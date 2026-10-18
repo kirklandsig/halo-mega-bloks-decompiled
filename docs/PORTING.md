@@ -37,12 +37,15 @@ Anbernic handheld.
 ```
 python tools/xex.py -o orig/MegaHaloGame.exe --decrypted orig/MegaHaloGame.dec.xex
 python tools/recomp_config.py
-XenonAnalyse orig/MegaHaloGame.dec.xex recomp/switch_tables.toml
+python tools/switch_tables.py
 XenonRecomp build/recomp/MegaHaloGame.toml <XenonRecomp>/XenonUtils/ppc_context.h
 ```
 
-The XEX is devkit-signed, and XenonRecomp knows only the retail key, so it
-reads the decrypted copy. The output is about 540 MB of C++; keep it out of
+`tools/switch_tables.py` replaces XenonAnalyse, which misses this compiler's
+jump-table order: it finds 345 tables (every `bctr` in the image is either a
+bounds-checked table or a pointer call; `--survey` prints the counts). The XEX
+is devkit-signed, and XenonRecomp knows only the retail key, so it reads the
+decrypted copy. The output is about 540 MB of C++; keep it out of
 synced folders.
 
 ## Phase 2 steps

@@ -90,29 +90,29 @@ facts, including the XenonRecomp findings, are in
   `variable`). Also `config/imports.csv`
   (`library,ordinal,name,thunk,kind`). Tasks 4 and 5 rely on both.
 
-- [ ] Write `test_imports_csv`: marked `orig`. It asserts that every row of
+- [x] Write `test_imports_csv`: marked `orig`. It asserts that every row of
   `config/imports.csv` has a library in `{xboxkrnl.exe, xam.xex, xbdm.xex, ...}`
   as found in the XEX, that the thunk VAs are unique, and that there is at
   least one row from `xboxkrnl.exe`. Run it and see it fail.
-- [ ] Implement `tools/imports.py`. It reads the XEX import libraries through
+- [x] Implement `tools/imports.py`. It reads the XEX import libraries through
   `tools/xex.py`. Names come from Xenia's export tables (BSD), which may be
   copied in with their notice. Run the tests and see them pass.
-- [ ] **Packaged-build baseline.** Run the packaged Xenia build that comes
+- [x] **Packaged-build baseline.** Run the packaged Xenia build that comes
   with the game files on the build's XEX, without admin rights. Its readme
   reports that it reaches gameplay, with workarounds through the dev menu.
   - Record how far it gets (boot, title, menu, first level) and how long
     each stage takes.
   - Record the kernel, XAM and `xbdm` exports it logs as unimplemented.
   - Check the readme's known issues.
-- [ ] **Source baseline.** Build upstream Xenia Canary from source at a
+- [x] **Source baseline.** Build upstream Xenia Canary from source at a
   recent commit, and record that commit. Run the same XEX and record the same
   facts. List what the packaged build has that upstream lacks (devkit XEX
   loading, `xbdm` stubs, keyboard passthrough).
-- [ ] **Prior art (time-box: about an hour).** Look for an existing host that
+- [x] **Prior art (time-box: about an hour).** Look for an existing host that
   runs XenonRecomp output on Xenia's kernel and GPU, with an MIT- or
   BSD-compatible license. If one fits, Task 5 builds on it instead of starting
   from scratch. Record what was found.
-- [ ] Write `docs/specs/phase2-baseline.md` with all of the above and a
+- [x] Write `docs/specs/phase2-baseline.md` with all of the above and a
   recommendation for Task 5's starting point. Commit, then push.
 
 ### Task 2: jump tables
@@ -131,7 +131,7 @@ facts, including the XenonRecomp findings, are in
   in the TOML format that XenonRecomp's `switch_table_file_path` reads (the
   format XenonAnalyse writes).
 
-- [ ] Write the tests on hand-assembled big-endian words, with no `orig/`:
+- [x] Write the tests on hand-assembled big-endian words, with no `orig/`:
   - `test_slwi_absolute_table`: `cmplwi cr6, r11, 3; bgt cr6, D;
     lis r12, H; slwi r11, r11, 2; addi r12, r12, L; lwzx r0, r12, r11;
     mtctr r0; bctr`, with a 4-entry table, gives one `Switch` with
@@ -143,13 +143,13 @@ facts, including the XenonRecomp findings, are in
   - `test_label_outside_function_rejected`: a table entry beyond the
     function's end rejects the table.
   Run them and see them fail.
-- [ ] Implement `find` and `render`. Then survey the real image: classify
+- [x] Implement `find` and `render`. Then survey the real image: classify
   every `bctr` in it as a table (absolute, or the byte- or halfword-offset
   forms if this compiler emits them), a pointer call or tail call, or
   unexplained.
-- [ ] `test_every_bctr_classified` (marked `orig`): the unexplained count is
+- [x] `test_every_bctr_classified` (marked `orig`): the unexplained count is
   0, and there are at least 300 tables. Run all the tests and see them pass.
-- [ ] Write `recomp/switch_tables.toml`, update `PORTING.md`'s run steps
+- [x] Write `recomp/switch_tables.toml`, update `PORTING.md`'s run steps
   (this tool replaces XenonAnalyse), commit, then push.
 
 ### Task 3: XenonRecomp fork, missing instructions
