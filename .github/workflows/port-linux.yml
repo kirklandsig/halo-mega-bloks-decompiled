@@ -1,0 +1,62 @@
+name: Port build (Linux)
+
+# Builds the ReXGlue SDK fork and the haggar host on Linux against the
+# stand-in for the generated code (tools/stub_recomp.py), so host and Linux
+# build breakage shows up without the build's files. clang 19 or newer:
+# libstdc++ 13's std::expected needs it.
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['runtime/**', 'third_party/**', '.gitmodules', 'tools/stub_recomp.py', 'tools/paths.py', '.github/workflows/port-linux.yml']
+  push:
+    branches: [main]
+    paths: ['runtime/**', 'third_party/**', '.gitmodules', 'tools/stub_recomp.py', 'tools/paths.py', '.github/workflows/port-linux.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      CC: clang-19
+      CXX: clang++-19
+      SDL_OPTS: >-
+        -DSDL_X11_XCURSOR=OFF -DSDL_X11_XRANDR=OFF -DSDL_X11_XSCRNSAVER=OFF
+        -DSDL_X11_XSHAPE=OFF -DSDL_X11_XTEST=OFF -DSDL_X11_XDBE=OFF
+        -DSDL_X11_XSYNC=OFF -DSDL_WAYLAND=OFF -DSDL_IBUS=OFF
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Submodules (the SDK only)
+        run: |
+          git submodule update --init third_party/rexglue
+          git -C third_party/rexglue submodule update --init --recursive --depth 1
+          echo "SDK_SHA=$(git -C third_party/rexglue rev-parse HEAD)" >> "$GITHUB_ENV"
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-19 lld-19 ninja-build pkg-config \
+            libx11-dev libx11-xcb-dev libxext-dev libxi-dev libxfixes-dev libwayland-dev libvulkan-dev
+      - uses: actions/cache@v4
+        id: sdk
+        with:
+          path: third_party/rexglue/out/install/linux-amd64
+          key: rexglue-linux-amd64-${{ env.SDK_SHA }}
+      - name: Build the SDK
+        if: steps.sdk.outputs.cache-hit != 'true'
+        working-directory: third_party/rexglue
+        run: |
+          cmake --preset linux-amd64 -DREXGLUE_BUILD_TESTS=OFF -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX $SDL_OPTS
+          cmake --build out/build/linux-amd64 --config Release --target install
+      - name: Build the host against the stand-in
+        run: |
+          python3 tools/stub_recomp.py
+          cmake -S runtime -B build/runtime -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-march=x86-64-v2 \
+            -DHAGGAR_SKIP_CODEGEN=ON -DCMAKE_PREFIX_PATH="$PWD/third_party/rexglue/out/install/linux-amd64"
+          cmake --build build/runtime
+          test -x build/runtime/haggar

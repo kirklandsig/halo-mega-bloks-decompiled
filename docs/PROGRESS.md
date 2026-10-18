@@ -30,7 +30,7 @@ welcome.
 | Full compile | done: 506 files, about 6 minutes, `haggar.exe` |
 | Xenia baseline | upstream Xenia Canary reaches gameplay with `console_type = 0` |
 | Boots natively | **yes, Windows x86-64: M5**, the first level is playable (with the build's known Ghost Walk workaround), 11 to 16 fps on an integrated GPU |
-| Linux | not yet (Task 6) |
+| Linux | builds (WSL2, clang 19); runs to UE3 startup on a software Vulkan device, no frame yet; CI builds the host |
 
 ## UnrealScript
 

@@ -22,6 +22,7 @@
 #include <rex/rex_app.h>
 #include <rex/runtime.h>
 #include <rex/system/interfaces/graphics.h>
+#include <rex/audio/nop/nop_audio_system.h>
 #include <rex/input/input_system.h>
 #include <rex/ui/presenter.h>
 
@@ -34,6 +35,7 @@ REXCVAR_DEFINE_INT32(capture_every, 0, "haggar",
 REXCVAR_DEFINE_STRING(capture_dir, "", "haggar", "Folder for --capture_every (default: user data)");
 REXCVAR_DEFINE_STRING(press, "", "haggar",
                       "Scripted controller for unattended runs, e.g. \"A@40,LS_UP@60-70\" (scripted_pad.h)");
+REXCVAR_DEFINE_STRING(audio, "sdl", "haggar", "Audio output: sdl, or nop (none, for hosts without an audio device)");
 REXCVAR_DECLARE(std::string, gpu_plugin);
 
 class HaggarApp : public rex::ReXApp {
@@ -51,6 +53,11 @@ class HaggarApp : public rex::ReXApp {
     if (REXCVAR_GET(gpu_plugin).empty())
       REXCVAR_SET(gpu_plugin, "xenos");
     game_root_ = paths.game_data_root;
+  }
+
+  void OnPreSetup(rex::RuntimeConfig& config) override {
+    if (REXCVAR_GET(audio) == "nop")
+      config.audio_factory = REX_AUDIO_BACKEND(rex::audio::nop::NopAudioSystem);
   }
 
   // The build's XEX keeps its own name (MegaHaloGame.xex, or the release

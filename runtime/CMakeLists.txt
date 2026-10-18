@@ -20,7 +20,9 @@ endif()
 set(HAGGAR_RECOMP_DIR "${_haggar_build}/recomp" CACHE PATH
     "Directory holding haggar_manifest.toml (tools/recomp_config.py)")
 set(HAGGAR_GENERATED "${HAGGAR_RECOMP_DIR}/generated")
-if(NOT EXISTS "${HAGGAR_RECOMP_DIR}/haggar_manifest.toml")
+# ON: build against the stand-in from tools/stub_recomp.py (CI, no orig/).
+option(HAGGAR_SKIP_CODEGEN "Use the generated directory as it is; don't run rexglue codegen" OFF)
+if(NOT HAGGAR_SKIP_CODEGEN AND NOT EXISTS "${HAGGAR_RECOMP_DIR}/haggar_manifest.toml")
     message(FATAL_ERROR "${HAGGAR_RECOMP_DIR}/haggar_manifest.toml not found: run python tools/recomp_config.py")
 endif()
 
@@ -38,14 +40,18 @@ if(EXISTS "${HAGGAR_GENERATED}/sources.cmake")
     include("${HAGGAR_GENERATED}/sources.cmake")
 endif()
 
-add_custom_command(
-    OUTPUT "${HAGGAR_GENERATED}/codegen.build.stamp" ${GENERATED_SOURCES}
-    COMMAND $<TARGET_FILE:rex::rexglue> codegen "${HAGGAR_RECOMP_DIR}/haggar_manifest.toml"
-    DEPFILE "${HAGGAR_GENERATED}/codegen.d"
-    WORKING_DIRECTORY "${HAGGAR_RECOMP_DIR}"
-    COMMENT "Generating recompiled code for haggar"
-    VERBATIM)
-add_custom_target(haggar_codegen DEPENDS "${HAGGAR_GENERATED}/codegen.build.stamp")
+if(HAGGAR_SKIP_CODEGEN)
+    add_custom_target(haggar_codegen)
+else()
+    add_custom_command(
+        OUTPUT "${HAGGAR_GENERATED}/codegen.build.stamp" ${GENERATED_SOURCES}
+        COMMAND $<TARGET_FILE:rex::rexglue> codegen "${HAGGAR_RECOMP_DIR}/haggar_manifest.toml"
+        DEPFILE "${HAGGAR_GENERATED}/codegen.d"
+        WORKING_DIRECTORY "${HAGGAR_RECOMP_DIR}"
+        COMMENT "Generating recompiled code for haggar"
+        VERBATIM)
+    add_custom_target(haggar_codegen DEPENDS "${HAGGAR_GENERATED}/codegen.build.stamp")
+endif()
 
 if(WIN32)
     add_executable(haggar WIN32 src/main.cpp)
@@ -69,3 +75,15 @@ if(GENERATED_SOURCES)
 endif()
 
 rexglue_configure_target(haggar GPU_PLUGINS xenos)
+
+# On Linux the host finds librexruntime.so through $ORIGIN, as the Windows
+# build finds the DLLs it stages; stage the shared libraries the same way.
+if(UNIX AND NOT APPLE)
+    foreach(_lib rex::runtime rex::TracyClient)
+        if(TARGET ${_lib})
+            add_custom_command(TARGET haggar POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${_lib}> $<TARGET_FILE_DIR:haggar>
+                VERBATIM)
+        endif()
+    endforeach()
+endif()

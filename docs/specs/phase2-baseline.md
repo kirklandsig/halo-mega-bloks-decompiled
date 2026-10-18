@@ -1,6 +1,6 @@
 # Phase 2 baseline and results
 
-Status: Tasks 1 to 5 done, M5 reached (2026-10-18). This file collects the Phase 2 facts: the
+Status: Tasks 1 to 6 done; M5 reached on Windows, M2 on Linux (2026-10-18). This file collects the Phase 2 facts: the
 Xenia baselines, the prior-art search, the build numbers and the runtime
 milestones. Screenshots stay on the lane's machine; the log lines are quoted
 here.
@@ -250,6 +250,34 @@ Compared with the upstream Xenia baseline: both reach the first level.
 Xenia's frame showed the player under a sky above a dark plane, while the
 recompiled build shows the jungle. The likely cause is this run's A press
 and wait on the briefing, not a difference in the engine.
+
+## Task 6: Linux
+
+**Build: done**, under WSL2 (Ubuntu 24.04) on the same machine. Nothing was
+installed system-wide and `sudo` wasn't used: clang 19.1.1 and the missing
+X11 and Wayland development headers (`libx11-xcb-dev`, `libwayland-dev`,
+`libxi-dev`, `libxfixes-dev`) were unpacked into a home-directory prefix
+with `apt-get download` and `dpkg -x`.
+
+| Check | Result |
+| --- | --- |
+| Compiler | clang 19 or newer is required: with clang 18, libstdc++ 13's `std::expected` is unavailable and the SDK doesn't compile |
+| SDK | `cmake --preset linux-amd64`, with SDL3's optional X11 extras off (Xcursor, XRandR, XScrnSaver, XShape, XTest, XDBE, XSync, Wayland, IBus). XInput2 must stay on: SDL3 doesn't compile without it. About 3 minutes on 16 threads |
+| Game | codegen plus all 506 files in **11 minutes**; `haggar` is 302 MB, plus `librexruntime.so` and `librexgpu-xenos.so`, staged next to it |
+| Run (WSLg, Mesa llvmpipe Vulkan, the only Vulkan device here) | **M2**: UE3 starts and Wwise initializes (`Log: Wwise(R) SDK Version 2012.1.4 Build 4260`). With `--audio=nop` it gets further, through the first package loads. Then, about 8 s in, a thread hits the game's assert (the write to address 3), and no frame is presented. **M3 is not reached** |
+
+Without an audio device (this SDL build has no ALSA, Pulse or PipeWire
+backend, since those headers weren't available), Wwise's second render
+client registration fails, and the game asserts in audio init.
+`--audio=nop` (the SDK's no-op audio system) gets past that. The second
+assert is open. The likely cause is the software Vulkan device, so the next
+step is a Linux machine with a real GPU (a user step, below).
+
+**CI.** `.github/workflows/port-linux.yml` builds the SDK fork (cached by its
+commit) and the host on `ubuntu-24.04` with clang 19. It builds against
+`tools/stub_recomp.py`'s stand-in for the generated code
+(`-DHAGGAR_SKIP_CODEGEN=ON`), so it needs no `orig/`. The same stand-in
+build links on Windows.
 
 ## Decisions
 

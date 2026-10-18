@@ -247,10 +247,10 @@ not committed.
 
 ### Task 6: Linux
 
-- [ ] Build `haggar_recomp` and the host on Linux with clang: under WSL2 if
+- [x] Build `haggar_recomp` and the host on Linux with clang: under WSL2 if
   it is installed, or else record it as a user step. Run to M3 if the GPU
   path allows it.
-- [ ] Add a CI job that builds the host glue with the generated code stubbed
+- [x] Add a CI job that builds the host glue with the generated code stubbed
   out, so Linux build breakage shows up without `orig/`. Steam Deck testing
   is a user step, written up in `PORTING.md`. Commit, then push.
 
