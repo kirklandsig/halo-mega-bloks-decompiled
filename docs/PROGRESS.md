@@ -24,12 +24,13 @@ welcome.
 
 | Step | State |
 | --- | --- |
-| Whole executable translated by XenonRecomp | done (239,193 functions) |
-| Sample of the output compiles | 20 of 20 files |
-| Jump tables (`lis; slwi; addi; lwzx; mtctr; bctr`) | not found yet (about 320 sites) |
-| Missing instruction types | 52 (8,665 sites in 2,419 functions) |
-| Xenia baseline | not tried |
-| Boots natively | no |
+| Recompiler | ReXGlue SDK codegen (fork `kirklandsig/rexglue-sdk`): 237,162 PDB functions, 55 s |
+| Jump tables | 345 found (`tools/switch_tables.py`); every `bctr` classified |
+| Unimplemented instructions | 0 |
+| Full compile | done: 506 files, about 6 minutes, `haggar.exe` |
+| Xenia baseline | upstream Xenia Canary reaches gameplay with `console_type = 0` |
+| Boots natively | **yes, Windows x86-64: M5**, the first level is playable (with the build's known Ghost Walk workaround), 11 to 16 fps on an integrated GPU |
+| Linux | not yet (Task 6) |
 
 ## UnrealScript
 

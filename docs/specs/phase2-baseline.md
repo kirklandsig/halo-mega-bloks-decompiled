@@ -1,6 +1,6 @@
 # Phase 2 baseline and results
 
-Status: in progress (2026-10-18). This file collects the Phase 2 facts: the
+Status: Tasks 1 to 5 done, M5 reached (2026-10-18). This file collects the Phase 2 facts: the
 Xenia baselines, the prior-art search, the build numbers and the runtime
 milestones. Screenshots stay on the lane's machine; the log lines are quoted
 here.
@@ -206,6 +206,50 @@ points, not wrong sizes, so `config/functions.csv` is unchanged.
 covers the per-instruction checks. The real host's first run covers the rest
 (an entry point, a jump table and indirect calls through the function table),
 since it reaches M1 to M5 below.
+
+## Task 5: the recompiled game runs, M1 to M5
+
+`haggar.exe --game <folder>` runs the recompiled build on ReXGlue's runtime,
+which is Xenia's kernel, XAM, `xbdm`, VFS, D3D12 Xenos GPU, XMA audio and SDL
+input. The host (`runtime/src/haggar_app.h`, CC0) adds:
+
+- `--game`, an alias for `--game_data_root`;
+- loading the build's XEX under whichever name it has in the folder;
+- the Xenos GPU plugin by default (ReXApp turns the GPU off unless one is
+  named);
+- `DEVKIT:\` (and `e:`) mapped to `<user data>/devkit`. `DmMapDevkitDrive`
+  succeeds, and the game then writes its profiling and log files there.
+  Without a drive behind it, the game asserts and deliberately writes to
+  address 3, as upstream Xenia's crash does;
+- for unattended runs, `--capture_every=N` (the guest frame read back from
+  the GPU, as PPM, whatever is on screen) and `--press=<script>` (a scripted
+  controller, `runtime/src/scripted_pad.h`).
+
+Runs on the test machine, at default settings, D3D12:
+
+| Milestone | Evidence |
+| --- | --- |
+| **M1**: the entry point runs to its first kernel calls | guest thread `F8000028` runs the recompiled `main`: `SetInterruptCallback(83F19158, 40009780)`, audio client registration, then `NtCreateFile` calls (first run, before the `DEVKIT:` mapping) |
+| **M2**: UE3 starts | the engine's own log through `DbgPrint`: `Log: Finished loading level: 0.569361 seconds`, `Log: Initializing Engine Completed`, `Log: >>>>>>>>>>>>>> Initial startup: 11.96s <<<<<<<<<<<<<<<`, `Log: Applying property bLevelLoadComplete for object GFxHaloLoadingScreen_0` |
+| **M3**: first frame presented | 1280x720 guest frames from about 15 s: the mission briefing ("Due to reports of increased Covenant forces in the area... Navigate the jungle on-foot and reach the base!") with its A prompt |
+| **M4**: title screen or menu | this build has neither (upstream Xenia goes straight into a level too); its screens are the briefing, which waits for A, and the dev menu (Back: Build Vehicle, Get Weapon, ..., Ghost / Walk Toggle, ..., Toggle UI Visibility), both drawn and working |
+| **M5**: the first level is playable | after A, the jungle level with the full HUD (health, ammo `32/224`, grenades, radar). As the readme warns, the player can't move at first; Ghost / Walk toggled on and off through the dev menu fixes it. The left stick then walks Master Chief through the jungle: the blok counter goes from 0 to 6, and an objective marker (`119.9m`) appears |
+
+**Frame rate: 11 to 16 fps in the level** (`VdSwap` log, per 300 frames:
+16.1, 16.1, 15.4 standing; 12.8, 14.4, 11.1 while walking) on the Radeon 860M
+integrated GPU. The readme's minimum is a discrete GPU of GTX 980 Ti class,
+and Xenia's GPU emulation is the heavy part.
+
+Review Focus 4 (physical-address mirrors): the recompiled code uses the
+runtime's guest memory (virtual base `0x100000000`, physical base
+`0x200000000`, Xenia's mapping) and no copy of the image. The D3D and GPU
+code that uses the `0xA0000000` and higher ranges draws correctly: the HUD,
+the Scaleform UI and the level.
+
+Compared with the upstream Xenia baseline: both reach the first level.
+Xenia's frame showed the player under a sky above a dark plane, while the
+recompiled build shows the jungle. The likely cause is this run's A press
+and wait on the briefing, not a difference in the engine.
 
 ## Decisions
 

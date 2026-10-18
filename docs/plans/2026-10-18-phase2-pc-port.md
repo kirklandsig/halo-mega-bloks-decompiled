@@ -238,11 +238,11 @@ The integration points, which Task 1's prior-art result may already cover:
 Milestones, each committed and pushed, with a `PROGRESS.md` line. Evidence
 goes in `docs/specs/phase2-baseline.md`: log lines, and a screenshot that is
 not committed.
-- [ ] **M1:** the recompiled entry point runs to its first kernel call.
-- [ ] **M2:** UE3's engine starts (its startup lines appear in the log).
-- [ ] **M3:** the first frame is presented.
-- [ ] **M4:** the title screen or main menu.
-- [ ] **M5:** the first level is playable, as far as the Task 1 baseline
+- [x] **M1:** the recompiled entry point runs to its first kernel call.
+- [x] **M2:** UE3's engine starts (its startup lines appear in the log).
+- [x] **M3:** the first frame is presented.
+- [x] **M4:** the title screen or main menu.
+- [x] **M5:** the first level is playable, as far as the Task 1 baseline
   gets (its known issues are acceptable), and the frame rate is recorded.
 
 ### Task 6: Linux
