@@ -1,0 +1,42 @@
+# Game files, binaries and the Xbox 360 SDK never enter this repository.
+*.xex
+*.pdb
+*.exe
+*.dll
+*.lib
+*.obj
+*.map
+*.xxx
+*.upk
+*.tfc
+*.bik
+*.wem
+*.bnk
+*.iso
+*.7z
+*.rar
+*.zip
+*.cab
+/orig/
+/sdk/
+/build/
+/extracted/
+
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local scripts and notes.
+/local/
+
+# Claude Code session data and agent worktrees.
+/.claude/
+
+/*.log
+
+# dotnet build output
+/tools/script_export/obj/
+/tools/script_export/bin/
+
+# generated XenonRecomp config (tools/recomp_config.py writes build/recomp/)
+/recomp/MegaHaloGame.toml

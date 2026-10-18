@@ -1,0 +1,25 @@
+{
+  "game": "Halo Mega Bloks (Project Haggar)",
+  "system": "Xbox 360",
+  "type": "decomp",
+  "project": "halo-mega-bloks-decompiled",
+  "status": "in-progress",
+  "approach": "Static recompilation of the whole Xbox 360 executable (XenonRecomp) plus a runtime for the native port, a matching decompilation of n-Space's own C++ with the original compiler, and the game's UnrealScript decompiled from its cooked packages.",
+  "notes": "An independent, non-commercial preservation project for the cancelled Halo Mega Bloks game (Project Haggar, n-Space, Unreal Engine 3), not affiliated with or endorsed by Microsoft, 343 Industries, n-Space, Mega Brands or Epic Games. Source only: the repository contains no game files and no SDK files. Progress is tracked in docs/PROGRESS.md. New contributors: start with docs/START_HERE.md, and claim work in issue #1 before you begin.",
+  "help": [
+    "Matching n-Space's C++ functions",
+    "Porting: the XenonRecomp fork and the runtime",
+    "Reviewing and documenting the UnrealScript",
+    "Naming types and documenting game systems"
+  ],
+  "tags": ["matching", "msvc", "cpp", "static-recompilation", "unreal-engine-3"],
+  "maintainers": [
+    { "name": "kirklandsig", "link": "https://github.com/kirklandsig" }
+  ],
+  "links": [
+    { "label": "Start here", "url": "https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/START_HERE.md" },
+    { "label": "Progress", "url": "https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PROGRESS.md" },
+    { "label": "Active claims", "url": "https://github.com/kirklandsig/halo-mega-bloks-decompiled/issues/1" },
+    { "label": "Porting", "url": "https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PORTING.md" }
+  ]
+}

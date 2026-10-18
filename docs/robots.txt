@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kirklandsig.github.io/halo-mega-bloks-decompiled/sitemap.xml

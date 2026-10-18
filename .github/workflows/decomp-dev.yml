@@ -1,0 +1,31 @@
+name: decomp.dev report
+
+# Publishes the objdiff-format progress report that decomp.dev charts
+# (see docs/DECOMP_DEV.md). It reads config/functions.csv and
+# config/status.csv only, so it needs neither the build's files nor the SDK,
+# and it holds no secrets.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python tools/decomp_dev_export.py -o build/report.json
+      # decomp.dev reads an artifact named <version>_report holding report.json.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: retail_report
+          path: build/report.json

@@ -1,0 +1,4 @@
+class HaloAnimNodeCopyBoneTranslation extends UDKAnimNodeCopyBoneTranslation
+	native;
+
+var array<HaloAnimBlendByAimProfile> AimProfileBlends;

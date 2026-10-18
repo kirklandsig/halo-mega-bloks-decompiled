@@ -1,0 +1,1 @@
+class HaloVehicleWraithWheel extends UTHoverWheel;

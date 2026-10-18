@@ -1,0 +1,2 @@
+class ClientBeaconAddressResolverLive extends ClientBeaconAddressResolver
+	native;

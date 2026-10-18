@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halo Mega Bloks (Project Haggar) decompilation and native port</title>
+<meta name="description" content="Decompilation and native PC port of Project Haggar, the cancelled Halo Mega Bloks game (n-Space, Xbox 360, Unreal Engine 3). Also spelled Halo Mega Blocks. Static recompilation, matching decompilation of n-Space's C++, and the game's UnrealScript. Bring your own copy of the build.">
+<meta name="keywords" content="Halo Mega Bloks, Halo Mega Blocks, Project Haggar, n-Space, Xbox 360, Unreal Engine 3, UDK, decompilation, static recompilation, XenonRecomp, cancelled game, game preservation, Anbernic">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://kirklandsig.github.io/halo-mega-bloks-decompiled/">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Halo Mega Bloks (Project Haggar) decompilation">
+<meta property="og:title" content="Halo Mega Bloks (Project Haggar): decompilation and native PC port">
+<meta property="og:description" content="Rebuilding the cancelled Halo Mega Bloks game for the Xbox 360 from source, to run natively on PC and later on an Anbernic handheld.">
+<meta property="og:url" content="https://kirklandsig.github.io/halo-mega-bloks-decompiled/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Halo Mega Bloks (Project Haggar): decompilation and native PC port">
+<meta name="twitter:description" content="Rebuilding the cancelled Halo Mega Bloks game for the Xbox 360 from source, to run natively on PC and later on an Anbernic handheld.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Halo Mega Bloks (Project Haggar) decompilation",
+  "alternateName": ["halo-mega-bloks-decompiled", "Halo Mega Blocks decompilation", "Project Haggar"],
+  "description": "Decompilation and native PC port of Project Haggar, the cancelled Halo Mega Bloks game (n-Space, Xbox 360, Unreal Engine 3). Requires your own copy of the build's files.",
+  "url": "https://kirklandsig.github.io/halo-mega-bloks-decompiled/",
+  "codeRepository": "https://github.com/kirklandsig/halo-mega-bloks-decompiled",
+  "programmingLanguage": ["C++", "Python", "UnrealScript", "C#"],
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "author": { "@type": "Person", "name": "kirklandsig", "url": "https://github.com/kirklandsig" },
+  "keywords": ["Halo Mega Bloks", "Halo Mega Blocks", "Project Haggar", "n-Space", "Xbox 360", "Unreal Engine 3", "decompilation", "static recompilation", "game preservation"]
+}
+</script>
+<style>
+:root { --bg: #f5f7fa; --fg: #1b1f24; --muted: #57606a; --card: #ffffff; --line: #d0d7de; --link: #0b62d6; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --card: #161b22; --line: #30363d; --link: #58a6ff; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 820px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 1.9rem; line-height: 1.25; margin: 0 0 12px; }
+h2 { font-size: 1.25rem; margin: 32px 0 8px; }
+p, li { color: var(--fg); }
+.lead { font-size: 1.1rem; }
+.muted { color: var(--muted); }
+a { color: var(--link); }
+section { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 4px 20px 12px; margin-top: 20px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+td { border-top: 1px solid var(--line); padding: 6px 8px; vertical-align: top; }
+td:first-child { color: var(--muted); white-space: nowrap; }
+@media (max-width: 560px) { td:first-child { white-space: normal; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Halo Mega Bloks (Project Haggar) decompilation and native port</h1>
+<p class="lead">Decompilation and native PC port of Project Haggar, the cancelled Halo Mega Bloks game (n-Space, Xbox 360, Unreal Engine 3). Also spelled Halo Mega Blocks.</p>
+<p><strong>Project Haggar</strong> is the Halo Mega Bloks game (also spelled "Halo Mega Blocks") that n-Space developed for the Xbox 360 on Unreal Engine 3 (the UDK July 2012 BETA 2 engine) until 343 Industries cancelled it in 2013. This open-source project rebuilds a development build of it from source, so it can run natively on PC and, eventually, on an Anbernic handheld.</p>
+<p><a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled">Source code on GitHub</a> &middot; <a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/START_HERE.md">Start here</a> &middot; <a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PROGRESS.md">Progress</a> &middot; <a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled/issues/1">Active claims</a></p>
+
+<section>
+<h2>Three tracks</h2>
+<ul>
+<li><strong>Native port.</strong> A static recompilation of the whole Xbox 360 executable (XenonRecomp) plus a runtime: first hosted on Xenia's kernel, GPU and audio, then with a native renderer for handhelds.</li>
+<li><strong>n-Space's C++.</strong> A byte-matching decompilation with the original compiler (XDK 21076, <code>cl</code> 16.00.11886) and the build's own flags. Epic's engine is recompiled, not hand-decompiled.</li>
+<li><strong>UnrealScript.</strong> The game's script classes, decompiled from its cooked packages.</li>
+</ul>
+</section>
+
+<section>
+<h2>Status</h2>
+<table>
+<tr><td>Inventory</td><td>237,168 functions and 759,808 types from the build's PDB</td></tr>
+<tr><td>n-Space's C++</td><td>1,258 functions in scope, 8 matched (10 in total)</td></tr>
+<tr><td>Recompilation</td><td>Whole executable translated; sampled output compiles. Jump tables and 52 instruction types next</td></tr>
+<tr><td>UnrealScript</td><td>2,571 of 2,597 classes export cleanly; the 758 n-Space and modified classes are in the repo</td></tr>
+<tr><td>Playable natively</td><td>Not yet</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Can I play the cancelled Halo Mega Bloks game?</h2>
+<p>Not natively yet: the port is the goal, and it doesn't boot yet. You would need your own copy of the build's files either way. The repository contains no game files and no SDK files.</p>
+</section>
+
+<section>
+<h2>Help</h2>
+<p>No decompilation experience is needed. Read <a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/START_HERE.md">Start here</a>: setup, claiming work, and a prompt you can paste into an AI coding agent. Script review and documentation need no SDK.</p>
+</section>
+
+<p class="muted">An independent, non-commercial preservation project, not affiliated with or endorsed by Microsoft, 343 Industries, n-Space, Mega Brands or Epic Games. The project's own work is released under CC0 1.0.</p>
+</main>
+</body>
+</html>
