@@ -256,12 +256,12 @@ not committed.
 
 ### Task 7: docs and the clean-clone check
 
-- [ ] `PORTING.md`: "Build and run the PC port". It covers prerequisites,
+- [x] `PORTING.md`: "Build and run the PC port". It covers prerequisites,
   supplying your own copy of the build, cloning with submodules, each tool
   in order, the CMake build and running `haggar.exe`. Keep no links to game,
   XDK or emulator sources.
-- [ ] Follow those steps in a fresh worktree from `main` and fix anything that
+- [x] Follow those steps in a fresh worktree from `main` and fix anything that
   differs.
-- [ ] Update `PROGRESS.md`, the README's status line, `llms.txt`, the Pages
+- [x] Update `PROGRESS.md`, the README's status line, `llms.txt`, the Pages
   site's status, and the design's "Phases" (Phase 2 done, with what was left
   over). Commit, then push.

@@ -26,6 +26,18 @@ if(NOT HAGGAR_SKIP_CODEGEN AND NOT EXISTS "${HAGGAR_RECOMP_DIR}/haggar_manifest.
     message(FATAL_ERROR "${HAGGAR_RECOMP_DIR}/haggar_manifest.toml not found: run python tools/recomp_config.py")
 endif()
 
+# This clone's SDK (third_party/rexglue, installed in place) comes before any
+# other ReXGlue registered with CMake.
+if(WIN32)
+    set(_haggar_sdk_preset win-amd64)
+else()
+    set(_haggar_sdk_preset linux-amd64)
+endif()
+set(_haggar_sdk "${CMAKE_CURRENT_SOURCE_DIR}/../third_party/rexglue/out/install/${_haggar_sdk_preset}")
+if(EXISTS "${_haggar_sdk}")
+    get_filename_component(_haggar_sdk "${_haggar_sdk}" ABSOLUTE)
+    list(PREPEND CMAKE_PREFIX_PATH "${_haggar_sdk}")
+endif()
 find_package(rexglue 0.10.0 REQUIRED CONFIG)
 
 # Guest SEH scopes emit __try/__except, which trap hardware faults only under

@@ -7,7 +7,7 @@
 - Game: Project Haggar, the Halo Mega Bloks game by n-Space for the Xbox 360, cancelled in 2013. Engine: Unreal Engine 3, exactly UDK July 2012 BETA 2 (engine version 10246, changelist 1340247).
 - Inputs: a development build with a full private PDB (237,168 functions, 759,808 type records). The executable is a devkit-signed XEX2.
 - Matching compiler: XDK 21076, cl 16.00.11886 for PowerPC, with each object's command line from the PDB. 1,258 n-Space functions in scope, 8 of them matched (10 matched in total).
-- Port: XenonRecomp translates the whole executable; a fork for this compiler's jump tables and 52 instruction types is the next step, then a Xenia-hosted runtime, then a native renderer for handhelds.
+- Port: the recompiled build runs natively on Windows x86-64 from boot to the first level (ReXGlue SDK codegen and its Xenia-derived runtime; 237,162 functions, no unimplemented instruction), and builds on Linux. Next: Linux on real GPUs, then a native renderer for handhelds.
 - Scripts: 758 UnrealScript classes (n-Space's own and those modified from UDK) are in script/.
 - Not playable natively yet.
 
@@ -16,7 +16,7 @@
 - [README](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/README.md): overview, status, requirements, tools, FAQ
 - [Start here](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/START_HERE.md): setup, claiming work, an AI-agent prompt
 - [Decompiling](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/DECOMPILING.md): markers, the check, compiler idioms
-- [Porting](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PORTING.md): the native port plan
+- [Porting](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PORTING.md): build and run the native port
 - [Progress](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PROGRESS.md): numbers per track
 - [Design](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/specs/2026-10-18-design.md): goals, scope, phases
 - [Active claims](https://github.com/kirklandsig/halo-mega-bloks-decompiled/issues/1): who is working on what
@@ -24,4 +24,5 @@
 ## Optional
 
 - [Phase 0 results](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/specs/phase0-results.md): feasibility measurements
+- [Phase 2 results](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/specs/phase2-baseline.md): the PC port, baselines and milestones
 - [Contributing](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/CONTRIBUTING.md)

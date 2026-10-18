@@ -15,9 +15,9 @@ endorsed by Microsoft, 343 Industries, n-Space, Mega Brands or Epic Games.
 Three tracks, one goal: the game running natively.
 
 1. **Native port (the deliverable).** A static recompilation of the whole
-   executable (XenonRecomp) plus a runtime, first hosted on Xenia's kernel,
-   GPU and audio, then with a native renderer for handhelds. See
-   [docs/PORTING.md](docs/PORTING.md).
+   executable (the ReXGlue SDK's codegen) plus its runtime, which is Xenia's
+   kernel, GPU and audio without the JIT; later, a native renderer for
+   handhelds. See [docs/PORTING.md](docs/PORTING.md).
 2. **n-Space's C++, decompiled to match.** Each function is rebuilt with the
    original compiler (XDK 21076, `cl` 16.00.11886) and the build's own flags,
    and must produce the same bytes. Matched functions can replace their
@@ -29,14 +29,17 @@ The handheld goal: an Anbernic device, chosen by profiling the PC build.
 
 ## Status
 
-Phase 1, the public launch. Phase 0's measurements are in
-`docs/specs/phase0-results.md`; the inventory row is Phase 1's.
+Phase 2 is done: **the recompiled build runs natively on Windows x86-64, from
+boot to the first level** (11 to 16 fps on an integrated GPU), and it builds
+on Linux. Phase 2's results are in `docs/specs/phase2-baseline.md`, and
+Phase 0's in `docs/specs/phase0-results.md`.
 
 | | |
 | --- | --- |
 | Inventory | 237,168 functions (215,944 from the PDB's procedures, 21,224 library functions with only a public symbol), 2,295 objects |
 | n-Space's C++ | 1,258 functions in scope, **8 matched** (10 matched in total: Gate A matched 10 of 10) |
-| Recompilation | XenonRecomp translates the whole executable (239,193 functions); 20 of 20 sampled files compile. Jump tables and 52 instruction types are Phase 2 |
+| Native port | Windows: boots to the first level, playable with the build's own known issues. Linux: builds, and starts UE3 on a software Vulkan device |
+| Recompilation | 237,162 functions, 345 jump tables, no unimplemented instruction; 506 files compile in about 6 minutes |
 | UnrealScript | 2,571 of 2,597 classes export cleanly; the 758 that are n-Space's own or modified from UDK are committed |
 
 Details: [docs/PROGRESS.md](docs/PROGRESS.md).
@@ -93,9 +96,10 @@ Script review, naming and documenting game systems need no SDK.
 ## FAQ
 
 **Can I play the cancelled Halo Mega Bloks game?**
-Not natively yet. The port is the goal of this project, and it doesn't boot
-yet. You would need your own copy of the build's files either way: this
-repository contains none.
+On Windows, yes, if you have your own copy of the build's files (this
+repository contains none): build the port with
+[docs/PORTING.md](docs/PORTING.md). It reaches the first level, with the
+build's own known issues (it is a development build).
 
 **Is this the Halo Mega Blocks game I've heard about?**
 Yes: Project Haggar, the Mega Bloks Halo game n-Space made for the Xbox 360.
@@ -110,10 +114,12 @@ No. The engine is not hand-decompiled; it is recompiled from the build.
 ## Credits
 
 Tools used, each under its own license:
+- [ReXGlue SDK](https://github.com/rexglue/rexglue-sdk) (BSD), the
+  recompiler and runtime the port is built on.
 - [XenonRecomp](https://github.com/hedge-dev/XenonRecomp) (MIT), for the
-  static recompilation.
+  Phase 0 recompilation, and the basis of ReXGlue's translations.
 - [Xenia](https://github.com/xenia-project/xenia) (BSD), the reference for the
-  XEX format and the planned runtime.
+  XEX format, and the source of ReXGlue's runtime.
 - [UELib](https://github.com/EliotVU/Unreal-Library) (MIT), for the script
   export.
 - [UModel / UE Viewer](https://github.com/gildor2/UEViewer) and its package

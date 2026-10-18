@@ -116,9 +116,7 @@ cmake --build out/build/win-amd64 --config Release --target install
 cd ../..
 ```
 
-The install registers the SDK with CMake, so the next step finds it. You can
-also pass `-DCMAKE_PREFIX_PATH=third_party/rexglue/out/install/<preset>`. On
-Linux, `.github/workflows/port-linux.yml` has the SDL options that build
+On Linux, `.github/workflows/port-linux.yml` has the SDL options that build
 without the optional X11 extras.
 
 ### 5. Build the game
@@ -126,14 +124,15 @@ without the optional X11 extras.
 ```
 cmake -S runtime -B build/runtime -G Ninja -DCMAKE_BUILD_TYPE=Release ^
   -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS=-march=x86-64-v2
-cmake --build build/runtime          # runs the codegen (about a minute)
-cmake -S runtime -B build/runtime    # picks up the generated file list
-cmake --build build/runtime          # compiles the 506 generated files (about 6 to 11 minutes)
+cmake --build build/runtime --target haggar_codegen   # the codegen (about a minute)
+cmake -S runtime -B build/runtime                      # picks up the generated file list
+cmake --build build/runtime                            # the 506 generated files (6 to 11 minutes)
 ```
 
-(On Linux, the line continuation is `\`, not `^`.) The first build only
-generates the code. Configure again so CMake sees the generated sources,
-then build again.
+On Linux, the line continuation is `\`, not `^`. The codegen writes the list
+of generated sources, so configure again after it, then build. `runtime/`
+uses this clone's SDK (`third_party/rexglue/out/install/`) before any other
+ReXGlue registered with CMake.
 
 ### 6. Run
 

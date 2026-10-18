@@ -1,6 +1,6 @@
 # Phase 2 baseline and results
 
-Status: Tasks 1 to 6 done; M5 reached on Windows, M2 on Linux (2026-10-18). This file collects the Phase 2 facts: the
+Status: Phase 2 done; M5 on Windows, M2 on Linux (2026-10-18). This file collects the Phase 2 facts: the
 Xenia baselines, the prior-art search, the build numbers and the runtime
 milestones. Screenshots stay on the lane's machine; the log lines are quoted
 here.
@@ -278,6 +278,28 @@ commit) and the host on `ubuntu-24.04` with clang 19. It builds against
 `tools/stub_recomp.py`'s stand-in for the generated code
 (`-DHAGGAR_SKIP_CODEGEN=ON`), so it needs no `orig/`. The same stand-in
 build links on Windows.
+
+## Task 7: the clean-clone check
+
+`PORTING.md` was followed step by step in a fresh worktree from `main`,
+outside synced folders, with only the build's XEX and PDB supplied:
+
+1. submodules, then `tools/fix_symlinks.py` (19 stubs replaced);
+2. `tools/xex.py`, then `pytest` (79 passed);
+3. `tools/switch_tables.py`, then `tools/recomp_config.py`;
+4. the SDK, about 6 minutes;
+5. the game: codegen, configure again, then build, 6 minutes;
+6. `haggar.exe --game <folder>`.
+
+It reached the jungle level, at 15.9 to 16.4 fps. The check found two
+problems in the first draft, both fixed:
+
+- **A one-step build fails at link.** The first `cmake --build` has no
+  generated file list yet, so step 5 now builds `--target haggar_codegen`
+  first, then configures again.
+- **The wrong SDK.** CMake's package registry found another clone's SDK.
+  `runtime/CMakeLists.txt` now puts the clone's own
+  `third_party/rexglue/out/install/<preset>` first.
 
 ## Decisions
 

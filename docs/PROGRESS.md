@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-18.
+Updated 2026-10-18 (Phase 2 done: the PC port runs).
 
 ## n-Space's C++ (matching)
 
