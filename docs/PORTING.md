@@ -34,19 +34,24 @@ Anbernic handheld.
 
 ## Running the recompiler today
 
+The recompiler is the ReXGlue SDK's codegen (`third_party/rexglue`, our fork
+`kirklandsig/rexglue-sdk`, branch `haggar`), which reads the devkit-signed
+XEX itself:
+
 ```
-python tools/xex.py -o orig/MegaHaloGame.exe --decrypted orig/MegaHaloGame.dec.xex
-python tools/recomp_config.py
+python tools/xex.py -o orig/MegaHaloGame.exe
 python tools/switch_tables.py
-XenonRecomp build/recomp/MegaHaloGame.toml <XenonRecomp>/XenonUtils/ppc_context.h
+python tools/recomp_config.py
+rexglue codegen build/recomp/haggar_manifest.toml
 ```
 
 `tools/switch_tables.py` replaces XenonAnalyse, which misses this compiler's
 jump-table order: it finds 345 tables (every `bctr` in the image is either a
-bounds-checked table or a pointer call; `--survey` prints the counts). The XEX
-is devkit-signed, and XenonRecomp knows only the retail key, so it reads the
-decrypted copy. The output is about 540 MB of C++; keep it out of
-synced folders.
+bounds-checked table or a pointer call; `--survey` prints the counts).
+`tools/recomp_config.py` writes the manifest and the PDB's function list into
+`build/recomp/` (or `$HAGGAR_BUILD_DIR/recomp/`). The codegen takes about a
+minute and writes about 550 MB of C++ to `build/recomp/generated/`; keep it
+out of synced folders.
 
 ## Phase 2 steps
 

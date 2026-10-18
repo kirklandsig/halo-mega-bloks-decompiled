@@ -4,6 +4,7 @@ location, never from the current directory.
     HAGGAR_XEX   the retail XEX   (default orig/MegaHaloGame.xex)
     HAGGAR_PDB   its PDB          (default orig/MegaHaloGame.pdb)
     XDK_DIR      the Xbox 360 SDK (default sdk/)
+    HAGGAR_BUILD_DIR  generated files and build output (default build/)
 """
 import os
 import sys
@@ -11,13 +12,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 ORIG = ROOT / 'orig'
-BUILD = ROOT / 'build'
 CONFIG = ROOT / 'config'
 
 
 def _env(name, default):
     value = os.environ.get(name)
     return Path(value) if value else default
+
+
+BUILD = _env('HAGGAR_BUILD_DIR', ROOT / 'build').resolve()
 
 
 def xex():

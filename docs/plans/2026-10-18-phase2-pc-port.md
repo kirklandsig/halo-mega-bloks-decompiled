@@ -160,7 +160,7 @@ facts, including the XenonRecomp findings, are in
   newer upstream commit, and record which.
 - Modify: the recompiler's instruction switch, and its tests.
 
-- [ ] Write a test for each missing mnemonic: the 52 from
+- [x] Write a test for each missing mnemonic: the 52 from
   `docs/specs/phase0-results.md` (`bdzf`, `stfsu`, `vsrah`, `lfsu`, `vslh`,
   `vsel128`, `sthu`, `lhzu`, `dcbst`, `eqv`, `vsubshs`, `lfsux`,
   `vpkswss128`, `subfze`, ...), plus `vcmpbfp128.` updating CR6.
@@ -171,10 +171,10 @@ facts, including the XenonRecomp findings, are in
     a small one in the fork.
   - Update-form cases include `rA == rD` (Review Focus 3).
   Run them and see them fail.
-- [ ] Implement each instruction. Xenia's PowerPC frontend (BSD) is the
+- [x] Implement each instruction. Xenia's PowerPC frontend (BSD) is the
   semantic reference. Treat the 9 undecodable words as invalid instructions
   in the config, or as data, after checking where they sit.
-- [ ] Run XenonRecomp on `tools/recomp_config.py`'s config, with the Task 2
+- [x] Run XenonRecomp on `tools/recomp_config.py`'s config, with the Task 2
   switch tables, into `HAGGAR_BUILD_DIR`. It must give **0 unrecognized
   instruction warnings**. Commit the fork, bump the submodule, then push.
 

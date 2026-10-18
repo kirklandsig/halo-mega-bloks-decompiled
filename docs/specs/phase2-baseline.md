@@ -136,6 +136,46 @@ in place of a Xenia CPU backend of our own. Its codegen also replaces the
 XenonRecomp fork for Task 3. The plan's own inputs carry over: the PDB's
 function list, Task 2's jump tables and Task 1's imports.
 
+## Task 3: codegen with no unimplemented instructions
+
+Task 3 runs on the ReXGlue fork (`kirklandsig/rexglue-sdk`, branch `haggar`,
+based on v0.10.0 `c94f5eb`) in place of a XenonRecomp fork, per Task 1's
+recommendation.
+
+| Check | Result |
+| --- | --- |
+| Codegen input | 237,162 function boundaries from the PDB (helpers left to ReXGlue's signature scan), `setjmp`/`longjmp`, Task 2's 345 tables |
+| Codegen time | **55 s** (after the two fixes below; before them, Register alone ran for more than 10 minutes) |
+| Output | 506 `haggar_recomp.*.cpp` files plus headers, 546 MB, 379 `switch` statements |
+| Unimplemented instructions | **0** (`PPC_UNIMPLEMENTED` appears nowhere) |
+| Undecodable words | 4, all in two `xbdm` import thunks (ordinals 70 and 71) that the import table doesn't list, so they are never patched or called |
+
+The fork's changes:
+
+- **Scaling.** Adding a function notified every function in the graph, and
+  the config boundary check scanned every function per config entry. Both
+  were O(n²) at 237k functions. The first now indexes unresolved jumps by
+  target, and the second uses the sorted base map.
+- **`xbdm`.** ReXGlue's `xbdm` stubs leave `r3` untouched. The game's `main`
+  asserts when `DmRegisterCommandProcessor` fails, which is the crash
+  upstream Xenia shows with `console_type = -1`. So the 23 `xbdm` imports
+  the game uses now return Xenia's values: success for the calls Xenia
+  implements, with the same buffer writes, and failure for the performance
+  counters, `DmReboot` and `DmTrace*`.
+- **Instruction tests.** ReXGlue already tests 20 of Phase 0's 52 missing
+  mnemonics. The fork adds tests for 31 more, in its own `tests/ppc/asm`
+  format: the update-form loads and stores, `bdzf`, `bdnzt`, `dcbst`,
+  `subfze.`, `fnmadd`, `vaddsws`, `vsubsbs`, `vcmpgtsb`, `vcmpgtsh`,
+  `vcmpgtsw`, `vnor128`, `vsel128` and `vcfpuxws128`. The whole suite
+  passes, 1,495 cases (37 of them new). A deliberately wrong expectation
+  fails, as a negative control.
+  - The 52nd, `mulchw.`, isn't a Xenon instruction. Its sites are VMX128
+    words that XenonRecomp's disassembler misread.
+- **Review Focus 3 (invalid update forms).** The image has none. None of its
+  136,000 update-form loads and stores has `rA = 0`, or `rA = rD` on a load.
+  So no translation choice for the invalid forms can change this build's
+  behaviour.
+
 ## Decisions
 
 - **ReXGlue in place of a XenonRecomp fork and a Xenia CPU backend.** The
