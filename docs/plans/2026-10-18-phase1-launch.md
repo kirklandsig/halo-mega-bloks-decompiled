@@ -221,26 +221,26 @@ Other files:
 
 ### Task 6: publish
 
-- [ ] Run `python -m pytest -q` and `python tools/prepublish.py`. Expect both
+- [x] Run `python -m pytest -q` and `python tools/prepublish.py`. Expect both
   to pass.
-- [ ] Create the squashed history: `git checkout --orphan publish`, commit
+- [x] Create the squashed history: `git checkout --orphan publish`, commit
   the current tree as
   `Halo Mega Bloks (Project Haggar) decompilation: tools, inventory, scripts and docs`,
   then run `prepublish.py` on it again.
-- [ ] Create the repo and push:
+- [x] Create the repo and push:
   - `gh repo create kirklandsig/halo-mega-bloks-decompiled --public --description "<exact copy>"`
   - add the remote, push `publish:main`, and set `main` as the default branch
   - `gh repo edit --add-topic` for each topic
   - enable Pages
   - Locally, rename `publish` to `main`, and keep the old Phase 0 history as
     the local branch `history-phase0`. Never push it.
-- [ ] Create issue #1, "Active claims", with a claims table in the Halo 2
+- [x] Create issue #1, "Active claims", with a claims table in the Halo 2
   format, and pin it.
-- [ ] Find out recomp.fyi's process for listing a new project. If it is a
+- [x] Find out recomp.fyi's process for listing a new project. If it is a
   GitHub PR or issue, open it (the user asked for this listing). If it needs
   a web form or a login, write down the exact steps for the user.
-- [ ] Check the decomp.dev workflow's first run on `main`. Its artifact
+- [x] Check the decomp.dev workflow's first run on `main`. Its artifact
   should be `report.json`.
-- [ ] Report back: the repo URL, the Pages URL, the issue URL, the recomp.fyi
+- [x] Report back: the repo URL, the Pages URL, the issue URL, the recomp.fyi
   status, and the two decomp.dev steps the user has to take (registering at
   decomp.dev/manage/new and installing the GitHub app).
