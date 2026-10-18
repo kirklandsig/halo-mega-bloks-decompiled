@@ -31,6 +31,7 @@ def test_functions_skip_empty_and_helpers():
     rows = [{'address': '0x82410000', 'size': '36'}, {'address': '0x82410024', 'size': '0'},
             {'address': '0x83C0A800', 'size': '4'}]
     assert recomp_config.functions(rows, {'__savegprlr_14': 0x83C0A800}) == [(0x82410000, 36)]
+    assert recomp_config.functions(rows, {}, thunks=[0x82410000]) == [(0x83C0A800, 4)]
 
 
 @pytest.mark.orig

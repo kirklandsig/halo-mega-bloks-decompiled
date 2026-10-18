@@ -52,14 +52,16 @@ def helpers(pdb):
     return out
 
 
-def functions(rows, helper_vas):
+def functions(rows, helper_vas, thunks=()):
     """(address, size) of each function with code, leaving out the helper
-    blocks."""
+    blocks and the import thunks. ReXGlue names a thunk __imp__<export>, and a
+    [functions] entry at the same address would rename it sub_<address>."""
     spans = [(va, va + HELPERS[k]) for k, va in helper_vas.items() if HELPERS[k]]
+    thunks = set(thunks)
     out = []
     for r in rows:
         va, size = int(r['address'], 16), int(r['size'])
-        if size and not any(lo <= va < hi for lo, hi in spans):
+        if size and va not in thunks and not any(lo <= va < hi for lo, hi in spans):
             out.append((va, size))
     return out
 
@@ -100,7 +102,8 @@ def main(argv=None):
     ap.add_argument('--pdb', default=None)
     args = ap.parse_args(argv)
     helper_vas = helpers(Pdb(args.pdb or paths.pdb()))
-    funcs = functions(inventory.read_csv(paths.CONFIG / 'functions.csv'), helper_vas)
+    thunks = [int(r['thunk'], 16) for r in inventory.read_csv(paths.CONFIG / 'imports.csv')]
+    funcs = functions(inventory.read_csv(paths.CONFIG / 'functions.csv'), helper_vas, thunks)
     out = recomp_dir()
     out.mkdir(parents=True, exist_ok=True)
     (out / 'functions.toml').write_text(render_functions(helper_vas, funcs), encoding='utf-8', newline='\n')

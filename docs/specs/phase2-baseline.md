@@ -176,6 +176,37 @@ The fork's changes:
   So no translation choice for the invalid forms can change this build's
   behaviour.
 
+## Task 4: full compile
+
+`runtime/` is the ReXGlue project (CC0 glue): `runtime/CMakeLists.txt`
+follows the SDK's generated `rexglue.cmake`, with the generated code read
+from `$HAGGAR_BUILD_DIR/recomp/generated`. Its targets:
+
+- `haggar_codegen` runs `rexglue codegen` when the manifest, the function
+  list, the jump tables or the XEX change.
+- `haggar_recomp` is an object library of all 506 generated files plus
+  `haggar_init.cpp` and `haggar_register.cpp`, built with SIMDe.
+- `haggar` is the executable.
+
+| Check | Result |
+| --- | --- |
+| Compiler | clang++ 19.1.7 (`-march=x86-64-v2`, C++23, `-fasync-exceptions`, `-O3`), Ninja, VS 2022 Build Tools libraries |
+| Build time | **6 min 12 s** for the 497 recompiled sources on 8 cores (Ryzen AI 7 350); the codegen adds about a minute |
+| Size | objects 471 MB; `haggar.exe` 187 MB, plus `rexruntime.dll` (10 MB) and `rexgpu-xenos.dll` (2.8 MB) |
+| Link | clean, after one fix: `tools/recomp_config.py` leaves the 406 import thunks the PDB lists as functions out of `[functions]`. Before that, ReXGlue renamed each such thunk `sub_<address>` in place of `__imp__<export>`, and the calls to the kernel didn't link |
+
+**Phase 1's open problem (function boundaries).** ReXGlue keeps every PDB
+boundary, except where it finds an entry point inside one. That happens 50
+times, all in the lib tier (43 with private symbols, 7 public-only), for
+example the CRT's `_write`, `fgets` and `RtlFreeHeap`. In each case code
+branches into the middle of the PDB function. These are genuine second entry
+points, not wrong sizes, so `config/functions.csv` is unchanged.
+
+**The smoke host was not built.** ReXGlue's own instruction suite (Task 3)
+covers the per-instruction checks. The real host's first run covers the rest
+(an entry point, a jump table and indirect calls through the function table),
+since it reaches M1 to M5 below.
+
 ## Decisions
 
 - **ReXGlue in place of a XenonRecomp fork and a Xenia CPU backend.** The

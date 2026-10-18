@@ -191,7 +191,7 @@ facts, including the XenonRecomp findings, are in
   `ppc_recomp.*.cpp`, with XenonRecomp's function-mapping table), built with
   SIMDe so the same sources build for ARM64 later. Task 5 links it.
 
-- [ ] **The smoke host.** It reserves the 4 GB guest space, loads the
+- [x] **The smoke host.** It reserves the 4 GB guest space, loads the
   basefile image at `0x82000000`, and stubs every import from
   `config/imports.csv` so that it traps with the import's name. Then it calls
   recompiled functions directly:
@@ -202,13 +202,13 @@ facts, including the XenonRecomp findings, are in
     case for each index.
   - `smoke_indirect`: a call through the guest function table reaches the
     right host function.
-- [ ] Build every generated file with clang-cl (`/std:c++20 /O2`), link
+- [x] Build every generated file with clang-cl (`/std:c++20 /O2`), link
   `haggar_recomp`, and run the smoke tests. Record the build time and the
   library's size in `docs/specs/phase2-baseline.md`. Also check the Phase 1
   open problem: compare the sizes of the public-only functions with
   XenonRecomp's function boundaries, and fix `config/functions.csv` if they
   differ.
-- [ ] Commit, then push.
+- [x] Commit, then push.
 
 ### Task 5: the Xenia-hosted runtime
 
