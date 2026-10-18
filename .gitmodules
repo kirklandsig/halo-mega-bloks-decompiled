@@ -1,0 +1,8 @@
+[submodule "third_party/xenia"]
+	path = third_party/xenia
+	url = https://github.com/kirklandsig/xenia-canary.git
+	branch = haggar
+[submodule "third_party/rexglue"]
+	path = third_party/rexglue
+	url = https://github.com/kirklandsig/rexglue-sdk.git
+	branch = haggar

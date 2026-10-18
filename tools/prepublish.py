@@ -53,6 +53,8 @@ def scan(tree_files, private_patterns, ignore_patterns=None, identical=None, roo
     private = [re.compile(p, re.I) for p in private_patterns]
     problems = []
     for path in map(Path, tree_files):
+        if path.is_dir():
+            continue  # a submodule (third_party/): the fork's own tree, not ours
         try:
             rel = path.resolve().relative_to(Path(root).resolve()).as_posix()
         except ValueError:
