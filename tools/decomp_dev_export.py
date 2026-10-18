@@ -1,6 +1,7 @@
-"""Writes the objdiff-format progress report that decomp.dev charts, from
+"""Writes the objdiff-format progress report that ByteMatch charts, from
 config/functions.csv and config/status.csv. It needs neither the build's
-files nor the SDK. See docs/DECOMP_DEV.md.
+files nor the SDK. See docs/BYTEMATCH.md. (The name
+predates ByteMatch, which succeeded decomp.dev.)
 
     python tools/decomp_dev_export.py [-o build/report.json]
 
@@ -97,7 +98,7 @@ def build_report(functions_csv, status_csv):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='Write the decomp.dev (objdiff) progress report.')
+    ap = argparse.ArgumentParser(description='Write the ByteMatch (objdiff) progress report.')
     ap.add_argument('-o', '--output', default='-', help='report path, or - for stdout (default)')
     args = ap.parse_args(argv)
     report = build_report(paths.require(paths.CONFIG / 'functions.csv'), paths.CONFIG / 'status.csv')

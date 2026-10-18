@@ -1,7 +1,7 @@
-name: decomp.dev report
+name: ByteMatch report
 
-# Publishes the objdiff-format progress report that decomp.dev charts
-# (see docs/DECOMP_DEV.md). It reads config/functions.csv and
+# Publishes the objdiff-format progress report that ByteMatch charts
+# (https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled; see docs/BYTEMATCH.md). It reads config/functions.csv and
 # config/status.csv only, so it needs neither the build's files nor the SDK,
 # and it holds no secrets.
 on:
@@ -24,7 +24,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-dev.txt
       - run: python tools/decomp_dev_export.py -o build/report.json
-      # decomp.dev reads an artifact named <version>_report holding report.json.
+      # ByteMatch reads an artifact named <version>_report holding report.json.
       - uses: actions/upload-artifact@v4
         with:
           name: retail_report

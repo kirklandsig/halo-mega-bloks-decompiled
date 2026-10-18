@@ -1,6 +1,7 @@
-# decomp.dev progress report
+# ByteMatch progress report
 
-[decomp.dev](https://decomp.dev) charts a decompilation from an
+[ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled) (the successor to decomp.dev) charts this
+decompilation from an
 [objdiff](https://github.com/encounter/objdiff) progress report. This project
 can't run `objdiff-cli report generate` (its checker compiles single objects
 with the Xbox 360 compiler and compares them with the retail executable), so
@@ -8,8 +9,7 @@ it writes the same report format itself.
 
 The format is
 [`objdiff-core/protos/report.proto`](https://github.com/encounter/objdiff/blob/main/objdiff-core/protos/report.proto)
-(report version 2; see the [decomp.dev guide](https://decomp.wiki/tools/decomp-dev)).
-decomp.dev reads a JSON report uploaded as a GitHub Actions artifact named
+(report version 2). ByteMatch reads a JSON report uploaded as a GitHub Actions artifact named
 `<version>_report`. Byte counts are JSON strings; function counts and
 percentages are JSON numbers.
 
@@ -36,16 +36,13 @@ Functions are named `function_<va>`.
 
 ## The workflow
 
-`.github/workflows/decomp-dev.yml` runs on every push to `main`, writes the
+`.github/workflows/bytematch.yml` runs on every push to `main`, writes the
 report and uploads it as the artifact `retail_report` (holding
 `report.json`). It needs no secrets and none of the build's files.
 
-## Registering the project
+## The project page
 
-A maintainer does this once, on decomp.dev:
-
-1. Sign in at [decomp.dev](https://decomp.dev) with GitHub and add the project
-   at [decomp.dev/manage/new](https://decomp.dev/manage/new)
-   (`kirklandsig/halo-mega-bloks-decompiled`).
-2. Install the decomp.dev GitHub app on the repository, so it can read the
-   workflow's artifacts.
+The project is registered, and the ByteMatch GitHub app is installed on the
+repository: progress is at
+[bytematch.dev/kirklandsig/halo-mega-bloks-decompiled](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled). It updates
+from each run's `retail_report` artifact.

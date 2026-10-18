@@ -1,6 +1,7 @@
 # Progress
 
-Updated 2026-10-18 (Phase 2 done: the PC port runs).
+Updated 2026-10-18 (Phase 2 done: the PC port runs). Matching progress is
+charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## n-Space's C++ (matching)
 

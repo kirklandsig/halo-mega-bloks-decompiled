@@ -42,7 +42,8 @@ Phase 0's in `docs/specs/phase0-results.md`.
 | Recompilation | 237,162 functions, 345 jump tables, no unimplemented instruction; 506 files compile in about 6 minutes |
 | UnrealScript | 2,571 of 2,597 classes export cleanly; the 758 that are n-Space's own or modified from UDK are committed |
 
-Details: [docs/PROGRESS.md](docs/PROGRESS.md).
+Details: [docs/PROGRESS.md](docs/PROGRESS.md). Matching progress is charted on
+[ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## What this repository does not contain
 
@@ -82,7 +83,7 @@ python -m pytest -q
 | `tools/recomp_config.py` | Writes the XenonRecomp config into `build/recomp/` |
 | `tools/script_export` | Exports a cooked package's script classes as `.uc` (dotnet) |
 | `tools/script_compare.py` | Compares exported classes with UDK's, writes `config/script_classes.csv` |
-| `tools/decomp_dev_export.py` | Writes the decomp.dev progress report |
+| `tools/decomp_dev_export.py` | Writes the [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled) progress report (docs/BYTEMATCH.md) |
 | `tools/prepublish.py` | Checks the tree for leaks before anything is pushed |
 
 ## How to help

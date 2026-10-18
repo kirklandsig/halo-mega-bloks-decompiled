@@ -18,6 +18,7 @@
 - [Decompiling](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/DECOMPILING.md): markers, the check, compiler idioms
 - [Porting](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PORTING.md): build and run the native port
 - [Progress](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PROGRESS.md): numbers per track
+- [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled): matching progress, charted from the report workflow
 - [Design](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/specs/2026-10-18-design.md): goals, scope, phases
 - [Active claims](https://github.com/kirklandsig/halo-mega-bloks-decompiled/issues/1): who is working on what
 
