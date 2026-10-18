@@ -80,6 +80,8 @@ def test_render():
 
 @pytest.mark.orig
 def test_every_bctr_classified():
+    if not paths.basefile().exists():
+        pytest.skip(f'{paths.basefile()} not present')
     image = paths.basefile().read_bytes()
     counts = st.survey(image, st.functions())
     assert counts['unexplained'] == 0
