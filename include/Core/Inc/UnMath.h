@@ -47,3 +47,11 @@ inline FVector FVector::operator*=(float Scale)
     return *this;
 }
 inline unsigned int FVector::IsZero() const { return X == 0.0f && Y == 0.0f && Z == 0.0f; }
+inline FRotator FRotator::GetNormalized() const
+{
+    FRotator Rot = *this;
+    Rot.Pitch = NormalizeAxis(Rot.Pitch);
+    Rot.Roll = NormalizeAxis(Rot.Roll);
+    Rot.Yaw = NormalizeAxis(Rot.Yaw);
+    return Rot;
+}

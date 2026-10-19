@@ -1,6 +1,7 @@
 // @object Unity_NullSurveysEtAl.cpp.obj
 #include "Core/Inc/UnMathXe.h"
 #include "MegaHaloGame/Inc/MegaHaloGameClasses.h"
+#include "Core/Inc/Map.h"
 
 // The vector constants' initializers (Core/Inc/UnMathXe.h)
 // @retail 0x8428CAF8
@@ -95,7 +96,20 @@ unsigned int UHaloSaveGame::BasicDeserializeObject(UObject *Obj, int Version, co
     return 1;
 }
 
-// Not attempted yet (todo), and why:
-// - AutoInitializeRegistrantsMegaHaloGame (0x833CA4D0): adds the natives to
-//   GNativeLookupFuncs through TMap::Set, whose inline templates (TMap,
-//   TSet's pair initializer) aren't written yet.
+// The native lookup table (megahalogameclasses.h, NATIVES_ONLY) and the map
+// it is registered in (UnScript.cpp).
+struct FNativeFunctionLookup
+{
+    const char *Name;
+    void (UObject::*Pointer)(FFrame &, void *const);
+};
+extern FNativeFunctionLookup GMegaHaloGameUHaloSaveGameNatives[];
+extern TMap<FName, FNativeFunctionLookup *, FDefaultSetAllocator> GNativeLookupFuncs;
+
+// AUTO_INITIALIZE_REGISTRANTS_MEGAHALOGAME
+// @retail 0x833CA4D0
+void AutoInitializeRegistrantsMegaHaloGame(int &)
+{
+    UHaloSaveGame::StaticClass();
+    GNativeLookupFuncs.Set(FName("HaloSaveGame", FNAME_Add), GMegaHaloGameUHaloSaveGameNatives);
+}

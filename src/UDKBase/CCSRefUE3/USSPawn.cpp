@@ -82,14 +82,11 @@ unsigned int AUSSPawn::CoverPoseTransitionOver()
     return CurrentCoverPose == WantedCoverPose;
 }
 
-// Todo: retail keeps the normalized rotator in a stack copy (storing Pitch
-// and Roll) where ours keeps it in registers; not yet found what forces that.
 // @retail 0x83322758
 unsigned int AUSSPawn::CanAim(FRotator Rotation)
 {
     FRotator Aim = Rotation;
-    Aim.Pitch = FRotator::NormalizeAxis(Aim.Pitch);
-    Aim.Yaw = FRotator::NormalizeAxis(Aim.Yaw);
+    Aim = Aim.GetNormalized();
     const float Yaw = Aim.Yaw / 16384.0f;
     const float Pitch = Aim.Pitch / 16384.0f;
     bool bCanAim = true;
@@ -100,12 +97,11 @@ unsigned int AUSSPawn::CanAim(FRotator Rotation)
     return bCanAim;
 }
 
-// Near: retail multiplies the acceleration's X and Z with the operands
-// swapped (as in the division just above); the code is otherwise the same.
 // @retail 0x83322810
 void AUSSPawn::MoveToInCover(FVector Destination)
 {
-    FVector Direction(Destination.X - Location.X, Destination.Y - Location.Y, 0.0f);
+    FVector Direction = Destination - Location;
+    Direction.Z = 0.0f;
     const float Distance = Direction.Size2D();
     if (ReachedDestination(Location, Destination, 0, 0))
     {
@@ -168,7 +164,9 @@ void AUSSPawn::SetMovementSpeedDefault()
     SetSpeed(CCS::MovementSpeed_Walk);
 }
 
-// Todo: as CanAim, retail keeps the rotator difference in a stack copy.
+// Todo: retail keeps the rotator difference in a stack copy (all three
+// components stored, the pawn's Roll held in r30); neither GetNormalized (which
+// fixed CanAim) nor an inline operator-= reproduces it.
 // @retail 0x8336D540
 void AUSSPawn::TickSpecial(float DeltaTime)
 {

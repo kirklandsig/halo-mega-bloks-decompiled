@@ -88,17 +88,16 @@ AActor *UCCSActorFactory::CreateActor(const FVector *const Location, const FRota
     return pVehicle != 0 ? pVehicle : pPawn;
 }
 
-// Todo: retail sets the return value 1 first and keeps 0 in a saved
-// register across the assignment; not yet found.
 // @retail 0x83328B98
 unsigned int UCCSActorFactory::CanCreateActor(FString &OutErrorMsg, unsigned int bFromAssetOnly)
 {
+    unsigned int bResult = 1;
     if (bFromAssetOnly && PawnClass == 0)
     {
+        bResult = 0;
         OutErrorMsg = L"Error_CouldNotCreateActor_NoAssetAssigned";
-        return 0;
     }
-    return 1;
+    return bResult;
 }
 
 // @retail 0x8331E700

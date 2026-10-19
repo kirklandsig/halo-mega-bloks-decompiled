@@ -74,8 +74,10 @@ bool HaloRBTKamikaze::TestPreCondition(IGripBTInterface *pInterface)
     return false;
 }
 
-// Todo: retail zeroes the origin and has CCSGameCharacter::GetPosition write
+// Todo: retail zeroes the origin and has CCSCharacter::GetPosition write
 // straight into it; ours goes through a temporary (and a larger frame).
+// Declaring the origin zeroed and assigning it under `if (pBrain)` gets the
+// zeroing right but still copies from a separate return slot.
 // @retail 0x83340B78
 GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {

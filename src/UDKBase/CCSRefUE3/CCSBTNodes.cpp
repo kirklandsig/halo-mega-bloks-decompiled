@@ -401,7 +401,107 @@ void UHaloBTKamikaze::InitializeRuntime(GripRBTNode *pNode)
     pKamikaze->SetBlendTimes(BlendInTime, BlendOutTime);
 }
 
-// Not attempted yet (todo): UCCSBTTimeSinceEvent::GetNodeTitle and
-// UCCSBTSelectTarget::GetNodeTitle (cpptext in UDKBaseClasses.h). Retail
-// calls FString's destructor out of line in their switch cases and inlines
-// it elsewhere in the same function.
+// UCCSBTTimeSinceEvent's cpptext (udkbaseclasses.h)
+// @retail 0x83353C60
+FString UCCSBTTimeSinceEvent::GetNodeTitle()
+{
+    FString Title;
+    if (NodeName == NAME_None)
+    {
+        Title = L"Time Since ";
+        switch (RelevantEvent)
+        {
+        case HALO_EVENT_DAMAGED:
+            Title += L"Damaged Event";
+            break;
+        case HALO_EVENT_DEATH:
+            Title += L"Death Event";
+            break;
+        case HALO_EVENT_ENTER_SLOW_TRAP:
+            Title += L"Enter Slow Trap Event";
+            break;
+        case HALO_EVENT_EXIT_SLOW_TRAP:
+            Title += L"Exit Slow Trap Event";
+            break;
+        case HALO_EVENT_ROOT_MOTION_COLLISION:
+            Title += L"Root Motion Collision Event";
+            break;
+        default:
+            Title += L"Event";
+            break;
+        }
+        switch (Operator)
+        {
+        case GripRBTCondition::LESS_THAN:
+            Title += FString(L" < ");
+            break;
+        case GripRBTCondition::LESS_THAN_OR_EQUAL_TO:
+            Title += FString(L" <= ");
+            break;
+        case GripRBTCondition::EQUAL_TO:
+            Title += FString(L" = ");
+            break;
+        case GripRBTCondition::NOT_EQUAL_TO:
+            Title += FString(L" != ");
+            break;
+        case GripRBTCondition::GREATER_THAN:
+            Title += FString(L" > ");
+            break;
+        case GripRBTCondition::GREATER_THAN_OR_EQUAL_TO:
+            Title += FString(L" >= ");
+            break;
+        }
+        const FString ThresholdText = FString::Printf__VA(L"%.2f", Threshold);
+        Title += ThresholdText;
+    }
+    else
+    {
+        Title = NodeName.ToString();
+    }
+    return Title;
+}
+
+// UCCSBTSelectTarget's cpptext (udkbaseclasses.h); TargetSelectionAlgorithm
+// is the script enum ECCSSelectTargetAlgorithm.
+// @retail 0x83352A38
+FString UCCSBTSelectTarget::GetNodeTitle()
+{
+    FString Title;
+    if (NodeName == NAME_None)
+    {
+        Title = DefaultTitle.ToString();
+        if (TargetSelectionAlgorithm == 0)  // ECCSSelectTarget_Closest
+        {
+            Title = Title + FString(L" - Closest");
+        }
+        else if (TargetSelectionAlgorithm == 1)  // ECCSSelectTarget_Closest_Objective
+        {
+            Title = Title + FString(L" - Closest Objective");
+        }
+        else if (TargetSelectionAlgorithm == 2)  // ECCSSelectTarget_Closest_Reactive_Target
+        {
+            Title = Title + FString(L" - Closest Reactive Target");
+        }
+        else if (TargetSelectionAlgorithm == 3)  // ECCSSelectTarget_Specific_Tag
+        {
+            Title = Title + FString(L" - Specific Target Tag");
+        }
+        else if (TargetSelectionAlgorithm == 4)  // ECCSSelectTarget_HighestThreat
+        {
+            Title = Title + FString(L" - Highest Threat Target");
+        }
+        else if (TargetSelectionAlgorithm == 5)  // ECCSSelectTarget_ClosestVehicle
+        {
+            Title = Title + FString(L" - Closest Vehicle(for Entry)");
+        }
+        else if (TargetSelectionAlgorithm == 6)  // ECCSSelectTarget_None
+        {
+            Title = Title + FString(L" - None");
+        }
+    }
+    else
+    {
+        Title = NodeName.ToString();
+    }
+    return Title;
+}
