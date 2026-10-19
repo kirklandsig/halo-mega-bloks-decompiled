@@ -7,7 +7,11 @@
 
 template <class T0, int T1> struct DefaultKeyFuncs;
 template <class T0> class FInterpCurve;
+template <class T0, class T1> class GripBBArray;
+template <class T0> class GripBBProperty;
 template <class T0> class GripRBTNumericCondition;
+template <class T0, class T1> class Grip_Array;
+template <class T0, int T1> class Grip_ArrayPOD;
 template <class T0, class T1> class Grip_Map;
 template <class T0> class Grip_Set;
 template <class T0, class T1> class NxArray;
@@ -2781,6 +2785,7 @@ enum NxMemoryType
 };
 
 namespace Grip {
+template <class T0, int T1> struct AllocatorGH;
 template <class T0, class T1> class List;
 template <class T0> struct ListNode;
 struct AllocInfo;

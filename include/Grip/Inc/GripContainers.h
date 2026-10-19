@@ -358,7 +358,7 @@ public:
 template <class T> class GripBBProperty : public GripBBMember
 {
 public:
-    T m_value;
+    hg::guest_t<T> m_value;
 };
 
 #endif

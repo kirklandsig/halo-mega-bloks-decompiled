@@ -134,6 +134,7 @@ class Header:
         self.forward = set()  # full names declared only
         self.enums = {}     # full name -> type index
         self.templates = {}  # qualified template name -> argument kinds
+        self.late_templates = {}  # the same, for templates of a late provided header
         self.deps = {}      # name -> classes that must be complete before it
         self._stack = []
         for name in list(targets) + list(opaque):
@@ -272,7 +273,10 @@ class Header:
             if args is None:
                 continue
             kinds = ['int' if re.fullmatch(r'-?\d+', a) else 'class' for a in args]
-            if not provided('::'.join(split_scope(name)[:i + 1])):
+            scoped = '::'.join(split_scope(name)[:i + 1])
+            if late_include(scoped):  # declared ahead of its late header
+                self.late_templates.setdefault(self._qualify(name, part, base), kinds)
+            elif not provided(scoped):
                 self.templates.setdefault(base if base in self.templates else self._qualify(name, part, base), kinds)
             for a in args:
                 arg = re.sub(r'^(?:const |enum |class |struct |union )+', '', a.rstrip(' *&')).strip()
@@ -687,7 +691,7 @@ class Header:
         def put(ns, text):
             scoped.setdefault(tuple(ns), []).append(text)
 
-        for tname, kinds in sorted(self.templates.items()):
+        for tname, kinds in sorted(list(self.templates.items()) + list(self.late_templates.items())):
             parts = split_scope(tname)
             if self._scope_of(tname):
                 continue

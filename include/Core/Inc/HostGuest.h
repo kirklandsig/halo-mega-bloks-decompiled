@@ -66,6 +66,12 @@ template <class T> struct gptr {
   }
 };
 
+// How guest memory holds a T: pointers as guest pointers, scalars big-endian.
+template <class T, bool Scalar = std::is_arithmetic_v<T> || std::is_enum_v<T>> struct guest { typedef T type; };
+template <class T> struct guest<T, true> { typedef be<T> type; };
+template <class T> struct guest<T *, false> { typedef gptr<T> type; };
+template <class T> using guest_t = typename guest<T>::type;
+
 // The context of the hook running on this thread, for calls back into
 // recompiled code.
 struct Scope {
