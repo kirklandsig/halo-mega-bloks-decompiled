@@ -110,7 +110,11 @@ class Header:
         self.deps = {}      # name -> classes that must be complete before it
         self._stack = []
         for name in list(targets) + list(opaque):
-            self._need_class(self.t.find(name))
+            ti = self.t.find(name)
+            if self._kind(ti) == pt.LF_ENUM:
+                self._need(ti, complete=True)
+            else:
+                self._need_class(ti)
 
     # ---- type records -------------------------------------------------
     def _kind(self, ti):

@@ -29,9 +29,13 @@ from pdbfile import IMAGE_BASE
 TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FArchiveProxy'], 'UDKBase': ['FRenderCommandFence', 'AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
                        'ActorWrapper', 'CCSGameCover', 'FCoverInfo', 'CCSCharacter', 'CCSGameCharacter', 'FCoverSlot',
                        'APawn', 'UActorComponent', 'ACCSController', 'CCSBrain', 'Grip_Vector', 'AController',
+                       'UAnimNode', 'UAnimNodeBlendBase', 'UAnimNodeBlendList', 'FAnimBlendChild', 'UUDKAnimBlendBase',
+                       'UUDKAnimBlendByPhysics', 'UUDKAnimBlendByTurnInPlace', 'UUDKAnimNodeCopyBoneTranslation',
+                       'FAimOffsetProfile', 'USkeletalMeshComponent', 'UProperty', 'UClass', 'UObject', 'UStruct', 'UField',
+                       'UAnimObject', 'AUDKPawn',
                        'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>']}
 OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
-          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'AUDKPawn',
+          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'EPhysics', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
                        # the behaviour-tree nodes' runtime classes
                        'CCSRBTEnemyClosestRange',
                        'CCSRBTEnemyLowestLKPAge',
@@ -150,9 +154,10 @@ class Classes:
         exec_structs = sorted({t for r in self.execs for v in self.native_types(r)
                                for t in [gen_header.template_args(v)[1][0] if v.startswith('TArray<') else v]
                                if re.fullmatch(r'F\w+', t) and self._exists(t)})
-        self.header = gen_header.Header(types, self.parms + TARGETS.get(package, []) + self.member_targets
+        self.header = gen_header.Header(types, self.parms + ['FName', 'UObject', 'UClass'] + TARGETS.get(package, []) + self.member_targets
+                                        + self.classes
                                         + (['FFrame'] if self.execs else []),
-                                        self.classes + event_classes + ['UClass', 'FName'] + exec_structs
+                                        self.classes + event_classes + ['UClass'] + exec_structs
                                         + OPAQUE.get(package, []))
         self.packages = script_packages()
         for name, decls in EXTRA.get(package, {}).items():

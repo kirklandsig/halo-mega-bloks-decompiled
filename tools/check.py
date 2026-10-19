@@ -100,8 +100,15 @@ def plain_name(symbol):
 def find_symbol(c, row):
     """Our symbol for a functions.csv row: its decorated name, or, when the
     PDB has none (statics, inlines), the one symbol whose plain name is the row's."""
-    if row['symbol']:
+    if row['symbol'] and '?A0x' not in row['symbol']:
         return row['symbol']
+    if row['symbol']:  # an anonymous namespace: its '?A0x<hash>@' differs per translation unit
+        anon = re.compile(r'\?A0x[0-9a-f]+@')
+        want = anon.sub('?A0x@', row['symbol'])
+        hits = {s.name for s in c.symbols.values() if s.section > 0 and anon.sub('?A0x@', s.name) == want}
+        if len(hits) != 1:
+            raise KeyError(row['name'])
+        return hits.pop()
     atexit = re.search(r"`dynamic atexit destructor for '(\w+)''$", row['name'])
     if atexit:  # '??__F<Var>@<scope>@@YAXXZ': the scope of a function's static is hard to spell
         hits = {s.name for s in c.symbols.values() if s.section > 0 and s.name.startswith(f'??__F{atexit.group(1)}@')}

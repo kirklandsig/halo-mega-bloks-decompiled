@@ -5,7 +5,10 @@
 #include "Core/Inc/ScriptInterface.h"
 
 template <class T0, class T1> class TIndirectArray;
+template <class T0, class T1> class TLookupMap;
 template <class T0, class T1, class T2> class TMap;
+template <class T0, class T1, int T2, class T3> class TMapBase;
+template <class T0, class T1, int T2, class T3> class TSortableMapBase;
 class AActor;
 class FArchive;
 struct FAsyncPackage;
@@ -15,7 +18,11 @@ class FEditPropertyChain;
 class FExportObjectInnerContext;
 class FFeedbackContext;
 struct FFrame;
+struct FGCReferenceInfo;
+struct FGCReferenceTokenStream;
+struct FGCSkipInfo;
 class FGuid;
+struct FImplementedInterface;
 class FName;
 struct FNameEntry;
 struct FNodeChild;
@@ -26,6 +33,7 @@ struct FPropertyChangedChainEvent;
 struct FPropertyChangedEvent;
 struct FReferencerInformation;
 struct FReferencerInformationList;
+struct FRepRecord;
 struct FScriptDelegate;
 struct FStateFrame;
 class FString;
@@ -817,7 +825,47 @@ enum EPlatformType
 };
 }
 
-class FName  // size 0x8, opaque
+struct FGCReferenceTokenStream  // size 0xC, opaque
+{
+public:
+    enum EGCArrayInfoPlaceholder
+    {
+        E_GCSkipIndexPlaceholder = -559039810,
+    };
+    void Shrink();
+    void PrependStream(const FGCReferenceTokenStream &);
+    void EmitReferenceInfo(FGCReferenceInfo);
+    unsigned long EmitSkipIndexPlaceholder();
+    void UpdateSkipIndexPlaceholder(unsigned long, unsigned long);
+    void EmitCount(unsigned long);
+    void EmitStride(unsigned long);
+    unsigned long EmitReturn();
+    unsigned long ReadCount(unsigned long &);
+    unsigned long ReadStride(unsigned long &);
+    FGCReferenceInfo ReadReferenceInfo(unsigned long &);
+    FGCReferenceInfo AccessReferenceInfo(unsigned long) const;
+    FGCSkipInfo ReadSkipInfo(unsigned long &);
+    unsigned long GetSkipReturnCount(FGCSkipInfo);
+    unsigned int EndOfStream(unsigned long);
+    #ifndef HAGGAR_HOST
+    FGCReferenceTokenStream();
+    #endif
+HG_PRIVATE:
+    unsigned int FGCReferenceTokenStreamData[0x3];
+};
+
+struct FImplementedInterface  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FImplementedInterface(UClass *, UProperty *);
+    FImplementedInterface();
+    #endif
+HG_PRIVATE:
+    unsigned int FImplementedInterfaceData[0x2];
+};
+
+class FName  // size 0x8
 {
 public:
     int GetIndex() const;
@@ -871,15 +919,17 @@ public:
     static int NameEntryMemorySize;
     static int NumAnsiNames;
     static int NumUnicodeNames;
+    int Index;  // 0x0
+    int Number;  // 0x4
     #else
     static TArrayNoInit<FNameEntry *> (&Names);
     static hg::gptr<FNameEntry> (&NameHash)[4096];
     static hg::be<int> (&NameEntryMemorySize);
     static hg::be<int> (&NumAnsiNames);
     static hg::be<int> (&NumUnicodeNames);
+    hg::be<int> Index;
+    hg::be<int> Number;
     #endif
-HG_PRIVATE:
-    unsigned int FNameData[0x2];
 };
 
 struct FNodeChild  // size 0x14, opaque
@@ -891,6 +941,16 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int FNodeChildData[0x5];
+};
+
+struct FRepRecord  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FRepRecord(UProperty *, int);
+    #endif
+HG_PRIVATE:
+    unsigned int FRepRecordData[0x2];
 };
 
 class FString : public TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
@@ -990,7 +1050,61 @@ public:
     #endif
 };
 
-class UObject  // size 0x3C, opaque
+template <> class TMapBase<FName,UComponent *,0,FDefaultSetAllocator>  // size 0x3C, opaque
+{
+public:
+    TMapBase<FName,UComponent *,0,FDefaultSetAllocator> &operator=(const TMapBase<FName,UComponent *,0,FDefaultSetAllocator> &);
+    void Empty(int);
+    void Reset();
+    void Shrink();
+    void Compact();
+    int Num() const;
+    int GetKeys(TLookupMap<FName,FDefaultSetAllocator> &) const;
+    unsigned long GetAllocatedSize() const;
+    void CountBytes(FArchive &);
+    UComponent *&Set(const FName &, UComponent *);
+    int Remove(const FName &);
+    int RemoveKey(const FName &);
+    const FName *FindKey(UComponent *) const;
+    UComponent *const *Find(const FName &) const;
+    UComponent **Find(const FName &);
+    UComponent *&FindOrAdd(const FName &);
+    UComponent *&FindOrAddKey(const FName &);
+    UComponent *FindRef(const FName &) const;
+    unsigned int HasKey(const FName &) const;
+    void GenerateKeyArray(TArray<FName,FDefaultAllocator> &) const;
+    void GenerateValueArray(TArray<UComponent *,FDefaultAllocator> &) const;
+    void Dump(FOutputDevice &);
+    #ifndef HAGGAR_HOST
+    TMapBase(const TMapBase<FName,UComponent *,0,FDefaultSetAllocator> &);
+    TMapBase();
+    #endif
+HG_PRIVATE:
+    unsigned int TMapBaseData[0xF];
+};
+
+template <> class TSortableMapBase<FName,UComponent *,0,FDefaultSetAllocator> : public TMapBase<FName,UComponent *,0,FDefaultSetAllocator>  // size 0x3C, opaque
+{
+public:
+    TSortableMapBase<FName,UComponent *,0,FDefaultSetAllocator> &operator=(const TSortableMapBase<FName,UComponent *,0,FDefaultSetAllocator> &);
+    #ifndef HAGGAR_HOST
+    TSortableMapBase(const TSortableMapBase<FName,UComponent *,0,FDefaultSetAllocator> &);
+    TSortableMapBase();
+    #endif
+};
+
+template <> class TMap<FName,UComponent *,FDefaultSetAllocator> : public TSortableMapBase<FName,UComponent *,0,FDefaultSetAllocator>  // size 0x3C, opaque
+{
+public:
+    TMap<FName,UComponent *,FDefaultSetAllocator> &operator=(const TMap<FName,UComponent *,FDefaultSetAllocator> &);
+    unsigned int RemoveAndCopyValue(const FName &, UComponent *&);
+    #ifndef HAGGAR_HOST
+    TMap(const TMap<FName,UComponent *,FDefaultSetAllocator> &);
+    TMap();
+    #endif
+};
+
+class UObject  // size 0x3C
 {
 public:
     enum
@@ -1694,6 +1808,18 @@ public:
     static TArray<int,FDefaultAllocator> GGCObjectsPendingDestruction;
     static int GGCObjectsPendingDestructionCount;
     static unsigned int GExclusiveResourceSizeMode;
+    UObject *HashNext;  // 0x4
+    unsigned __int64 ObjectFlags;  // 0x8
+    UObject *HashOuterNext;  // 0x10
+    FStateFrame *StateFrame;  // 0x14
+    ULinkerLoad *_Linker;  // 0x18
+    int _LinkerIndex;  // 0x1C
+    int Index;  // 0x20
+    int NetIndex;  // 0x24
+    UObject *Outer;  // 0x28
+    FName Name;  // 0x2C
+    UClass *Class;  // 0x34
+    UObject *ObjectArchetype;  // 0x38
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
     static hg::be<unsigned int> (&GObjInitialized);
@@ -1729,9 +1855,19 @@ public:
     static TArray<int,FDefaultAllocator> (&GGCObjectsPendingDestruction);
     static hg::be<int> (&GGCObjectsPendingDestructionCount);
     static hg::be<unsigned int> (&GExclusiveResourceSizeMode);
+    hg::gptr<UObject> HashNext;
+    hg::be<unsigned __int64> ObjectFlags;
+    hg::gptr<UObject> HashOuterNext;
+    hg::gptr<FStateFrame> StateFrame;
+    hg::gptr<ULinkerLoad> _Linker;
+    hg::be<int> _LinkerIndex;
+    hg::be<int> Index;
+    hg::be<int> NetIndex;
+    hg::gptr<UObject> Outer;
+    FName Name;
+    hg::gptr<UClass> Class;
+    hg::gptr<UObject> ObjectArchetype;
     #endif
-HG_PRIVATE:
-    unsigned int UObjectData[0xE];
 };
 
 class UGripBTObject : public UObject  // size 0x44, opaque
@@ -1894,7 +2030,7 @@ public:
     #endif
 };
 
-class UCCSBTTree : public UGripBTTree  // size 0x98, opaque
+class UCCSBTTree : public UGripBTTree  // size 0x98
 {
 public:
     enum
@@ -2072,7 +2208,7 @@ HG_PRIVATE:
     unsigned int UStateData[0x12];
 };
 
-class UClass : public UState  // size 0x154, opaque
+class UClass : public UState  // size 0x154
 {
 public:
     enum
@@ -2143,11 +2279,39 @@ public:
     typedef UState Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    unsigned long ClassFlags;  // 0xBC
+    unsigned long ClassCastFlags;  // 0xC0
+    int ClassUnique;  // 0xC4
+    UClass *ClassWithin;  // 0xC8
+    FName ClassConfigName;  // 0xCC
+    TArray<FRepRecord,FDefaultAllocator> ClassReps;  // 0xD4
+    TArray<UField *,FDefaultAllocator> NetFields;  // 0xE0
+    UObject *ClassDefaultObject;  // 0xEC
+    void (*ClassConstructor)(void *);  // 0xF0
+    void (UObject::*ClassStaticConstructor)();  // 0xF4
+    void (UObject::*ClassStaticInitializer)();  // 0xF8
+    TMap<FName,UComponent *,FDefaultSetAllocator> ComponentNameToDefaultObjectMap;  // 0xFC
+    TArray<FImplementedInterface,FDefaultAllocator> Interfaces;  // 0x138
+    unsigned int bNeedsPropertiesLinked;  // 0x144
+    FGCReferenceTokenStream ReferenceTokenStream;  // 0x148
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::be<unsigned long> ClassFlags;
+    hg::be<unsigned long> ClassCastFlags;
+    hg::be<int> ClassUnique;
+    hg::gptr<UClass> ClassWithin;
+    FName ClassConfigName;
+    TArray<FRepRecord,FDefaultAllocator> ClassReps;
+    TArray<UField *,FDefaultAllocator> NetFields;
+    hg::gptr<UObject> ClassDefaultObject;
+    hg::be<unsigned int> ClassConstructor;
+    hg::be<unsigned int> ClassStaticConstructor;
+    hg::be<unsigned int> ClassStaticInitializer;
+    TMap<FName,UComponent *,FDefaultSetAllocator> ComponentNameToDefaultObjectMap;
+    TArray<FImplementedInterface,FDefaultAllocator> Interfaces;
+    hg::be<unsigned int> bNeedsPropertiesLinked;
+    FGCReferenceTokenStream ReferenceTokenStream;
     #endif
-HG_PRIVATE:
-    unsigned int UClassData[0x26];
 };
 
 #include "Core/Inc/UnObjBas.h"

@@ -42,3 +42,8 @@ inline void *GripHeapObject::operator new(unsigned int, void *Mem) { return Mem;
 #ifndef HAGGAR_HOST
 inline FCoverInfo::FCoverInfo(ACoverLink *InLink, int InSlotIdx) : Link(InLink), SlotIdx(InSlotIdx) {}
 #endif
+
+// engineclasses.h (UActorComponent's cpptext)
+inline AActor *UActorComponent::GetOwner() const { return Owner; }
+
+DECLARE_CAST_BY_FLAG(UByteProperty)

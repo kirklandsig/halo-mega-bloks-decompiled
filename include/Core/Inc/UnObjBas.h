@@ -42,3 +42,29 @@ template <class T> T *Cast(UObject *Src);
 #ifndef HAGGAR_HOST  // constructors stay recompiled in the port
 inline FName::FName() {}
 #endif
+
+// UnName.h: a name compares as one 64-bit word on this target
+inline unsigned int FName::operator==(const FName &Other) const
+{
+    return *(const unsigned __int64 *)this == *(const unsigned __int64 *)&Other;
+}
+inline unsigned int FName::operator!=(const FName &Other) const
+{
+    return *(const unsigned __int64 *)this != *(const unsigned __int64 *)&Other;
+}
+#ifndef HAGGAR_HOST
+inline FName::FName(EName N) : Index(N), Number(0) {}
+#endif
+
+inline UClass *UObject::GetClass() const { return Class; }
+
+// UnClass.h: field lookup by name (out of line in retail)
+template <class T> T *FindField(UStruct *Owner, FName FieldName);
+
+// Casts.h: UField classes cast by their class's cast flags, inline
+#define DECLARE_CAST_BY_FLAG(ClassName)                                                       \
+    template <> inline ClassName *Cast<ClassName>(UObject *Src)                               \
+    {                                                                                         \
+        return Src && Src->GetClass()->HasAnyCastFlag(CASTCLASS_##ClassName) ? (ClassName *)Src : 0; \
+    }
+inline unsigned int UClass::HasAnyCastFlag(EClassCastFlag FlagToCheck) const { return (ClassCastFlags & FlagToCheck) != 0; }

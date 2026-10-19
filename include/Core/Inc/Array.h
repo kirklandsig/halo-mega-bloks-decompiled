@@ -234,6 +234,43 @@ public:
             AllocatorInstance.ResizeAllocation(ArrayNum, ArrayMax, sizeof(T));
         }
     }
+    int RemoveItem(const T &Item)
+    {
+#line 1154
+        check(((&Item) < GetTypedData()) || ((&Item) >= GetTypedData() + ArrayMax));
+        const int OriginalNum = ArrayNum;
+        if (!OriginalNum)
+        {
+            return 0;
+        }
+        int WriteIndex = 0;
+        int ReadIndex = 0;
+        int NotMatch = !(GetTypedData()[ReadIndex] == Item);
+        do
+        {
+            int RunStartIndex = ReadIndex++;
+            while (ReadIndex < OriginalNum && NotMatch == !(GetTypedData()[ReadIndex] == Item))
+            {
+                ReadIndex++;
+            }
+            int RunLength = ReadIndex - RunStartIndex;
+            if (NotMatch)
+            {
+                if (WriteIndex != RunStartIndex)
+                {
+                    appMemmove(&GetTypedData()[WriteIndex], &GetTypedData()[RunStartIndex], sizeof(T) * RunLength);
+                }
+                WriteIndex += RunLength;
+            }
+            else
+            {
+                DestructItems(RunStartIndex, RunLength);
+            }
+            NotMatch = !NotMatch;
+        } while (ReadIndex < OriginalNum);
+        ArrayNum = WriteIndex;
+        return OriginalNum - ArrayNum;
+    }
     void Reset(int NewSize = 0)
     {
         if (NewSize <= ArrayMax)
@@ -278,7 +315,6 @@ public:
     void Init(const T &, int);
     void Init(int);
     int RemoveSingleItem(const T &);
-    int RemoveItem(const T &);
     int RemoveSingleItemSwap(const T &);
     int RemoveItemSwap(const T &);
     void Swap(int, int);
