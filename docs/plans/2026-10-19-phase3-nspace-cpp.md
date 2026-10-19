@@ -100,7 +100,7 @@ idioms are in `docs/DECOMPILING.md`; the worked example is
   - Virtuals keep their slot index, with `ReservedSlotN` for slots that are
     never called.
 
-- [ ] **Write the tests.**
+- [x] **Write the tests.**
   - `test_offsets_match_pdb` (marked `orig`): it renders `HaloRBTKamikaze`
     and a CCS behaviour-tree node, compiles a translation unit of
     `static_assert(offsetof(...) == N)` lines with the XDK, and checks that
@@ -109,7 +109,7 @@ idioms are in `docs/DECOMPILING.md`; the worked example is
     captured as a fixture.
 
   Run them and see them fail.
-- [ ] **Implement it on top of `tools/pdbtype.py`.** Then regenerate the
+- [x] **Implement it on top of `tools/pdbtype.py`.** Then regenerate the
   Phase 0 example's header, `include/UDKBase/Inc/HaloRBTKamikaze.h`. Its 10
   functions must still match. Commit, then push.
 

@@ -126,6 +126,12 @@ def compile_args(cmd, includes, obj):
     return args + [f'-I{p}' for p in includes] + [f'-Fo{obj}']
 
 
+def compile_file(cl, cmd, includes, src, obj):
+    """Run cl on `src` with an object's command line; the CompletedProcess."""
+    return subprocess.run([str(cl), *compile_args(cmd, includes, obj), str(src)],
+                          capture_output=True, text=True, cwd=paths.ROOT)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description='Compile sources and compare marked functions with retail.')
     ap.add_argument('sources', nargs='+')
@@ -145,8 +151,7 @@ def main(argv=None):
             raise SystemExit(f'{src}: unknown object {obj_name}')
         obj = paths.BUILD / 'obj' / src.relative_to(paths.ROOT).with_suffix('.obj')
         obj.parent.mkdir(parents=True, exist_ok=True)
-        r = subprocess.run([str(cl), *compile_args(objects[obj_name]['cmd'], includes, obj), str(src)],
-                           capture_output=True, text=True, cwd=paths.ROOT)
+        r = compile_file(cl, objects[obj_name]['cmd'], includes, src, obj)
         if r.returncode:
             print(r.stdout + r.stderr)
             raise SystemExit(f'{src}: cl failed')

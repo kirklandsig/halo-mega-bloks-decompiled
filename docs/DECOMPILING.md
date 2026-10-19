@@ -43,6 +43,29 @@ function's original file and line (the `source` and `line` columns).
 `src/UDKBase/Src/HaloRBTKamikaze.cpp` is the worked example: ten functions,
 all matched.
 
+## Headers
+
+`tools/gen_header.py` writes a header from the PDB:
+
+```
+python tools/gen_header.py HaloRBTKamikaze CCSBlackboard ... --opaque ICCSMeatPuppet -o include/UDKBase/Inc/HaloRBTKamikaze.h
+```
+
+- The named classes (targets) get their data members at the PDB's offsets,
+  with explicit `_padN` arrays where the PDB has nothing.
+- Everything else they need comes along: bases, the types of by-value
+  members, forward declarations, enums and namespaces. Those classes are
+  opaque (their data is one `char` array of the PDB's size) unless named.
+  `--opaque` adds a class the code calls through but that nothing pulls in,
+  such as the target of a pointer member.
+- Every class keeps its vtable (its own virtuals in slot order) and its
+  methods, with the PDB's access, so decorated names match.
+- The PDB has no bodies. Inline functions go below the
+  `// ---- written by hand below this line` marker as `inline` definitions
+  outside the class; regenerating keeps that part. Member templates the PDB
+  doesn't list are added with `--add 'Class=decl'`.
+- The header's first lines record the command that wrote it.
+
 ## The check
 
 ```
@@ -93,6 +116,13 @@ never written by it.
   warnings.
 - **Float constants** are loaded from `.rdata` through `REFHI`/`REFLO`
   relocations, which the comparison masks.
+- **A declared inline must be defined.** The generated header declares
+  every method the original had, including inline ones such as
+  `FName::FName()`. Left undefined, it becomes a call, and every function
+  around it stops matching. Define it (often an empty body) in the hand part.
+- **Empty classes stay empty** (`GripHeapObject`, size 1 in the PDB). Giving
+  one a byte of data breaks the empty-base layout of everything that
+  derives from it.
 - **Vector (VMX128) code** hasn't been matched yet. If you match some, add
   what you learn here.
 
