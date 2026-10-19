@@ -71,3 +71,8 @@ void CCSAFFireBurst::Tick(float DeltaTime)
         m_pCCSCtrl->eventActionStopFiring();
     }
 }
+
+// @retail 0x83327E00
+// CCSAFFireBurst::~CCSAFFireBurst
+// @retail 0x83327E08
+// CCSAFFireBurst::`scalar deleting destructor'

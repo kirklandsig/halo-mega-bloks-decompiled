@@ -325,3 +325,25 @@ inline FCheckResult::FCheckResult()
       SourceComponent(0), BoneName(NAME_None), Level(0), LevelIndex(INDEX_NONE), bStartPenetrating(0)
 {
 }
+
+// gripbbmember.h
+inline bool GripBBMember::IsUsed() const { return m_used; }
+inline void CCSBlackboard::FlagThreatLocationAsUsed() { m_threatLocation.FlagAsUsed(); }
+inline void CCSBlackboard::FlagThreatDirectionAsUsed() { m_threatDirection.FlagAsUsed(); }
+inline Grip_Vector CCSBlackboard::GetThreatLocation() const { return m_threatLocation.Get(); }
+inline Grip_Vector CCSBlackboard::GetThreatDirection() const { return m_threatDirection.Get(); }
+inline EThreatType CCSBlackboard::GetThreatType() const { return m_threatType.Get(); }
+inline void CCSBlackboard::FlagHeatGeneratedAsUsed() { m_heatGenerated.FlagAsUsed(); }
+
+// gripbtsystemflags.h, gripbbmember.h
+#ifndef HAGGAR_HOST
+inline GripBTSystemFlags::GripBTSystemFlags() : m_flags(0) {}
+inline GripBBMember::GripBBMember() : m_blackboard(0), m_used(false) {}
+inline GripBBMember::~GripBBMember() {}
+#endif
+
+// gripbbvisualization.h
+#ifndef HAGGAR_HOST
+inline GripBBVisualization::GripBBVisualization() : m_pBB(0) {}
+#endif
+inline void GripBBVisualization::SetBlackboard(GripBlackboard *pBB) { m_pBB = pBB; }

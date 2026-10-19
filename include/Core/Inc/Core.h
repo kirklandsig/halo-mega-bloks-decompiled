@@ -9,6 +9,9 @@
 #pragma warning(disable : 4512)
 // ...and this one: anonymous structs in unions (FColor)
 #pragma warning(disable : 4201)
+// ...and these: a class whose base's constructor takes a defaulted argument
+// the PDB doesn't record (FOutputDeviceRedirectorBase)
+#pragma warning(disable : 4510 4610)
 
 // The CRT's, declared here (the XDK's CRT headers aren't needed)
 extern "C" void *memcpy(void *Dest, const void *Src, unsigned int Count);

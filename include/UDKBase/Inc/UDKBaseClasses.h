@@ -431,6 +431,7 @@ class FOutBunch;
 struct FOutParmRec;
 struct FOutcode;
 class FOutputDevice;
+class FOutputDeviceRedirectorBase;
 struct FPackageFileSummary;
 class FPackageInfo;
 struct FPackedNormal;
@@ -19245,6 +19246,18 @@ public:
     TMap<UObject *,UObject *,FDefaultSetAllocator> SourceToDestinationMap;
     TMap<UComponent *,UComponent *,FDefaultSetAllocator> ComponentInstanceMap;
     #endif
+};
+
+class FOutputDeviceRedirectorBase : public FOutputDevice  // size 0x10
+{
+public:
+    HG_VIRTUAL void AddOutputDevice(FOutputDevice *) HG_PURE;
+    HG_VIRTUAL void RemoveOutputDevice(FOutputDevice *) HG_PURE;
+    HG_VIRTUAL unsigned int IsRedirectingTo(FOutputDevice *) HG_PURE;
+    HG_VIRTUAL void FlushThreadedLogs() HG_PURE;
+    HG_VIRTUAL void SerializeBacklog(FOutputDevice *);
+    HG_VIRTUAL void EnableBacklog(unsigned int);
+    HG_VIRTUAL void SetCurrentThreadAsMasterThread() HG_PURE;
 };
 
 struct FPackageFileSummary  // size 0xA4, opaque
