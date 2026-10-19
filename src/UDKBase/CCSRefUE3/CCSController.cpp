@@ -372,10 +372,11 @@ void ACCSController::TakePossession()
     GripEngineServices::GetAIManager()->AddBrainFinder(&s_brainFinderCCS);
 }
 
-// Todo: the code is retail's, but the target's eye position lands in another
-// stack slot (retail reuses it for the facing copy, which it takes from
-// FRotator::Vector's result where ours writes straight into it), so the
-// schedule differs from there on (1,360 bytes vs 1,376).
+// Todo (1,328 bytes vs 1,376): the code is retail's, but retail inlines both
+// FVector::Normalize calls, which ours calls out of line (CCSAFStrafeTarget
+// calls it out of line in retail, so it isn't FORCEINLINE). With it forced
+// inline, the eye position still lands in another stack slot (retail reuses
+// it for the facing copy, which it takes from FRotator::Vector's result).
 // @retail 0x83337BB0
 unsigned int ACCSController::Tick(float DeltaTime, ELevelTick TickType)
 {
