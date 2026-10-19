@@ -14,6 +14,10 @@ template <class T0> inline T0 *IGripBTInterface::GetActionFactory()
 {
     return static_cast<T0 *>(GetActionFactoryInternal());
 }
+template <class T0> inline T0 *IGripBTInterface::GetMeatPuppetQuery()
+{
+    return static_cast<T0 *>(GetMeatPuppetQueryInternal());
+}
 
 #ifndef HAGGAR_HOST  // constructors stay recompiled in the port
 // ccsgamecharacter.h, ccscharacter.h
@@ -341,6 +345,14 @@ inline bool Grip_Vector::operator!=(const Grip_Vector &V) const { return X != V.
 // gripengineservices.h
 inline Grip_Vector GripEngineServices::GetActorPosition(void *pActor) { return ms_pImpl->GetActorPosition(pActor); }
 inline GripAIManager *GripEngineServices::GetAIManager() { return ms_pImpl->GetAIManager(); }
+inline bool GripEngineServices::SingleLineCheck(GripLineCheckResult &Result, void *pIgnore, const Grip_Vector &Start, const Grip_Vector &End,
+                                                const int Flags, const Grip_Vector Extent)
+{
+    return ms_pImpl->SingleLineCheck(Result, pIgnore, Start, End, Flags, Extent);
+}
+#ifndef HAGGAR_HOST
+inline GripLineCheckResult::GripLineCheckResult() : m_pActor(0) {}
+#endif
 inline Grip_Vector CCSCharacter::GetPosition() const { return m_gameCharacter.GetPosition(); }
 
 // line-check results (the iterator's Next is left as it is)

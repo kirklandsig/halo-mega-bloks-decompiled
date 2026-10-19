@@ -26,7 +26,7 @@ from pdbfile import IMAGE_BASE
 
 # Classes the hand-written code of a package needs in its header as well:
 # with their members (TARGETS) or opaque (OPAQUE).
-TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FArchiveProxy'], 'UDKBase': ['FRenderCommandFence', 'FEnemyThreatInfo', 'AUDKVehicle', 'AGameInfo', 'USeqAct_ActorFactory', 'FBox', 'FOutputDeviceRedirectorBase', 'UCCSBlackboard', 'FCCSTargetData', 'FCCSCoverData', 'FCCSMoveCmdData', 'CCSAFFactory', 'UCCSAFExitCover', 'UCCSAFIdle', 'UCCSAFMoveTo', 'UCCSAFStrafeTo', 'UCCSAFFlee', 'UCCSAFOrientToward', 'UCCSAFMoveToActor', 'UCCSAFStrafeTarget', 'UCCSAFEncircleTarget', 'UCCSAFFireBurst', 'UCCSAFEnterCover', 'UCCSAFGetInCover', 'UCCSAFGetOutCover', 'AUDKWeaponPawn', 'AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
+TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FArchiveProxy'], 'UDKBase': ['FRenderCommandFence', 'FEnemyThreatInfo', 'GripLineCheckResult', 'AUDKVehicle', 'AGameInfo', 'USeqAct_ActorFactory', 'FBox', 'FOutputDeviceRedirectorBase', 'UCCSBlackboard', 'FCCSTargetData', 'FCCSCoverData', 'FCCSMoveCmdData', 'CCSAFFactory', 'UCCSAFExitCover', 'UCCSAFIdle', 'UCCSAFMoveTo', 'UCCSAFStrafeTo', 'UCCSAFFlee', 'UCCSAFOrientToward', 'UCCSAFMoveToActor', 'UCCSAFStrafeTarget', 'UCCSAFEncircleTarget', 'UCCSAFFireBurst', 'UCCSAFEnterCover', 'UCCSAFGetInCover', 'UCCSAFGetOutCover', 'AUDKWeaponPawn', 'AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
                        'ActorWrapper', 'CCSGameCover', 'FCoverInfo', 'CCSCharacter', 'CCSGameCharacter', 'FCoverSlot',
                        'APawn', 'UActorComponent', 'ACCSController', 'CCSBrain', 'Grip_Vector', 'AController',
                        'UAnimNode', 'UAnimNodeBlendBase', 'UAnimNodeBlendList', 'FAnimBlendChild', 'UUDKAnimBlendBase',
@@ -72,7 +72,8 @@ OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsSt
                        'HaloRBTKamikaze',
                        ]}
 # Member declarations the PDB lacks (member templates), per package.
-EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();', 'template <class T0> T0 *GetActionFactory();'],
+EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();', 'template <class T0> T0 *GetActionFactory();',
+                                          'template <class T0> T0 *GetMeatPuppetQuery();'],
                      'IGripAFInterface': ['template <class T0> T0 *GetSystem();'],
                      # the action handles' CreateAction call it
                      'CCSAFFactory': ['HG_PRIVATE:', 'template <class AO, class AF> int CreateActionInternal(const AO &);', 'public:']

@@ -14649,6 +14649,7 @@ HG_PROTECTED:
 public:
     template <class T0> T0 *GetBlackboard();
     template <class T0> T0 *GetActionFactory();
+    template <class T0> T0 *GetMeatPuppetQuery();
 };
 
 class IGripBrainListener  // size 0x4, opaque
@@ -21943,6 +21944,21 @@ public:
     const int endl;  // 0x4
     #else
     const hg::be<int> endl;
+    #endif
+};
+
+struct GripLineCheckResult : public GripHeapObject  // size 0x10
+{
+public:
+    #ifndef HAGGAR_HOST
+    GripLineCheckResult();
+    #endif
+    #ifndef HAGGAR_HOST
+    void *m_pActor;  // 0x0
+    Grip_Vector m_location;  // 0x4
+    #else
+    hg::gptr<void> m_pActor;
+    Grip_Vector m_location;
     #endif
 };
 
