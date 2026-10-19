@@ -100,7 +100,7 @@ function bool SetEnemy(UTBot B, Pawn NewEnemy)
 		return false;
 	}
 	// End:0xEA
-	if(AddEnemy(NewEnemy)!)
+	if(!AddEnemy(NewEnemy))
 	{
 		return false;
 	}
@@ -134,7 +134,7 @@ function float VehicleDesireability(UTVehicle V, UTBot B)
 		return 0.0000000;
 	}
 	// End:0xB3
-	if(UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag && V.bCanCarryFlag!)
+	if(UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag && !V.bCanCarryFlag)
 	{
 		return 0.0000000;
 	}
@@ -176,7 +176,7 @@ function bool AssignSquadResponsibility(UTBot B)
 		{
 			V = UTVehicle(VFactory.ChildVehicle);
 			// End:0x2B5
-			if((((V != none) && V.bHasBeenDriven! || V.bStationary) && (VehicleDesireability(V, B)) > 0.0000000) || ((V == none) && VFactory.RespawnProgress < B.RespawnPredictionTime) && VFactory.IsInState('Active'))
+			if((((V != none) && !V.bHasBeenDriven || V.bStationary) && (VehicleDesireability(V, B)) > 0.0000000) || ((V == none) && VFactory.RespawnProgress < B.RespawnPredictionTime) && VFactory.IsInState('Active'))
 			{
 				VFactory.bTransientEndPoint = true;
 			}			

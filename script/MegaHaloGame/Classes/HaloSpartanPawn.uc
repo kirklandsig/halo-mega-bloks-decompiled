@@ -48,7 +48,7 @@ event TakeDamage(int Damage, Controller InstigatedBy, Vector HitLocation, Vector
 
 	shieldWasUp = (GetCurrentShield()) > float(0);
 	// End:0x44
-	if(shieldWasUp!)
+	if(!shieldWasUp)
 	{
 		PlayAkEvent(AkEvent'Dialog.Play_CHAR_Pain');
 	}

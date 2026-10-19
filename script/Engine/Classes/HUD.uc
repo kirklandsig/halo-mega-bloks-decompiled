@@ -195,7 +195,7 @@ function AddPostRenderedActor(Actor A)
 
 exec function ToggleHUD()
 {
-	bShowHUD = bShowHUD!;
+	bShowHUD = !bShowHUD;
 	//return;	
 }
 
@@ -207,7 +207,7 @@ exec function ShowHUD()
 
 exec function ShowScores()
 {
-	SetShowScores(bShowScores!);
+	SetShowScores(!bShowScores);
 	//return;	
 }
 
@@ -224,7 +224,7 @@ exec function ShowDebug(optional name DebugType)
 	// End:0x32
 	if(DebugType == 'None')
 	{
-		bShowDebugInfo = bShowDebugInfo!;		
+		bShowDebugInfo = !bShowDebugInfo;		
 	}
 	else
 	{
@@ -238,7 +238,7 @@ exec function ShowDebug(optional name DebugType)
 			}
 		}
 		// End:0x98
-		if(bRemoved!)
+		if(!bRemoved)
 		{
 			DebugDisplay[DebugDisplay.Length] = DebugType;
 		}
@@ -273,13 +273,13 @@ function bool ShouldDisplayDebug(name DebugType)
 
 exec function ToggleDirectorInfoHUD()
 {
-	bShowDirectorInfoHUD = bShowDirectorInfoHUD!;
+	bShowDirectorInfoHUD = !bShowDirectorInfoHUD;
 	//return;	
 }
 
 exec function ToggleDirectorInfoDebug()
 {
-	bShowDirectorInfoDebug = bShowDirectorInfoDebug!;
+	bShowDirectorInfoDebug = !bShowDirectorInfoDebug;
 	//return;	
 }
 
@@ -470,7 +470,7 @@ event PostRender()
 		if(bShowHUD)
 		{
 			// End:0x1FE
-			if(bShowScores!)
+			if(!bShowScores)
 			{
 				DrawHUD();
 				DisplayConsoleMessages();
@@ -692,7 +692,7 @@ function LocalizedMessage(Class<LocalMessage> InMessageClass, PlayerReplicationI
 		PlayerOwner.PlayBeepSound();
 	}
 	// End:0xC0
-	if(InMessageClass.default.bIsSpecial!)
+	if(!InMessageClass.default.bIsSpecial)
 	{
 		AddConsoleMessage(CriticalString, InMessageClass, RelatedPRI_1);
 		return;
@@ -998,7 +998,7 @@ function DisplayKismetMessages()
 		else
 		{
 			DrawText(KismetTextInfo[KismetTextIdx].MessageText $ KismetTextInfo[KismetTextIdx].AppendedText, KismetTextInfo[KismetTextIdx].MessageOffset, KismetTextInfo[KismetTextIdx].MessageFont, KismetTextInfo[KismetTextIdx].MessageFontScale, KismetTextInfo[KismetTextIdx].MessageColor);
-			KismetTextIdx++;
+			++KismetTextIdx;
 		}
 		// [Loop Continue]
 		goto J0x0B;

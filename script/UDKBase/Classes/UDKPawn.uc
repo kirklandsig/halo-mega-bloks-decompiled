@@ -271,7 +271,7 @@ replication
 		LastTakeHitInfo;
 
 	// Pos:0x09E
-	if(bNetDirty && bNetOwner!)
+	if(bNetDirty && !bNetOwner)
 		DrivenWeaponPawn, bPuttingDownWeapon;
 
 	// Pos:0x0B9

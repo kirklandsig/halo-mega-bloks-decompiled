@@ -253,14 +253,14 @@ function DrawBreadCrumbs(optional bool bPersistent = false)
 				Outer.DrawDebugLine(curPt, lastPt, 0, 255, 0, bPersistent);
 			}
 			Outer.DrawDebugBox(curPt, vect(5.0000000, 5.0000000, 5.0000000), 0, 0, 255, bPersistent);
-			I--;
+			--I;
 			// End:0x17B
 			if(I < 0)
 			{
 				I = 10 - 1;
 			}
 			lastPt = curPt;
-			Count++;
+			++Count;
 			// [Loop Continue]
 			goto J0x51;
 		}

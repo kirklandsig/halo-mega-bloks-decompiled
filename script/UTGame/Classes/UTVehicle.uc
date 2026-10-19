@@ -217,7 +217,7 @@ simulated function PostBeginPlay()
 	if(int(Role) == int(ROLE_Authority))
 	{
 		// End:0xC0
-		if(bDeleteMe! && UTGame(WorldInfo.Game) != none)
+		if(!bDeleteMe && UTGame(WorldInfo.Game) != none)
 		{
 			UTGame(WorldInfo.Game).RegisterVehicle(self);
 		}
@@ -252,7 +252,7 @@ simulated function PostBeginPlay()
 	// End:0x27D
 	if(int(WorldInfo.NetMode) != int(NM_DedicatedServer))
 	{
-		UpdateShadowSettings(Class'Engine.Engine'.static.IsSplitScreen()! && int(Class'UTGame.UTPlayerController'.default.PawnShadowMode) == int(2));
+		UpdateShadowSettings(!Class'Engine.Engine'.static.IsSplitScreen() && int(Class'UTGame.UTPlayerController'.default.PawnShadowMode) == int(2));
 		CreateDamageMaterialInstance();
 	}
 	VehicleEvent('Created');
@@ -306,7 +306,7 @@ simulated function UpdateLookSteerStatus()
 
 	UTPC = UTPlayerController(Controller);
 	// End:0xDD
-	if((((UTPC == none) || int(UTPC.VehicleControlType) == int(2)) || (int(UTPC.VehicleControlType) == int(1)) && bLookSteerOnNormalControls!) || (int(UTPC.VehicleControlType) == int(0)) && bLookSteerOnSimpleControls!)
+	if((((UTPC == none) || int(UTPC.VehicleControlType) == int(2)) || (int(UTPC.VehicleControlType) == int(1)) && !bLookSteerOnNormalControls) || (int(UTPC.VehicleControlType) == int(0)) && !bLookSteerOnSimpleControls)
 	{
 		bUsingLookSteer = false;		
 	}
@@ -341,7 +341,7 @@ simulated function SetInputs(float InForward, float InStrafe, float InUp)
 			// End:0x18A
 			if(bStickDeflectionThrottle)
 			{
-				bReverseThrottle = (Throttle < DeflectionReverseThresh) || (Throttle < 0.0000000) && Abs(Steering) < Throttle-;
+				bReverseThrottle = (Throttle < DeflectionReverseThresh) || (Throttle < 0.0000000) && Abs(Steering) < -Throttle;
 				Throttle = Deflection;
 				// End:0x18A
 				if(bReverseThrottle)
@@ -364,7 +364,7 @@ simulated function SetInputs(float InForward, float InStrafe, float InUp)
 			else
 			{
 				// End:0x309
-				if(DeltaTargetHeading < LookSteerDeadZone-)
+				if(DeltaTargetHeading < -LookSteerDeadZone)
 				{
 					Steering = FMax((DeltaTargetHeading + LookSteerDeadZone) * LookSteerSensitivity, -1.0000000);					
 				}
@@ -390,7 +390,7 @@ simulated function SetInputs(float InForward, float InStrafe, float InUp)
 			// End:0x4C2
 			if(bStickDeflectionThrottle)
 			{
-				bReverseThrottle = (Throttle < DeflectionReverseThresh) || (Throttle < 0.0000000) && Abs(Steering) < Throttle-;
+				bReverseThrottle = (Throttle < DeflectionReverseThresh) || (Throttle < 0.0000000) && Abs(Steering) < -Throttle;
 				Deflection = Sqrt((Throttle * Throttle) + (Steering * Steering));
 				Throttle = Deflection;
 				// End:0x4C2
@@ -422,7 +422,7 @@ simulated function PlaySpawnEffect()
 	local int I;
 
 	// End:0x33B
-	if(IsTimerActive('StopSpawnEffect')!)
+	if(!IsTimerActive('StopSpawnEffect'))
 	{
 		bPlayingSpawnEffect = true;
 		// End:0x324
@@ -635,7 +635,7 @@ simulated function CreateVehicleEffect(int EffectIndex)
 simulated function InitializeEffects()
 {
 	// End:0x59
-	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && bInitializedVehicleEffects!)
+	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !bInitializedVehicleEffects)
 	{
 		bInitializedVehicleEffects = true;
 		TriggerVehicleEffect('BeginPlay');
@@ -674,7 +674,7 @@ simulated function TriggerVehicleEffect(name EventTag)
 			if(VehicleEffects[I].EffectStartTag == EventTag)
 			{
 				// End:0x274
-				if(VehicleEffects[I].bHighDetailOnly! || int(WorldInfo.GetDetailMode()) == int(2))
+				if(!VehicleEffects[I].bHighDetailOnly || int(WorldInfo.GetDetailMode()) == int(2))
 				{
 					// End:0x117
 					if(VehicleEffects[I].EffectRef == none)
@@ -690,7 +690,7 @@ simulated function TriggerVehicleEffect(name EventTag)
 					else
 					{
 						// End:0x23B
-						if(VehicleEffects[I].EffectRef.bIsActive!)
+						if(!VehicleEffects[I].EffectRef.bIsActive)
 						{
 							VehicleEffects[I].EffectRef.ActivateSystem();
 						}
@@ -743,12 +743,12 @@ simulated function PlayVehicleSound(name SoundTag)
 				VehicleSounds[I].SoundRef = CreateAudioComponent(VehicleSounds[I].SoundTemplate, false, true);
 			}
 			// End:0x28F
-			if((VehicleSounds[I].SoundRef != none) && VehicleSounds[I].SoundRef.bWasPlaying! || VehicleSounds[I].SoundRef.bFinished)
+			if((VehicleSounds[I].SoundRef != none) && !VehicleSounds[I].SoundRef.bWasPlaying || VehicleSounds[I].SoundRef.bFinished)
 			{
 				VehicleSounds[I].SoundRef.Play();
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -936,7 +936,7 @@ function bool FindAutoExit(Pawn ExitingDriver)
 		return true;
 	}
 	// End:0x603
-	if(bFindGroundExit!)
+	if(!bFindGroundExit)
 	{
 		return false;
 	}
@@ -966,7 +966,7 @@ event RanInto(Actor Other)
 	local Class<UDKEmitCameraEffect> CameraEffect;
 
 	// End:0x9F
-	if((((Pawn(Other) == none) || (Vehicle(Other) != none) && Other.IsA('UTVehicle_Hoverboard')!) || Other == Instigator) || int(Other.Role) != int(ROLE_Authority))
+	if((((Pawn(Other) == none) || (Vehicle(Other) != none) && !Other.IsA('UTVehicle_Hoverboard')) || Other == Instigator) || int(Other.Role) != int(ROLE_Authority))
 	{
 		return;
 	}
@@ -1191,7 +1191,7 @@ simulated function bool DisableVehicle()
 				{
 					Seats[SeatIdx].SeatPawn.DriverLeave(true);
 				}
-				SeatIdx++;
+				++SeatIdx;
 				// [Loop Continue]
 				goto J0x67;
 			}
@@ -1274,7 +1274,7 @@ simulated function ProcessViewRotation(float DeltaTime, out Rotator out_ViewRota
 	if(WorldInfo.bUseConsoleInput)
 	{
 		// End:0x3E2
-		if(bSeparateTurretFocus! && ShouldClamp())
+		if(!bSeparateTurretFocus && ShouldClamp())
 		{
 			// End:0xC3
 			if(out_DeltaRot.Yaw == 0)
@@ -1290,7 +1290,7 @@ simulated function ProcessViewRotation(float DeltaTime, out Rotator out_ViewRota
 			else
 			{
 				// End:0x15D
-				if(bIsConsoleTurning!)
+				if(!bIsConsoleTurning)
 				{
 					// End:0x13F
 					if(GetClampedViewRotation().Yaw == Controller.Rotation.Yaw)
@@ -1319,9 +1319,9 @@ simulated function ProcessViewRotation(float DeltaTime, out Rotator out_ViewRota
 			if(MaxDeltaDegrees > 0.0000000)
 			{
 				MaxDelta = int((MaxDeltaDegrees * 182.0444031) * DeltaTime);
-				out_DeltaRot.Pitch = ((out_DeltaRot.Pitch >= 0) ? Min(out_DeltaRot.Pitch, MaxDelta) : Max(out_DeltaRot.Pitch, MaxDelta-));
-				out_DeltaRot.Yaw = ((out_DeltaRot.Yaw >= 0) ? Min(out_DeltaRot.Yaw, MaxDelta) : Max(out_DeltaRot.Yaw, MaxDelta-));
-				out_DeltaRot.Roll = ((out_DeltaRot.Roll >= 0) ? Min(out_DeltaRot.Roll, MaxDelta) : Max(out_DeltaRot.Roll, MaxDelta-));
+				out_DeltaRot.Pitch = ((out_DeltaRot.Pitch >= 0) ? Min(out_DeltaRot.Pitch, MaxDelta) : Max(out_DeltaRot.Pitch, -MaxDelta));
+				out_DeltaRot.Yaw = ((out_DeltaRot.Yaw >= 0) ? Min(out_DeltaRot.Yaw, MaxDelta) : Max(out_DeltaRot.Yaw, -MaxDelta));
+				out_DeltaRot.Roll = ((out_DeltaRot.Roll >= 0) ? Min(out_DeltaRot.Roll, MaxDelta) : Max(out_DeltaRot.Roll, -MaxDelta));
 			}
 		}
 	}
@@ -1341,11 +1341,11 @@ simulated function Rotator GetClampedViewRotation()
 		ViewRotation.Yaw = Controller.Rotation.Yaw;
 		MaxDelta.Yaw = int(((Acos(VWeap.GetMaxFinalAimAdjustment()) * 180.0000000) / 3.1415927) * 182.0444031);
 		// End:0x25E
-		if(ClampRotation(ViewRotation, Rotation, MaxDelta, MaxDelta)!)
+		if(!ClampRotation(ViewRotation, Rotation, MaxDelta, MaxDelta))
 		{
 			ControlRotation.Yaw = Controller.Rotation.Yaw;
 			// End:0x25E
-			if(ClampRotation(ControlRotation, ViewRotation, rot(0, 16384, 0), rot(0, 16384, 0))!)
+			if(!ClampRotation(ControlRotation, ViewRotation, rot(0, 16384, 0), rot(0, 16384, 0)))
 			{
 				ControlRotation.Pitch = Controller.Rotation.Pitch;
 				ControlRotation.Roll = Controller.Rotation.Roll;
@@ -1372,7 +1372,7 @@ simulated function bool ShouldClamp()
 simulated event Rotator GetViewRotation()
 {
 	// End:0x46
-	if((bIsConsoleTurning && bSeparateTurretFocus!) && PlayerController(Controller) != none)
+	if((bIsConsoleTurning && !bSeparateTurretFocus) && PlayerController(Controller) != none)
 	{
 		return GetClampedViewRotation();		
 	}
@@ -1532,7 +1532,7 @@ simulated event ReplicatedEvent(name VarName)
 										{
 											Seats[SeatIndex].BarrelIndex++;
 											// End:0x3D3
-											if(IsZero(SeatFlashLocation(SeatIndex,, true))!)
+											if(!IsZero(SeatFlashLocation(SeatIndex,, true)))
 											{
 												VehicleWeaponFired(true, SeatFlashLocation(SeatIndex,, true), SeatIndex);												
 											}
@@ -1585,7 +1585,7 @@ simulated function DrivingStatusChanged()
 		}
 	}
 	// End:0xB5
-	if(bDriving && bIsDisabled!)
+	if(bDriving && !bIsDisabled)
 	{
 		VehiclePlayEnterSound();		
 	}
@@ -1597,9 +1597,9 @@ simulated function DrivingStatusChanged()
 			VehiclePlayExitSound();
 		}
 	}
-	bBlocksNavigation = bDriving!;
+	bBlocksNavigation = !bDriving;
 	// End:0x116
-	if(bDriving!)
+	if(!bDriving)
 	{
 		StopFiringWeapon();
 		SetMovementEffect(0, false);
@@ -1768,7 +1768,7 @@ function bool ChangeSeat(Controller ControllerToMove, int RequestedSeat)
 		return false;
 	}
 	// End:0x322
-	if(SeatAvailable(RequestedSeat)!)
+	if(!SeatAvailable(RequestedSeat))
 	{
 		BumpController = GetControllerForSeatIndex(RequestedSeat);
 		// End:0x1A3
@@ -1778,7 +1778,7 @@ function bool ChangeSeat(Controller ControllerToMove, int RequestedSeat)
 			return false;
 		}
 		// End:0x20F
-		if(HasPriority(ControllerToMove, BumpController)!)
+		if(!HasPriority(ControllerToMove, BumpController))
 		{
 			// End:0x20D
 			if(PlayerController(ControllerToMove) != none)
@@ -2020,7 +2020,7 @@ simulated function bool CanEnterVehicle(Pawn P)
 	local PlayerReplicationInfo SeatPRI;
 
 	// End:0xCB
-	if(((((P.bIsCrouched || P.DrivenVehicle != none) || P.Controller == none) || P.Controller.bIsPlayer!) || Health <= 0) || bDeleteMe)
+	if(((((P.bIsCrouched || P.DrivenVehicle != none) || P.Controller == none) || !P.Controller.bIsPlayer) || Health <= 0) || bDeleteMe)
 	{
 		return false;
 	}
@@ -2065,7 +2065,7 @@ function bool TryToDrive(Pawn P)
 		return false;
 	}
 	// End:0x100
-	if(((bIsInverted && bMustBeUpright) && bVehicleOnGround!) && VSize(Velocity) <= 5.0000000)
+	if(((bIsInverted && bMustBeUpright) && !bVehicleOnGround) && VSize(Velocity) <= 5.0000000)
 	{
 		// End:0xFE
 		if(bCanFlip)
@@ -2078,12 +2078,12 @@ function bool TryToDrive(Pawn P)
 		return false;
 	}
 	// End:0x134
-	if(CanEnterVehicle(P)! || Vehicle(P) != none)
+	if(!CanEnterVehicle(P) || Vehicle(P) != none)
 	{
 		return false;
 	}
 	// End:0x313
-	if(bIsDisabled! && (((int(Team) == 128) || bTeamLocked!) || WorldInfo.Game.bTeamGame!) || WorldInfo.GRI.OnSameTeam(self, P))
+	if(!bIsDisabled && (((int(Team) == 128) || !bTeamLocked) || !WorldInfo.Game.bTeamGame) || WorldInfo.GRI.OnSameTeam(self, P))
 	{
 		// End:0x22D
 		if(bEnteringUnlocks)
@@ -2096,7 +2096,7 @@ function bool TryToDrive(Pawn P)
 			}
 		}
 		// End:0x2A4
-		if(AnySeatAvailable()!)
+		if(!AnySeatAvailable())
 		{
 			// End:0x293
 			if(WorldInfo.GRI.OnSameTeam(self, P))
@@ -2104,7 +2104,7 @@ function bool TryToDrive(Pawn P)
 				bFreedSeat = KickOutBot();
 			}
 			// End:0x2A4
-			if(bFreedSeat!)
+			if(!bFreedSeat)
 			{
 				return false;
 			}
@@ -2206,7 +2206,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	HUD = UTHUDBase(PC.myHUD);
 	Dist = VSize(CameraPosition - Location);
 	// End:0x437
-	if(WorldInfo.GRI.GameClass.default.bTeamGame && WorldInfo.GRI.OnSameTeam(self, PC)!)
+	if(WorldInfo.GRI.GameClass.default.bTeamGame && !WorldInfo.GRI.OnSameTeam(self, PC))
 	{
 		// End:0x119
 		if(IsInvisible())
@@ -2215,13 +2215,13 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 			return;
 		}
 		// End:0x437
-		if(bShowLocked! && PC.PlayerReplicationInfo.bOnlySpectator!)
+		if(!bShowLocked && !PC.PlayerReplicationInfo.bOnlySpectator)
 		{
 			// End:0x3FF
 			if((PlayerReplicationInfo != none) && (WorldInfo.TimeSeconds - LastPostRenderTraceTime) > 0.5000000)
 			{
 				// End:0x3CC
-				if((UTPlayerController(PC).AlreadyInActionMusic()! && (Dist * Dist) < VSizeSq(PC.ViewTarget.Location - Location)) && IsInvisible()!)
+				if((!UTPlayerController(PC).AlreadyInActionMusic() && (Dist * Dist) < VSizeSq(PC.ViewTarget.Location - Location)) && !IsInvisible())
 				{
 					ScreenLoc = Canvas.Project(Location);
 					// End:0x3CC
@@ -2238,7 +2238,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 			}
 			bShowUseable = ShouldShowUseable(PC, Dist);
 			// End:0x437
-			if(bShowUseable!)
+			if(!bShowUseable)
 			{
 				return;
 			}
@@ -2249,12 +2249,12 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	if((((ScreenLoc.X < float(0)) || ScreenLoc.X >= Canvas.ClipX) || ScreenLoc.Y < float(0)) || ScreenLoc.Y >= Canvas.ClipY)
 	{
 		// End:0x62D
-		if(((bShowLocked! && bShowUseable!) && bPlayingSpawnEffect!) && (UTPawn(PC.Pawn) != none) || UTVehicle_Hoverboard(PC.Pawn) != none)
+		if(((!bShowLocked && !bShowUseable) && !bPlayingSpawnEffect) && (UTPawn(PC.Pawn) != none) || UTVehicle_Hoverboard(PC.Pawn) != none)
 		{
 			bShowUseable = ShouldShowUseable(PC, Dist);
 		}
 		// End:0x63E
-		if(bShowUseable!)
+		if(!bShowUseable)
 		{
 			return;
 		}
@@ -2283,7 +2283,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 		LastPostRenderTraceTime = WorldInfo.TimeSeconds + (0.2000000 * FRand());
 		bPostRenderTraceSucceeded = FastTrace(Location, CameraPosition);
 		// End:0x972
-		if(bPostRenderTraceSucceeded!)
+		if(!bPostRenderTraceSucceeded)
 		{
 			// End:0x82D
 			if(bShowLocked)
@@ -2292,7 +2292,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 			}
 			bPostRenderTraceSucceeded = FastTrace(Location + ((GetCollisionHeight()) * vect(0.0000000, 0.0000000, 1.0000000)), CameraPosition);
 			// End:0x972
-			if(bPostRenderTraceSucceeded!)
+			if(!bPostRenderTraceSucceeded)
 			{
 				CrossDir = Normal(vect(0.0000000, 0.0000000, 1.0000000) Cross (Location - CameraPosition));
 				bPostRenderTraceSucceeded = FastTrace((Location + ((GetCollisionHeight()) * vect(0.0000000, 0.0000000, 1.0000000))) + (CylinderComponent.CollisionRadius * CrossDir), CameraPosition) || FastTrace((Location + ((GetCollisionHeight()) * vect(0.0000000, 0.0000000, 1.0000000))) - (CylinderComponent.CollisionRadius * CrossDir), CameraPosition);
@@ -2300,7 +2300,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 		}
 	}
 	// End:0x983
-	if(bPostRenderTraceSucceeded!)
+	if(!bPostRenderTraceSucceeded)
 	{
 		return;
 	}
@@ -2359,7 +2359,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 		}
 	}
 	// End:0x12FB
-	if(bPlayingSpawnEffect! && (UTPawn(PC.Pawn) != none) || UTVehicle_Hoverboard(PC.Pawn) != none)
+	if(!bPlayingSpawnEffect && (UTPawn(PC.Pawn) != none) || UTVehicle_Hoverboard(PC.Pawn) != none)
 	{
 		// End:0x1265
 		if(bShowUseable || ShouldShowUseable(PC, Dist))
@@ -2386,7 +2386,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 		else
 		{
 			// End:0x12B5
-			if(WorldInfo.GRI.GameClass.default.bTeamGame!)
+			if(!WorldInfo.GRI.GameClass.default.bTeamGame)
 			{
 				return;
 			}
@@ -2401,7 +2401,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	else
 	{
 		// End:0x134B
-		if(WorldInfo.GRI.GameClass.default.bTeamGame!)
+		if(!WorldInfo.GRI.GameClass.default.bTeamGame)
 		{
 			return;
 		}
@@ -2436,7 +2436,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 		RenderPassengerBeacons(PC, Canvas, TeamColor, TextColor, Weap);
 	}
 	// End:0x190C
-	if((HUD != none) && HUD.bCrosshairOnFriendly!)
+	if((HUD != none) && !HUD.bCrosshairOnFriendly)
 	{
 		ScreenLoc = Canvas.Project(Location);
 		MaxOffset = HUDExtent / Dist;
@@ -2573,7 +2573,7 @@ simulated function TeamChanged_VehicleEffects()
 				VehicleEffects[VehicleEffectIndex].EffectRef.SetTemplate(NewTemplate);
 			}
 		}
-		VehicleEffectIndex++;
+		++VehicleEffectIndex;
 		// [Loop Continue]
 		goto J0x3F;
 	}
@@ -2591,7 +2591,7 @@ event IncomingMissile(Projectile P)
 
 	C = AIController(Controller);
 	// End:0xCD
-	if(((C != none) && C.Skill >= 5.0000000) && (C.Enemy == none) || C.LineOfSightTo(C.Enemy)!)
+	if(((C != none) && C.Skill >= 5.0000000) && (C.Enemy == none) || !C.LineOfSightTo(C.Enemy))
 	{
 		ShootMissile(P);
 	}
@@ -2665,7 +2665,7 @@ function bool TooCloseToAttack(Actor Other)
 			{
 				bControlledWeaponPawn = true;
 				// End:0x143
-				if(Seats[I].SeatPawn.TooCloseToAttack(Other)!)
+				if(!Seats[I].SeatPawn.TooCloseToAttack(Other))
 				{
 					return false;
 				}
@@ -2698,7 +2698,7 @@ function bool CheckTurretPitchLimit(int NeededPitch, int SeatIndex)
 			if(I < Seats[SeatIndex].TurretControllers.Length)
 			{
 				// End:0xDB
-				if(Seats[SeatIndex].TurretControllers[I].WouldConstrainPitch(NeededPitch, Mesh)!)
+				if(!Seats[SeatIndex].TurretControllers[I].WouldConstrainPitch(NeededPitch, Mesh))
 				{
 					return false;
 				}
@@ -2777,7 +2777,7 @@ function PlayHorn()
 					{
 						UTBot(P.Controller).SetTemporaryOrders('Follow', Controller);
 						// End:0x345
-						if(NumPositions-- == 0)
+						if(--NumPositions == 0)
 						{
 							// End:0x346
 							break;
@@ -2830,14 +2830,14 @@ function HandleEnteringFlag(UTPlayerReplicationInfo EnteringPRI)
 	if(EnteringPRI.bHasFlag)
 	{
 		// End:0x6A
-		if(bCanCarryFlag!)
+		if(!bCanCarryFlag)
 		{
 			EnteringPRI.GetFlag().Drop();			
 		}
 		else
 		{
 			// End:0xAB
-			if(bDriverHoldsFlag!)
+			if(!bDriverHoldsFlag)
 			{
 				AttachFlag(EnteringPRI.GetFlag(), Driver);
 			}
@@ -2858,7 +2858,7 @@ function bool DriverEnter(Pawn P)
 	}
 	Instigator = self;
 	// End:0xA5
-	if(super(UDKVehicleBase).DriverEnter(P)!)
+	if(!super(UDKVehicleBase).DriverEnter(P))
 	{
 		return false;
 	}
@@ -2958,7 +2958,7 @@ exec function FixedView(string VisibleMeshes)
 		{
 			P.FixedView(VisibleMeshes);
 		}
-		SeatIdx++;
+		++SeatIdx;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -2984,7 +2984,7 @@ function DriverLeft()
 	}
 	Dist = VSize(Location - ParentFactory.Location);
 	// End:0x1D5
-	if((Dist >= float(2000)) && (Dist > float(5000)) || FastTrace(ParentFactory.Location, Location)!)
+	if((Dist >= float(2000)) && (Dist > float(5000)) || !FastTrace(ParentFactory.Location, Location))
 	{
 		ResetTime = WorldInfo.TimeSeconds + ((bKeyVehicle) ? 15.0000000 : 30.0000000);
 	}
@@ -3017,7 +3017,7 @@ function int GetFirstAvailableSeat()
 function bool PassengerEnter(Pawn P, int SeatIndex)
 {
 	// End:0x7E
-	if(WorldInfo.Game.bTeamGame && WorldInfo.GRI.OnSameTeam(P, self)!)
+	if(WorldInfo.Game.bTeamGame && !WorldInfo.GRI.OnSameTeam(P, self))
 	{
 		return false;
 	}
@@ -3028,7 +3028,7 @@ function bool PassengerEnter(Pawn P, int SeatIndex)
 		return false;
 	}
 	// End:0x140
-	if(Seats[SeatIndex].SeatPawn.DriverEnter(P)!)
+	if(!Seats[SeatIndex].SeatPawn.DriverEnter(P))
 	{
 		return false;
 	}
@@ -3045,7 +3045,7 @@ event bool DriverLeave(bool bForceLeave)
 	local Pawn OldDriver;
 
 	// End:0x22
-	if(bForceLeave! && bAllowedExit!)
+	if(!bForceLeave && !bAllowedExit)
 	{
 		return false;
 	}
@@ -3145,7 +3145,7 @@ function bool Occupied()
 	if(I < Seats.Length)
 	{
 		// End:0x4E
-		if(SeatAvailable(I)!)
+		if(!SeatAvailable(I))
 		{
 			return true;
 		}
@@ -3187,7 +3187,7 @@ function bool OpenPositionFor(Pawn P)
 		return true;
 	}
 	// End:0x1EB
-	if(WorldInfo.GRI.OnSameTeam(Controller, P)!)
+	if(!WorldInfo.GRI.OnSameTeam(Controller, P))
 	{
 		return false;
 	}
@@ -3220,7 +3220,7 @@ function float BotDesireability(UTSquadAI S, int TeamIndex, Actor Objective)
 	if(bSameTeam)
 	{
 		// End:0x10D
-		if(bKeyVehicle! && WorldInfo.TimeSeconds < PlayerStartTime)
+		if(!bKeyVehicle && WorldInfo.TimeSeconds < PlayerStartTime)
 		{
 			// End:0xA2
 			foreach LocalPlayerControllers(Class'Engine.PlayerController', P)
@@ -3236,14 +3236,14 @@ function float BotDesireability(UTSquadAI S, int TeamIndex, Actor Objective)
 		}
 	}
 	// End:0x164
-	if((bKeyVehicle! && bStationary!) && WorldInfo.TimeSeconds < VehicleLostTime)
+	if((!bKeyVehicle && !bStationary) && WorldInfo.TimeSeconds < VehicleLostTime)
 	{
 		return 0.0000000;		
 	}
 	else
 	{
 		// End:0x1B7
-		if((((Health <= 0) || bIsDisabled) || bTeamLocked && bSameTeam!) || Occupied())
+		if((((Health <= 0) || bIsDisabled) || bTeamLocked && !bSameTeam) || Occupied())
 		{
 			return 0.0000000;
 		}
@@ -3299,13 +3299,13 @@ function bool SpokenFor(Controller C)
 		return false;
 	}
 	// End:0x147
-	if((((Reservation.RouteGoal != self) && (Reservation.RouteGoal != LastAnchor) || LastAnchor == none) && Reservation.MoveTarget != self) || Reservation.InLatentExecution(Reservation.503)!)
+	if((((Reservation.RouteGoal != self) && (Reservation.RouteGoal != LastAnchor) || LastAnchor == none) && Reservation.MoveTarget != self) || !Reservation.InLatentExecution(Reservation.503))
 	{
 		Reservation = none;
 		return false;
 	}
 	// End:0x194
-	if(WorldInfo.GRI.OnSameTeam(Reservation, C)!)
+	if(!WorldInfo.GRI.OnSameTeam(Reservation, C))
 	{
 		return false;
 	}
@@ -3340,14 +3340,14 @@ simulated function bool StopsProjectile(Projectile P)
 	{
 		return false;
 	}
-	return ((P.Instigator == none) || P.Instigator.Base != self) || P.Instigator.IsA('UTWeaponPawn')!;
+	return ((P.Instigator == none) || P.Instigator.Base != self) || !P.Instigator.IsA('UTWeaponPawn');
 	//return ReturnValue;	
 }
 
 function SetReservation(Controller C)
 {
 	// End:0x34
-	if(SpokenFor(C)!)
+	if(!SpokenFor(C))
 	{
 		Reservation = UTBot(C);
 	}
@@ -3409,7 +3409,7 @@ function IncrementLinkedToCount()
 function DecrementLinkedToCount()
 {
 	// End:0x2C
-	if(int(LinkedToCount--) <= int(0))
+	if(int(--LinkedToCount) <= int(0))
 	{
 		LinkedToCount = 0;
 		StopLinkedEffect();
@@ -3987,7 +3987,7 @@ simulated function CauseMuzzleFlashLight(int SeatIndex)
 		return;
 	}
 	// End:0x2FE
-	if(WorldInfo.bDropDetail! || ((Seats[SeatIndex].SeatPawn != none) && PlayerController(Seats[SeatIndex].SeatPawn.Controller) != none) && Seats[SeatIndex].SeatPawn.IsLocallyControlled())
+	if(!WorldInfo.bDropDetail || ((Seats[SeatIndex].SeatPawn != none) && PlayerController(Seats[SeatIndex].SeatPawn.Controller) != none) && Seats[SeatIndex].SeatPawn.IsLocallyControlled())
 	{
 		// End:0x1D2
 		if(Seats[SeatIndex].MuzzleFlashLight == none)
@@ -4106,7 +4106,7 @@ simulated function VehicleWeaponImpactEffects(Vector HitLocation, int SeatIndex)
 	// End:0x11E
 	if(Pawn(HitActor) != none)
 	{
-		CheckHitInfo(HitInfo, Pawn(HitActor).Mesh, HitNormal-, NewHitLoc);
+		CheckHitInfo(HitInfo, Pawn(HitActor).Mesh, -HitNormal, NewHitLoc);
 	}
 	ImpactEffect = Class<UTVehicleWeapon>(Seats[SeatIndex].GunClass).static.GetImpactEffect(HitActor, HitInfo.PhysMaterial, SeatFiringMode(SeatIndex,, true));
 	// End:0x42C
@@ -4127,7 +4127,7 @@ simulated function VehicleWeaponImpactEffects(Vector HitLocation, int SeatIndex)
 				foreach LocalPlayerControllers(Class'UTGame.UTPlayerController', PC)
 				{
 					// End:0x3F6
-					if(WorldInfo.GRI.OnSameTeam(self, PC)!)
+					if(!WorldInfo.GRI.OnSameTeam(self, PC))
 					{
 						PC.CheckBulletWhip(Class<UTVehicleWeapon>(Seats[SeatIndex].GunClass).default.BulletWhip, Location, Normal(HitLocation - Location), HitLocation);
 					}					
@@ -4149,7 +4149,7 @@ simulated function VehicleWeaponImpactEffects(Vector HitLocation, int SeatIndex)
 		if((HitActor != none) && (Pawn(HitActor) == none) || Vehicle(HitActor) != none)
 		{
 			// End:0x866
-			if(WorldInfo.bDropDetail! && Pawn(HitActor) == none)
+			if(!WorldInfo.bDropDetail && Pawn(HitActor) == none)
 			{
 				DecalMaterialsLength = ImpactEffect.DecalMaterials.Length;
 				// End:0x866
@@ -4164,12 +4164,12 @@ simulated function VehicleWeaponImpactEffects(Vector HitLocation, int SeatIndex)
 						{
 							MITV_Decal = new (self) Class'Engine.MaterialInstanceTimeVarying';
 							MITV_Decal.SetParent(MI);
-							WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, HitLocation, Rotator(HitNormal-), ImpactEffect.DecalWidth, ImpactEffect.DecalHeight, 10.0000000, false,, HitInfo.HitComponent, true, false, HitInfo.BoneName, HitInfo.Item, HitInfo.LevelIndex);
+							WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, HitLocation, Rotator(-HitNormal), ImpactEffect.DecalWidth, ImpactEffect.DecalHeight, 10.0000000, false,, HitInfo.HitComponent, true, false, HitInfo.BoneName, HitInfo.Item, HitInfo.LevelIndex);
 							MITV_Decal.SetScalarStartTime(ImpactEffect.DecalDissolveParamName, ImpactEffect.DurationOfDecal);							
 						}
 						else
 						{
-							WorldInfo.MyDecalManager.SpawnDecal(MI, HitLocation, Rotator(HitNormal-), ImpactEffect.DecalWidth, ImpactEffect.DecalHeight, 10.0000000, false,, HitInfo.HitComponent, true, false, HitInfo.BoneName, HitInfo.Item, HitInfo.LevelIndex);
+							WorldInfo.MyDecalManager.SpawnDecal(MI, HitLocation, Rotator(-HitNormal), ImpactEffect.DecalWidth, ImpactEffect.DecalHeight, 10.0000000, false,, HitInfo.HitComponent, true, false, HitInfo.BoneName, HitInfo.Item, HitInfo.LevelIndex);
 						}
 					}
 				}
@@ -4179,7 +4179,7 @@ simulated function VehicleWeaponImpactEffects(Vector HitLocation, int SeatIndex)
 			{
 				SpawnImpactEmitter(HitLocation, HitNormal, ImpactEffect, SeatIndex);
 				// End:0xB0B
-				if((((Seats[SeatIndex].ImpactFlashLightClass != none) && int(WorldInfo.GetDetailMode()) != int(0)) && Class'Engine.Engine'.static.IsSplitScreen()!) && WorldInfo.bDropDetail! || ((Seats[SeatIndex].SeatPawn != none) && PlayerController(Seats[SeatIndex].SeatPawn.Controller) != none) && Seats[SeatIndex].SeatPawn.IsLocallyControlled())
+				if((((Seats[SeatIndex].ImpactFlashLightClass != none) && int(WorldInfo.GetDetailMode()) != int(0)) && !Class'Engine.Engine'.static.IsSplitScreen()) && !WorldInfo.bDropDetail || ((Seats[SeatIndex].SeatPawn != none) && PlayerController(Seats[SeatIndex].SeatPawn.Controller) != none) && Seats[SeatIndex].SeatPawn.IsLocallyControlled())
 				{
 					LightLoc = HitLocation + (((0.5000000 * Seats[SeatIndex].ImpactFlashLightClass.default.TimeShift[0].Radius) * vect(1.0000000, 0.0000000, 0.0000000)) >> Rotator(HitNormal));
 					UDKEmitterPool(WorldInfo.MyEmitterPool).SpawnExplosionLight(Seats[SeatIndex].ImpactFlashLightClass, LightLoc);
@@ -4294,7 +4294,7 @@ simulated function Vector GetCameraFocus(int SeatIndex)
 	local Actor HitActor;
 
 	// End:0xFB
-	if(bDeadVehicle! && Seats[SeatIndex].CameraTag != 'None')
+	if(!bDeadVehicle && Seats[SeatIndex].CameraTag != 'None')
 	{
 		Mesh.GetSocketWorldLocationAndRotation(Seats[SeatIndex].CameraTag, CamStart);
 		HitActor = Trace(HitLocation, HitNormal, CamStart, Location, false, vect(12.0000000, 12.0000000, 12.0000000));
@@ -4330,7 +4330,7 @@ simulated function Vector GetCameraStart(int SeatIndex)
 	CamStart = GetCameraFocus(SeatIndex);
 	OriginalCamZ = CamStart.Z;
 	// End:0x118
-	if(((CameraLag == float(0)) || SeatIndex != 0) || IsHumanControlled()!)
+	if(((CameraLag == float(0)) || SeatIndex != 0) || !IsHumanControlled())
 	{
 		return CamStart;
 	}
@@ -4450,7 +4450,7 @@ simulated function VehicleCalcCamera(float DeltaTime, int SeatIndex, out Vector 
 
 	Mesh.SetOwnerNoSee(false);
 	// End:0xC1
-	if(((UTPawn(Driver) != none) && Driver.bHidden!) && Driver.Mesh.bOwnerNoSee)
+	if(((UTPawn(Driver) != none) && !Driver.bHidden) && Driver.Mesh.bOwnerNoSee)
 	{
 		UTPawn(Driver).SetMeshVisibility(true);
 	}
@@ -4464,7 +4464,7 @@ simulated function VehicleCalcCamera(float DeltaTime, int SeatIndex, out Vector 
 	}
 	CamStart = GetCameraStart(SeatIndex);
 	// End:0x249
-	if((Seats[SeatIndex].SeatPawn.Controller != none) && bSpectatedView!)
+	if((Seats[SeatIndex].SeatPawn.Controller != none) && !bSpectatedView)
 	{
 		out_CamRot = Seats[SeatIndex].SeatPawn.GetViewRotation();
 	}
@@ -4480,7 +4480,7 @@ simulated function VehicleCalcCamera(float DeltaTime, int SeatIndex, out Vector 
 	{
 		NewCamStartZ = CamStart.Z;
 		// End:0x4B0
-		if(((Velocity.Z > float(0)) && HasWheelsOnGround()!) && OldCamPosZ != float(0))
+		if(((Velocity.Z > float(0)) && !HasWheelsOnGround()) && OldCamPosZ != float(0))
 		{
 			bFixedCamZ = true;
 			// End:0x42B
@@ -4556,7 +4556,7 @@ simulated function VehicleCalcCamera(float DeltaTime, int SeatIndex, out Vector 
 	}
 	CamDir = (CamRotX * Seats[SeatIndex].CameraOffset) * SeatCameraScale;
 	// End:0x9B3
-	if(bRotateCameraUnderVehicle! && CamDir.Z < float(0))
+	if(!bRotateCameraUnderVehicle && CamDir.Z < float(0))
 	{
 		CamDir *= ((VSize(CamDir) - Abs(CamDir.Z)) / (VSize(CamDir) + Abs(CamDir.Z)));
 	}
@@ -4573,10 +4573,10 @@ simulated function VehicleCalcCamera(float DeltaTime, int SeatIndex, out Vector 
 		out_CamLoc = CamPos;
 	}
 	// End:0xBAF
-	if((bRotateCameraUnderVehicle! && CamDir.Z < float(0)) && TraceComponent(FirstHitLocation, HitNormal, CollisionComponent, out_CamLoc, CamStart, vect(0.0000000, 0.0000000, 0.0000000)))
+	if((!bRotateCameraUnderVehicle && CamDir.Z < float(0)) && TraceComponent(FirstHitLocation, HitNormal, CollisionComponent, out_CamLoc, CamStart, vect(0.0000000, 0.0000000, 0.0000000)))
 	{
 		// End:0xBAF
-		if(TraceComponent(HitLocation, HitNormal, CollisionComponent, CamStart, out_CamLoc, vect(0.0000000, 0.0000000, 0.0000000))!)
+		if(!TraceComponent(HitLocation, HitNormal, CollisionComponent, CamStart, out_CamLoc, vect(0.0000000, 0.0000000, 0.0000000)))
 		{
 			out_CamLoc = FirstHitLocation;
 			bObstructed = true;
@@ -4584,12 +4584,12 @@ simulated function VehicleCalcCamera(float DeltaTime, int SeatIndex, out Vector 
 		}
 	}
 	// End:0xD69
-	if(bCameraNeverHidesVehicle! && bObstructed)
+	if(!bCameraNeverHidesVehicle && bObstructed)
 	{
-		bInsideVehicle = (bInsideVehicle || TraceComponent(HitLocation, HitNormal, CollisionComponent, SafeLocation, out_CamLoc, vect(0.0000000, 0.0000000, 0.0000000))!) || VSizeSq(HitLocation - out_CamLoc) < MinCameraDistSq;
+		bInsideVehicle = (bInsideVehicle || !TraceComponent(HitLocation, HitNormal, CollisionComponent, SafeLocation, out_CamLoc, vect(0.0000000, 0.0000000, 0.0000000))) || VSizeSq(HitLocation - out_CamLoc) < MinCameraDistSq;
 		Mesh.SetOwnerNoSee(bInsideVehicle);
 		// End:0xD69
-		if(((UTPawn(Driver) != none) && Driver.bHidden!) && Driver.Mesh.bOwnerNoSee != Mesh.bOwnerNoSee)
+		if(((UTPawn(Driver) != none) && !Driver.bHidden) && Driver.Mesh.bOwnerNoSee != Mesh.bOwnerNoSee)
 		{
 			Driver.Mesh.SetOwnerNoSee(Mesh.bOwnerNoSee);
 		}
@@ -4639,7 +4639,7 @@ simulated function StartBurnOut()
 		{
 			BurnOutMaterialInstances[I].MITV.SetScalarStartTime('BurnTime', 0.0000000);
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0xE0;
 	}
@@ -4814,7 +4814,7 @@ simulated function StopVehicleSounds()
 		{
 			Seats[SeatIdx].SeatMotionAudio.Stop();
 		}
-		SeatIdx++;
+		++SeatIdx;
 		// [Loop Continue]
 		goto J0x15;
 	}
@@ -5476,7 +5476,7 @@ function bool CanAttack(Actor Other)
 	local Weapon W;
 
 	// End:0x18D
-	if(((((bShouldLeaveForCombat && Driver != none) && Driver.InvManager != none) && Controller != none) && WorldInfo.GRI.OnSameTeam(self, Other)!) && IsHumanControlled()!)
+	if(((((bShouldLeaveForCombat && Driver != none) && Driver.InvManager != none) && Controller != none) && !WorldInfo.GRI.OnSameTeam(self, Other)) && !IsHumanControlled())
 	{
 		// End:0x12A
 		foreach Driver.InvManager.InventoryActors(Class'Engine.Weapon', W)
@@ -5607,7 +5607,7 @@ simulated function LinearColor GetSeatColor(int SeatIndex, bool bIsPlayersSeat)
 	local byte TestMask;
 
 	// End:0x8A
-	if(bIsPlayersSeat!)
+	if(!bIsPlayersSeat)
 	{
 		TestMask = byte(int(1) << SeatIndex);
 		// End:0x68
@@ -5694,7 +5694,7 @@ simulated function ApplyWeaponEffects(int OverlayFlags, optional int SeatIndex)
 			Seats[SeatIndex].WeaponEffects[I].Effect.SetStaticMesh(GRI.VehicleWeaponEffects[OverlayIndex].Mesh);
 			Seats[SeatIndex].WeaponEffects[I].Effect.SetMaterial(0, GRI.VehicleWeaponEffects[OverlayIndex].Material);
 			// End:0x6D9
-			if(Seats[SeatIndex].WeaponEffects[I].Effect.bAttached!)
+			if(!Seats[SeatIndex].WeaponEffects[I].Effect.bAttached)
 			{
 				Mesh.AttachComponentToSocket(Seats[SeatIndex].WeaponEffects[I].Effect, Seats[SeatIndex].WeaponEffects[I].SocketName);
 			}
@@ -5774,7 +5774,7 @@ simulated state DyingVehicle
 			if(bIsVisible)
 			{
 				// End:0x290
-				if(bDoingSecondaryExplosion!)
+				if(!bDoingSecondaryExplosion)
 				{
 					// End:0x28D
 					if(BigExplosionTemplates.Length > 0)
@@ -5786,7 +5786,7 @@ simulated state DyingVehicle
 				{
 					Template = SecondaryExplosion;
 				}
-				PlayVehicleExplosionEffect(Template, bDoingSecondaryExplosion!);
+				PlayVehicleExplosionEffect(Template, !bDoingSecondaryExplosion);
 			}
 			// End:0x2EA
 			if(ExplosionSound != none)
@@ -5826,7 +5826,7 @@ simulated state DyingVehicle
 		HurtRadius(ExplosionDamage, ExplosionRadius, Class'UTGame.UTDmgType_VehicleExplosion', ExplosionMomentum, Location,, GetCollisionDamageInstigator());
 		AddVelocity((ExplosionMomentum / Mass) * vect(0.0000000, 0.0000000, 1.0000000), Location, Class'UTGame.UTDmgType_VehicleExplosion');
 		// End:0x58F
-		if((int(Role) == int(ROLE_Authority)) && bVehicleOnGround!)
+		if((int(Role) == int(ROLE_Authority)) && !bVehicleOnGround)
 		{
 			Mesh.SetRBAngularVelocity(VRand() * ExplosionInAirAngVel, true);
 		}
@@ -5849,7 +5849,7 @@ simulated state DyingVehicle
 			DeathExplosion.SetTemplate(TheExplosionTemplate, true);
 			DeathExplosion.ParticleSystemComponent.SetFloatParameter('Velocity', ((GroundSpeed > 0.0100000) ? VSize(Velocity) / GroundSpeed : 0.0000000));
 			// End:0x1BD
-			if(((bSpawnLight && ExplosionLightClass != none) && WorldInfo.bDropDetail!) && ShouldSpawnExplosionLight(Location, vect(0.0000000, 0.0000000, 1.0000000)))
+			if(((bSpawnLight && ExplosionLightClass != none) && !WorldInfo.bDropDetail) && ShouldSpawnExplosionLight(Location, vect(0.0000000, 0.0000000, 1.0000000)))
 			{
 				L = new (DeathExplosion) ExplosionLightClass;
 				DeathExplosion.AttachComponent(L);

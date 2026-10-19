@@ -161,7 +161,7 @@ simulated function PlayTakeHitEffects(float Damage, Vector HitLocation, Class<Da
 	local Vector BloodMomentum;
 
 	// End:0x1D
-	if(EffectIsRelevant(Location, false)!)
+	if(!EffectIsRelevant(Location, false))
 	{
 		return;
 	}
@@ -261,7 +261,7 @@ function bool NeedToTurn(Vector Target)
 
 	AimRotation = Rotator(Target - (GetWeaponStartTraceLocation()));
 	NeededRotation = AimRotation - Rotation;
-	return CanAim(NeededRotation)!;
+	return !CanAim(NeededRotation);
 	//return ReturnValue;	
 }
 

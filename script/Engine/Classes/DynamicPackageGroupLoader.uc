@@ -22,7 +22,7 @@ event PostBeginPlay()
 	super.PostBeginPlay();
 	DumpDataToLog();
 	// End:0x8A
-	if(VerifySanity()!)
+	if(!VerifySanity())
 	{
 		WarnInternal("DynamicPackageGroupLoader detected problems with data configuration - check DynamicLoader INI file!");
 	}
@@ -60,11 +60,11 @@ simulated function DumpDataToLog()
 		if(P < PackageGroups[G].PackageNameList.Length)
 		{
 			LogInternal((("        > PKG " $ string(P)) $ ":  ") $ PackageGroups[G].PackageNameList[P]);
-			P++;
+			++P;
 			// [Loop Continue]
 			goto J0xFA;
 		}
-		G++;
+		++G;
 		// [Loop Continue]
 		goto J0x47;
 	}

@@ -179,7 +179,7 @@ state ComboAttack
 		bComboQueued = false;
 		bComboOnNextTick = false;
 		// End:0x4D
-		if(DoComboAttack()!)
+		if(!DoComboAttack())
 		{
 			GotoState('Active');
 		}

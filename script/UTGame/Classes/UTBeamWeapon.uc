@@ -67,7 +67,7 @@ simulated function UpdateBeamEmitter(Vector FlashLocation, Vector HitNormal, Act
 	// End:0x8C
 	if(BeamEmitter[int(CurrentFireMode)] != none)
 	{
-		SetBeamEmitterHidden(UTPawn(Instigator).IsFirstPerson()!);
+		SetBeamEmitterHidden(!UTPawn(Instigator).IsFirstPerson());
 		BeamEmitter[int(CurrentFireMode)].SetVectorParameter(EndPointParamName, FlashLocation);
 	}
 	//return;	
@@ -98,7 +98,7 @@ simulated function UpdateBeam(float DeltaTime)
 	RealImpact = CalcWeaponFire(StartTrace, EndTrace);
 	bUsingAimingHelp = false;
 	// End:0x1BF
-	if((RealImpact.HitActor == none) || RealImpact.HitActor.bProjTarget!)
+	if((RealImpact.HitActor == none) || !RealImpact.HitActor.bProjTarget)
 	{
 		NearImpact = InstantAimHelp(StartTrace, EndTrace, RealImpact);
 	}
@@ -151,7 +151,7 @@ simulated state WeaponBeamFiring
 		}
 		GotoState('Active');
 		// End:0x172
-		if(HasAnyAmmo()!)
+		if(!HasAnyAmmo())
 		{
 			WeaponEmpty();
 		}

@@ -40,7 +40,7 @@ event Touch(Actor Other, PrimitiveComponent OtherComp, Vector HitLocation, Vecto
 	if(Agent != none)
 	{
 		// End:0x9E
-		if(bRequireLOS! || FastTrace(Other.Location, Location))
+		if(!bRequireLOS || FastTrace(Other.Location, Location))
 		{
 			Agent.HandleBehaviorEvent(EventType, Initiator, false, true);
 		}

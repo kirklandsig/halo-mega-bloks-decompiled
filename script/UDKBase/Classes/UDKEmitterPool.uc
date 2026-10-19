@@ -82,7 +82,7 @@ function UDKExplosionLight SpawnExplosionLight(Class<UDKExplosionLight> LightCla
 	local int I;
 
 	// End:0x65
-	if((AttachToActor != none) && AttachToActor.bStatic || AttachToActor.bMovable!)
+	if((AttachToActor != none) && AttachToActor.bStatic || !AttachToActor.bMovable)
 	{
 		AttachToActor = none;
 	}

@@ -455,49 +455,49 @@ var array<SeqAct_Latent> LatentActions;
 replication
 {
 	// Pos:0x000
-	if(((bSkipActorPropertyReplication! || bNetInitial) && bReplicateMovement) && ((int(RemoteRole) == int(ROLE_AutonomousProxy)) && bNetInitial) || ((int(RemoteRole) == int(ROLE_SimulatedProxy)) && bNetInitial || bUpdateSimulatedPosition) && (Base == none) || Base.bWorldGeometry)
+	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && ((int(RemoteRole) == int(ROLE_AutonomousProxy)) && bNetInitial) || ((int(RemoteRole) == int(ROLE_SimulatedProxy)) && bNetInitial || bUpdateSimulatedPosition) && (Base == none) || Base.bWorldGeometry)
 		Location, Rotation;
 
 	// Pos:0x0B8
-	if(((bSkipActorPropertyReplication! || bNetInitial) && bReplicateMovement) && int(RemoteRole) == int(ROLE_SimulatedProxy))
+	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && int(RemoteRole) == int(ROLE_SimulatedProxy))
 		Base;
 
 	// Pos:0x0F8
-	if((((((bSkipActorPropertyReplication! || bNetInitial) && bReplicateMovement) && bNetInitial || bUpdateSimulatedPosition) && int(RemoteRole) == int(ROLE_SimulatedProxy)) && Base != none) && Base.bWorldGeometry!)
+	if((((((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && bNetInitial || bUpdateSimulatedPosition) && int(RemoteRole) == int(ROLE_SimulatedProxy)) && Base != none) && !Base.bWorldGeometry)
 		RelativeLocation, RelativeRotation;
 
 	// Pos:0x18D
-	if(((bSkipActorPropertyReplication! || bNetInitial) && bReplicateMovement) && (int(RemoteRole) == int(ROLE_SimulatedProxy)) && bNetInitial || bUpdateSimulatedPosition)
+	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && (int(RemoteRole) == int(ROLE_SimulatedProxy)) && bNetInitial || bUpdateSimulatedPosition)
 		Physics, Velocity;
 
 	// Pos:0x1EB
-	if((bSkipActorPropertyReplication! || bNetInitial) && int(Role) == int(ROLE_Authority))
+	if((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority))
 		bHardAttach;
 
 	// Pos:0x21C
-	if(((bSkipActorPropertyReplication! || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
+	if(((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
 		bHidden;
 
 	// Pos:0x25C
-	if((((bSkipActorPropertyReplication! || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bCollideActors || bCollideWorld)
+	if((((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bCollideActors || bCollideWorld)
 		bBlockActors, bProjTarget;
 
 	// Pos:0x2BA
-	if((bSkipActorPropertyReplication! || bNetInitial) && int(Role) == int(ROLE_Authority))
+	if((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority))
 		RemoteRole, Role, 
 		bNetOwner, bTearOff;
 
 	// Pos:0x2EB
-	if((((bSkipActorPropertyReplication! || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bReplicateInstigator)
+	if((((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bReplicateInstigator)
 		Instigator;
 
 	// Pos:0x33A
-	if(((bSkipActorPropertyReplication! || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
+	if(((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
 		DrawScale, ReplicatedCollisionType, 
 		bCollideActors, bCollideWorld;
 
 	// Pos:0x37A
-	if(((bNetOwner && bSkipActorPropertyReplication! || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
+	if(((bNetOwner && !bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
 		Owner;
 }
 
@@ -1029,7 +1029,7 @@ native final function PlayerController GetALocalPlayerController();
 event PreBeginPlay()
 {
 	// End:0xA4
-	if(((bGameRelevant! && bStatic!) && int(WorldInfo.NetMode) != int(NM_Client)) && WorldInfo.Game.CheckRelevance(self)!)
+	if(((!bGameRelevant && !bStatic) && int(WorldInfo.NetMode) != int(NM_Client)) && !WorldInfo.Game.CheckRelevance(self))
 	{
 		// End:0xA1
 		if(bNoDelete)
@@ -1126,7 +1126,7 @@ simulated function bool HurtRadius(float BaseDamage, float DamageRadius, Class<D
 			}
 		}
 		// End:0x29C
-		if(((Victim.bWorldGeometry! && Victim != self) && Victim != IgnoredActor) && Victim.bCanBeDamaged || Victim.bProjTarget)
+		if(((!Victim.bWorldGeometry && Victim != self) && Victim != IgnoredActor) && Victim.bCanBeDamaged || Victim.bProjTarget)
 		{
 			Victim.TakeRadiusDamage(InstigatedByController, BaseDamage, DamageRadius, DamageType, Momentum, HurtOrigin, bDoFullDamage, self);
 			bCausedDamage = bCausedDamage || Victim.bProjTarget;
@@ -1955,7 +1955,7 @@ simulated function OnDestroy(SeqAct_Destroy Action)
 	else
 	{
 		// End:0x18C
-		if(bDeleteMe!)
+		if(!bDeleteMe)
 		{
 			Destroy();
 		}
@@ -1966,7 +1966,7 @@ simulated function OnDestroy(SeqAct_Destroy Action)
 event ForceNetRelevant()
 {
 	// End:0x5B
-	if(((int(RemoteRole) == int(ROLE_None)) && bNoDelete) && bStatic!)
+	if(((int(RemoteRole) == int(ROLE_None)) && bNoDelete) && !bStatic)
 	{
 		RemoteRole = ROLE_SimulatedProxy;
 		bAlwaysRelevant = true;
@@ -2030,7 +2030,7 @@ simulated function OnModifyHealth(SeqAct_ModifyHealth Action)
 	}
 	else
 	{
-		TakeDamage(int(Action.Amount), InstigatorController, Location, Vector(Rotation) * Action.Momentum-, Action.DamageType);
+		TakeDamage(int(Action.Amount), InstigatorController, Location, Vector(Rotation) * -Action.Momentum, Action.DamageType);
 	}
 	//return;	
 }
@@ -2089,7 +2089,7 @@ simulated function OnTeleport(SeqAct_Teleport Action)
 			}
 			destActor = tempActor;
 			// End:0x2BC
-			if((Action.bCheckOverlap! || bOccupiedDest!) && destActor != none)
+			if((!Action.bCheckOverlap || !bOccupiedDest) && destActor != none)
 			{
 				// [Explicit Break]
 				goto J0x2CA;
@@ -2285,7 +2285,7 @@ simulated function OnToggleHidden(SeqAct_ToggleHidden Action)
 		}
 		else
 		{
-			SetHidden(bHidden!);
+			SetHidden(!bHidden);
 		}
 	}
 	ForceNetRelevant();

@@ -22,7 +22,7 @@ function bool Start(optional bool StartPaused = false)
 function TickLoadingScreen()
 {
 	// End:0x49
-	if(bInitComplete!)
+	if(!bInitComplete)
 	{
 		// End:0x49
 		if(bLevelLoadComplete)

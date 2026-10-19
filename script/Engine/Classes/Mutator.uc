@@ -10,7 +10,7 @@ var bool bUserAdded;
 event PreBeginPlay()
 {
 	// End:0x12
-	if(MutatorIsAllowed()!)
+	if(!MutatorIsAllowed())
 	{
 		Destroy();
 	}
@@ -19,7 +19,7 @@ event PreBeginPlay()
 
 function bool MutatorIsAllowed()
 {
-	return WorldInfo.IsDemoBuild()!;
+	return !WorldInfo.IsDemoBuild();
 	//return ReturnValue;	
 }
 

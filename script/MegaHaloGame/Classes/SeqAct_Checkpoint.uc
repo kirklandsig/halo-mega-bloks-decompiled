@@ -43,7 +43,7 @@ event Activated()
 		}		
 		Game.CheckpointRespawnPoint = Game.CurrentRespawnPoint;
 		// End:0x256
-		if(Game.bIsDemoMode!)
+		if(!Game.bIsDemoMode)
 		{
 			Game.SaveCheckpoint(CheckpointId);
 		}

@@ -21,7 +21,7 @@ static final simulated function float StudNumToCoord(int studNum, float cadence)
 	{
 		return halfCadence + (float(studNum - 1) * cadence);
 	}
-	return halfCadence- + (float(studNum + 1) * cadence);
+	return -halfCadence + (float(studNum + 1) * cadence);
 	//return ReturnValue;	
 }
 
@@ -100,7 +100,7 @@ static final simulated function bool SuggestFittedStudNums(int boardWidth, int i
 		// End:0x4C
 		if(centerStudNum < 0)
 		{
-			centerStudNum = boardWidth / 2-;			
+			centerStudNum = -boardWidth / 2;			
 		}
 		else
 		{
@@ -146,7 +146,7 @@ final simulated function bool FindBestPlacement(Vector HitLocation, int itemStud
 	local int aimStudX, aimStudY, firstFitStudX, firstFitStudY, lastFitStudX, lastFitStudY;
 
 	// End:0x11
-	if(CheckSanity()!)
+	if(!CheckSanity())
 	{
 		return false;
 	}

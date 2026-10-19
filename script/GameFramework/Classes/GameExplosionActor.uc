@@ -80,7 +80,7 @@ simulated function bool DoFullDamageToActor(Actor Victim)
 protected simulated function bool IsBehindExplosion(Actor A)
 {
 	// End:0x77
-	if(ExplosionTemplate.bDirectionalExplosion && IsZero(ExplosionDirection)!)
+	if(ExplosionTemplate.bDirectionalExplosion && !IsZero(ExplosionDirection))
 	{
 		return (ExplosionDirection Dot Normal(A.Location - Location)) < DirectionalExplosionMinDot;
 	}
@@ -134,7 +134,7 @@ protected simulated function bool DoExplosionDamage(bool bCauseDamage, bool bCau
 				}
 			}
 			// End:0xA3E
-			if(((((((Victim != self) && Victim.bWorldGeometry! || Victim.bCanBeDamaged) && NavigationPoint(Victim) == none) && Victim != ExplosionTemplate.ActorToIgnoreForDamage) && ExplosionTemplate.bIgnoreInstigator! || Victim != Instigator) && ClassIsChildOf(Victim.Class, ExplosionTemplate.ActorClassToIgnoreForDamage)!) && IsBehindExplosion(Victim)!)
+			if(((((((Victim != self) && !Victim.bWorldGeometry || Victim.bCanBeDamaged) && NavigationPoint(Victim) == none) && Victim != ExplosionTemplate.ActorToIgnoreForDamage) && !ExplosionTemplate.bIgnoreInstigator || Victim != Instigator) && !ClassIsChildOf(Victim.Class, ExplosionTemplate.ActorClassToIgnoreForDamage)) && !IsBehindExplosion(Victim))
 			{
 				VictimPawn = GamePawn(Victim);
 				Victim.GetComponentsBoundingBox(BBox);
@@ -158,7 +158,7 @@ protected simulated function bool DoExplosionDamage(bool bCauseDamage, bool bCau
 						FracActor.BreakOffPartsInRadius(Location, ExplosionTemplate.FractureMeshRadius, ExplosionTemplate.FracturePartVel, ((int(WantPhysChunksAndParticles) == int(1)) ? true : false));
 					}
 				}
-				bCausePawnEffects = (bCauseEffects && VictimPawn != none) && VictimPawn.InGodMode()!;
+				bCausePawnEffects = (bCauseEffects && VictimPawn != none) && !VictimPawn.InGodMode();
 				bCauseDamageEffects = bCauseDamage && VictimDist < ExplosionTemplate.DamageRadius;
 				// End:0x6DF
 				if(DoFullDamageToActor(Victim))
@@ -178,14 +178,14 @@ protected simulated function bool DoExplosionDamage(bool bCauseDamage, bool bCau
 					}
 				}
 				// End:0xA3E
-				if(bDamageBlocked!)
+				if(!bDamageBlocked)
 				{
 					// End:0x9E9
 					if(bCauseDamageEffects)
 					{
 						ModInstigator = InstigatorController;
 						// End:0x8B0
-						if((((AttacheeController != none) && AttacheeController.PlayerReplicationInfo != none) && VictimPawn != none) && WorldInfo.GRI.OnSameTeam(AttacheeController, VictimPawn.Controller)!)
+						if((((AttacheeController != none) && AttacheeController.PlayerReplicationInfo != none) && VictimPawn != none) && !WorldInfo.GRI.OnSameTeam(AttacheeController, VictimPawn.Controller))
 						{
 							ModInstigator = AttacheeController;
 						}
@@ -294,7 +294,7 @@ simulated function Explode(GameExplosion NewExplosionTemplate, optional Vector D
 	}
 	HowLongToLive = (LifeSpan + ExplosionTemplate.DamageDelay) + 0.0100000;
 	// End:0x98D
-	if(bHasExploded! || bExplodeMoreThanOnce)
+	if(!bHasExploded || bExplodeMoreThanOnce)
 	{
 		// End:0x12C
 		if(ExplosionTemplate.bAllowPerMaterialFX)
@@ -430,7 +430,7 @@ simulated function Explode(GameExplosion NewExplosionTemplate, optional Vector D
 		}
 		bHasExploded = true;
 		// End:0x98D
-		if(bPendingDelete! && bDeleteMe!)
+		if(!bPendingDelete && !bDeleteMe)
 		{
 			LifeSpan = ((bExplodeMoreThanOnce) ? 0.0000000 : HowLongToLive);
 		}
@@ -509,7 +509,7 @@ simulated function SpawnCameraLensEffects()
 		foreach WorldInfo.LocalPlayerControllers(Class'Engine.PlayerController', PC)
 		{
 			// End:0x177
-			if((((PC.Pawn != none) && VSize(PC.Pawn.Location - Location) < ExplosionTemplate.CameraLensEffectRadius) && PC.IsAimingAt(self, 0.1000000)) && IsBehindExplosion(PC.Pawn)!)
+			if((((PC.Pawn != none) && VSize(PC.Pawn.Location - Location) < ExplosionTemplate.CameraLensEffectRadius) && PC.IsAimingAt(self, 0.1000000)) && !IsBehindExplosion(PC.Pawn))
 			{
 				PC.ClientSpawnCameraLensEffect(ExplosionTemplate.CameraLensEffect);
 			}			

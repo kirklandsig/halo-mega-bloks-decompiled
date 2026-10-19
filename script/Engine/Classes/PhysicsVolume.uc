@@ -106,7 +106,7 @@ event PawnLeavingVolume(Pawn Other)
 simulated function OnToggle(SeqAct_Toggle inAction)
 {
 	// End:0x38
-	if(bStatic! || int(RemoteRole) > int(ROLE_None))
+	if(!bStatic || int(RemoteRole) > int(ROLE_None))
 	{
 		super.OnToggle(inAction);
 	}
@@ -127,7 +127,7 @@ simulated function OnToggle(SeqAct_Toggle inAction)
 			// End:0x12B
 			if(inAction.InputLinks[2].bHasImpulse)
 			{
-				bPainCausing = bPainCausing! && BACKUP_bPainCausing;
+				bPainCausing = !bPainCausing && BACKUP_bPainCausing;
 			}
 		}
 	}
@@ -147,7 +147,7 @@ function TimerPop(VolumeTimer T)
 	if(T == PainTimer)
 	{
 		// End:0x28
-		if(bPainCausing!)
+		if(!bPainCausing)
 		{
 			return;
 		}
@@ -155,7 +155,7 @@ function TimerPop(VolumeTimer T)
 		foreach TouchingActors(Class'Engine.Actor', A)
 		{
 			// End:0x9B
-			if(A.bCanBeDamaged && A.bStatic!)
+			if(A.bCanBeDamaged && !A.bStatic)
 			{
 				CausePainTo(A);
 			}			
@@ -233,7 +233,7 @@ function CausePainTo(Actor Other)
 	}
 	else
 	{
-		Other.HealDamage(int(DamagePerSec- * PainInterval), DamageInstigator, DamageType);
+		Other.HealDamage(int(-DamagePerSec * PainInterval), DamageInstigator, DamageType);
 	}
 	//return;	
 }

@@ -254,7 +254,7 @@ replication
 		bCanSwatTurn;
 
 	// Pos:0x073
-	if(bNetDirty && bNetOwner! || bDemoRecording)
+	if(bNetDirty && !bNetOwner || bDemoRecording)
 		FiringMode, FlashCount, 
 		bIsCrouched;
 
@@ -263,15 +263,15 @@ replication
 		TearOffMomentum;
 
 	// Pos:0x0B6
-	if(bNetOwner! || bDemoRecording)
+	if(!bNetOwner || bDemoRecording)
 		RemoteViewPitch;
 
 	// Pos:0x0D1
-	if(bNetInitial && bNetOwner!)
+	if(bNetInitial && !bNetOwner)
 		bRootMotionFromInterpCurve;
 
 	// Pos:0x0EC
-	if((bNetInitial && bNetOwner!) && bRootMotionFromInterpCurve)
+	if((bNetInitial && !bNetOwner) && bRootMotionFromInterpCurve)
 		RootMotionInterpCurrentTime, RootMotionInterpCurveLastValue, 
 		RootMotionInterpRate;
 
@@ -466,7 +466,7 @@ simulated function FaceFXAudioFinished(AudioComponent AC)
 event FaceFXAsset GetActorFaceFXAsset()
 {
 	// End:0x81
-	if((Mesh.SkeletalMesh != none) && Mesh.bDisableFaceFX!)
+	if((Mesh.SkeletalMesh != none) && !Mesh.bDisableFaceFX)
 	{
 		return Mesh.SkeletalMesh.FaceFXAsset;		
 	}
@@ -636,7 +636,7 @@ event bool SpecialMoveThruEdge(Pylon.ENavMeshEdgeType EdgeType, int Dir, Vector 
 simulated function SetBaseEyeheight()
 {
 	// End:0x25
-	if(bIsCrouched!)
+	if(!bIsCrouched)
 	{
 		BaseEyeHeight = default.BaseEyeHeight;		
 	}
@@ -795,7 +795,7 @@ simulated function SetFlashLocation(Weapon InWeapon, byte InFiringMode, Vector N
 function ClearFlashLocation(Weapon InWeapon)
 {
 	// End:0x51
-	if(IsZero(FlashLocation)!)
+	if(!IsZero(FlashLocation))
 	{
 		bForceNetUpdate = true;
 		FlashLocation = vect(0.0000000, 0.0000000, 0.0000000);
@@ -807,7 +807,7 @@ function ClearFlashLocation(Weapon InWeapon)
 simulated function FlashLocationUpdated(Weapon InWeapon, Vector InFlashLocation, bool bViaReplication)
 {
 	// End:0x3A
-	if(IsZero(InFlashLocation)!)
+	if(!IsZero(InFlashLocation))
 	{
 		WeaponFired(InWeapon, bViaReplication, InFlashLocation);		
 	}
@@ -970,7 +970,7 @@ function PossessedBy(Controller C, bool bVehicleTransition)
 function UpdateControllerOnPossess(bool bVehicleTransition)
 {
 	// End:0x30
-	if(bVehicleTransition!)
+	if(!bVehicleTransition)
 	{
 		Controller.SetRotation(Rotation);
 	}
@@ -1279,7 +1279,7 @@ singular simulated event Rotator GetBaseAimRotation()
 	local Rotator POVRot;
 
 	// End:0x5B
-	if((Controller != none) && InFreeCam()!)
+	if((Controller != none) && !InFreeCam())
 	{
 		Controller.GetPlayerViewPoint(POVLoc, POVRot);
 		return POVRot;
@@ -1542,7 +1542,7 @@ final simulated event UpdatePawnRotation(Rotator NewRotation)
 simulated function FaceRotation(Rotator NewRotation, float DeltaTime)
 {
 	// End:0xA2
-	if(InFreeCam()!)
+	if(!InFreeCam())
 	{
 		// End:0x4E
 		if(int(Physics) == int(9))
@@ -1570,7 +1570,7 @@ event bool EncroachingOn(Actor Other)
 		return true;
 	}
 	// End:0x99
-	if(((Controller == none) || Controller.bIsPlayer!) && Pawn(Other) != none)
+	if(((Controller == none) || !Controller.bIsPlayer) && Pawn(Other) != none)
 	{
 		return true;
 	}
@@ -1630,10 +1630,10 @@ singular event BaseChange()
 	local DynamicSMActor Dyn;
 
 	// End:0xB9
-	if((Pawn(Base) != none) && (DrivenVehicle == none) || DrivenVehicle.IsBasedOn(Base)!)
+	if((Pawn(Base) != none) && (DrivenVehicle == none) || !DrivenVehicle.IsBasedOn(Base))
 	{
 		// End:0xB9
-		if(Pawn(Base).CanBeBaseForPawn(self)!)
+		if(!Pawn(Base).CanBeBaseForPawn(self))
 		{
 			Pawn(Base).CrushedBy(self);
 			JumpOffPawn();
@@ -1641,7 +1641,7 @@ singular event BaseChange()
 	}
 	Dyn = DynamicSMActor(Base);
 	// End:0x115
-	if((Dyn != none) && Dyn.CanBasePawn(self)!)
+	if((Dyn != none) && !Dyn.CanBasePawn(self))
 	{
 		JumpOffPawn();
 	}
@@ -1675,7 +1675,7 @@ function DetachFromController(optional bool bDestroyController)
 			Controller.UnPossess();
 		}
 		// End:0x119
-		if(((bDestroyController && OldController != none) && OldController.bDeleteMe!) && OldController.bIsPlayer!)
+		if(((bDestroyController && OldController != none) && !OldController.bDeleteMe) && !OldController.bIsPlayer)
 		{
 			OldController.Destroy();
 		}
@@ -1725,7 +1725,7 @@ event PostBeginPlay()
 	SpawnTime = WorldInfo.TimeSeconds;
 	EyeHeight = BaseEyeHeight;
 	// End:0xA2
-	if((WorldInfo.bStartup && Health > 0) && bDontPossess!)
+	if((WorldInfo.bStartup && Health > 0) && !bDontPossess)
 	{
 		SpawnDefaultController();
 	}
@@ -2237,7 +2237,7 @@ event HeadVolumeChange(PhysicsVolume newHeadVolume)
 	if((HeadVolume != none) && HeadVolume.bWaterVolume)
 	{
 		// End:0xF5
-		if(newHeadVolume.bWaterVolume!)
+		if(!newHeadVolume.bWaterVolume)
 		{
 			// End:0xE6
 			if((Controller.bIsPlayer && BreathTime > float(0)) && BreathTime < float(8))
@@ -2313,7 +2313,7 @@ function bool CheckWaterJump(out Vector WallNormal)
 	if(AIController(Controller) != none)
 	{
 		// End:0x117
-		if((Controller.InLatentExecution(Controller.503) && Controller.MoveTarget != none) && Controller.MoveTarget.PhysicsVolume.bWaterVolume!)
+		if((Controller.InLatentExecution(Controller.503) && Controller.MoveTarget != none) && !Controller.MoveTarget.PhysicsVolume.bWaterVolume)
 		{
 			Checkpoint = Normal(Controller.MoveTarget.Location - Location);			
 		}
@@ -2355,7 +2355,7 @@ function bool CheckWaterJump(out Vector WallNormal)
 function bool DoJump(bool bUpdating)
 {
 	// End:0x203
-	if(((bJumpCapable && bIsCrouched!) && bWantsToCrouch!) && ((int(Physics) == int(1)) || int(Physics) == int(9)) || int(Physics) == int(8))
+	if(((bJumpCapable && !bIsCrouched) && !bWantsToCrouch) && ((int(Physics) == int(1)) || int(Physics) == int(9)) || int(Physics) == int(8))
 	{
 		// End:0xA6
 		if(int(Physics) == int(8))
@@ -2383,7 +2383,7 @@ function bool DoJump(bool bUpdating)
 			}
 		}
 		// End:0x1FC
-		if(((Base != none) && Base.bWorldGeometry!) && Base.Velocity.Z > 0.0000000)
+		if(((Base != none) && !Base.bWorldGeometry) && Base.Velocity.Z > 0.0000000)
 		{
 			Velocity.Z += Base.Velocity.Z;
 		}
@@ -2402,7 +2402,7 @@ function PlayDyingSound()
 function PlayHit(float Damage, Controller InstigatedBy, Vector HitLocation, Class<DamageType> DamageType, Vector Momentum, TraceHitInfo HitInfo)
 {
 	// End:0x4A
-	if((Damage <= float(0)) && (Controller == none) || Controller.bGodMode!)
+	if((Damage <= float(0)) && (Controller == none) || !Controller.bGodMode)
 	{
 		return;
 	}
@@ -2466,7 +2466,7 @@ simulated function PlayDying(Class<DamageType> DamageType, Vector HitLoc, option
 simulated event TornOff()
 {
 	// End:0x2C
-	if(bPlayedDeath!)
+	if(!bPlayedDeath)
 	{
 		PlayDying(HitDamageType, TakeHitLocation);
 	}
@@ -2737,7 +2737,7 @@ function DoKismetAttachment(Actor Attachment, SeqAct_AttachToActor Action)
 		bValidSocket = Mesh.GetSocketByName(Action.BoneName) != none;
 		bValidBone = Mesh.MatchRefBone(Action.BoneName) != -1;
 		// End:0x19E
-		if(bValidBone! && bValidSocket!)
+		if(!bValidBone && !bValidSocket)
 		{
 			LogInternal((((((((string(WorldInfo.TimeSeconds) @ string(Class)) @ string(GetFuncName())) @ "bone or socket") @ string(Action.BoneName)) @ "not found on actor") @ string(self)) @ "with mesh") @ string(Mesh));
 		}
@@ -2750,7 +2750,7 @@ function DoKismetAttachment(Actor Attachment, SeqAct_AttachToActor Action)
 		Attachment.SetCollision(false, false);
 		Attachment.SetHardAttach(Action.bHardAttach);
 		// End:0x37F
-		if(bValidBone && bValidSocket!)
+		if(bValidBone && !bValidSocket)
 		{
 			// End:0x2FD
 			if(Action.bUseRelativeOffset)
@@ -2819,7 +2819,7 @@ simulated function OnTeleport(SeqAct_Teleport Action)
 	}
 	Action.GetObjectVars(objVars, "Destination");
 	// End:0x18E
-	if(HandleTeleport(objVars, Action.bUpdateRotation, Action.bCheckOverlap,, Action.TeleportVolumes)!)
+	if(!HandleTeleport(objVars, Action.bUpdateRotation, Action.bCheckOverlap,, Action.TeleportVolumes))
 	{
 		WarnInternal("failed to handle teleport kismet action properly" @ string(Action));
 	}
@@ -2878,19 +2878,19 @@ simulated function bool HandleTeleport(array<Object> DestList, bool bUpdateRotat
 			}
 			destActor = tempActor;
 			// End:0x241
-			if((bCheckOverlap! || bOccupiedDest!) && destActor != none)
+			if((!bCheckOverlap || !bOccupiedDest) && destActor != none)
 			{
 				// [Explicit Continue]
 				goto J0x2AB;
 			}
 		}
-		Idx++;
+		++Idx;
 		// End:0x26F
 		if(Idx >= DestList.Length)
 		{
 			Idx = 0;
 		}
-		Cnt++;
+		++Cnt;
 		// End:0x91
 		if(!((Idx == PreferredDestIndex) || Cnt >= DestList.Length))
 			goto J0x91;
@@ -2908,7 +2908,7 @@ simulated function bool HandleTeleport(array<Object> DestList, bool bUpdateRotat
 		if(SetLocation(destActor.Location))
 		{
 			// End:0x3E0
-			if(IsLocallyControlled()! && PlayerController(Controller) != none)
+			if(!IsLocallyControlled() && PlayerController(Controller) != none)
 			{
 				PlayerController(Controller).ClientSetLocation(destActor.Location, Rotation);
 			}
@@ -2964,7 +2964,7 @@ simulated event BecomeViewTarget(PlayerController PC)
 		PhysicsVolume.NotifyPawnBecameViewTarget(self, PC);
 	}
 	// End:0x92
-	if(bReplicateHealthToAll! && int(WorldInfo.NetMode) != int(NM_Client))
+	if(!bReplicateHealthToAll && int(WorldInfo.NetMode) != int(NM_Client))
 	{
 		PC.ForceSingleNetUpdateFor(self);
 	}
@@ -3089,7 +3089,7 @@ state Dying
 	event Timer()
 	{
 		// End:0x0F
-		if(PlayerCanSeeMe()!)
+		if(!PlayerCanSeeMe())
 		{
 			Destroy();			
 		}
@@ -3124,7 +3124,7 @@ state Dying
 		// End:0x3A
 		if(DeathTick == 0)
 		{
-			DeathTick++;
+			++DeathTick;
 			TryThrowWeaponOnDeath();			
 		}
 		else
@@ -3132,7 +3132,7 @@ state Dying
 			// End:0x54
 			if(DeathTick < 0)
 			{
-				DeathTick++;
+				++DeathTick;
 			}
 		}
 		//return;		
@@ -3198,7 +3198,7 @@ state Dying
 		if(PreviousStateName != 'Dying')
 		{
 			LogInternal(string(self) $ " IS STARTING TO DIE!");
-			DeathTick = Rand(4)-;
+			DeathTick = -Rand(4);
 		}
 		//return;		
 	}

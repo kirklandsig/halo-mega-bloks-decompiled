@@ -758,7 +758,7 @@ event UniqueNetId GetPlayerUniqueNetIdFromIndex(int UserIndex)
 	local UniqueNetId ReturnVal, NullId;
 
 	// End:0x6E
-	if(EqualEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)) || PlayerInterface.GetUniquePlayerId(byte(UserIndex), ReturnVal)!)
+	if(EqualEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)) || !PlayerInterface.GetUniquePlayerId(byte(UserIndex), ReturnVal))
 	{
 		ReturnVal = NullId;
 	}

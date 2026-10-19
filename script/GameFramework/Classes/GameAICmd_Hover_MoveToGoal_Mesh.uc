@@ -93,7 +93,7 @@ function Pushed()
 	if(bFallbackMoveToMesh)
 	{
 		// End:0xF0
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("Going into breadcrumb fallback state to get back onto navmesh CurLoc:" @ string(Outer.Pawn.Location));
 		}
@@ -101,10 +101,10 @@ function Pushed()
 		return;
 	}
 	// End:0x21B
-	if(Outer.NavigationHandle.ComputeValidFinalDestination(InitialFinalDestination)!)
+	if(!Outer.NavigationHandle.ComputeValidFinalDestination(InitialFinalDestination))
 	{
 		// End:0x20A
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal(("ABORTING! Final destination" @ string(InitialFinalDestination)) @ "is not reachable! (ComputeValidFinalDestination returned FALSE)");
 		}
@@ -113,10 +113,10 @@ function Pushed()
 	else
 	{
 		// End:0x32D
-		if(Outer.NavigationHandle.SetFinalDestination(InitialFinalDestination)!)
+		if(!Outer.NavigationHandle.SetFinalDestination(InitialFinalDestination))
 		{
 			// End:0x31C
-			if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+			if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 			{
 				Outer.AILog_Internal(("ABORTING! Final destination" @ string(InitialFinalDestination)) @ "is not reachable! (SetFinalDestination returned FALSE)");
 			}
@@ -178,7 +178,7 @@ function bool HasReachedGoal()
 		return true;
 	}
 	// End:0xA8
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal((string(GetFuncName()) @ string(bFinalApproach)) @ string(MoveToActor));
 	}
@@ -253,7 +253,7 @@ state MoveDown extends DebugState
 			if(HitActor == none)
 			{
 				// End:0x21D
-				if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+				if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 				{
 					Outer.AILog_Internal(string(GetFuncName()) @ "Could not find surface to adjust height to!");
 				}
@@ -268,7 +268,7 @@ state MoveDown extends DebugState
 Begin:
 
 	// End:0x69
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("Moving down!");
 	}
@@ -296,7 +296,7 @@ state Moving extends DebugState
 CheckMove:
 
 	// End:0x6A
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("CHECKMOVE TAG");
 	}
@@ -309,7 +309,7 @@ Begin:
 
 
 	// End:0xEE
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("BEGIN TAG" @ string(GetStateName()));
 	}
@@ -331,10 +331,10 @@ Begin:
 		if(MoveToActor != none)
 		{
 			// End:0x404
-			if(Outer.NavigationHandle.SetFinalDestination(MoveToActor.GetDestination(Outer))!)
+			if(!Outer.NavigationHandle.SetFinalDestination(MoveToActor.GetDestination(Outer)))
 			{
 				// End:0x3FA
-				if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+				if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 				{
 					Outer.AILog_Internal(("ABORTING! Final destination" @ string(InitialFinalDestination)) @ "is not reachable! (SetFinalDestination returned FALSE)");
 				}
@@ -342,30 +342,30 @@ Begin:
 			}
 		}
 		// End:0x5A6
-		if(Outer.GeneratePathToLocation(Outer.BP2Vect(Outer.NavigationHandle.FinalDestination), GoalDistance, true)!)
+		if(!Outer.GeneratePathToLocation(Outer.BP2Vect(Outer.NavigationHandle.FinalDestination), GoalDistance, true))
 		{
 			// End:0x598
-			if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+			if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 			{
 				Outer.AILog_Internal((("Couldn't generate path to location" @ string(Outer.BP2Vect(Outer.NavigationHandle.FinalDestination))) @ "from") @ string(Outer.Pawn.Location));
 			}
 			GotoState('Fallback_Breadcrumbs');
 		}
 		// End:0x614
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("Generated path...");
 		}
 		// End:0x70F
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal((("Found path!" @ "BP2Vect(NavigationHandle.FinalDestination):'") $ string(Outer.BP2Vect(Outer.NavigationHandle.FinalDestination))) $ "'", 'Move');
 		}
 		// End:0x7FA
-		if(Outer.NavigationHandle.GetNextMoveLocation(IntermediatePoint, SubGoalReachDist)!)
+		if(!Outer.NavigationHandle.GetNextMoveLocation(IntermediatePoint, SubGoalReachDist))
 		{
 			// End:0x7F0
-			if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+			if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 			{
 				Outer.AILog_Internal("Generated path, but couldn't retrieve next move location?");
 			}
@@ -383,13 +383,13 @@ Begin:
 	if(true)
 	{
 		// End:0x8DF
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("Still moving to" @ string(IntermediatePoint), 'Loop');
 		}
 		bFinalApproach = VSizeSq(IntermediatePoint - Outer.BP2Vect(Outer.NavigationHandle.FinalDestination)) < 1.0000000;
 		// End:0x9CC
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("Calling MoveTo -- " @ string(IntermediatePoint));
 		}
@@ -397,7 +397,7 @@ Begin:
 		if(bFinalApproach && MoveToActor != none)
 		{
 			// End:0xA80
-			if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+			if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 			{
 				Outer.AILog_Internal((" - Final approach to" @ string(MoveToActor)) $ ", using MoveToward()");
 			}
@@ -415,7 +415,7 @@ Begin:
 			Outer.MoveTo(IntermediatePoint, Outer.Enemy, GetMoveDestinationOffset());
 		}
 		// End:0xC8F
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("MoveTo Finished -- " @ string(IntermediatePoint));
 		}
@@ -431,7 +431,7 @@ Begin:
 			{
 				Outer.Vect2BP(LastMoveTargetPathLocation, MoveToActor.GetDestination(Outer));
 				// End:0xDF2
-				if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+				if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 				{
 					Outer.AILog_Internal("Repathing because target moved:" @ string(MoveToActor));
 				}
@@ -440,18 +440,18 @@ Begin:
 			else
 			{
 				// End:0x1196
-				if(Outer.NavigationHandle.GetNextMoveLocation(IntermediatePoint, SubGoalReachDist)!)
+				if(!Outer.NavigationHandle.GetNextMoveLocation(IntermediatePoint, SubGoalReachDist))
 				{
 					// End:0xEC6
-					if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+					if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 					{
 						Outer.AILog_Internal("Couldn't get next move location");
 					}
 					// End:0x10C4
-					if(bFinalApproach! && ((MoveToActor != none) ? Outer.ActorReachable(MoveToActor) : Outer.PointReachable(Outer.BP2Vect(Outer.NavigationHandle.FinalDestination))))
+					if(!bFinalApproach && ((MoveToActor != none) ? Outer.ActorReachable(MoveToActor) : Outer.PointReachable(Outer.BP2Vect(Outer.NavigationHandle.FinalDestination))))
 					{
 						// End:0x1000
-						if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+						if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 						{
 							Outer.AILog_Internal("Target is directly reachable; try direct move");
 						}
@@ -462,7 +462,7 @@ Begin:
 					{
 						Outer.Sleep(0.1000000);
 						// End:0x1189
-						if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+						if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 						{
 							Outer.AILog_Internal("GetNextMoveLocation returned false, and finaldest is not directly reachable");
 						}
@@ -476,7 +476,7 @@ Begin:
 					{
 						NumMovePointFails++;
 						// End:0x1345
-						if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+						if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 						{
 							Outer.AILog_Internal(((((((((("WARNING: Got same move location... something's wrong?!" @ "LastMovePoint:'") $ string(LastMovePoint)) $ "'") @ "IntermediatePoint:'") $ string(IntermediatePoint)) $ "'") @ "Delta") @ string(VSize(LastMovePoint - IntermediatePoint))) @ "ChkDist") @ string(Outer.Pawn.GetCollisionRadius() * 0.1000000));
 						}						
@@ -490,7 +490,7 @@ Begin:
 					if((NumMovePointFails >= MaxMovePointFails) && MaxMovePointFails >= 0)
 					{
 						// End:0x1440
-						if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+						if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 						{
 							Outer.AILog_Internal("ERROR: Got same move location 5x in a row.. something's wrong! bailing from this move");
 						}
@@ -499,7 +499,7 @@ Begin:
 					else
 					{
 						// End:0x14E8
-						if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+						if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 						{
 							Outer.AILog_Internal(((("NextMove" @ string(IntermediatePoint)) @ "NumMovePointFails:'") $ string(NumMovePointFails)) $ "'");
 						}
@@ -511,7 +511,7 @@ Begin:
 		goto J0x85A;
 	}
 	// End:0x1562
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("Reached end of move loop??");
 	}
@@ -520,7 +520,7 @@ FailedMove:
 
 
 	// End:0x15F0
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("Failed move.  Now ZeroMovementVariables");
 	}
@@ -531,7 +531,7 @@ ReachedGoal:
 
 
 	// End:0x17D3
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal(("Reached move point:" @ string(Outer.BP2Vect(Outer.NavigationHandle.FinalDestination))) @ string(VSize(Outer.Pawn.Location - Outer.BP2Vect(Outer.NavigationHandle.FinalDestination))));
 	}
@@ -559,7 +559,7 @@ state Fallback_Breadcrumbs extends DebugState
 Begin:
 
 	// End:0x86
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("trying to move back along breadcrumb path");
 	}
@@ -567,13 +567,13 @@ Begin:
 	if(Outer.NavigationHandle.GetNextBreadCrumb(IntermediatePoint))
 	{
 		// End:0x149
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("Moving to breadcrumb pos:" $ string(IntermediatePoint));
 		}
 		Outer.MoveToDirectNonPathPos(IntermediatePoint);
 		// End:0x1BB
-		if(Outer.NavigationHandle.IsAnchorInescapable()!)
+		if(!Outer.NavigationHandle.IsAnchorInescapable())
 		{
 			GotoState('Moving');
 		}
@@ -583,7 +583,7 @@ Begin:
 	else
 	{
 		// End:0x237
-		if(Outer.NavigationHandle.IsAnchorInescapable()!)
+		if(!Outer.NavigationHandle.IsAnchorInescapable())
 		{
 			GotoState('Moving', 'Begin');			
 		}
@@ -619,7 +619,7 @@ state Fallback_FindNearbyMeshPoint extends DebugState
 				return false;
 			}
 			// End:0x231
-			if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+			if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 			{
 				Outer.AILog_Internal(("Retval:'" $ string(Retval)) $ "'");
 			}
@@ -639,12 +639,12 @@ state Fallback_FindNearbyMeshPoint extends DebugState
 Begin:
 
 	// End:0xA0
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("Fallback! We now try MoveTo directly to a point that is avail to us");
 	}
 	// End:0xD3
-	if(FindAPointWhereICanHoverTo(FallbackDest, 2048.0000000)!)
+	if(!FindAPointWhereICanHoverTo(FallbackDest, 2048.0000000))
 	{
 		GotoState('MoveDown');		
 	}

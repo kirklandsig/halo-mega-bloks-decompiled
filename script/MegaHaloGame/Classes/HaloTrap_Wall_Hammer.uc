@@ -18,7 +18,7 @@ function Exited(Actor Actor)
 
 function bool CanDamage(HaloPawn Pawn)
 {
-	return (((int(GetTeamNum()) != int(Pawn.GetTeamNum())) && Pawn.bCanBeDamaged) && Pawn.IsAliveAndWell()) && Pawn.bStatic!;
+	return (((int(GetTeamNum()) != int(Pawn.GetTeamNum())) && Pawn.bCanBeDamaged) && Pawn.IsAliveAndWell()) && !Pawn.bStatic;
 	//return ReturnValue;	
 }
 

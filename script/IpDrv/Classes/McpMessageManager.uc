@@ -54,7 +54,7 @@ native function bool StartAsyncUncompression(string MessageId, McpMessageBase.EM
 event FinishedAsyncUncompression(bool bWasSuccessful, const out array<byte> UncompressedMessageContents, string MessageId)
 {
 	// End:0x67
-	if(CacheMessageContents(UncompressedMessageContents, MessageId)!)
+	if(!CacheMessageContents(UncompressedMessageContents, MessageId))
 	{
 		LogInternal((((("(" $ string(Name)) $ ") McpMessageManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName()));
 	}
@@ -99,7 +99,7 @@ function CreateMessage(const out array<string> ToUniqueUserIds, string FromUniqu
 		if((int(CompressionType) == int(1)) || int(CompressionType) == int(2))
 		{
 			// End:0x321
-			if(StartAsyncCompression(CompressionType, MessageContents, CreateMessageRequest)!)
+			if(!StartAsyncCompression(CompressionType, MessageContents, CreateMessageRequest))
 			{
 				OnCreateMessageComplete(Message, false, "Failed to Start Async Compression.");
 			}			
@@ -108,7 +108,7 @@ function CreateMessage(const out array<string> ToUniqueUserIds, string FromUniqu
 		{
 			CreateMessageRequest.SetContent(MessageContents);
 			// End:0x3F0
-			if(CreateMessageRequest.ProcessRequest()!)
+			if(!CreateMessageRequest.ProcessRequest())
 			{
 				LogInternal(((((((("(" $ string(Name)) $ ") McpMessageManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 			}
@@ -159,7 +159,7 @@ function DeleteMessage(string MessageId)
 		DeleteMessageRequest.SetURL(URL);
 		DeleteMessageRequest.__OnProcessRequestComplete__Delegate = OnDeleteMessageRequestComplete;
 		// End:0x1A0
-		if(DeleteMessageRequest.ProcessRequest()!)
+		if(!DeleteMessageRequest.ProcessRequest())
 		{
 			LogInternal(((((((("(" $ string(Name)) $ ") McpMessageManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 		}
@@ -202,7 +202,7 @@ function QueryMessages(string ToUniqueUserId, string TitleId)
 		QueryMessagesRequest.__OnProcessRequestComplete__Delegate = OnQueryMessagesRequestComplete;
 		LogInternal((((((("(" $ string(Name)) $ ") McpMessageManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "URL: ") $ URL);
 		// End:0x212
-		if(QueryMessagesRequest.ProcessRequest()!)
+		if(!QueryMessagesRequest.ProcessRequest())
 		{
 			LogInternal(((((((("(" $ string(Name)) $ ") McpMessageManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 		}
@@ -316,7 +316,7 @@ function QueryMessageContents(string MessageId)
 		QueryMessageContentsRequest.__OnProcessRequestComplete__Delegate = OnQueryMessageContentsRequestComplete;
 		LogInternal((((((("(" $ string(Name)) $ ") McpMessageManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "URL: ") $ URL);
 		// End:0x1F7
-		if(QueryMessageContentsRequest.ProcessRequest()!)
+		if(!QueryMessageContentsRequest.ProcessRequest())
 		{
 			LogInternal(((((((("(" $ string(Name)) $ ") McpMessageManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 		}
@@ -356,7 +356,7 @@ private final function OnQueryMessageContentsRequestComplete(HttpRequestInterfac
 				else
 				{
 					// End:0x280
-					if(StartAsyncUncompression(MessageId, Message.MessageCompressionType, MessageContents)!)
+					if(!StartAsyncUncompression(MessageId, Message.MessageCompressionType, MessageContents))
 					{
 						OnQueryMessageContentsComplete(MessageId, false, "Could not Start AsyncDecompression");
 					}
@@ -415,7 +415,7 @@ function CacheMessage(McpMessage Message)
 		J0x83:
 
 		// End:0x12F [Loop If]
-		if((MessageIndex < UserMessageList.Messages.Length) && bWasFound!)
+		if((MessageIndex < UserMessageList.Messages.Length) && !bWasFound)
 		{
 			bWasFound = Message.MessageId == UserMessageList.Messages[MessageIndex].MessageId;
 			MessageIndex++;
@@ -423,7 +423,7 @@ function CacheMessage(McpMessage Message)
 			goto J0x83;
 		}
 		// End:0x1DC
-		if(bWasFound!)
+		if(!bWasFound)
 		{
 			AddAt = UserMessageList.Messages.Length;
 			UserMessageList.Messages.Length = AddAt + 1;

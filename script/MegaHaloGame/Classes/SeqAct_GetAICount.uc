@@ -35,7 +35,7 @@ event Activated()
 	foreach GetWorldInfo().AllControllers(Class'UDKBase.CCSController', AIController)
 	{
 		// End:0x1E3
-		if(((AIController.Pawn != none) && HaloPawn(AIController.Pawn) != none) && requireTeamCheck! || int(AIController.Pawn.GetTeamNum()) == int(TeamNum))
+		if(((AIController.Pawn != none) && HaloPawn(AIController.Pawn) != none) && !requireTeamCheck || int(AIController.Pawn.GetTeamNum()) == int(TeamNum))
 		{
 			aiTally++;
 		}		

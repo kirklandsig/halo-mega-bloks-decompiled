@@ -209,14 +209,14 @@ copies of the code?
 
 ### Task 5: scripts (time-box: about a day)
 
-- [ ] **Try UDK July 2012 BETA 2's script compiler** (local copy in
+- [x] **Try UDK July 2012 BETA 2's script compiler** (local copy in
   `%USERPROFILE%\haggar-tools\udk`) on the committed n-Space scripts, with the
   UDK-identical classes from UDK itself.
   - Record whether it compiles, and what fails, in `docs/PROGRESS.md`.
   - Never commit UDK files.
-- [ ] **Fix the 14 classes that still contain decompiler errors,** where the
+- [x] **Fix the 14 classes that still contain decompiler errors,** where the
   bytecode makes the original clear. List the rest.
-- [ ] **Commit, then push.**
+- [x] **Commit, then push.**
 
 ### Task 6: wrap-up
 

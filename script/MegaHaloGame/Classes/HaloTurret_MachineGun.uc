@@ -49,7 +49,7 @@ function UpdateAI(float DeltaTime)
 	FlatRot.Pitch = 0;
 	FlatForward = Vector(FlatRot);
 	// End:0x51D
-	if(Seats[0].Gun.IsFiring()! && (CurBurstCD == float(0)) || ContinuousTracking)
+	if(!Seats[0].Gun.IsFiring() && (CurBurstCD == float(0)) || ContinuousTracking)
 	{
 		// End:0x4E1
 		foreach WorldInfo.AllPawns(Class'MegaHaloGame.HaloPawn', potentialTarget, fireLoc, Seats[0].Gun.WeaponRange)

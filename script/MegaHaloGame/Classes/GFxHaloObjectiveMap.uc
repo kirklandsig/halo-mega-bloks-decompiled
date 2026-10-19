@@ -158,7 +158,7 @@ function MarkObjective(HaloObjective Objective)
 			OM = ObjectiveContainer.AttachMovie("objectiveMarker", "OM_" $ string(Index));
 			OM_N = OM.GetObject("distance");
 			OM_H = OM.GetObject("health");
-			OM.SetFloat("_xrotation", GetFloat("_xrotation")- + MarkerRotation);
+			OM.SetFloat("_xrotation", -GetFloat("_xrotation") + MarkerRotation);
 			switch(HUDMarker.Type)
 			{
 				// End:0x1BB
@@ -279,7 +279,7 @@ function Pan(Vector2D StickVector)
 	if(widthDiff > 0.0000000)
 	{
 		NewPosition.X = MapContainer1.GetFloat("_x") - (StickVector.X * PanMultiplier);
-		NewPosition.X = float(Min(Max(int(NewPosition.X), int(widthDiff-)), int(widthDiff)));		
+		NewPosition.X = float(Min(Max(int(NewPosition.X), int(-widthDiff)), int(widthDiff)));		
 	}
 	else
 	{
@@ -290,7 +290,7 @@ function Pan(Vector2D StickVector)
 	if(heightDiff > 0.0000000)
 	{
 		NewPosition.Y = MapContainer1.GetFloat("_y") + (StickVector.Y * PanMultiplier);
-		NewPosition.Y = float(Min(Max(int(NewPosition.Y), int(heightDiff-)), int(heightDiff)));		
+		NewPosition.Y = float(Min(Max(int(NewPosition.Y), int(-heightDiff)), int(heightDiff)));		
 	}
 	else
 	{
@@ -434,8 +434,8 @@ function ZoomToObjectives()
 		}
 	}
 	SetMapZoom(newZoom);
-	NewPosition.X = (((MinX - MapCenterX) + MaxX) - MapCenterX- * 0.5000000) * CurrentZoom;
-	NewPosition.Y = (((MinY - MapCenterY) + MaxY) - MapCenterY- * 0.5000000) * CurrentZoom;
+	NewPosition.X = (-((MinX - MapCenterX) + MaxX) - MapCenterX * 0.5000000) * CurrentZoom;
+	NewPosition.Y = (-((MinY - MapCenterY) + MaxY) - MapCenterY * 0.5000000) * CurrentZoom;
 	SetMapPan(NewPosition);
 	NewPosition.X = 0.0000000;
 	NewPosition.Y = 0.0000000;

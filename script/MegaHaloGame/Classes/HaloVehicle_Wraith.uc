@@ -69,7 +69,7 @@ var HaloVehicle_Wraith.BankDirection LastBankDirection;
 replication
 {
 	// Pos:0x000
-	if((bNetOwner! || bDemoRecording) && int(Role) == int(ROLE_Authority))
+	if((!bNetOwner || bDemoRecording) && int(Role) == int(ROLE_Authority))
 		bDoBikeJump, bHoldingDuck;
 }
 
@@ -133,11 +133,11 @@ simulated function GetPlayerInput(out PlayerInput Player, optional bool Accel = 
 			Player.aTurn = Player.aStrafe;
 			Player.aStrafe = 0.0000000;
 		}
-		Player.aLookUp = Player.aBaseY- * 0.3000000;
+		Player.aLookUp = -Player.aBaseY * 0.3000000;
 		// End:0x170
 		if(Player.bInvertMouse == true)
 		{
-			Player.aLookUp = Player.aLookUp-;
+			Player.aLookUp = -Player.aLookUp;
 		}
 	}
 	//return;	
@@ -145,7 +145,7 @@ simulated function GetPlayerInput(out PlayerInput Player, optional bool Accel = 
 
 simulated function bool CanBeBaseForPawn(Pawn aPawn)
 {
-	return bCanBeBaseForPawns && bDriving!;
+	return bCanBeBaseForPawns && !bDriving;
 	//return ReturnValue;	
 }
 
@@ -465,7 +465,7 @@ simulated function float GetCurrentPitch()
 simulated function SetInputs(float InForward, float InStrafe, float InUp)
 {
 	// End:0x4D
-	if((bBoostersActivated! && ForwardVel < 0.0000000) && InForward < 0.0000000)
+	if((!bBoostersActivated && ForwardVel < 0.0000000) && InForward < 0.0000000)
 	{
 		InForward *= ReverseSpeedPercentage;
 	}
@@ -494,7 +494,7 @@ function Rotator GetWeaponAim(UTVehicleWeapon VWeapon)
 		if((Seats[SeatIndex].GunClass != none) && VWeapon.IsA(Seats[SeatIndex].GunClass.Name))
 		{
 			// End:0x101
-			if(bTossRotValid!)
+			if(!bTossRotValid)
 			{
 				GetBarrelLocationAndRotation(SeatIndex, barrelLoc, barrelRot);				
 			}
@@ -536,7 +536,7 @@ simulated function Tick(float DeltaSeconds)
 			// End:0x8C
 			case 2:
 				// End:0x89
-				if(OutputSteering > BankSteeringLimit-)
+				if(OutputSteering > -BankSteeringLimit)
 				{
 					LastBankDirection = 1;
 					StopBankRightSound();
@@ -554,7 +554,7 @@ simulated function Tick(float DeltaSeconds)
 				else
 				{
 					// End:0xEE
-					if(OutputSteering <= BankSteeringLimit-)
+					if(OutputSteering <= -BankSteeringLimit)
 					{
 						LastBankDirection = 2;
 						PlayBankRightSound();

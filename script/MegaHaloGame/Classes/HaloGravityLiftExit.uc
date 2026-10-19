@@ -42,7 +42,7 @@ simulated function TickPawn(Pawn Pawn, float DeltaTime)
 	}
 	else
 	{
-		Pawn.Acceleration = Normal(toCenter)-;
+		Pawn.Acceleration = -Normal(toCenter);
 	}
 	Pawn.Acceleration *= ExitingAccel;
 	Pawn.Acceleration.Z = accelZ;

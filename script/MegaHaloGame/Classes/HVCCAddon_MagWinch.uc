@@ -84,7 +84,7 @@ function Tick(float DeltaTime)
 		{
 			ToTarget = CurrentGateTarget.GetWinchAttachLocation() - Location;
 			// End:0x31C
-			if(MagWinchProjectile.ContactMade! && (VSizeSq(ToTarget) > (MaxWinchRange * MaxWinchRange)) || RDiff(Rotator(ToTarget), Rotation) > MaxWinchRotDif)
+			if(!MagWinchProjectile.ContactMade && (VSizeSq(ToTarget) > (MaxWinchRange * MaxWinchRange)) || RDiff(Rotator(ToTarget), Rotation) > MaxWinchRotDif)
 			{
 				TraceActor = Trace(HitLocation, HitNormal, CurrentGateTarget.GetWinchAttachLocation(), Location);
 				// End:0x319
@@ -96,7 +96,7 @@ function Tick(float DeltaTime)
 			else
 			{
 				// End:0x4CB
-				if(MagWinchProjectile.ContactMade && MagWinchProjectile.FlyingBack!)
+				if(MagWinchProjectile.ContactMade && !MagWinchProjectile.FlyingBack)
 				{
 					CurrentMagWinchMessage = name(MagWinchPullMessage);
 					vehicleFoward = Vector(ParentVehicle.Rotation);

@@ -45,7 +45,7 @@ function RegisterUserGenerated(string UDID, optional string ExistingMcpAuth)
 		RegisterUserRequests[AddAt].UDID = UDID;
 		RegisterUserRequests[AddAt].Request = Request;
 		// End:0x1EB
-		if(Request.ProcessRequest()!)
+		if(!Request.ProcessRequest())
 		{
 			LogInternal(("Failed to start RegisterUser web request for URL(" $ URL) $ ")");
 		}
@@ -83,7 +83,7 @@ function OnRegisterUserRequestComplete(HttpRequestInterface Request, HttpRespons
 				J0x12B:
 
 				// End:0x19E [Loop If]
-				if((UserIndex < UserStatuses.Length) && bWasFound!)
+				if((UserIndex < UserStatuses.Length) && !bWasFound)
 				{
 					bWasFound = McpId == UserStatuses[UserIndex].McpId;
 					UserIndex++;
@@ -91,7 +91,7 @@ function OnRegisterUserRequestComplete(HttpRequestInterface Request, HttpRespons
 					goto J0x12B;
 				}
 				// End:0x255
-				if(bWasFound!)
+				if(!bWasFound)
 				{
 					AddAt = UserStatuses.Length;
 					UserStatuses.Length = AddAt + 1;
@@ -131,7 +131,7 @@ function RegisterUserEmail(string Email, string PasswordHash, string UDID, optio
 		RegisterUserRequests[AddAt].UDID = UDID;
 		RegisterUserRequests[AddAt].Request = Request;
 		// End:0x262
-		if(Request.ProcessRequest()!)
+		if(!Request.ProcessRequest())
 		{
 			LogInternal(("Failed to start RegisterUserEmail web request for URL(" $ URL) $ ")");
 		}
@@ -170,7 +170,7 @@ function RegisterUserFacebook(string FacebookId, string FacebookAuthToken, strin
 		RegisterUserRequests[AddAt].UDID = UDID;
 		RegisterUserRequests[AddAt].Request = Request;
 		// End:0x26B
-		if(Request.ProcessRequest()!)
+		if(!Request.ProcessRequest())
 		{
 			LogInternal(("Failed to start RegisterUserFacebook web request for URL(" $ URL) $ ")");
 		}
@@ -203,7 +203,7 @@ function QueryUser(string McpId, optional bool bShouldUpdateLastActive)
 		QueryUsersRequests.Length = AddAt + 1;
 		QueryUsersRequests[AddAt] = Request;
 		// End:0x1E2
-		if(Request.ProcessRequest()!)
+		if(!Request.ProcessRequest())
 		{
 			LogInternal(("Failed to start QueryUser web request for URL(" $ URL) $ ")");
 		}
@@ -251,7 +251,7 @@ function OnQueryUserRequestComplete(HttpRequestInterface Request, HttpResponseIn
 				J0x277:
 
 				// End:0x2EA [Loop If]
-				if((UserIndex < UserStatuses.Length) && bWasFound!)
+				if((UserIndex < UserStatuses.Length) && !bWasFound)
 				{
 					bWasFound = McpId == UserStatuses[UserIndex].McpId;
 					UserIndex++;
@@ -259,7 +259,7 @@ function OnQueryUserRequestComplete(HttpRequestInterface Request, HttpResponseIn
 					goto J0x277;
 				}
 				// End:0x489
-				if(bWasFound!)
+				if(!bWasFound)
 				{
 					AddAt = UserStatuses.Length;
 					UserStatuses.Length = AddAt + 1;
@@ -324,7 +324,7 @@ function QueryUsers(const out array<string> McpIds)
 		QueryUsersRequests.Length = AddAt + 1;
 		QueryUsersRequests[AddAt] = Request;
 		// End:0x2B7
-		if(Request.ProcessRequest()!)
+		if(!Request.ProcessRequest())
 		{
 			LogInternal(("Failed to start QueryUsers web request for URL(" $ URL) $ ")");
 		}
@@ -378,7 +378,7 @@ function OnQueryUsersRequestComplete(HttpRequestInterface Request, HttpResponseI
 					J0x369:
 
 					// End:0x3DC [Loop If]
-					if((UserIndex < UserStatuses.Length) && bWasFound!)
+					if((UserIndex < UserStatuses.Length) && !bWasFound)
 					{
 						bWasFound = McpId == UserStatuses[UserIndex].McpId;
 						UserIndex++;
@@ -386,7 +386,7 @@ function OnQueryUsersRequestComplete(HttpRequestInterface Request, HttpResponseI
 						goto J0x369;
 					}
 					// End:0x538
-					if(bWasFound!)
+					if(!bWasFound)
 					{
 						AddAt = UserStatuses.Length;
 						UserStatuses.Length = AddAt + 1;
@@ -434,7 +434,7 @@ function DeleteUser(string McpId)
 		DeleteUserRequests.Length = AddAt + 1;
 		DeleteUserRequests[AddAt] = Request;
 		// End:0x1AF
-		if(Request.ProcessRequest()!)
+		if(!Request.ProcessRequest())
 		{
 			LogInternal(("Failed to start DeleteUser web request for URL(" $ URL) $ ")");
 		}

@@ -24,7 +24,7 @@ function PostBeginPlay()
 
 	super(Actor).PostBeginPlay();
 	// End:0x39
-	if(bDeleteMe!)
+	if(!bDeleteMe)
 	{
 		WorldInfo.PopulationManager = self;
 	}
@@ -49,7 +49,7 @@ event NotifyPathChanged()
 function AddSpawnPoint(GameCrowdDestination GCD)
 {
 	// End:0x4C
-	if((GCD.MyPopMgr != none) || GCD.bAllowCloudSpawning!)
+	if((GCD.MyPopMgr != none) || !GCD.bAllowCloudSpawning)
 	{
 		return;
 	}
@@ -259,7 +259,7 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 	Canvas.DrawText("---- GameCrowdPopulationManager ---");
 	out_YPos += out_YL;
 	// End:0xE9
-	if(GetPlayerInfo()!)
+	if(!GetPlayerInfo())
 	{
 		return;
 	}
@@ -267,7 +267,7 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 	foreach DynamicActors(Class'GameFramework.GameCrowdAgent', GCA)
 	{
 		// End:0x144
-		if(GCA.bDeleteMe!)
+		if(!GCA.bDeleteMe)
 		{
 			AgentList[AgentList.Length] = GCA;
 		}		
@@ -467,7 +467,7 @@ function Tick(float DeltaTime)
 				PickedSpawnPoint.PrioritizeSpawnPoint(PlayerInfo, CloudSpawnInfo.MaxSpawnDist);
 				PickedSpawnPoint.DrawDebug(PlayerInfo);
 				// End:0x387
-				if(ValidateSpawnAt(CloudSpawnInfo, PickedSpawnPoint)!)
+				if(!ValidateSpawnAt(CloudSpawnInfo, PickedSpawnPoint))
 				{
 					DrawDebugCylinder(PickedSpawnPoint.Location, PickedSpawnPoint.Location, PickedSpawnPoint.CylinderComponent.CollisionRadius, int(PickedSpawnPoint.CylinderComponent.CollisionHeight), 255, 0, 0);
 				}
@@ -478,7 +478,7 @@ function Tick(float DeltaTime)
 		}
 	}
 	// End:0x3C6
-	if(bPauseCrowd! && IsSpawningActive())
+	if(!bPauseCrowd && IsSpawningActive())
 	{
 		UpdateAllSpawners(DeltaTime);
 	}
@@ -495,7 +495,7 @@ event bool UpdateSpawner(out CrowdSpawnInfoItem Item, float DeltaTime)
 	local int NumSpawned;
 
 	// End:0x64
-	if(Item.bSpawningActive! || Item.ActiveAgents.Length >= Item.SpawnNum)
+	if(!Item.bSpawningActive || Item.ActiveAgents.Length >= Item.SpawnNum)
 	{
 		return false;
 	}
@@ -582,7 +582,7 @@ event PrioritizeSpawnPoints(out CrowdSpawnInfoItem Item, float DeltaTime)
 	local int UpdateNum;
 
 	// End:0x36
-	if((Item.PotentialSpawnPoints.Length == 0) || GetPlayerInfo()!)
+	if((Item.PotentialSpawnPoints.Length == 0) || !GetPlayerInfo())
 	{
 		return;
 	}
@@ -598,7 +598,7 @@ function AnalyzeSpawnPoints(out CrowdSpawnInfoItem Item, int StartIndex, int Num
 	local GameCrowdDestination GCD;
 
 	// End:0x3E
-	if((StartIndex >= Item.PotentialSpawnPoints.Length) || GetPlayerInfo()!)
+	if((StartIndex >= Item.PotentialSpawnPoints.Length) || !GetPlayerInfo())
 	{
 		return;
 	}
@@ -675,7 +675,7 @@ function bool ValidateSpawnAt(out CrowdSpawnInfoItem Item, GameCrowdDestination 
 	local int PlayerIdx;
 
 	// End:0x71
-	if((Candidate.bIsEnabled! || Candidate.bAllowsSpawning!) || Candidate.AtCapacity())
+	if((!Candidate.bIsEnabled || !Candidate.bAllowsSpawning) || Candidate.AtCapacity())
 	{
 		return false;
 	}
@@ -743,7 +743,7 @@ event GameCrowdAgent CreateNewAgent(out CrowdSpawnInfoItem Item, GameCrowdDestin
 
 	GameCrowdSpawnInterface(SpawnLoc).GetSpawnPosition(none, SpawnPos, SpawnRot);
 	// End:0x4D
-	if(GetPlayerInfo()!)
+	if(!GetPlayerInfo())
 	{
 		return none;
 	}

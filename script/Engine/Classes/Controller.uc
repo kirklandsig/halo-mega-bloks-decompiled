@@ -183,7 +183,7 @@ event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	// End:0x65
-	if(bDeleteMe! && int(WorldInfo.NetMode) != int(NM_Client))
+	if(!bDeleteMe && int(WorldInfo.NetMode) != int(NM_Client))
 	{
 		// End:0x5B
 		if(bIsPlayer)
@@ -369,7 +369,7 @@ function PawnDied(Pawn inPawn)
 	if(bIsPlayer)
 	{
 		// End:0x134
-		if(GamePlayEndedState()!)
+		if(!GamePlayEndedState())
 		{
 			GotoState('Dead');
 		}		
@@ -406,7 +406,7 @@ event Destroyed()
 		if(PlayerReplicationInfo != none)
 		{
 			// End:0x10A
-			if(PlayerReplicationInfo.bOnlySpectator! && PlayerReplicationInfo.Team != none)
+			if(!PlayerReplicationInfo.bOnlySpectator && PlayerReplicationInfo.Team != none)
 			{
 				PlayerReplicationInfo.Team.RemoveFromTeam(self);
 			}
@@ -428,7 +428,7 @@ function Restart(bool bVehicleTransition)
 {
 	Pawn.Restart();
 	// End:0x39
-	if(bVehicleTransition!)
+	if(!bVehicleTransition)
 	{
 		Enemy = none;
 	}
@@ -786,7 +786,7 @@ simulated function bool PawnIsFacing(Actor ATarget, float Epsilon)
 		pawnToTargetDir = ATarget.Location - Pawn.Location;
 		pawnToTargetDir.Z = 0.0000000;
 		// End:0xC1
-		if(IsZero(pawnToTargetDir)!)
+		if(!IsZero(pawnToTargetDir))
 		{
 			return (pawnToTargetDir Dot Vector(Pawn.Rotation)) >= Epsilon;
 		}
@@ -966,7 +966,7 @@ function OnToggleGodMode(SeqAct_ToggleGodMode inAction)
 		}
 		else
 		{
-			bGodMode = bGodMode!;
+			bGodMode = !bGodMode;
 		}
 	}
 	//return;	
@@ -1166,14 +1166,14 @@ state RoundEnded
 			Pawn.TurnOff();
 			StopFiring();
 			// End:0x71
-			if(bIsPlayer!)
+			if(!bIsPlayer)
 			{
 				Pawn.UnPossessed();
 				Pawn = none;
 			}
 		}
 		// End:0x83
-		if(bIsPlayer!)
+		if(!bIsPlayer)
 		{
 			Destroy();
 		}

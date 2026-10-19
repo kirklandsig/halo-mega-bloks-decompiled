@@ -51,7 +51,7 @@ simulated event FellOutOfWorld(Class<DamageType> dmgType)
 simulated event Explode()
 {
 	// End:0x24
-	if(bHasBeenRecycled!)
+	if(!bHasBeenRecycled)
 	{
 		super.Explode();
 		RecyclePart(true);

@@ -38,7 +38,7 @@ function GripBTNode.BTExecutionResult Execute(GripBTInterface BTInterface, bool 
 
 	ExecRes = 2;
 	// End:0x5B
-	if(MeleeSequence.bPlaying!)
+	if(!MeleeSequence.bPlaying)
 	{
 		// End:0x4C
 		if(PushToFinish)

@@ -210,7 +210,7 @@ function bool PickBehaviorFrom(array<BehaviorEntry> BehaviorList, optional Vecto
 		}
 		else
 		{
-			BehaviorList[I].bCanBeUsed = (BehaviorList[I].bHasBeenUsed! || BehaviorList[I].bNeverRepeat!) && BehaviorList[I].BehaviorArchetype.CanBeUsedBy(self, BestCameraLoc);
+			BehaviorList[I].bCanBeUsed = (!BehaviorList[I].bHasBeenUsed || !BehaviorList[I].bNeverRepeat) && BehaviorList[I].BehaviorArchetype.CanBeUsedBy(self, BestCameraLoc);
 			// End:0x2AE
 			if(BehaviorList[I].bCanBeUsed)
 			{
@@ -269,7 +269,7 @@ event WaitForGroupMembers()
 		if(I < MyGroup.Members.Length)
 		{
 			// End:0x244
-			if((((MyGroup.Members[I] != none) && MyGroup.Members[I].bDeleteMe!) && VSizeSq(MyGroup.Members[I].Location - Location) > DesiredGroupRadiusSq) && (MyGroup.Members[I].Velocity Dot (Location - MyGroup.Members[I].Location)) > 0.0000000)
+			if((((MyGroup.Members[I] != none) && !MyGroup.Members[I].bDeleteMe) && VSizeSq(MyGroup.Members[I].Location - Location) > DesiredGroupRadiusSq) && (MyGroup.Members[I].Velocity Dot (Location - MyGroup.Members[I].Location)) > 0.0000000)
 			{
 				CurrentBehavior.ActionTarget = MyGroup.Members[I];
 				// [Explicit Break]
@@ -408,7 +408,7 @@ simulated function Destroyed()
 {
 	super(Actor).Destroyed();
 	// End:0x68
-	if(NotEqual_InterfaceInterface(MySpawner, GameCrowdSpawnerInterface(none)) && bHasNotifiedSpawner!)
+	if(NotEqual_InterfaceInterface(MySpawner, GameCrowdSpawnerInterface(none)) && !bHasNotifiedSpawner)
 	{
 		bHasNotifiedSpawner = true;
 		MySpawner.AgentDestroyed(self);
@@ -518,7 +518,7 @@ simulated function Vector GetAttemptedSpawnLocation(float Pct, Vector CurPos, fl
 
 	MaxLateralOffset = CurRadius + (Pct * (DestRadius - CurRadius));
 	LateralDir = Normal((CurPos - DestPos) Cross vect(0.0000000, 0.0000000, 1.0000000));
-	LateralOffset = RandRange(MaxLateralOffset-, MaxLateralOffset);
+	LateralOffset = RandRange(-MaxLateralOffset, MaxLateralOffset);
 	return ((Pct * DestPos) + ((1.0000000 - Pct) * CurPos)) + (LateralOffset * LateralDir);
 	//return ReturnValue;	
 }
@@ -554,7 +554,7 @@ simulated function InitializeAgent(Actor SpawnLoc, const out array<CrowdSpawnerP
 		}
 	}
 	// End:0xCCC
-	if(bGroupDestination!)
+	if(!bGroupDestination)
 	{
 		SpawnDest = GameCrowdDestination(SpawnLoc);
 		// End:0xCCC
@@ -563,7 +563,7 @@ simulated function InitializeAgent(Actor SpawnLoc, const out array<CrowdSpawnerP
 			DebugSpawnDest = SpawnDest;
 			SetCurrentDestination(SpawnDest);
 			bRealPreferVisible = bPreferVisibleDestination;
-			bPreferVisibleDestination = bPreferVisibleDestinationOnSpawn || SpawnDest.bWillBeVisible!;
+			bPreferVisibleDestination = bPreferVisibleDestinationOnSpawn || !SpawnDest.bWillBeVisible;
 			LastRenderTime = WorldInfo.TimeSeconds;
 			CurrentDestination.ReachedDestination(self);
 			bPreferVisibleDestination = bRealPreferVisible;
@@ -624,7 +624,7 @@ simulated function InitializeAgent(Actor SpawnLoc, const out array<CrowdSpawnerP
 					else
 					{
 						// End:0x5F0
-						if(SpawnDest.bWillBeVisible!)
+						if(!SpawnDest.bWillBeVisible)
 						{
 							TryPct = (0.5000000 * TryPct) + 0.5000000;							
 						}
@@ -646,7 +646,7 @@ simulated function InitializeAgent(Actor SpawnLoc, const out array<CrowdSpawnerP
 						J0x715:
 
 						// End:0x95E [Loop If]
-						if((CheckCnt < MaxCheckCnt) && bFoundOption!)
+						if((CheckCnt < MaxCheckCnt) && !bFoundOption)
 						{
 							TryOptions.Length = 0;
 							NavigationHandle.GetValidPositionsForBox(TryLoc, 128.0000000, GetCollisionExtent(), false, TryOptions, 1);
@@ -678,7 +678,7 @@ simulated function InitializeAgent(Actor SpawnLoc, const out array<CrowdSpawnerP
 								J0x87D:
 
 								// End:0x8B8
-								if(bVisibleOption!)
+								if(!bVisibleOption)
 								{
 									bFoundOption = true;
 									TryLoc = TryOptions[OptionIdx];
@@ -692,7 +692,7 @@ simulated function InitializeAgent(Actor SpawnLoc, const out array<CrowdSpawnerP
 							J0x8C6:
 
 							// End:0x95B
-							if(bFoundOption!)
+							if(!bFoundOption)
 							{
 								TryPct *= 0.5000000;
 								TryLoc = GetAttemptedSpawnLocation(TryPct, SpawnDest.Location, SpawnDestRadius, CurrentDestination.Location, TravelDestRadius);
@@ -701,10 +701,10 @@ simulated function InitializeAgent(Actor SpawnLoc, const out array<CrowdSpawnerP
 							// [Loop Continue]
 							goto J0x715;
 						}
-						bVisibleTryLoc = bFoundOption!;
+						bVisibleTryLoc = !bFoundOption;
 					}
 					// End:0xA56
-					if(bVisibleTryLoc!)
+					if(!bVisibleTryLoc)
 					{
 						SpawnOffset = TryLoc;
 						SetLocation(TryLoc);
@@ -822,7 +822,7 @@ event NotifySeePlayer(PlayerController PC)
 	if(CurrentBehavior == none)
 	{
 		// End:0x11E
-		if(PickBehaviorFrom(SeePlayerBehaviors, PC.Pawn.Location)!)
+		if(!PickBehaviorFrom(SeePlayerBehaviors, PC.Pawn.Location))
 		{
 			I = 0;
 			J0x71:
@@ -831,7 +831,7 @@ event NotifySeePlayer(PlayerController PC)
 			if(I < SeePlayerBehaviors.Length)
 			{
 				// End:0xF2
-				if(SeePlayerBehaviors[I].bNeverRepeat! || SeePlayerBehaviors[I].bHasBeenUsed!)
+				if(!SeePlayerBehaviors[I].bNeverRepeat || !SeePlayerBehaviors[I].bHasBeenUsed)
 				{
 					bFoundBehavior = true;
 					// [Explicit Break]
@@ -844,7 +844,7 @@ event NotifySeePlayer(PlayerController PC)
 			J0x100:
 
 			// End:0x11E
-			if(bFoundBehavior!)
+			if(!bFoundBehavior)
 			{
 				SeePlayerInterval = 0.0000000;
 			}
@@ -867,7 +867,7 @@ function TryRandomBehavior()
 	if((CurrentBehavior == none) && (WorldInfo.TimeSeconds - LastRenderTime) < 0.1000000)
 	{
 		// End:0x11A
-		if(PickBehaviorFrom(RandomBehaviors)!)
+		if(!PickBehaviorFrom(RandomBehaviors))
 		{
 			I = 0;
 			J0x68:
@@ -876,7 +876,7 @@ function TryRandomBehavior()
 			if(I < RandomBehaviors.Length)
 			{
 				// End:0xE9
-				if(RandomBehaviors[I].bNeverRepeat! || RandomBehaviors[I].bHasBeenUsed!)
+				if(!RandomBehaviors[I].bNeverRepeat || !RandomBehaviors[I].bHasBeenUsed)
 				{
 					bFoundBehavior = true;
 					// [Explicit Break]
@@ -889,7 +889,7 @@ function TryRandomBehavior()
 			J0xF7:
 
 			// End:0x11A
-			if(bFoundBehavior!)
+			if(!bFoundBehavior)
 			{
 				ClearTimer('TryRandomBehavior');
 			}
@@ -1056,7 +1056,7 @@ event UpdateIntermediatePoint(optional Actor DestinationActor)
 		}
 	}
 	// End:0xA9
-	if(bUseNavMeshPathing!)
+	if(!bUseNavMeshPathing)
 	{
 		IntermediatePoint = DestinationActor.Location;		
 	}
@@ -1133,7 +1133,7 @@ event Vector GeneratePathToActor(Actor Goal, optional float WithinDistance, opti
 		InitNavigationHandle();
 	}
 	// End:0x1A6
-	if((NavigationHandle != none) && NavigationHandle.ActorReachable(Goal)!)
+	if((NavigationHandle != none) && !NavigationHandle.ActorReachable(Goal))
 	{
 		Class'Engine.NavMeshPath_Toward'.static.TowardGoal(NavigationHandle, Goal);
 		Class'Engine.NavMeshGoal_At'.static.AtActor(NavigationHandle, Goal, WithinDistance, bAllowPartialPath);

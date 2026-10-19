@@ -150,14 +150,14 @@ function VerifyTopLevelConnections()
 						// [Explicit Break]
 						goto J0x3E8;
 					}
-					PtIdx++;
+					++PtIdx;
 					// [Loop Continue]
 					goto J0x309;
 				}
 				J0x3E8:
 
 				// End:0x4CB
-				if(bFoundPath!)
+				if(!bFoundPath)
 				{
 					LogInternal((((((((("PATH CONNECTION FAILURE!" @ string(self)) @ "Location:'") $ string(Location)) $ "'") @ "failed to path to ") @ string(NeighborPylon)) @ "Dst_Pts[0]:'") $ string(Dst_Pts[0])) $ "'");
 					DrawDebugLine(Location, Dst_Pts[0], 255, 0, 0, true);
@@ -165,7 +165,7 @@ function VerifyTopLevelConnections()
 				}
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x13C;
 	}
@@ -180,13 +180,13 @@ event NotifyPathChanged()
 function PostBeginPlay()
 {
 	super(Actor).PostBeginPlay();
-	SetEnabled(bBlocked!);
+	SetEnabled(!bBlocked);
 	//return;	
 }
 
 event SetEnabled(bool bEnabled)
 {
-	bDisabled = bEnabled!;
+	bDisabled = !bEnabled;
 	bForceObstacleMeshCollision = bDisabled;
 	OnPylonStatusChange();
 	//return;	
@@ -194,7 +194,7 @@ event SetEnabled(bool bEnabled)
 
 event bool IsEnabled()
 {
-	return bDisabled!;
+	return !bDisabled;
 	//return ReturnValue;	
 }
 
@@ -217,7 +217,7 @@ function OnToggle(SeqAct_Toggle Action)
 			// End:0xD8
 			if(Action.InputLinks[2].bHasImpulse)
 			{
-				SetEnabled(IsEnabled()!);
+				SetEnabled(!IsEnabled());
 			}
 		}
 	}

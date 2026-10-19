@@ -93,7 +93,7 @@ simulated function PlayFireSound()
 	if(FireSoundEvent != none)
 	{
 		// End:0x10F
-		if((FireSoundEvent != AkEvent'Weapons.Play_Weapon_Fire_Loop') || bIsPlayingLoopFiringSound!)
+		if((FireSoundEvent != AkEvent'Weapons.Play_Weapon_Fire_Loop') || !bIsPlayingLoopFiringSound)
 		{
 			SetSwitch('Local_Player', (((Instigator.Controller != none) && Instigator.Controller.IsLocalPlayerController()) ? 'Yes' : 'No'));
 			SetSwitch('Weapon_Type', akWeaponType);

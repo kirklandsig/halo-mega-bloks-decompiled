@@ -204,7 +204,7 @@ function UpdateListDataProvider()
 					{
 						RendererDataProvider.SetElementString(0, StringListDataStore.StringData[StringIter].Strings[0]);
 						// End:0x605
-						if(Class'Engine.WorldInfo'.static.IsConsoleBuild(2)!)
+						if(!Class'Engine.WorldInfo'.static.IsConsoleBuild(2))
 						{
 							ChoiceIter = 1;
 							J0x540:
@@ -240,7 +240,7 @@ function UpdateListDataProvider()
 			TempObj.SetFloat("optIndex", float(DefaultIndex));
 		}
 		// End:0x8D1
-		if(bFoundDefault!)
+		if(!bFoundDefault)
 		{
 			J = 0;
 			J0x781:
@@ -265,7 +265,7 @@ function UpdateListDataProvider()
 		J0x8D1:
 
 		// End:0x935
-		if(bFoundDefault!)
+		if(!bFoundDefault)
 		{
 			// End:0x935
 			if(LocationPart == "Registry")
@@ -275,7 +275,7 @@ function UpdateListDataProvider()
 			}
 		}
 		// End:0xA66
-		if(bFoundDefault!)
+		if(!bFoundDefault)
 		{
 			// End:0xA66
 			if(LocationPart == "UTGameSettings")
@@ -307,7 +307,7 @@ function UpdateListDataProvider()
 			}
 		}
 		// End:0xAA9
-		if(bFoundDefault!)
+		if(!bFoundDefault)
 		{
 			DefaultValue = GameSettings.GetPropertyAsStringByName(name(RelevantPart));
 		}

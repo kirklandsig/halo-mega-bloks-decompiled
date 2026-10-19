@@ -43,7 +43,7 @@ event PostBeginPlay()
 event Timer()
 {
 	// End:0x63
-	if((bAutomatedPerfTesting && AutomatedPerfRemainingTime > 0) && bAutoContinueToNextRound!)
+	if((bAutomatedPerfTesting && AutomatedPerfRemainingTime > 0) && !bAutoContinueToNextRound)
 	{
 		AutomatedPerfRemainingTime--;
 		// End:0x63
@@ -237,7 +237,7 @@ function StartAutomatedMapTestTimerWorker()
 				LogInternal("levels not streamed in yet sleeping 5s");
 				return;
 			}
-			LevelIdx++;
+			++LevelIdx;
 			// [Loop Continue]
 			goto J0x1A;
 		}
@@ -530,7 +530,7 @@ Begin:
 	{
 		LogInternal("StreamLevelOut: " $ string(WorldInfo.StreamingLevels[SentinelIdx].PackageName));
 		SentinelPC.ClientUpdateLevelStreamingStatus(WorldInfo.StreamingLevels[SentinelIdx].PackageName, false, false, true);
-		SentinelIdx++;
+		++SentinelIdx;
 		// [Loop Continue]
 		goto J0x2A;
 	}
@@ -555,7 +555,7 @@ Begin:
 		SentinelPC.ClientUpdateLevelStreamingStatus(WorldInfo.StreamingLevels[SentinelIdx].PackageName, false, false, true);
 		Sleep(3.0000000);
 		WorldInfo.ForceGarbageCollection(true);
-		SentinelIdx++;
+		++SentinelIdx;
 		// [Loop Continue]
 		goto J0x14D;
 	}
@@ -586,7 +586,7 @@ Begin:
 			LogInternal("   Found a LevelStreamingAlwaysLoaded" @ string(WorldInfo.StreamingLevels[SentinelIdx].PackageName));
 			SentinelPC.ClientUpdateLevelStreamingStatus(WorldInfo.StreamingLevels[SentinelIdx].PackageName, true, true, true);
 		}
-		SentinelIdx++;
+		++SentinelIdx;
 		// [Loop Continue]
 		goto J0x644;
 	}
@@ -625,7 +625,7 @@ Begin:
 				// [Explicit Break]
 				goto J0x9CB;
 			}
-			SentinelIdx++;
+			++SentinelIdx;
 			// [Loop Continue]
 			goto J0x90A;
 		}
@@ -709,7 +709,7 @@ state SentinelHandleCauseEventCommand
 			// [Explicit Break]
 			goto J0xD8;
 		}
-		SentinelIdx++;
+		++SentinelIdx;
 		// [Loop Continue]
 		goto J0x17;
 	}

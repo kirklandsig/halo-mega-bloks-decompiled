@@ -93,10 +93,10 @@ function StartActivation(Controller Controller, Pawn Pawn)
 
 	TheGame = HaloGameDefault(WorldInfo.Game);
 	// End:0x270
-	if(((HaloPawn(Pawn) != none) && TheGame.TheCustomizationManager.IsActive()!) && TheGame.TheCustomizationManager.MagicMomentStack.Length == 0)
+	if(((HaloPawn(Pawn) != none) && !TheGame.TheCustomizationManager.IsActive()) && TheGame.TheCustomizationManager.MagicMomentStack.Length == 0)
 	{
 		// End:0x270
-		if(InUse()!)
+		if(!InUse())
 		{
 			LogInternal("HVCPanel Activated");
 			bIsBeingActivated = true;

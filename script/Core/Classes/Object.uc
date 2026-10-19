@@ -1276,7 +1276,7 @@ static final simulated function int ClampRotAxisFromBase(int Current, int Center
 	else
 	{
 		// End:0x97
-		if(DeltaFromCenter < MaxDelta-)
+		if(DeltaFromCenter < -MaxDelta)
 		{
 			Current = Center - MaxDelta;
 		}
@@ -1484,10 +1484,10 @@ static final function JoinArray(array<string> StringArray, out string out_Result
 	if(I < StringArray.Length)
 	{
 		// End:0xDE
-		if((StringArray[I] != "") || bIgnoreBlanks!)
+		if((StringArray[I] != "") || !bIgnoreBlanks)
 		{
 			// End:0xB6
-			if((out_Result != "") || bIgnoreBlanks! && I > 0)
+			if((out_Result != "") || !bIgnoreBlanks && I > 0)
 			{				
 				out_Result $= delim;
 			}			
@@ -1967,7 +1967,7 @@ static final simulated function float FindDeltaAngle(float A1, float A2)
 	else
 	{
 		// End:0x8B
-		if(Delta < 3.1415927-)
+		if(Delta < -3.1415927)
 		{
 			Delta = Delta + (3.1415927 * 2.0000000);
 		}
@@ -1989,7 +1989,7 @@ static final simulated function float UnwindHeading(float A)
 	J0x2D:
 
 	// End:0x5C [Loop If]
-	if(A < 3.1415927-)
+	if(A < -3.1415927)
 	{
 		A += (3.1415927 * 2.0000000);
 		// [Loop Continue]

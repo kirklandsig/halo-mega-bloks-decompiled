@@ -37,7 +37,7 @@ simulated function Vector GetAimLocation(Vector FromLoc)
 		if(I < Pawn.TargetNodes.Length)
 		{
 			// End:0x13F
-			if(Pawn.Mesh.GetSocketWorldLocationAndRotation(Pawn.TargetNodes[I], testLoc)!)
+			if(!Pawn.Mesh.GetSocketWorldLocationAndRotation(Pawn.TargetNodes[I], testLoc))
 			{
 				testLoc = Pawn.Mesh.GetBoneLocation(Pawn.TargetNodes[I]);
 			}
@@ -48,7 +48,7 @@ simulated function Vector GetAimLocation(Vector FromLoc)
 				BestLoc = testLoc;
 				BestDistSq = testDistSq;
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x3F;
 		}

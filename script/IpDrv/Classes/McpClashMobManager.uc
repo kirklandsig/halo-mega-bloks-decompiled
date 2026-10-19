@@ -110,7 +110,7 @@ function QueryChallengeList()
 		LogInternal(((("McpClashMobManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ ErrorStr);
 	}
 	// End:0x202
-	if(bPending!)
+	if(!bPending)
 	{
 		OnQueryChallengeListComplete(false, ErrorStr);
 	}
@@ -209,7 +209,7 @@ function DownloadChallengeFile(string UniqueChallengeId, string DLName)
 		LogInternal(((("McpClashMobManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ ErrorStr);
 	}
 	// End:0x27A
-	if(bPending!)
+	if(!bPending)
 	{
 		OnDownloadChallengeFileComplete(false, UniqueChallengeId, DLName, "", ErrorStr);
 	}
@@ -348,7 +348,7 @@ function GetChallengeFileContents(string UniqueChallengeId, string DLName, out a
 		if(FileIdx != -1)
 		{
 			// End:0x1B6
-			if((int(ChallengeEvents[ChallengeIdx].file_list[FileIdx].Status) != int(2)) || FileCache.GetTitleFileContents(DLName, OutFileContents)!)
+			if((int(ChallengeEvents[ChallengeIdx].file_list[FileIdx].Status) != int(2)) || !FileCache.GetTitleFileContents(DLName, OutFileContents))
 			{
 				LogInternal(((((((("McpClashMobManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "No data loaded for file entry.") $ " UniqueChallengeId=") $ UniqueChallengeId) $ " DLName=") $ DLName);
 			}			
@@ -490,7 +490,7 @@ function AcceptChallenge(string UniqueChallengeId, string UniqueUserId)
 		LogInternal(((("McpClashMobManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ ErrorStr);
 	}
 	// End:0x4DE
-	if(bPending!)
+	if(!bPending)
 	{
 		OnAcceptChallengeComplete(false, UniqueChallengeId, UniqueUserId, ErrorStr);
 	}
@@ -616,7 +616,7 @@ function QueryChallengeUserStatus(string UniqueChallengeId, string UniqueUserId)
 		LogInternal(((("McpClashMobManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ ErrorStr);
 	}
 	// End:0x4DE
-	if(bPending!)
+	if(!bPending)
 	{
 		OnQueryChallengeUserStatusComplete(false, UniqueChallengeId, UniqueUserId, ErrorStr);
 	}
@@ -799,7 +799,7 @@ function QueryChallengeMultiUserStatus(string UniqueChallengeId, string UniqueUs
 		LogInternal(((("McpClashMobManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ ErrorStr);
 	}
 	// End:0x5C3
-	if(bPending!)
+	if(!bPending)
 	{
 		OnQueryChallengeUserStatusComplete(false, UniqueChallengeId, UniqueUserId, ErrorStr);
 	}
@@ -1012,7 +1012,7 @@ function UpdateChallengeUserProgress(string UniqueChallengeId, string UniqueUser
 		LogInternal(((("McpClashMobManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ ErrorStr);
 	}
 	// End:0x51C
-	if(bPending!)
+	if(!bPending)
 	{
 		OnUpdateChallengeUserProgressComplete(false, UniqueChallengeId, UniqueUserId, ErrorStr);
 	}
@@ -1138,7 +1138,7 @@ function UpdateChallengeUserReward(string UniqueChallengeId, string UniqueUserId
 		LogInternal(((("McpClashMobManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ ErrorStr);
 	}
 	// End:0x4FF
-	if(bPending!)
+	if(!bPending)
 	{
 		OnUpdateChallengeUserRewardComplete(false, UniqueChallengeId, UniqueUserId, ErrorStr);
 	}

@@ -274,7 +274,7 @@ function LoadTest(int SelectedIndex, optional int NumPlayers = 1)
 	LogInternal("TEST LEVEL: " $ string(Level));
 	LogInternal("PLAYERS: " $ string(NumPlayers));
 	// End:0x13B
-	if(bIsDemoMode! && Level == 'Streaming_Test_Persistent')
+	if(!bIsDemoMode && Level == 'Streaming_Test_Persistent')
 	{
 		PC = HaloPlayerPawnController(GetPC());
 		HaloLocalPlayer(PC.Player).LoadFromFile(PC.GetDeviceId(), string(Level), NumPlayers);		
@@ -340,7 +340,7 @@ function bool ConditionalShowLoginUI(int ControllerId, optional bool bAllowGuest
 
 	PC = HaloPlayerPawnController(GetPC());
 	// End:0x1D2
-	if((PC != none) && bIsDemoMode!)
+	if((PC != none) && !bIsDemoMode)
 	{
 		// End:0x1D2
 		if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
@@ -352,7 +352,7 @@ function bool ConditionalShowLoginUI(int ControllerId, optional bool bAllowGuest
 				// End:0x184
 				if(Class'Engine.WorldInfo'.static.IsConsoleBuild(1))
 				{
-					OnlineSub.PlayerInterface.ShowLoginUI(bAllowGuest!);					
+					OnlineSub.PlayerInterface.ShowLoginUI(!bAllowGuest);					
 				}
 				else
 				{
@@ -385,11 +385,11 @@ function PerformProfileAndPlayerStorageChecks()
 
 	PC = HaloPlayerPawnController(GetPC());
 	// End:0x54D
-	if(((((PC != none) && OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PressedStartControllerId))) > int(0)) && OnlineSub.PlayerInterface.IsGuestLogin(byte(PressedStartControllerId))!)
+	if(((((PC != none) && OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PressedStartControllerId))) > int(0)) && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PressedStartControllerId)))
 	{
 		LP = HaloLocalPlayer(PC.Player);
 		// End:0x23D
-		if((PC.bProfileSettingsReadComplete! || int(PC.ProfileSettings.AsyncState) == int(0)) || int(PC.ProfileSettings.AsyncState) == int(1))
+		if((!PC.bProfileSettingsReadComplete || int(PC.ProfileSettings.AsyncState) == int(0)) || int(PC.ProfileSettings.AsyncState) == int(1))
 		{
 			OnlineSub.PlayerInterface.AddReadProfileSettingsCompleteDelegate(byte(PressedStartControllerId), OnReadProfileSettingsComplete);
 			bIsBlockingForRead = true;			
@@ -397,7 +397,7 @@ function PerformProfileAndPlayerStorageChecks()
 		else
 		{
 			// End:0x403
-			if((((((LP != none) && LP.bHasSeenStartScreen!) && PC.OnlinePlayerData != none) && PC.OnlinePlayerData.StorageProvider != none) && PC.PersistentData != none) && int(PC.PersistentData.AsyncState) < int(3))
+			if((((((LP != none) && !LP.bHasSeenStartScreen) && PC.OnlinePlayerData != none) && PC.OnlinePlayerData.StorageProvider != none) && PC.PersistentData != none) && int(PC.PersistentData.AsyncState) < int(3))
 			{
 				LP.bHasSeenStartScreen = true;
 				OnlineSub.PlayerInterface.AddReadPlayerStorageCompleteDelegate(byte(PressedStartControllerId), OnReadPlayerStorageComplete);
@@ -417,7 +417,7 @@ function PerformProfileAndPlayerStorageChecks()
 		}
 	}
 	// End:0x566
-	if(bIsBlockingForRead!)
+	if(!bIsBlockingForRead)
 	{
 		PerformPostReadChecks();
 	}
@@ -470,14 +470,14 @@ function PerformPostReadChecks()
 		{
 			LP = HaloLocalPlayer(IterPC.Player);
 			// End:0x145
-			if((LP != none) && LP.bHasSeenStartScreen!)
+			if((LP != none) && !LP.bHasSeenStartScreen)
 			{
 				LP.bHasSeenStartScreen = true;
 				IterPC.OnlinePlayerData.StorageProvider.RefreshStorageData();
 			}			
 		}		
 		// End:0x1F2
-		if(bIsDemoMode || (int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PressedStartControllerId))) > int(0)) && OnlineSub.PlayerInterface.IsGuestLogin(byte(PressedStartControllerId))!)
+		if(bIsDemoMode || (int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PressedStartControllerId))) > int(0)) && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PressedStartControllerId)))
 		{
 			AdvanceToMainMenu();
 		}
@@ -611,7 +611,7 @@ function UpdatePlayersAndControllers(bool bShouldPerformChecks)
 			if(OnlineSub.SystemInterface.IsControllerConnected(ControllerIndex) || bIsSignedIn)
 			{
 				// End:0x331
-				if(bIsSignedIn! && bOnTitleScreen)
+				if(!bIsSignedIn && bOnTitleScreen)
 				{
 					// End:0x32E
 					if(NumLocalPlayers > 1)
@@ -648,7 +648,7 @@ function UpdatePlayersAndControllers(bool bShouldPerformChecks)
 					}					
 				}
 				// End:0x462
-				if(bWasControllerFound!)
+				if(!bWasControllerFound)
 				{
 					// End:0x456
 					if(bIsSignedIn)
@@ -665,7 +665,7 @@ function UpdatePlayersAndControllers(bool bShouldPerformChecks)
 			else
 			{
 				// End:0x5DC
-				if((bIsInStartupProcess! && NumLocalPlayers > 1) && int(OnlineSub.PlayerInterface.GetLoginStatus(byte(ControllerIndex))) == int(0))
+				if((!bIsInStartupProcess && NumLocalPlayers > 1) && int(OnlineSub.PlayerInterface.GetLoginStatus(byte(ControllerIndex))) == int(0))
 				{
 					// End:0x5DB
 					foreach WI.LocalPlayerControllers(Class'MegaHaloGame.HaloPlayerPawnController', PC)
@@ -687,16 +687,16 @@ function UpdatePlayersAndControllers(bool bShouldPerformChecks)
 			goto J0x125;
 		}
 		// End:0x62D
-		if(((GetNumLocalPlayers() >= 2) && bOnTitleScreen!) && PressedStartControllerId == -1)
+		if(((GetNumLocalPlayers() >= 2) && !bOnTitleScreen) && PressedStartControllerId == -1)
 		{
 			bHasInactiveControllers = false;
 		}
 	}
 	// End:0x6B6
-	if(bShouldPerformChecks && bOnTitleScreen!)
+	if(bShouldPerformChecks && !bOnTitleScreen)
 	{
 		// End:0x6AC
-		if(bDidCreateRemovePlayer && IsAllowedToCreatePlayers()!)
+		if(bDidCreateRemovePlayer && !IsAllowedToCreatePlayers())
 		{
 			// End:0x6AB
 			foreach WI.LocalPlayerControllers(Class'MegaHaloGame.HaloPlayerPawnController', PC)
@@ -812,7 +812,7 @@ function OnLoginChange(byte LocalUserNum)
 	else
 	{
 		// End:0x148
-		if(bOnTitleScreen!)
+		if(!bOnTitleScreen)
 		{
 			LP = HaloLocalPlayer(GetPC().Player);
 			// End:0x13B
@@ -832,7 +832,7 @@ function OnLoginChange(byte LocalUserNum)
 		}
 	}
 	UpdateGuestStatus();
-	UpdatePlayersAndControllers(bOnTitleScreen!);
+	UpdatePlayersAndControllers(!bOnTitleScreen);
 	//return;	
 }
 

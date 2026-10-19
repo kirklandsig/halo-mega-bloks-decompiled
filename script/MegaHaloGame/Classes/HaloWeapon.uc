@@ -185,7 +185,7 @@ simulated function InstantFire()
 	RealImpact = CalcWeaponFire(StartTrace, EndTrace, ImpactList);
 	FinalImpactIndex = ImpactList.Length - 1;
 	// End:0x17E
-	if((FinalImpactIndex >= 0) && (ImpactList[FinalImpactIndex].HitActor == none) || ImpactList[FinalImpactIndex].HitActor.bProjTarget!)
+	if((FinalImpactIndex >= 0) && (ImpactList[FinalImpactIndex].HitActor == none) || !ImpactList[FinalImpactIndex].HitActor.bProjTarget)
 	{
 		NearImpact = InstantAimHelp(StartTrace, EndTrace, RealImpact);
 		// End:0x17E
@@ -351,10 +351,10 @@ function Projectile SpawnProjectile(Class<Projectile> ProjectileClass, Vector Pr
 	if(HitActor != none)
 	{
 		// End:0x437
-		if((HaloDestructibleActor(HitActor) == none) || HaloDestructibleActor(HitActor).bPassShotsFromWithin!)
+		if((HaloDestructibleActor(HitActor) == none) || !HaloDestructibleActor(HitActor).bPassShotsFromWithin)
 		{
 			Proj.SetLocation(HitLocation);
-			Proj.Explode(HitLocation, ProjectileDir-);
+			Proj.Explode(HitLocation, -ProjectileDir);
 			HitActor.TakeDamage(int(Proj.Damage), Proj.InstigatorController, HitLocation, Proj.MomentumTransfer * Normal(Proj.Velocity), Proj.MyDamageType,, Proj);
 			return none;
 		}
@@ -422,7 +422,7 @@ simulated function TryToSwapWeaponsIfOutOfAmmo()
 	local HaloPlayerPawnController C;
 
 	// End:0x7E
-	if(HasAnyAmmo()!)
+	if(!HasAnyAmmo())
 	{
 		// End:0x7E
 		if(Instigator != none)
@@ -518,7 +518,7 @@ function TickSpread(float DeltaTime)
 	local float ScaleRange, CurScale;
 
 	// End:0x2E
-	if(IsFiring()!)
+	if(!IsFiring())
 	{
 		AddToSpread(SpreadDecRate * DeltaTime);
 	}
@@ -646,7 +646,7 @@ simulated function bool DoReload(optional bool abortGrenadeThrows)
 	if(P != none)
 	{
 		// End:0x61
-		if(abortGrenadeThrows! && P.IsThrowingGrenade())
+		if(!abortGrenadeThrows && P.IsThrowingGrenade())
 		{
 			return false;
 		}
@@ -760,7 +760,7 @@ function GiveAmmoTo(HaloWeapon toWeap, bool bJustExtra)
 
 function bool ShouldTickOverheating()
 {
-	return IsFiring()!;
+	return !IsFiring();
 	//return ReturnValue;	
 }
 
@@ -953,7 +953,7 @@ function DropFrom(Vector StartLocation, Vector StartVelocity)
 		StartLocation += (vect(40.0000000, 10.0000000, 0.0000000) >> Instigator.Rotation);
 	}
 	// End:0x107
-	if(HasAnyAmmo()!)
+	if(!HasAnyAmmo())
 	{
 		Destroy();
 		return;
@@ -987,7 +987,7 @@ function DropFrom(Vector StartLocation, Vector StartVelocity)
 		fromPickup = StartLocation - pickupInRange.Location;
 		fromPickup.Z = 0.0000000;
 		// End:0x2F1
-		if(IsZero(fromPickup)!)
+		if(!IsZero(fromPickup))
 		{
 			StartVelocity += Normal(fromPickup);
 		}
@@ -1152,7 +1152,7 @@ simulated function PlayFiringSound()
 		if(FireSoundEvent[int(CurrentFireMode)] != none)
 		{
 			// End:0x159
-			if((FireSoundEvent[int(CurrentFireMode)] != AkEvent'Weapons.Play_Weapon_Fire_Loop') || bIsPlayingLoopFiringSound!)
+			if((FireSoundEvent[int(CurrentFireMode)] != AkEvent'Weapons.Play_Weapon_Fire_Loop') || !bIsPlayingLoopFiringSound)
 			{
 				bIsLocalPlayer = Instigator.Controller.IsLocalPlayerController();
 				SetSwitch('Local_Player', ((bIsLocalPlayer) ? 'Yes' : 'No'));
@@ -1244,7 +1244,7 @@ simulated function PlayRicochetSound(Vector HitLocation)
 	if(RicochetArraySize > 0)
 	{
 		// End:0x33
-		if(CurrentRicochetIndex++ >= RicochetArraySize)
+		if(++CurrentRicochetIndex >= RicochetArraySize)
 		{
 			CurrentRicochetIndex = 0;
 		}

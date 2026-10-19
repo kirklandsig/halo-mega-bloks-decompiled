@@ -121,7 +121,7 @@ function SetupZones()
 			LogInternal("!!!WARNING!!!  Tutorial will be broken due to Swipe");
 		}
 		// End:0x332
-		if(bSuppressSplash!)
+		if(!bSuppressSplash)
 		{
 			PauseMenu = MobileMenuPause(MPI.OpenMenuScene(Class'UDKBase.MobileMenuPause'));
 			SliderZone = MPI.FindZone("MenuSlider");
@@ -190,7 +190,7 @@ function CheckInactivity()
 		MPI.MobileInactiveTime = 0.0000000;
 	}
 	// End:0x1A6
-	if(((MPI.MobileInactiveTime > AutoAttractTime) && bIsInAttractMode!) && bCinematicMode!)
+	if(((MPI.MobileInactiveTime > AutoAttractTime) && !bIsInAttractMode) && !bCinematicMode)
 	{
 		EnterAttractMode();
 	}
@@ -227,7 +227,7 @@ function bool TapToMoveTap(MobileInputZone Zone, Interaction.ETouchType EventTyp
 	local bool bWantReverse, bValidDestination;
 
 	// End:0x5E7
-	if((bIsInAttractMode! && bCinematicMode!) && int(StickMoveZone.State) == int(0))
+	if((!bIsInAttractMode && !bCinematicMode) && int(StickMoveZone.State) == int(0))
 	{
 		RelLocation.X = TouchLocation.X / ViewportSize.X;
 		RelLocation.Y = TouchLocation.Y / ViewportSize.Y;
@@ -265,7 +265,7 @@ function bool TapToMoveTap(MobileInputZone Zone, Interaction.ETouchType EventTyp
 				Destination = HitLocation + ((HitNormal * Pawn.GetCollisionHeight()) * float(2));
 			}
 			// End:0x444
-			if(PointReachable(Destination)!)
+			if(!PointReachable(Destination))
 			{
 				Origin = Destination;
 				Destination.Z = -65535.0000000;
@@ -296,7 +296,7 @@ function bool TapToMoveTap(MobileInputZone Zone, Interaction.ETouchType EventTyp
 			{
 				PlaySound(TapToMoveSound);
 				MobileHUDExt(myHUD).StartTapToMoveEffect(TouchLocation.X, TouchLocation.Y);
-				DoTapToMove(Destination, bWantReverse!);				
+				DoTapToMove(Destination, !bWantReverse);				
 			}
 			else
 			{
@@ -332,7 +332,7 @@ function DoTapToMove(Vector NewDestination, bool bShouldLookAtDestination)
 function PlayerLookAtDestination()
 {
 	// End:0x1B
-	if(bLookAtDestination!)
+	if(!bLookAtDestination)
 	{
 		bLookAtDestination = true;
 	}
@@ -472,7 +472,7 @@ function ResetMenu()
 function OpenMenu()
 {
 	// End:0x5C
-	if(bPauseMenuOpen!)
+	if(!bPauseMenuOpen)
 	{
 		bPauseMenuOpen = true;
 		AutoSlide(PauseMenu.ShownSize);
@@ -500,7 +500,7 @@ function bool ProcessMenuSlide(MobileInputZone Zone, Interaction.ETouchType Even
 {
 	PauseMenu.Top = Zone.CurrentLocation.Y - PauseMenu.Height;
 	// End:0x11E
-	if((int(EventType) == int(3)) && bPauseMenuOpen!)
+	if((int(EventType) == int(3)) && !bPauseMenuOpen)
 	{
 		// End:0xF6
 		if(Zone.CurrentLocation.Y >= PauseMenu.ShownSize)
@@ -533,7 +533,7 @@ function PlayerTick(float DeltaTime)
 		}
 	}
 	// End:0xF3
-	if(bDoneInitialFade!)
+	if(!bDoneInitialFade)
 	{
 		bDoneInitialFade = true;
 	}
@@ -557,7 +557,7 @@ exec function ShowSplash()
 {
 	MPI.ActivateInputGroup("TapTutorialGroup");
 	// End:0x97
-	if((bSplashHasBeenShown! && bSuppressSplash!) && MPI != none)
+	if((!bSplashHasBeenShown && !bSuppressSplash) && MPI != none)
 	{
 		bSplashHasBeenShown = true;
 		MPI.OpenMenuScene(Class'UDKBase.MobileMenuSplash');
@@ -568,7 +568,7 @@ exec function ShowSplash()
 exec function FlashHelp(float Duration)
 {
 	// End:0x37
-	if(bPauseMenuOpen!)
+	if(!bPauseMenuOpen)
 	{
 		PauseMenu.FlashHelp(Duration);
 	}
@@ -658,7 +658,7 @@ Begin:
 	J0x13:
 
 	// End:0x6F [Loop If]
-	if((Pawn != none) && Pawn.ReachedPoint(TapToMoveDestination, none)!)
+	if((Pawn != none) && !Pawn.ReachedPoint(TapToMoveDestination, none))
 	{
 		MoveToDirectNonPathPos(TapToMoveDestination,, 1.0000000, true);
 		// [Loop Continue]

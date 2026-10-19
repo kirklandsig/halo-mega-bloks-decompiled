@@ -73,7 +73,7 @@ function bool Start(optional bool StartPaused = false)
 	super(GFxMoviePlayer).Start();
 	Advance(0.0000000);
 	// End:0x42
-	if(bInitialized!)
+	if(!bInitialized)
 	{
 		ConfigLeaderboard();
 	}
@@ -222,7 +222,7 @@ function UpdateLeaderboardLists()
 		{
 			UpdateRow(ListItems[I], NullEntry);
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -359,7 +359,7 @@ function TweenPlayerRow(GFxObject RowMC)
 	{
 		TweenTo(RowMC, 1.5000000, "_z", 0.0000000, 2, "TweenPlayerRow");
 	}
-	bPlayerRowTween = bPlayerRowTween!;
+	bPlayerRowTween = !bPlayerRowTween;
 	//return;	
 }
 
@@ -441,7 +441,7 @@ function DoInitialLeaderboardRead()
 {
 	OSI.AddReadOnlineStatsCompleteDelegate(ReadOnlineStatsComplete);
 	// End:0x15B
-	if(OSI.ReadOnlineStatsByRank(LeaderboardStatsRead, 1, LeaderboardReadCount)!)
+	if(!OSI.ReadOnlineStatsByRank(LeaderboardStatsRead, 1, LeaderboardReadCount))
 	{
 		OSI.ClearReadOnlineStatsCompleteDelegate(ReadOnlineStatsComplete);
 		// End:0xF6
@@ -536,7 +536,7 @@ function ReadOnlineStatsComplete(bool bWasSuccessful)
 					// [Explicit Break]
 					goto J0x2C8;
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x25;
 			}
@@ -573,7 +573,7 @@ function ReadOnlineStatsComplete(bool bWasSuccessful)
 					LeaderboardData[I].bLocalPlayer = true;
 					bKickoffLocalQuery = false;
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x318;
 			}
@@ -583,7 +583,7 @@ function ReadOnlineStatsComplete(bool bWasSuccessful)
 	else
 	{
 		// End:0x63C
-		if(bResolvingLocalPlayer!)
+		if(!bResolvingLocalPlayer)
 		{
 			LogInternal("ReadOnlineStatsComplete: Failed to read leaderboard data");
 		}
@@ -594,7 +594,7 @@ function ReadOnlineStatsComplete(bool bWasSuccessful)
 	{
 		bResolvingLocalPlayer = true;
 		// End:0x6D9
-		if(OSI.ReadOnlineStatsByRankAroundPlayer(0, LeaderboardStatsRead, 0)!)
+		if(!OSI.ReadOnlineStatsByRankAroundPlayer(0, LeaderboardStatsRead, 0))
 		{
 			LeaderboardStatsRead = none;
 			OSI.ClearReadOnlineStatsCompleteDelegate(ReadOnlineStatsComplete);

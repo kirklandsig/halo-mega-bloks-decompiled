@@ -8,7 +8,7 @@ event Activated()
 	// End:0x82
 	if(Game != none)
 	{
-		OutputLinks[0].bHasImpulse = Game.JumpToMission()!;
+		OutputLinks[0].bHasImpulse = !Game.JumpToMission();
 	}
 	//return;	
 }

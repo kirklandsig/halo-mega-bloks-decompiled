@@ -20,7 +20,7 @@ function RefreshStorageData()
 	if(LocPlayer.bHasSeenStartScreen)
 	{
 		// End:0x244
-		if(bIsExternalUIOpen!)
+		if(!bIsExternalUIOpen)
 		{
 			OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 			// End:0x241
@@ -30,10 +30,10 @@ function RefreshStorageData()
 				if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
 				{
 					// End:0x1BC
-					if((LocPlayer != none) && LocPlayer.bWantsToSkipSaves!)
+					if((LocPlayer != none) && !LocPlayer.bWantsToSkipSaves)
 					{
 						// End:0x178
-						if(OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded)!)
+						if(!OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded))
 						{
 							ShowDeviceSelection();							
 						}
@@ -72,7 +72,7 @@ function OnDeviceSelectionComplete(bool bWasSuccessful)
 	OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	OnlineSub.PlayerInterfaceEx.ClearDeviceSelectionDoneDelegate(byte(PlayerControllerId), OnDeviceSelectionComplete);
 	// End:0x303
-	if(bWasSuccessful && OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId))!)
+	if(bWasSuccessful && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId)))
 	{
 		LocPlayer.bWantsToSkipSaves = false;
 		Profile.DeviceID = OnlineSub.PlayerInterfaceEx.GetDeviceSelectionResults(byte(PlayerControllerId), Ignored);
@@ -90,7 +90,7 @@ function OnDeviceSelectionComplete(bool bWasSuccessful)
 	else
 	{
 		// End:0x398
-		if((int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId))!)
+		if((int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId)))
 		{			
 		}
 		else
@@ -144,7 +144,7 @@ function ShowDeviceSelection()
 	if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
 	{
 		// End:0x1E2
-		if((int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId))!)
+		if((int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId)))
 		{
 			bIsShowingDeviceSelection = true;
 			OnlineSub.PlayerInterfaceEx.AddDeviceSelectionDoneDelegate(byte(PlayerControllerId), OnDeviceSelectionComplete);
@@ -167,10 +167,10 @@ function OnStorageDeviceChange()
 	if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
 	{
 		// End:0x1F4
-		if(((bIsShowingDeviceSelection! && LocPlayer.bHasSeenStartScreen) && LocPlayer.bWantsToSkipSaves!) && OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded)!)
+		if(((!bIsShowingDeviceSelection && LocPlayer.bHasSeenStartScreen) && !LocPlayer.bWantsToSkipSaves) && !OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded))
 		{
 			// End:0x1F4
-			if((int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId))!)
+			if((int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId)))
 			{
 			}
 		}

@@ -199,7 +199,7 @@ event LocalPlayer CreatePlayer(int ControllerId, out string OutError, bool bSpaw
 		if(int(Outer.GetCurrentWorldInfo().NetMode) != int(NM_Client))
 		{
 			// End:0x1E9
-			if(NewPlayer.SpawnPlayActor("", OutError)!)
+			if(!NewPlayer.SpawnPlayActor("", OutError))
 			{
 				RemoveLocalPlayer(NewPlayer);
 				NewPlayer = none;
@@ -331,7 +331,7 @@ exec function SSSwapControllers()
 	if(Idx < (Outer.GamePlayers.Length - 1))
 	{
 		Outer.GamePlayers[Idx].ControllerId = Outer.GamePlayers[Idx + 1].ControllerId;
-		Idx++;
+		++Idx;
 		// [Loop Continue]
 		goto J0x4A;
 	}
@@ -360,7 +360,7 @@ exec function SetSplit(int Mode)
 
 exec function ShowTitleSafeArea()
 {
-	bShowTitleSafeZone = bShowTitleSafeZone!;
+	bShowTitleSafeZone = !bShowTitleSafeZone;
 	//return;	
 }
 
@@ -471,7 +471,7 @@ function bool CreateInitialPlayer(out string OutError)
 	J0x8F:
 
 	// End:0x13D
-	if(bFoundInitialGamepad! || bResult!)
+	if(!bFoundInitialGamepad || !bResult)
 	{
 		ControllerId = 0;
 		J0xBA:
@@ -495,7 +495,7 @@ function bool CreateInitialPlayer(out string OutError)
 	J0x13D:
 
 	// End:0x180
-	if(bFoundInitialGamepad! || bResult!)
+	if(!bFoundInitialGamepad || !bResult)
 	{
 		bResult = (CreatePlayer(0, OutError, false)) != none;
 	}
@@ -1142,7 +1142,7 @@ event SetProgressMessage(PlayerController.EProgressMessageType MessageType, stri
 			else
 			{
 				// End:0x2E3
-				if(Outer.GamePlayers[0].Actor.bIgnoreNetworkMessages!)
+				if(!Outer.GamePlayers[0].Actor.bIgnoreNetworkMessages)
 				{
 					LogInternal(((((((((("(" $ string(Name)) $ ") GameViewportClient::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "MessageType=") $ string(MessageType)) @ "Message=") $ Message) @ ": host migration not enabled.. handling connection error.", 'DevNet');
 					NotifyConnectionError(MessageType, Message, Title);
@@ -1174,7 +1174,7 @@ event SetProgressMessage(PlayerController.EProgressMessageType MessageType, stri
 		}
 	}
 	// End:0x475
-	if(Outer.GamePlayers[0].Actor.bIgnoreNetworkMessages!)
+	if(!Outer.GamePlayers[0].Actor.bIgnoreNetworkMessages)
 	{
 		Outer.GamePlayers[0].Actor.bIgnoreNetworkMessages = bIgnoreFutureNetworkMessages;
 	}
@@ -1319,7 +1319,7 @@ simulated event SetHardwareMouseCursorVisibility(bool bIsVisible)
 	local Vector2D ViewportSize;
 
 	// End:0x83
-	if(bIsVisible && bDisplayHardwareMouseCursor!)
+	if(bIsVisible && !bDisplayHardwareMouseCursor)
 	{
 		GetViewportSize(ViewportSize);
 		SetMouse(int(ViewportSize.X / float(2)), int(ViewportSize.Y / float(2)));

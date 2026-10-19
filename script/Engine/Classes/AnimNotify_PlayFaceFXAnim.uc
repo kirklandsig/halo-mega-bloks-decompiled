@@ -37,7 +37,7 @@ event Notify(Actor Owner, AnimNodeSequence AnimSeqInstigator)
 		if(Owner.CanActorPlayFaceFXAnim())
 		{
 			// End:0x286
-			if(bOverridePlayingAnim || Owner.IsActorPlayingFaceFXAnim()!)
+			if(bOverridePlayingAnim || !Owner.IsActorPlayingFaceFXAnim())
 			{
 				// End:0x286
 				if(Owner.PlayActorFaceFXAnim(FaceFXAnimSetRef, GroupName, AnimName, SoundCueToPlay, AkEventToPlay) == false)

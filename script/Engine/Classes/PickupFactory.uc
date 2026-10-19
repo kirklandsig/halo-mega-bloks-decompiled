@@ -306,7 +306,7 @@ auto state Pickup
 	function bool ValidTouch(Pawn Other)
 	{
 		// End:0x3A
-		if((Other == none) || Other.bCanPickupInventory!)
+		if((Other == none) || !Other.bCanPickupInventory)
 		{
 			return false;			
 		}
@@ -321,7 +321,7 @@ auto state Pickup
 			else
 			{
 				// End:0xBC
-				if(FastTrace(Other.Location, Location)!)
+				if(!FastTrace(Other.Location, Location))
 				{
 					SetTimer(0.5000000, false, 'RecheckValidTouch');
 					return false;
@@ -403,7 +403,7 @@ state Sleeping
 
 	function bool ReadyToPickup(float MaxWait)
 	{
-		return ((bPredictRespawns && bRespawnPaused!) && LatentFloat <= MaxWait) && LatentFloat > 0.0000000;
+		return ((bPredictRespawns && !bRespawnPaused) && LatentFloat <= MaxWait) && LatentFloat > 0.0000000;
 		//return ReturnValue;		
 	}
 

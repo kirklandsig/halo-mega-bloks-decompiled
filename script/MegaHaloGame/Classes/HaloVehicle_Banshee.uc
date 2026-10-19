@@ -24,7 +24,7 @@ replication
 		TurretFlashLocation;
 
 	// Pos:0x00A
-	if(IsSeatControllerReplicationViewer(1)! || bDemoRecording)
+	if(!IsSeatControllerReplicationViewer(1) || bDemoRecording)
 		TurretFiringMode, TurretFlashCount, 
 		TurretWeaponRotation;
 }
@@ -64,7 +64,7 @@ event Tick(float DeltaTime)
 				else
 				{
 					// End:0x3BB
-					if(Bot.InLatentExecution(Bot.503)!)
+					if(!Bot.InLatentExecution(Bot.503))
 					{
 						// End:0x338
 						if(Rise < 0.0000000)
@@ -95,7 +95,7 @@ event Tick(float DeltaTime)
 							if(Rise == 0.0000000)
 							{
 								// End:0x3BB
-								if(FastTrace(Location - vect(0.0000000, 0.0000000, 500.0000000), Location)!)
+								if(!FastTrace(Location - vect(0.0000000, 0.0000000, 500.0000000), Location))
 								{
 									Rise = FClamp((-1.0000000 * Velocity.Z) / (GetMaxRiseForce()), 0.0000000, 1.0000000);
 								}
@@ -138,7 +138,7 @@ simulated event RigidBodyCollision(PrimitiveComponent HitComponent, PrimitiveCom
 {
 	super(UTVehicle).RigidBodyCollision(HitComponent, OtherComponent, RigidCollisionData, ContactIndex);
 	// End:0xD0
-	if(IsTimerActive('ResetTurningSpeed')!)
+	if(!IsTimerActive('ResetTurningSpeed'))
 	{
 		SetTimer(0.7000000, false, 'ResetTurningSpeed');
 		MaxSpeed = default.MaxSpeed / 2.0000000;
@@ -166,7 +166,7 @@ simulated function ResetTurningSpeed()
 
 function bool ImportantVehicle()
 {
-	return bFreelanceStart!;
+	return !bFreelanceStart;
 	//return ReturnValue;	
 }
 
@@ -175,7 +175,7 @@ function bool DriverEnter(Pawn P)
 	local UTBot B;
 
 	// End:0x1A
-	if(super(UTVehicle).DriverEnter(P)!)
+	if(!super(UTVehicle).DriverEnter(P))
 	{
 		return false;
 	}
@@ -202,7 +202,7 @@ function PassengerLeave(int SeatIndex)
 function bool PassengerEnter(Pawn P, int SeatIndex)
 {
 	// End:0x23
-	if(super(UTVehicle).PassengerEnter(P, SeatIndex)!)
+	if(!super(UTVehicle).PassengerEnter(P, SeatIndex))
 	{
 		return false;
 	}
@@ -234,7 +234,7 @@ simulated function VehicleWeaponImpactEffects(Vector HitLocation, int SeatIndex)
 
 	super(UTVehicle).VehicleWeaponImpactEffects(HitLocation, SeatIndex);
 	// End:0xCE
-	if((SeatIndex == 1) && IsZero(HitLocation)!)
+	if((SeatIndex == 1) && !IsZero(HitLocation))
 	{
 		E = WorldInfo.MyEmitterPool.SpawnEmitter(TurretBeamTemplate, GetEffectLocation(SeatIndex));
 		E.SetVectorParameter('ShockBeamEnd', HitLocation);

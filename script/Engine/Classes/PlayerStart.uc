@@ -29,7 +29,7 @@ simulated function OnToggle(SeqAct_Toggle Action)
 			// End:0xDB
 			if(Action.InputLinks[2].bHasImpulse)
 			{
-				bEnabled = bEnabled!;
+				bEnabled = !bEnabled;
 			}
 		}
 	}

@@ -47,7 +47,7 @@ event bool DriverLeave(bool bForceLeave)
 	local int exitIndex;
 
 	// End:0x18E
-	if(bForceLeave!)
+	if(!bForceLeave)
 	{
 		HaloDriver = HaloPawn(Driver);
 		// End:0x18E

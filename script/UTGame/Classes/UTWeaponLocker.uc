@@ -612,7 +612,7 @@ auto state LockerPickup
 	simulated function bool ValidTouch(Actor Other)
 	{
 		// End:0x4C
-		if((Pawn(Other) == none) || Pawn(Other).bCanPickupInventory!)
+		if((Pawn(Other) == none) || !Pawn(Other).bCanPickupInventory)
 		{
 			return false;			
 		}
@@ -627,7 +627,7 @@ auto state LockerPickup
 			else
 			{
 				// End:0xD7
-				if(FastTrace(Other.Location, Location)!)
+				if(!FastTrace(Other.Location, Location))
 				{
 					SetTimer(0.5000000, false, 'RecheckValidTouch');
 					return false;
@@ -696,7 +696,7 @@ auto state LockerPickup
 				return;
 			}
 			// End:0x198
-			if(AddCustomer(Recipient)!)
+			if(!AddCustomer(Recipient))
 			{
 				return;
 			}

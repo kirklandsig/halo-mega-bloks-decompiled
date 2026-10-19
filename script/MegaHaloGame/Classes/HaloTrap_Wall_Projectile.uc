@@ -67,7 +67,7 @@ function bool HasLOS(HaloPawn Pawn)
 	CollisionActor = Trace(HitLocation, HitNormal, Pawn.Location);
 	bHasLOS = CollisionActor == Pawn;
 	// End:0x87
-	if(bHasLOS!)
+	if(!bHasLOS)
 	{
 		SetTimer(LineOfSightRecheckTime, false, 'RecheckLOS');
 	}

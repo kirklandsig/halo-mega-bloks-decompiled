@@ -48,7 +48,7 @@ replication
 		bDriving;
 
 	// Pos:0x020
-	if((bNetDirty && (bNetOwner || Driver == none) || Driver.bHidden!) && int(Role) == int(ROLE_Authority))
+	if((bNetDirty && (bNetOwner || Driver == none) || !Driver.bHidden) && int(Role) == int(ROLE_Authority))
 		Driver;
 }
 
@@ -127,7 +127,7 @@ simulated function TakeRadiusDamage(Controller InstigatedBy, float BaseDamage, f
 function DriverRadiusDamage(float DamageAmount, float DamageRadius, Controller EventInstigator, Class<DamageType> DamageType, float Momentum, Vector HitLocation, Actor DamageCauser, optional float DamageFalloffExponent = 1.0000000)
 {
 	// End:0xEC
-	if(((((EventInstigator != none) && Driver != none) && bAttachDriver) && Driver.bCollideActors!) && Driver.bBlockActors!)
+	if(((((EventInstigator != none) && Driver != none) && bAttachDriver) && !Driver.bCollideActors) && !Driver.bBlockActors)
 	{
 		Driver.TakeRadiusDamage(EventInstigator, DamageAmount, DamageRadius, DamageType, Momentum, HitLocation, false, DamageCauser, DamageFalloffExponent);
 	}
@@ -159,7 +159,7 @@ event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	// End:0x23
-	if(bDeleteMe!)
+	if(!bDeleteMe)
 	{
 		AddDefaultInventory();
 	}
@@ -221,7 +221,7 @@ simulated function Destroyed_HandleDriver()
 
 function bool CanEnterVehicle(Pawn P)
 {
-	return ((((((bDeleteMe! && AnySeatAvailable()) && bAttachDriver! || P.bIsCrouched!) && P.DrivenVehicle == none) && P.Controller != none) && P.Controller.bIsPlayer) && P.IsA('Vehicle')!) && Health > 0;
+	return ((((((!bDeleteMe && AnySeatAvailable()) && !bAttachDriver || !P.bIsCrouched) && P.DrivenVehicle == none) && P.Controller != none) && P.Controller.bIsPlayer) && !P.IsA('Vehicle')) && Health > 0;
 	//return ReturnValue;	
 }
 
@@ -234,7 +234,7 @@ function bool AnySeatAvailable()
 function bool TryToDrive(Pawn P)
 {
 	// End:0x1A
-	if(CanEnterVehicle(P)!)
+	if(!CanEnterVehicle(P))
 	{
 		return false;
 	}
@@ -260,7 +260,7 @@ function bool DriverEnter(Pawn P)
 	Driver.SetOwner(self);
 	C.Possess(self, true);
 	// End:0x17B
-	if((PlayerController(C) != none) && C.IsChildState(C.GetStateName(), LandMovementState)!)
+	if((PlayerController(C) != none) && !C.IsChildState(C.GetStateName(), LandMovementState))
 	{
 		PlayerController(C).GotoState(LandMovementState);
 	}
@@ -288,7 +288,7 @@ function EntryAnnouncement(Controller C)
 simulated function AttachDriver(Pawn P)
 {
 	// End:0x11
-	if(bAttachDriver!)
+	if(!bAttachDriver)
 	{
 		return;
 	}
@@ -303,7 +303,7 @@ simulated function AttachDriver(Pawn P)
 		P.Mesh.SetShadowParent(Mesh);
 	}
 	// End:0x165
-	if(bDriverIsVisible!)
+	if(!bDriverIsVisible)
 	{
 		P.SetHidden(true);
 		P.SetLocation(Location);
@@ -366,7 +366,7 @@ event bool DriverLeave(bool bForceLeave)
 		return false;
 	}
 	// End:0x98
-	if(bForceLeave! && WorldInfo.Game.CanLeaveVehicle(self, Driver)!)
+	if(!bForceLeave && !WorldInfo.Game.CanLeaveVehicle(self, Driver))
 	{
 		return false;
 	}
@@ -382,10 +382,10 @@ event bool DriverLeave(bool bForceLeave)
 		Driver.bCollideWorld = true;
 		Driver.SetCollision(true, true);
 		// End:0x1B8
-		if(PlaceExitingDriver()!)
+		if(!PlaceExitingDriver())
 		{
 			// End:0x194
-			if(bForceLeave!)
+			if(!bForceLeave)
 			{
 				Driver.SetHardAttach(true);
 				Driver.bCollideWorld = false;
@@ -496,7 +496,7 @@ function bool PlaceExitingDriver(optional Pawn ExitingDriver)
 			else
 			{
 				// End:0x276
-				if(ExitingDriver.SetLocation(tryPlace)!)
+				if(!ExitingDriver.SetLocation(tryPlace))
 				{					
 				}
 				else
@@ -739,7 +739,7 @@ event bool EncroachingOn(Actor Other)
 		bDeepEncroach = PointCheckComponent(CollisionComponent, P.Location, CheckExtent);
 	}
 	// End:0x353
-	if((((((Other == Instigator) && bDeepEncroach!) || Vehicle(Other) != none) || int(Other.Role) != int(ROLE_Authority)) || Other.bCollideActors! && Other.bBlockActors!) || bSlowEncroach && bDeepEncroach!)
+	if((((((Other == Instigator) && !bDeepEncroach) || Vehicle(Other) != none) || int(Other.Role) != int(ROLE_Authority)) || !Other.bCollideActors && !Other.bBlockActors) || bSlowEncroach && !bDeepEncroach)
 	{
 		// End:0x351
 		if((P.Velocity Dot (Location - P.Location)) > float(0))
@@ -801,7 +801,7 @@ simulated function SetDriving(bool B)
 simulated function DrivingStatusChanged()
 {
 	// End:0x3C
-	if(bDriving!)
+	if(!bDriving)
 	{
 		Throttle = 0.0000000;
 		Steering = 0.0000000;

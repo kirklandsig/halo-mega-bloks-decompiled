@@ -147,7 +147,7 @@ function EnumerateUserFiles(string UserId)
 		LogInternal(((((((("(" $ string(Name)) $ ") McpUserCloudFileDownload::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "User files already being enumerated for") $ " UserId=") $ UserId);
 	}
 	// End:0x34D
-	if(bPending!)
+	if(!bPending)
 	{
 		CallEnumerateUserFileCompleteDelegates(false, UserId);
 	}
@@ -340,7 +340,7 @@ function bool ReadUserFile(string UserId, string Filename)
 		LogInternal(((((((((("(" $ string(Name)) $ ") McpUserCloudFileDownload::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Invalid parameters") $ " UserId=") $ UserId) $ " FileName=") $ Filename);
 	}
 	// End:0x6EF
-	if(bPending!)
+	if(!bPending)
 	{
 		CallReadUserFileCompleteDelegates(false, UserId, Filename);
 	}
@@ -489,7 +489,7 @@ function bool WriteUserFile(string UserId, string Filename, const out array<byte
 		LogInternal(((((((((((("(" $ string(Name)) $ ") McpUserCloudFileDownload::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Invalid parameters") $ " UserId=") $ UserId) $ " FileName=") $ Filename) $ " FileContents=") $ string(FileContents.Length));
 	}
 	// End:0x807
-	if(bPending!)
+	if(!bPending)
 	{
 		CallWriteUserFileCompleteDelegates(false, UserId, Filename);
 	}
@@ -662,7 +662,7 @@ function bool DeleteUserFile(string UserId, string Filename, bool bShouldCloudDe
 		LogInternal(((((((((("(" $ string(Name)) $ ") McpUserCloudFileDownload::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Invalid parameters") $ " UserId=") $ UserId) $ " FileName=") $ Filename);
 	}
 	// End:0x73B
-	if(bPending!)
+	if(!bPending)
 	{
 		// End:0x711
 		if(bShouldCloudDelete)

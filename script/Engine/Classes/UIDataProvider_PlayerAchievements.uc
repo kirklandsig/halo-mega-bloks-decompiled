@@ -137,7 +137,7 @@ function UpdateAchievements()
 		Achievements.Length = 0;
 		OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 		// End:0x165
-		if((((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId))!)
+		if((((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId)))
 		{
 			OnlineSub.PlayerInterface.ReadAchievements(byte(PlayerControllerId));
 		}

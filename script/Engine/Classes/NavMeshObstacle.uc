@@ -26,14 +26,14 @@ event bool GetObstacleBoudingShape(out array<Vector> Shape)
 	Offset.X = Scale * DrawScale3D.X;
 	Offset.Y = Scale * DrawScale3D.Y;
 	Shape.AddItem(Location + (Offset >> Rotation));
-	Offset.X = Scale- * DrawScale3D.X;
+	Offset.X = -Scale * DrawScale3D.X;
 	Offset.Y = Scale * DrawScale3D.Y;
 	Shape.AddItem(Location + (Offset >> Rotation));
-	Offset.X = Scale- * DrawScale3D.X;
-	Offset.Y = Scale- * DrawScale3D.Y;
+	Offset.X = -Scale * DrawScale3D.X;
+	Offset.Y = -Scale * DrawScale3D.Y;
 	Shape.AddItem(Location + (Offset >> Rotation));
 	Offset.X = Scale * DrawScale3D.X;
-	Offset.Y = Scale- * DrawScale3D.Y;
+	Offset.Y = -Scale * DrawScale3D.Y;
 	Shape.AddItem(Location + (Offset >> Rotation));
 	return true;
 	//return ReturnValue;	
@@ -75,7 +75,7 @@ simulated function OnToggle(SeqAct_Toggle Action)
 			// End:0xDB
 			if(Action.InputLinks[2].bHasImpulse)
 			{
-				bEnabled = bEnabled!;
+				bEnabled = !bEnabled;
 			}
 		}
 	}

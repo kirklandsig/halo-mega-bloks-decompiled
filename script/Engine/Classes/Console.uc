@@ -108,7 +108,7 @@ function PurgeCommandFromHistory(string Command)
 				}
 				HistoryTop = ((HistoryTop == 0) ? 16 - 1 : HistoryTop - 1);
 			}
-			HistoryIdx++;
+			++HistoryIdx;
 			// [Loop Continue]
 			goto J0x2C;
 		}
@@ -119,7 +119,7 @@ function PurgeCommandFromHistory(string Command)
 function ConsoleCommand(string Command)
 {
 	// End:0xE3
-	if(((HistoryTop == 0) ? History[16 - 1] ComplementEqual Command! : History[HistoryTop - 1] ComplementEqual Command!))
+	if(((HistoryTop == 0) ? !History[16 - 1] ComplementEqual Command : !History[HistoryTop - 1] ComplementEqual Command))
 	{
 		PurgeCommandFromHistory(Command);
 		History[HistoryTop] = Command;
@@ -436,7 +436,7 @@ state Typing
 						if((Key == TypeKey) && int(Event) == int(0))
 						{
 							// End:0x1DB
-							if((AutoCompleteIndices.Length > 0) && bAutoCompleteLocked!)
+							if((AutoCompleteIndices.Length > 0) && !bAutoCompleteLocked)
 							{
 								TypedStr = AutoCompleteList[AutoCompleteIndices[AutoCompleteIndex]].Command;
 								SetCursorPos(Len(TypedStr));
@@ -484,7 +484,7 @@ state Typing
 									if((int(Event) != int(0)) && int(Event) != int(2))
 									{
 										// End:0x36E
-										if(bGamepad!)
+										if(!bGamepad)
 										{
 											return ((Key != 'LeftMouseButton') && Key != 'MiddleMouseButton') && Key != 'RightMouseButton';
 										}
@@ -496,10 +496,10 @@ state Typing
 										if(Key == 'Up')
 										{
 											// End:0x413
-											if(bNavigatingHistory! && (bRequireCtrlToNavigateAutoComplete && bCtrl) || (bRequireCtrlToNavigateAutoComplete! && bCtrl!) && AutoCompleteIndices.Length > 1)
+											if(!bNavigatingHistory && (bRequireCtrlToNavigateAutoComplete && bCtrl) || (!bRequireCtrlToNavigateAutoComplete && !bCtrl) && AutoCompleteIndices.Length > 1)
 											{
 												// End:0x410
-												if(AutoCompleteIndex++ == AutoCompleteIndices.Length)
+												if(++AutoCompleteIndex == AutoCompleteIndices.Length)
 												{
 													AutoCompleteIndex = 0;
 												}												
@@ -537,10 +537,10 @@ state Typing
 											if(Key == 'Down')
 											{
 												// End:0x57E
-												if(bNavigatingHistory! && (bRequireCtrlToNavigateAutoComplete && bCtrl) || (bRequireCtrlToNavigateAutoComplete! && bCtrl!) && AutoCompleteIndices.Length > 1)
+												if(!bNavigatingHistory && (bRequireCtrlToNavigateAutoComplete && bCtrl) || (!bRequireCtrlToNavigateAutoComplete && !bCtrl) && AutoCompleteIndices.Length > 1)
 												{
 													// End:0x56F
-													if(AutoCompleteIndex-- < 0)
+													if(--AutoCompleteIndex < 0)
 													{
 														AutoCompleteIndex = AutoCompleteIndices.Length - 1;
 													}
@@ -739,7 +739,7 @@ state Typing
 				}
 				Canvas.DrawText(OutStr, false);
 				// End:0x764
-				if(Idx++ >= AutoCompleteIndices.Length)
+				if(++Idx >= AutoCompleteIndices.Length)
 				{
 					Idx = 0;
 				}
@@ -864,7 +864,7 @@ state Open
 						if((Key == TypeKey) && int(Event) == int(0))
 						{
 							// End:0x1D1
-							if((AutoCompleteIndices.Length > 0) && bAutoCompleteLocked!)
+							if((AutoCompleteIndices.Length > 0) && !bAutoCompleteLocked)
 							{
 								TypedStr = AutoCompleteList[AutoCompleteIndices[0]].Command;
 								SetCursorPos(Len(TypedStr));
@@ -914,7 +914,7 @@ state Open
 									if((int(Event) != int(0)) && int(Event) != int(2))
 									{
 										// End:0x359
-										if(bGamepad!)
+										if(!bGamepad)
 										{
 											return ((Key != 'LeftMouseButton') && Key != 'MiddleMouseButton') && Key != 'RightMouseButton';
 										}
@@ -926,7 +926,7 @@ state Open
 										if(Key == 'Up')
 										{
 											// End:0x428
-											if(bCtrl!)
+											if(!bCtrl)
 											{
 												// End:0x425
 												if(HistoryBot >= 0)
@@ -970,7 +970,7 @@ state Open
 											if(Key == 'Down')
 											{
 												// End:0x53D
-												if(bCtrl!)
+												if(!bCtrl)
 												{
 													// End:0x53A
 													if(HistoryBot >= 0)

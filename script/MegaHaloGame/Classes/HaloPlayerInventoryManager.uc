@@ -31,7 +31,7 @@ function int GetWeaponCountForGroup(int GroupID)
 		// End:0x88
 		if((Weap != none) && int(Weap.InventoryGroup) == GroupID)
 		{
-			weapCount++;
+			++weapCount;
 		}
 		Item = Item.Inventory;
 		// [Loop Continue]
@@ -255,7 +255,7 @@ simulated function DiscardInventory()
 		if(I < int(PlasmaGrenadeCount))
 		{
 			DropGrenade(true);
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x22;
 		}
@@ -267,7 +267,7 @@ simulated function DiscardInventory()
 		if(I < int(FragGrenadeCount))
 		{
 			DropGrenade(false);
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x6B;
 		}

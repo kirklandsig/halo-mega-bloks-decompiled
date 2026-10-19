@@ -24,7 +24,7 @@ function bool ComputeCondition(GripBTInterface BTInterface)
 	// End:0x9A
 	if(Negate)
 	{
-		Result = Result!;
+		Result = !Result;
 	}
 	return Result;
 	//return ReturnValue;	

@@ -55,7 +55,7 @@ event Tick(float DeltaTime)
 	if(IsAsyncLoadingActive())
 	{
 		// End:0x45
-		if(bHasSentCheckpointLoadedEvent!)
+		if(!bHasSentCheckpointLoadedEvent)
 		{
 			SendCheckPointLoadedEvent();
 			bHasSentCheckpointLoadedEvent = true;

@@ -160,7 +160,7 @@ simulated event ReachedDestination(GameCrowdAgent Agent)
 		}
 	}
 	// End:0x4BA
-	if(bEventActivated! && NextDestinations.Length > 0)
+	if(!bEventActivated && NextDestinations.Length > 0)
 	{
 		PickNewDestinationFor(Agent, false);
 		// End:0x4BA
@@ -203,7 +203,7 @@ simulated function PickNewDestinationFor(GameCrowdAgent Agent, bool bIgnoreRestr
 		// End:0x1F3
 		if(((NextDestinations[I] != none) && NextDestinations[I].bHasNavigationMesh) && bIgnoreRestrictions || NextDestinations[I].AllowableDestinationFor(Agent))
 		{
-			DestinationFrequencySum += (NextDestinations[I].Frequency * (((bIsVisible! && Agent.bPreferVisibleDestination) && NextDestinations[I].bIsVisible || NextDestinations[I].bWillBeVisible) ? 2.0000000 : 1.0000000));
+			DestinationFrequencySum += (NextDestinations[I].Frequency * (((!bIsVisible && Agent.bPreferVisibleDestination) && NextDestinations[I].bIsVisible || NextDestinations[I].bWillBeVisible) ? 2.0000000 : 1.0000000));
 			DestOptions.AddItem(NextDestinations[I]);
 		}
 		I++;
@@ -221,7 +221,7 @@ simulated function PickNewDestinationFor(GameCrowdAgent Agent, bool bIgnoreRestr
 		// End:0x3ED
 		if((DestOptions[I] != none) && DestOptions[I].bHasNavigationMesh)
 		{
-			DestinationFrequencySum += (DestOptions[I].Frequency * (((bIsVisible! && Agent.bPreferVisibleDestination) && DestOptions[I].bIsVisible || DestOptions[I].bWillBeVisible) ? 2.0000000 : 1.0000000));
+			DestinationFrequencySum += (DestOptions[I].Frequency * (((!bIsVisible && Agent.bPreferVisibleDestination) && DestOptions[I].bIsVisible || DestOptions[I].bWillBeVisible) ? 2.0000000 : 1.0000000));
 			// End:0x3ED
 			if(DestinationPickValue < DestinationFrequencySum)
 			{
@@ -271,7 +271,7 @@ simulated event DecrementCustomerCount(GameCrowdAgent DepartingAgent)
 		J0xD4:
 
 		// End:0x141
-		if(bIsInQueue!)
+		if(!bIsInQueue)
 		{
 			CustomerCount--;
 			// End:0x141
@@ -293,7 +293,7 @@ simulated event IncrementCustomerCount(GameCrowdAgent ArrivingAgent)
 		if((QueueHead != none) && QueueHead.HasSpace())
 		{
 			// End:0x180
-			if((((AgentEnRoute != none) && AgentEnRoute.CurrentBehavior == none) && ReachedByAgent(AgentEnRoute, AgentEnRoute.Location, false)!) && VSizeSq(ArrivingAgent.Location - Location) < VSizeSq(AgentEnRoute.Location - Location))
+			if((((AgentEnRoute != none) && AgentEnRoute.CurrentBehavior == none) && !ReachedByAgent(AgentEnRoute, AgentEnRoute.Location, false)) && VSizeSq(ArrivingAgent.Location - Location) < VSizeSq(AgentEnRoute.Location - Location))
 			{
 				QueueHead.AddCustomer(AgentEnRoute, self);
 				AgentEnRoute = ArrivingAgent;				
@@ -332,7 +332,7 @@ simulated event bool AllowableDestinationFor(GameCrowdAgent Agent)
 	local bool bSupported;
 
 	// End:0x22
-	if(bHasNavigationMesh! || bIsEnabled!)
+	if(!bHasNavigationMesh || !bIsEnabled)
 	{
 		return false;
 	}
@@ -342,17 +342,17 @@ simulated event bool AllowableDestinationFor(GameCrowdAgent Agent)
 		return false;
 	}
 	// End:0x68
-	if(bAllowAsPreviousDestination! && Agent.PreviousDestination == self)
+	if(!bAllowAsPreviousDestination && Agent.PreviousDestination == self)
 	{
 		return false;
 	}
 	// End:0xCA
-	if((Agent.CurrentBehavior != none) && Agent.CurrentBehavior.AllowThisDestination(self)!)
+	if((Agent.CurrentBehavior != none) && !Agent.CurrentBehavior.AllowThisDestination(self))
 	{
 		return false;
 	}
 	// End:0x17F
-	if((((Agent.MyGroup != none) && AtCapacity(byte(Agent.MyGroup.Members.Length - 1))) || AtCapacity()) || (QueueHead != none) && QueueHead.HasSpace()!)
+	if((((Agent.MyGroup != none) && AtCapacity(byte(Agent.MyGroup.Members.Length - 1))) || AtCapacity()) || (QueueHead != none) && !QueueHead.HasSpace())
 	{
 		return false;
 	}
@@ -401,7 +401,7 @@ simulated event bool AllowableDestinationFor(GameCrowdAgent Agent)
 			J0x382:
 
 			// End:0x407
-			if(bSupported!)
+			if(!bSupported)
 			{
 				I = 0;
 				J0x39C:
@@ -424,7 +424,7 @@ simulated event bool AllowableDestinationFor(GameCrowdAgent Agent)
 			J0x407:
 
 			// End:0x418
-			if(bSupported!)
+			if(!bSupported)
 			{
 				return false;
 			}
@@ -547,7 +547,7 @@ simulated function bool AnalyzeSpawnPoint(const out array<CrowdSpawnerPlayerInfo
 		else
 		{
 			// End:0x357
-			if(bIsBeyondSpawnDistance!)
+			if(!bIsBeyondSpawnDistance)
 			{
 				bCanSpawnHereNow = true;
 				bIsVisible = false;
@@ -572,7 +572,7 @@ simulated function bool AnalyzeSpawnPoint(const out array<CrowdSpawnerPlayerInfo
 				J0x2A7:
 
 				// End:0x357
-				if(bIsVisible!)
+				if(!bIsVisible)
 				{
 					PlayerIdx = 0;
 					J0x2C1:
@@ -607,7 +607,7 @@ simulated function bool AnalyzeSpawnPoint(const out array<CrowdSpawnerPlayerInfo
 				{
 					NextGCD = NextDestinations[NextIdx];
 					// End:0x446
-					if((((NextGCD != none) && NextGCD.bIsVisible) && NextGCD.bCanSpawnHereNow) && NextGCD.bIsBeyondSpawnDistance!)
+					if((((NextGCD != none) && NextGCD.bIsVisible) && NextGCD.bCanSpawnHereNow) && !NextGCD.bIsBeyondSpawnDistance)
 					{
 						bAdjacentToVisibleNode = true;
 						// End:0x446
@@ -696,7 +696,7 @@ simulated function DrawDebug(const out array<CrowdSpawnerPlayerInfo> PlayerInfo,
 		else
 		{
 			// End:0x213
-			if(bIsEnabled! || bAllowsSpawning!)
+			if(!bIsEnabled || !bAllowsSpawning)
 			{
 				// End:0x1E6
 				if(PlayerIdx == 0)

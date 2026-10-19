@@ -78,7 +78,7 @@ simulated function GetWeaponList(out array<UTWeapon> WeaponList, optional bool b
 	foreach InventoryActors(Class'UTGame.UTWeapon', Weap)
 	{
 		// End:0x1C8
-		if((bFilter! || int(Weap.InventoryGroup) == GroupFilter) && bNoEmpty! || Weap.HasAnyAmmo())
+		if((!bFilter || int(Weap.InventoryGroup) == GroupFilter) && !bNoEmpty || Weap.HasAnyAmmo())
 		{
 			// End:0x1A7
 			if(WeaponList.Length > 0)
@@ -275,7 +275,7 @@ function AllAmmo(optional bool bAmmoForSuperWeapons)
 	if(Inv != none)
 	{
 		// End:0xA2
-		if((UTWeapon(Inv) != none) && bAmmoForSuperWeapons || UTWeapon(Inv).bSuperWeapon!)
+		if((UTWeapon(Inv) != none) && bAmmoForSuperWeapons || !UTWeapon(Inv).bSuperWeapon)
 		{
 			UTWeapon(Inv).Loaded(true);
 		}
@@ -337,7 +337,7 @@ simulated function SetPendingWeapon(Weapon DesiredWeapon)
 				PrevWeapon.ServerReselectWeapon();
 			}
 			// End:0x197
-			if(PrevWeapon.bReadyToFire()!)
+			if(!PrevWeapon.bReadyToFire())
 			{
 				PrevWeapon.Activate();				
 			}
@@ -365,7 +365,7 @@ simulated function SetPendingWeapon(Weapon DesiredWeapon)
 			}
 			PendingWeapon = DesiredWeapon;
 			// End:0x361
-			if(((PrevWeapon != none) && PrevWeapon.bDeleteMe!) && PrevWeapon.IsInState('Inactive')!)
+			if(((PrevWeapon != none) && !PrevWeapon.bDeleteMe) && !PrevWeapon.IsInState('Inactive'))
 			{
 				PrevWeapon.TryPutDown();				
 			}
@@ -401,7 +401,7 @@ simulated function ClientWeaponSet(Weapon NewWeapon, bool bOptionalSet, optional
 		return;
 	}
 	// End:0xD5
-	if(bOptionalSet!)
+	if(!bOptionalSet)
 	{
 		SetCurrentWeapon(NewWeapon);
 		return;
@@ -420,7 +420,7 @@ simulated function ClientWeaponSet(Weapon NewWeapon, bool bOptionalSet, optional
 		return;
 	}
 	// End:0x324
-	if((((PendingWeapon == none) || PendingWeapon.HasAnyAmmo()!) || PendingWeapon.GetWeaponRating() < NewWeapon.GetWeaponRating()) && Instigator.Weapon.HasAnyAmmo()! || Instigator.Weapon.GetWeaponRating() < NewWeapon.GetWeaponRating())
+	if((((PendingWeapon == none) || !PendingWeapon.HasAnyAmmo()) || PendingWeapon.GetWeaponRating() < NewWeapon.GetWeaponRating()) && !Instigator.Weapon.HasAnyAmmo() || Instigator.Weapon.GetWeaponRating() < NewWeapon.GetWeaponRating())
 	{
 		SetCurrentWeapon(NewWeapon);
 		return;
@@ -504,7 +504,7 @@ simulated function bool AddInventory(Inventory NewItem, optional bool bDoNotActi
 			J0x144:
 
 			// End:0x16F
-			if(bDoNotActivate!)
+			if(!bDoNotActivate)
 			{
 				CheckSwitchTo(UTWeapon(NewItem));
 			}

@@ -126,7 +126,7 @@ simulated event Touch(Actor Other, PrimitiveComponent OtherComp, Vector HitLocat
 						Pawn.PlayAkEvent(myWeap.AmmoPickupSoundEvent);
 					}
 					// End:0x37B
-					if(myWeap.HasAnyAmmo()!)
+					if(!myWeap.HasAnyAmmo())
 					{
 						Destroy();
 					}

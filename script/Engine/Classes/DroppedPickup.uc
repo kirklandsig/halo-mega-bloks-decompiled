@@ -136,7 +136,7 @@ auto state Pickup
 	function bool ValidTouch(Pawn Other)
 	{
 		// End:0x83
-		if(((Other == none) || Other.bCanPickupInventory!) || (Other.DrivenVehicle == none) && Other.Controller == none)
+		if(((Other == none) || !Other.bCanPickupInventory) || (Other.DrivenVehicle == none) && Other.Controller == none)
 		{
 			return false;
 		}
@@ -146,7 +146,7 @@ auto state Pickup
 			return false;
 		}
 		// End:0x11E
-		if(FastTrace(Other.Location, Location)!)
+		if(!FastTrace(Other.Location, Location))
 		{
 			SetTimer(0.5000000, false, 'RecheckValidTouch');
 			return false;

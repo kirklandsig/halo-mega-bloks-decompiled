@@ -96,7 +96,7 @@ static simulated function DrawKillIcon(Canvas Canvas, float ScreenX, float Scree
 simulated function GetCrosshairScaling(HUD HUD)
 {
 	// End:0x21
-	if(bShouldAimAffectCrosshair!)
+	if(!bShouldAimAffectCrosshair)
 	{
 		CrosshairScaling = 1.0000000;		
 	}
@@ -343,7 +343,7 @@ simulated function DetachWeapon()
 simulated function Activate()
 {
 	// End:0x1D
-	if(IsFiring()!)
+	if(!IsFiring())
 	{
 		GotoState('Active');
 	}
@@ -376,7 +376,7 @@ simulated function BeginFire(byte FireModeNum)
 
 	V = UTVehicle(Instigator);
 	// End:0x93
-	if((V == none) || V.bIsDisabled! && V.OverrideBeginFire(FireModeNum)!)
+	if((V == none) || !V.bIsDisabled && !V.OverrideBeginFire(FireModeNum))
 	{
 		super(Weapon).BeginFire(FireModeNum);
 	}
@@ -389,7 +389,7 @@ simulated function EndFire(byte FireModeNum)
 
 	V = UTVehicle(Instigator);
 	// End:0x6D
-	if((V == none) || V.OverrideEndFire(FireModeNum)!)
+	if((V == none) || !V.OverrideEndFire(FireModeNum))
 	{
 		super.EndFire(FireModeNum);
 	}
@@ -490,7 +490,7 @@ simulated function WeaponPlaySound(SoundCue Sound, optional float NoiseLoudness)
 simulated function UTWeapon.EZoomState GetZoomedState()
 {
 	// End:0x62
-	if(((int(Role) == int(ROLE_Authority)) && Instigator != none) && Instigator.IsLocallyControlled()!)
+	if(((int(Role) == int(ROLE_Authority)) && Instigator != none) && !Instigator.IsLocallyControlled())
 	{
 		return ((bCurrentlyZoomed) ? 3 : 0);		
 	}

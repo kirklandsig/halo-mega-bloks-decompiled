@@ -85,7 +85,7 @@ simulated function PostBeginPlay()
 	if(int(Role) == int(ROLE_Authority))
 	{
 		// End:0x37
-		if(bWideCheck!)
+		if(!bWideCheck)
 		{
 			CheckRadius *= GlobalCheckRadiusTweak;
 		}
@@ -98,10 +98,10 @@ simulated function PostBeginPlay()
 		return;
 	}
 	// End:0x206
-	if(((AmbientSound != none) && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && bSuppressSounds!)
+	if(((AmbientSound != none) && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !bSuppressSounds)
 	{
 		// End:0x206
-		if(bImportantAmbientSound || WorldInfo.bDropDetail! && int(WorldInfo.GetDetailMode()) != int(0))
+		if(bImportantAmbientSound || !WorldInfo.bDropDetail && int(WorldInfo.GetDetailMode()) != int(0))
 		{
 			AmbientComponent = CreateAudioComponent(AmbientSound, true, true);
 			// End:0x206
@@ -170,7 +170,7 @@ simulated function Explode(Vector HitLocation, Vector HitNormal)
 			MakeNoise(1.0000000);
 		}
 		// End:0x6C
-		if(bShuttingDown!)
+		if(!bShuttingDown)
 		{
 			ProjectileHurtRadius(HitLocation, HitNormal);
 		}
@@ -221,7 +221,7 @@ simulated function SpawnExplosionEffects(Vector HitLocation, Vector HitNormal)
 		{
 			EffectAttachActor = none;
 			// End:0x10C
-			if(bAdvanceExplosionEffect!)
+			if(!bAdvanceExplosionEffect)
 			{
 				ProjExplosion = WorldInfo.MyEmitterPool.SpawnEmitter(ProjExplosionTemplate, HitLocation, Rotator(HitNormal), EffectAttachActor);				
 			}
@@ -234,7 +234,7 @@ simulated function SpawnExplosionEffects(Vector HitLocation, Vector HitNormal)
 			}
 			SetExplosionEffectParameters(ProjExplosion);
 			// End:0x618
-			if((WorldInfo.bDropDetail! && (ExplosionLightClass != none) || ExplosionDecal != none) && ShouldSpawnExplosionLight(HitLocation, HitNormal))
+			if((!WorldInfo.bDropDetail && (ExplosionLightClass != none) || ExplosionDecal != none) && ShouldSpawnExplosionLight(HitLocation, HitNormal))
 			{
 				// End:0x45F
 				if(ExplosionLightClass != none)
@@ -261,19 +261,19 @@ simulated function SpawnExplosionEffects(Vector HitLocation, Vector HitNormal)
 						{
 							MITV_Decal = new (self) Class'Engine.MaterialInstanceTimeVarying';
 							MITV_Decal.SetParent(ExplosionDecal);
-							WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, HitLocation, Rotator(HitNormal-), DecalWidth, DecalHeight, 10.0000000, false);
+							WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, HitLocation, Rotator(-HitNormal), DecalWidth, DecalHeight, 10.0000000, false);
 							MITV_Decal.SetScalarStartTime(DecalDissolveParamName, DurationOfDecal);
 						}						
 					}
 					else
 					{
-						WorldInfo.MyDecalManager.SpawnDecal(ExplosionDecal, HitLocation, Rotator(HitNormal-), DecalWidth, DecalHeight, 10.0000000, true);
+						WorldInfo.MyDecalManager.SpawnDecal(ExplosionDecal, HitLocation, Rotator(-HitNormal), DecalWidth, DecalHeight, 10.0000000, true);
 					}
 				}
 			}
 		}
 		// End:0x651
-		if((ExplosionSound != none) && bSuppressSounds!)
+		if((ExplosionSound != none) && !bSuppressSounds)
 		{
 			PlaySound(ExplosionSound, true);
 		}
@@ -315,7 +315,7 @@ simulated function ShutDown()
 		ProjEffects.DeactivateSystem();
 	}
 	// End:0x10F
-	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && bSuppressExplosionFX!)
+	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !bSuppressExplosionFX)
 	{
 		SpawnExplosionEffects(Location, HitNormal);
 	}
@@ -381,7 +381,7 @@ simulated function HideProjectile()
 simulated function Destroyed()
 {
 	// End:0x61
-	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && bSuppressExplosionFX!)
+	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !bSuppressExplosionFX)
 	{
 		SpawnExplosionEffects(Location, Vector(Rotation) * float(-1));
 	}
@@ -450,7 +450,7 @@ static final function float CalculateTravelTime(float Dist, float MoveSpeed, flo
 	}
 	else
 	{
-		ProjTime = (MoveSpeed- + Sqrt(Square(MoveSpeed) - ((2.0000000 * AccelMag) * Dist-))) / AccelMag;
+		ProjTime = (-MoveSpeed + Sqrt(Square(MoveSpeed) - ((2.0000000 * AccelMag) * -Dist))) / AccelMag;
 		AccelTime = (MaxMoveSpeed - MoveSpeed) / AccelMag;
 		// End:0x12A
 		if(ProjTime > AccelTime)
@@ -513,7 +513,7 @@ state WaitingForVelocity
 	simulated function Tick(float DeltaTime)
 	{
 		// End:0x61
-		if(IsZero(Velocity)!)
+		if(!IsZero(Velocity))
 		{
 			Acceleration = AccelRate * Normal(Velocity);
 			GotoState(((InitialState != 'None') ? InitialState : 'Auto'));

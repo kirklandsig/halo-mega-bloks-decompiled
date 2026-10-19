@@ -346,7 +346,7 @@ function OnExternalUIChanged(bool bIsOpening)
 
 function bool CanUnpauseExternalUI()
 {
-	return ((bIsExternalUIOpen! || bPendingDelete) || bPendingDestroy) || bDeleteMe;
+	return ((!bIsExternalUIOpen || bPendingDelete) || bPendingDestroy) || bDeleteMe;
 	//return ReturnValue;	
 }
 
@@ -356,11 +356,11 @@ function OnControllerChanged(int ControllerId, bool bIsConnected)
 
 	LP = LocalPlayer(Player);
 	// End:0x1C7
-	if((((LP != none) && LP.ControllerId == ControllerId) && WorldInfo.IsConsoleBuild()) && (WorldInfo.Game == none) || WorldInfo.Game.IsAutomatedPerfTesting()!)
+	if((((LP != none) && LP.ControllerId == ControllerId) && WorldInfo.IsConsoleBuild()) && (WorldInfo.Game == none) || !WorldInfo.Game.IsAutomatedPerfTesting())
 	{
 		bIsControllerConnected = bIsConnected;
 		LogInternal((((("Received gamepad connection change for player" @ string(Class'Engine.UIInteraction'.static.GetPlayerIndex(ControllerId))) $ ": gamepad") @ string(ControllerId)) @ "is now") @ ((bIsConnected) ? "connected" : "disconnected"));
-		SetPause(bIsConnected!, CanUnpauseControllerConnected);
+		SetPause(!bIsConnected, CanUnpauseControllerConnected);
 	}
 	//return;	
 }
@@ -668,7 +668,7 @@ function bool RemoveMissingPeersFromSession(name SessionName, delegate<OnMissing
 		{
 			RegisteredPRI = GetPRIFromNetId(RegisteredPlayers[PlayerIdx]);
 			// End:0x196
-			if(((RegisteredPlayers[PlayerIdx] == PlayerReplicationInfo.UniqueId || RegisteredPlayers[PlayerIdx] == ZeroId) || FindConnectedPeerIndex(RegisteredPlayers[PlayerIdx]) != -1) || (RegisteredPRI != none) && RegisteredPRI.IsPrimaryPlayer()!)
+			if(((RegisteredPlayers[PlayerIdx] == PlayerReplicationInfo.UniqueId || RegisteredPlayers[PlayerIdx] == ZeroId) || FindConnectedPeerIndex(RegisteredPlayers[PlayerIdx]) != -1) || !(RegisteredPRI != none) && RegisteredPRI.IsPrimaryPlayer())
 			{
 				RegisteredPlayers.Remove(PlayerIdx, 1);
 				PlayerIdx--;				
@@ -700,7 +700,7 @@ function OnUnregisterPlayerCompleteForHostMigrate(name SessionName, UniqueNetId 
 {
 	OnlineSub.GameInterface.ClearUnregisterPlayerCompleteDelegate(OnUnregisterPlayerCompleteForHostMigrate);
 	// End:0x82
-	if(RemoveMissingPeersFromSession(SessionName, OnUnregisterPlayerCompleteForHostMigrate)!)
+	if(!RemoveMissingPeersFromSession(SessionName, OnUnregisterPlayerCompleteForHostMigrate))
 	{
 		PeerDesignatedAsHost(SessionName);
 	}
@@ -714,7 +714,7 @@ function OnHostMigratedOnlineGame(name SessionName, bool bWasSuccessful)
 	if(bWasSuccessful)
 	{
 		// End:0x8F
-		if(RemoveMissingPeersFromSession(SessionName, OnUnregisterPlayerCompleteForHostMigrate)!)
+		if(!RemoveMissingPeersFromSession(SessionName, OnUnregisterPlayerCompleteForHostMigrate))
 		{
 			PeerDesignatedAsHost(SessionName);
 		}		
@@ -827,7 +827,7 @@ function OnUnregisterPlayerCompleteForJoinMigrate(name SessionName, UniqueNetId 
 {
 	OnlineSub.GameInterface.ClearUnregisterPlayerCompleteDelegate(OnUnregisterPlayerCompleteForJoinMigrate);
 	// End:0x82
-	if(RemoveMissingPeersFromSession(SessionName, OnUnregisterPlayerCompleteForJoinMigrate)!)
+	if(!RemoveMissingPeersFromSession(SessionName, OnUnregisterPlayerCompleteForJoinMigrate))
 	{
 		PeerDesignatedAsClient(SessionName);
 	}
@@ -859,13 +859,13 @@ function OnJoinMigratedGame(name SessionName, bool bWasSuccessful)
 	if(bWasSuccessful)
 	{
 		// End:0x8F
-		if(RemoveMissingPeersFromSession(SessionName, OnUnregisterPlayerCompleteForJoinMigrate)!)
+		if(!RemoveMissingPeersFromSession(SessionName, OnUnregisterPlayerCompleteForJoinMigrate))
 		{
 			PeerDesignatedAsClient(SessionName);
 		}
 	}
 	// End:0x194
-	if(bWasSuccessful!)
+	if(!bWasSuccessful)
 	{
 		LogInternal(((((((("(" $ string(Name)) $ ") PlayerController::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "failed joining migrated session ") $ " SessionName=") $ string(SessionName), 'DevNet');
 		ClientSetProgressMessage(6, "<Strings:Engine.Errors.ConnectionFailed>", "<Strings:Engine.Errors.ConnectionFailed_Title>", true);
@@ -890,7 +890,7 @@ reliable server function ServerShortTimeout()
 	local Actor A;
 
 	// End:0x287
-	if(bShortConnectTimeOut!)
+	if(!bShortConnectTimeOut)
 	{
 		bShortConnectTimeOut = true;
 		ResetTimeMargin();
@@ -901,7 +901,7 @@ reliable server function ServerShortTimeout()
 			foreach AllActors(Class'Engine.Actor', A)
 			{
 				// End:0xA7
-				if(A.bOnlyRelevantToOwner!)
+				if(!A.bOnlyRelevantToOwner)
 				{
 					A.bForceNetUpdate = true;
 				}				
@@ -916,7 +916,7 @@ reliable server function ServerShortTimeout()
 				foreach AllActors(Class'Engine.Actor', A)
 				{
 					// End:0x1B3
-					if((A.NetUpdateFrequency < float(1)) && A.bOnlyRelevantToOwner!)
+					if((A.NetUpdateFrequency < float(1)) && !A.bOnlyRelevantToOwner)
 					{
 						A.SetNetUpdateTime(FMin(A.NetUpdateTime, WorldInfo.TimeSeconds + (0.2000000 * FRand())));
 					}					
@@ -928,7 +928,7 @@ reliable server function ServerShortTimeout()
 				foreach AllActors(Class'Engine.Actor', A)
 				{
 					// End:0x285
-					if((A.NetUpdateFrequency < float(1)) && A.bOnlyRelevantToOwner!)
+					if((A.NetUpdateFrequency < float(1)) && !A.bOnlyRelevantToOwner)
 					{
 						A.SetNetUpdateTime(FMin(A.NetUpdateTime, WorldInfo.TimeSeconds + (0.5000000 * FRand())));
 					}					
@@ -1064,7 +1064,7 @@ function PostControllerIdChange()
 		// DebugMode: 0
 		assert(WorldInfo.Game != none);
 		// End:0x1A8
-		if(WorldInfo.Game.bRequiresPushToTalk!)
+		if(!WorldInfo.Game.bRequiresPushToTalk)
 		{
 			ClientStartNetworkedVoice();
 		}
@@ -1190,7 +1190,7 @@ protected simulated function RegisterCustomPlayerDataStores()
 					if(OnlinePlayerData != none)
 					{
 						// End:0x30F
-						if(DataStoreManager.RegisterDataStore(OnlinePlayerData, LP)!)
+						if(!DataStoreManager.RegisterDataStore(OnlinePlayerData, LP))
 						{
 							LogInternal(((((("Failed to register 'OnlinePlayerData' data store for player:" @ string(self)) @ "(") $ PlayerName) $ ")") @ "OnlinePlayerData:") $ ((OnlinePlayerData != none) ? string(OnlinePlayerData.Name) : "None"), 'DevDataStore');
 						}						
@@ -1256,7 +1256,7 @@ protected simulated function RegisterStandardPlayerDataStores()
 						if(PlayerDataStore != none)
 						{
 							// End:0x3E2
-							if(DataStoreManager.RegisterDataStore(PlayerDataStore, LP)!)
+							if(!DataStoreManager.RegisterDataStore(PlayerDataStore, LP))
 							{
 								LogInternal(((((((("Failed to register '" $ string(PlayerDataStoreClass.default.Tag)) $ "' data store for player:") @ string(self)) @ "(") $ PlayerName) $ ")") @ "PlayerDataStore:") $ ((PlayerDataStore != none) ? string(PlayerDataStore.Name) : "None"), 'DevDataStore');
 							}
@@ -1299,7 +1299,7 @@ simulated function UnregisterPlayerDataStores()
 			if(OnlinePlayerDataStore != none)
 			{
 				// End:0x24D
-				if(DataStoreManager.UnregisterDataStore(OnlinePlayerDataStore)!)
+				if(!DataStoreManager.UnregisterDataStore(OnlinePlayerDataStore))
 				{
 					LogInternal(((((("Failed to unregister 'OnlinePlayerData' data store for player:" @ string(self)) @ "(") $ PlayerName) $ ")") @ "OnlinePlayerDataStore:") $ ((OnlinePlayerDataStore != none) ? string(OnlinePlayerDataStore.Name) : "None"), 'DevDataStore');
 				}				
@@ -1355,7 +1355,7 @@ simulated function UnregisterStandardPlayerDataStores()
 					if(PlayerDataStore != none)
 					{
 						// End:0x2D5
-						if(DataStoreManager.UnregisterDataStore(PlayerDataStore)!)
+						if(!DataStoreManager.UnregisterDataStore(PlayerDataStore))
 						{
 							LogInternal(((((((("Failed to unregister '" $ string(PlayerDataStore.Tag)) $ "' data store for player:") @ string(self)) @ "(") $ PlayerName) $ ")") @ "PlayerDataStore:") $ ((PlayerDataStore != none) ? string(PlayerDataStore.Name) : "None"), 'DevDataStore');
 						}
@@ -1418,7 +1418,7 @@ exec function SetTiltActive(bool bActive)
 reliable client simulated function ClientGotoState(name NewState, optional name NewLabel)
 {
 	// End:0x56
-	if(((NewLabel == 'Begin') || NewLabel == 'None') && IsInState(NewState)!)
+	if(((NewLabel == 'Begin') || NewLabel == 'None') && !IsInState(NewState))
 	{
 		GotoState(NewState);		
 	}
@@ -1476,7 +1476,7 @@ event Possess(Pawn aPawn, bool bVehicleTransition)
 	local SeqEvent_Touch TouchEvent;
 
 	// End:0x20C
-	if(PlayerReplicationInfo.bOnlySpectator!)
+	if(!PlayerReplicationInfo.bOnlySpectator)
 	{
 		// End:0x7C
 		if(aPawn.Controller != none)
@@ -1634,7 +1634,7 @@ simulated function HearSoundFinished(AudioComponent AC)
 {
 	HearSoundActiveComponents.RemoveItem(AC);
 	// End:0x77
-	if(AC.IsPendingKill()!)
+	if(!AC.IsPendingKill())
 	{
 		AC.ResetToDefaults();
 		HearSoundPoolComponents[HearSoundPoolComponents.Length] = AC;
@@ -1683,7 +1683,7 @@ unreliable client simulated event ClientHearSound(SoundCue ASound, Actor SourceA
 				return;
 			}
 			// End:0x1FA
-			if(IsZero(SourceLocation)! && SourceLocation != SourceActor.Location)
+			if(!IsZero(SourceLocation) && SourceLocation != SourceActor.Location)
 			{
 				AC.bUseOwnerLocation = false;
 				AC.Location = SourceLocation;
@@ -1887,7 +1887,7 @@ reliable client simulated event TeamMessage(PlayerReplicationInfo PRI, coerce st
 		if((((Type == 'Say') || Type == 'TeamSay') && PRI != none) && AllowTTSMessageFrom(PRI))
 		{
 			// End:0xB0
-			if(bIsUserCreated! || bIsUserCreated && CanViewUserCreatedContent())
+			if(!bIsUserCreated || bIsUserCreated && CanViewUserCreatedContent())
 			{
 				SpeakTTS(S, PRI);
 			}
@@ -1907,7 +1907,7 @@ reliable client simulated event TeamMessage(PlayerReplicationInfo PRI, coerce st
 		if(Player != none)
 		{
 			// End:0x21F
-			if(bIsUserCreated! || bIsUserCreated && CanViewUserCreatedContent())
+			if(!bIsUserCreated || bIsUserCreated && CanViewUserCreatedContent())
 			{
 				LocalPlayer(Player).ViewportClient.ViewportConsole.OutputText(S);
 			}
@@ -2257,7 +2257,7 @@ unreliable server function ServerTeamSay(string msg)
 {
 	LastActiveTime = WorldInfo.TimeSeconds;
 	// End:0x8B
-	if(WorldInfo.GRI.GameClass.default.bTeamGame!)
+	if(!WorldInfo.GRI.GameClass.default.bTeamGame)
 	{
 		Say(msg);
 		return;
@@ -2459,10 +2459,10 @@ function float GetServerMoveDeltaTime(float TimeStamp)
 	else
 	{
 		// End:0x185
-		if(CheckSpeedHack(DeltaTime)!)
+		if(!CheckSpeedHack(DeltaTime))
 		{
 			// End:0x13B
-			if(bWasSpeedHack!)
+			if(!bWasSpeedHack)
 			{
 				// End:0x10E
 				if((WorldInfo.TimeSeconds - LastSpeedHackLog) > float(20))
@@ -2833,7 +2833,7 @@ function bool SkipPositionUpdateForRM()
 	if((Pawn != none) && int(Pawn.default.Mesh.RootMotionMode) == int(2))
 	{
 		// End:0x13D
-		if((((int(Pawn.Physics) != int(2)) && Pawn.Mesh != none) && int(Pawn.Mesh.RootMotionMode) != int(2)) && Pawn.bRootMotionFromInterpCurve!)
+		if((((int(Pawn.Physics) != int(2)) && Pawn.Mesh != none) && int(Pawn.Mesh.RootMotionMode) != int(2)) && !Pawn.bRootMotionFromInterpCurve)
 		{
 			LogInternal("- skipping position update for root motion", 'PlayerMove');
 			return true;
@@ -2877,7 +2877,7 @@ unreliable client simulated function LongClientAdjustPosition(float TimeStamp, n
 		{
 			Pawn = none;
 			// End:0xC2
-			if(GamePlayEndedState()! && IsInState('Dead')!)
+			if(!GamePlayEndedState() && !IsInState('Dead'))
 			{
 				GotoState('Dead');
 			}
@@ -3061,11 +3061,11 @@ unreliable client simulated function LongClientAdjustPosition(float TimeStamp, n
 	}
 	MoveActor.bCanTeleport = false;
 	// End:0xE00
-	if(((((MoveActor.SetLocation(NewLocation)! && Pawn(MoveActor) != none) && Pawn(MoveActor).CylinderComponent.CollisionHeight > Pawn(MoveActor).CrouchHeight) && Pawn(MoveActor).bIsCrouched!) && int(newPhysics) == int(1)) && int(MoveActor.Physics) != int(10))
+	if(((((!MoveActor.SetLocation(NewLocation) && Pawn(MoveActor) != none) && Pawn(MoveActor).CylinderComponent.CollisionHeight > Pawn(MoveActor).CrouchHeight) && !Pawn(MoveActor).bIsCrouched) && int(newPhysics) == int(1)) && int(MoveActor.Physics) != int(10))
 	{
 		MoveActor.SetPhysics(newPhysics);
 		// End:0xDB2
-		if(MoveActor.SetLocation(NewLocation + (vect(0.0000000, 0.0000000, 1.0000000) * Pawn(MoveActor).MaxStepHeight))!)
+		if(!MoveActor.SetLocation(NewLocation + (vect(0.0000000, 0.0000000, 1.0000000) * Pawn(MoveActor).MaxStepHeight)))
 		{
 			Pawn(MoveActor).ForceCrouch();
 			MoveActor.SetLocation(NewLocation);			
@@ -3604,7 +3604,7 @@ exec function Pause()
 reliable server function ServerPause()
 {
 	// End:0x1E
-	if(IsPaused()!)
+	if(!IsPaused())
 	{
 		SetPause(true);		
 	}
@@ -3628,7 +3628,7 @@ event ConditionalPause(bool bDesiredPauseState)
 reliable server function ServerUTrace()
 {
 	// End:0x62
-	if((int(WorldInfo.NetMode) != int(NM_Standalone)) && (PlayerReplicationInfo == none) || PlayerReplicationInfo.bAdmin!)
+	if((int(WorldInfo.NetMode) != int(NM_Standalone)) && (PlayerReplicationInfo == none) || !PlayerReplicationInfo.bAdmin)
 	{
 		return;
 	}
@@ -3644,7 +3644,7 @@ exec function UTrace()
 	{
 		ServerUTrace();
 	}
-	SetUTracing(IsUTracing()!);
+	SetUTracing(!IsUTracing());
 	LogInternal((("UTracing changed to " $ string(IsUTracing())) $ " at ") $ string(WorldInfo.TimeSeconds), 'UTrace');
 	//return;	
 }
@@ -3721,7 +3721,7 @@ exec function StartFire(optional byte FireModeNum)
 		return;
 	}
 	// End:0xA9
-	if(((Pawn != none) && bCinematicMode!) && WorldInfo.bPlayersOnly!)
+	if(((Pawn != none) && !bCinematicMode) && !WorldInfo.bPlayersOnly)
 	{
 		Pawn.StartFire(FireModeNum);
 	}
@@ -3777,13 +3777,13 @@ function GetTriggerUseList(float interactDistanceToCheck, float crosshairDist, f
 				{
 					UseSeq = SeqEvent_Used(checkTrigger.GeneratedEvents[Idx]);
 					// End:0x374
-					if(((UseSeq != none) && bUsuableOnly! || checkTrigger.GeneratedEvents[Idx].CheckActivate(checkTrigger, Pawn, true)) && (Normal(checkTrigger.Location - CameraLoc) Dot Vector(CameraRot)) >= minDot)
+					if(((UseSeq != none) && !bUsuableOnly || checkTrigger.GeneratedEvents[Idx].CheckActivate(checkTrigger, Pawn, true)) && (Normal(checkTrigger.Location - CameraLoc) Dot Vector(CameraRot)) >= minDot)
 					{
 						aimingRequirementsSatisfied = false;
 						// End:0x320
 						if(VSize(Pawn.Location - checkTrigger.Location) <= UseSeq.InteractDistance)
 						{
-							aimingRequirementsSatisfied = ((UseSeq.bAimToInteract! && UseSeq.bAllowPawnFacingToInteract!) || UseSeq.bAimToInteract && IsAimingAt(checkTrigger, 0.9800000)) || UseSeq.bAllowPawnFacingToInteract && PawnIsFacing(checkTrigger, 0.7070000);
+							aimingRequirementsSatisfied = ((!UseSeq.bAimToInteract && !UseSeq.bAllowPawnFacingToInteract) || UseSeq.bAimToInteract && IsAimingAt(checkTrigger, 0.9800000)) || UseSeq.bAllowPawnFacingToInteract && PawnIsFacing(checkTrigger, 0.7070000);
 						}
 						// End:0x374
 						if(aimingRequirementsSatisfied)
@@ -3924,7 +3924,7 @@ function bool TriggerInteracted()
 				J0x162:
 
 				// End:0x22A [Loop If]
-				if((Idx < sortedList.Length) && bInserted!)
+				if((Idx < sortedList.Length) && !bInserted)
 				{
 					// End:0x21C
 					if(weightList[Idx] < Weight)
@@ -3940,7 +3940,7 @@ function bool TriggerInteracted()
 					goto J0x162;
 				}
 				// End:0x287
-				if(bInserted!)
+				if(!bInserted)
 				{
 					Idx = sortedList.Length;
 					sortedList[Idx] = A;
@@ -4225,7 +4225,7 @@ function NotifyChangedWeapon(Weapon PreviousWeapon, Weapon NewWeapon)
 event PlayerTick(float DeltaTime)
 {
 	// End:0x25
-	if(bShortConnectTimeOut!)
+	if(!bShortConnectTimeOut)
 	{
 		bShortConnectTimeOut = true;
 		ServerShortTimeout();
@@ -4318,7 +4318,7 @@ function Rotator GetAdjustedAimFor(Weapon W, Vector StartFireLoc)
 	}
 	ShotTarget = Pawn(BestTarget);
 	// End:0x2E2
-	if(AimingHelp(bInstantHit)!)
+	if(!AimingHelp(bInstantHit))
 	{
 		return BaseAimRot;
 	}
@@ -4351,7 +4351,7 @@ function Rotator GetAdjustedAimFor(Weapon W, Vector StartFireLoc)
 		AimSpot.Z = OldAim.Z;
 	}
 	// End:0x615
-	if(bNoZAdjust!)
+	if(!bNoZAdjust)
 	{
 		AimRot = Rotator(AimSpot - StartFireLoc);
 		// End:0x5C2
@@ -4444,7 +4444,7 @@ final function SetViewTargetWithBlend(Actor NewViewTarget, optional float BlendT
 reliable client simulated event ClientSetViewTarget(Actor A, optional ViewTargetTransitionParams TransitionParams)
 {
 	// End:0x45
-	if(bClientSimulatingViewTarget!)
+	if(!bClientSimulatingViewTarget)
 	{
 		// End:0x29
 		if(A == none)
@@ -4752,7 +4752,7 @@ unreliable server function ServerViewSelf(optional ViewTargetTransitionParams Tr
 
 function bool CanRestartPlayer()
 {
-	return (((PlayerReplicationInfo != none) && PlayerReplicationInfo.bOnlySpectator!) && HasClientLoadedCurrentWorld()) && PendingSwapConnection == none;
+	return (((PlayerReplicationInfo != none) && !PlayerReplicationInfo.bOnlySpectator) && HasClientLoadedCurrentWorld()) && PendingSwapConnection == none;
 	//return ReturnValue;	
 }
 
@@ -4836,14 +4836,14 @@ function OnToggleInput(SeqAct_ToggleInput inAction)
 				// End:0x21E
 				if(inAction.bToggleMovement)
 				{
-					bNewValue = IsMoveInputIgnored()!;
+					bNewValue = !IsMoveInputIgnored();
 					IgnoreMoveInput(bNewValue);
 					ClientIgnoreMoveInput(bNewValue);
 				}
 				// End:0x27F
 				if(inAction.bToggleTurning)
 				{
-					bNewValue = IsLookInputIgnored()!;
+					bNewValue = !IsLookInputIgnored();
 					IgnoreLookInput(bNewValue);
 					ClientIgnoreLookInput(bNewValue);
 				}
@@ -4912,7 +4912,7 @@ function OnDrawText(SeqAct_DrawText inAction)
 reliable client final simulated function ClientDrawKismetText(KismetDrawTextInfo DrawTextInfo, float DisplayTime)
 {
 	// End:0x11
-	if(bShowKismetDrawText!)
+	if(!bShowKismetDrawText)
 	{
 		return;
 	}
@@ -4986,7 +4986,7 @@ simulated function OnToggleHUD(SeqAct_ToggleHUD inAction)
 				// End:0x13E
 				if(inAction.InputLinks[2].bHasImpulse)
 				{
-					myHUD.bShowHUD = myHUD.bShowHUD!;
+					myHUD.bShowHUD = !myHUD.bShowHUD;
 				}
 			}
 		}
@@ -5026,7 +5026,7 @@ unreliable server function ServerCauseEvent(name EventName)
 		}
 	}
 	// End:0x168
-	if(bFoundEvt!)
+	if(!bFoundEvt)
 	{
 		ListConsoleEvents();
 	}
@@ -5134,7 +5134,7 @@ unreliable server function ServerRemoteEvent(name EventName)
 		}
 	}
 	// End:0x276
-	if(bFoundEvt!)
+	if(!bFoundEvt)
 	{
 		LogInternal("Remote events:");
 		ClientMessage("Remote events:",, 15.0000000);
@@ -5223,7 +5223,7 @@ event PlayRumble(const AnimNotify_Rumble TheAnimNotify)
 reliable client simulated event ClientPlayForceFeedbackWaveform(ForceFeedbackWaveform FFWaveform, optional Actor FFWaveformInstigator)
 {
 	// End:0x60
-	if(((PlayerInput != none) && PlayerInput.bUsingGamepad!) && WorldInfo.IsConsoleBuild(0)!)
+	if(((PlayerInput != none) && !PlayerInput.bUsingGamepad) && !WorldInfo.IsConsoleBuild(0))
 	{
 		return;
 	}
@@ -5278,7 +5278,7 @@ function OnToggleCinematicMode(SeqAct_ToggleCinematicMode Action)
 			// End:0x10C
 			if(Action.InputLinks[2].bHasImpulse)
 			{
-				bNewCinematicMode = bCinematicMode!;
+				bNewCinematicMode = !bCinematicMode;
 			}
 		}
 	}
@@ -5332,7 +5332,7 @@ reliable client simulated function ClientSetCinematicMode(bool bInCinematicMode,
 	// End:0x5F
 	if((myHUD != none) && bAffectsHUD)
 	{
-		myHUD.bShowHUD = bCinematicMode!;
+		myHUD.bShowHUD = !bCinematicMode;
 	}
 	// End:0x80
 	if(bAffectsMovement)
@@ -5386,7 +5386,7 @@ function OnConsoleCommand(SeqAct_ConsoleCommand inAction)
 	foreach inAction.Commands(Command)
 	{
 		// End:0x84
-		if(Left(Command, 4) ComplementEqual "set "! && Left(Command, 9) ComplementEqual "setnopec "!)
+		if(!Left(Command, 4) ComplementEqual "set " && !Left(Command, 9) ComplementEqual "setnopec ")
 		{			
 			ConsoleCommand(Command);
 		}		
@@ -5776,7 +5776,7 @@ reliable server event ServerUnmutePlayer(UniqueNetId PlayerNetId)
 event NotifyDirectorControl(bool bNowControlling, SeqAct_Interp CurrentMatinee)
 {
 	// End:0x53
-	if((bNowControlling! && int(WorldInfo.NetMode) == int(NM_Client)) && bClientSimulatingViewTarget)
+	if((!bNowControlling && int(WorldInfo.NetMode) == int(NM_Client)) && bClientSimulatingViewTarget)
 	{
 		ServerVerifyViewTarget();
 	}
@@ -5854,7 +5854,7 @@ function OnGameInviteAccepted(const out OnlineGameSearchResult InviteResult)
 					{
 						OnlineSub.GameInterface.AddJoinOnlineGameCompleteDelegate(OnInviteJoinComplete);
 						// End:0x335
-						if(OnlineSub.GameInterface.AcceptGameInvite(byte(LocalPlayer(Player).ControllerId), 'Game')!)
+						if(!OnlineSub.GameInterface.AcceptGameInvite(byte(LocalPlayer(Player).ControllerId), 'Game'))
 						{
 							OnlineSub.GameInterface.ClearJoinOnlineGameCompleteDelegate(OnInviteJoinComplete);
 							NotifyInviteFailed();
@@ -5941,7 +5941,7 @@ function OnDestroyForInviteComplete(name SessionName, bool bWasSuccessful)
 	{
 		OnlineSub.GameInterface.AddJoinOnlineGameCompleteDelegate(OnInviteJoinComplete);
 		// End:0x10F
-		if(OnlineSub.GameInterface.AcceptGameInvite(byte(LocalPlayer(Player).ControllerId), SessionName)!)
+		if(!OnlineSub.GameInterface.AcceptGameInvite(byte(LocalPlayer(Player).ControllerId), SessionName))
 		{
 			OnlineSub.GameInterface.ClearJoinOnlineGameCompleteDelegate(OnInviteJoinComplete);
 			NotifyInviteFailed();
@@ -6234,7 +6234,7 @@ reliable client simulated event AddDebugText(string DebugText, optional Actor Sr
 		else
 		{
 			// End:0x1E2
-			if(bSkipOverwriteCheck!)
+			if(!bSkipOverwriteCheck)
 			{
 				Idx = DebugTextList.Find('SrcActor', SrcActor);
 				// End:0x1DF
@@ -6517,7 +6517,7 @@ final simulated function bool IsPrimaryPlayer()
 {
 	local int SSIndex;
 
-	return IsSplitscreenPlayer(SSIndex)! || SSIndex == 0;
+	return !IsSplitscreenPlayer(SSIndex) || SSIndex == 0;
 	//return ReturnValue;	
 }
 
@@ -6941,7 +6941,7 @@ reliable client simulated event ClientStopCameraAnim(CameraAnim AnimToStop, opti
 
 exec function DebugCameraAnims()
 {
-	bDebugCameraAnims = bDebugCameraAnims!;
+	bDebugCameraAnims = !bDebugCameraAnims;
 	// End:0x46
 	if(bDebugCameraAnims == false)
 	{
@@ -7213,7 +7213,7 @@ exec function DumpPeers()
 	foreach WorldInfo.AllControllers(Class'Engine.PlayerController', PC)
 	{
 		// End:0x308
-		if((int(WorldInfo.NetMode) == int(NM_Client)) || PC.IsLocalPlayerController()!)
+		if((int(WorldInfo.NetMode) == int(NM_Client)) || !PC.IsLocalPlayerController())
 		{
 			LogInternal(((("  Player: " $ PC.PlayerReplicationInfo.PlayerName) $ "(") $ Class'Engine.OnlineSubsystem'.static.UniqueNetIdToString(PC.PlayerReplicationInfo.UniqueId)) $ ")");
 			LogInternal("    Peer connections: ");
@@ -7516,7 +7516,7 @@ state PlayerDriving
 		if(CurrentVehicle != none)
 		{
 			bPressedJump = InJump;
-			CurrentVehicle.SetInputs(InForward, InStrafe-, InUp);
+			CurrentVehicle.SetInputs(InForward, -InStrafe, InUp);
 			CheckJumpOrDuck();
 		}
 		//return;		
@@ -7583,7 +7583,7 @@ state PlayerSwimming
 		local Vector HitLocation, HitNormal, Checkpoint, X, Y, Z;
 
 		// End:0x47
-		if(Pawn.bCollideActors!)
+		if(!Pawn.bCollideActors)
 		{
 			GotoState(Pawn.LandMovementState);
 		}
@@ -7591,7 +7591,7 @@ state PlayerSwimming
 		if(int(Pawn.Physics) != int(10))
 		{
 			// End:0x416
-			if(NewVolume.bWaterVolume!)
+			if(!NewVolume.bWaterVolume)
 			{
 				Pawn.SetPhysics(2);
 				// End:0x413
@@ -7608,7 +7608,7 @@ state PlayerSwimming
 					else
 					{
 						// End:0x309
-						if((Pawn.Velocity.Z > float(160)) || Pawn.TouchingWaterVolume()!)
+						if((Pawn.Velocity.Z > float(160)) || !Pawn.TouchingWaterVolume())
 						{
 							GotoState(Pawn.LandMovementState);							
 						}
@@ -7639,7 +7639,7 @@ state PlayerSwimming
 		else
 		{
 			// End:0x486
-			if(NewVolume.bWaterVolume!)
+			if(!NewVolume.bWaterVolume)
 			{
 				GotoState(Pawn.LandMovementState);
 			}
@@ -7687,7 +7687,7 @@ state PlayerSwimming
 	event Timer()
 	{
 		// End:0x72
-		if(Pawn.PhysicsVolume.bWaterVolume! && int(Role) == int(ROLE_Authority))
+		if(!Pawn.PhysicsVolume.bWaterVolume && int(Role) == int(ROLE_Authority))
 		{
 			GotoState(Pawn.LandMovementState);
 		}
@@ -8019,7 +8019,7 @@ state WaitingForPawn extends BaseSpectating
 		else
 		{
 			// End:0xB6
-			if(IsTimerActive()! || GetTimerCount() > 1.0000000)
+			if(!IsTimerActive() || GetTimerCount() > 1.0000000)
 			{
 				SetTimer(0.2000000, true);
 				AskForPawn();
@@ -8097,14 +8097,14 @@ state RoundEnded
 			return;
 		}
 		// End:0x33
-		if(bFrozen!)
+		if(!bFrozen)
 		{
 			ServerRestartGame();			
 		}
 		else
 		{
 			// End:0x4F
-			if(IsTimerActive()!)
+			if(!IsTimerActive())
 			{
 				SetTimer(1.5000000, false);
 			}
@@ -8225,7 +8225,7 @@ state Dead
 	reliable server function ServerRestartPlayer()
 	{
 		// End:0x3C
-		if(WorldInfo.Game.PlayerCanRestart(self)!)
+		if(!WorldInfo.Game.PlayerCanRestart(self))
 		{
 			return;
 		}
@@ -8239,7 +8239,7 @@ state Dead
 		if(bFrozen)
 		{
 			// End:0x47
-			if(IsTimerActive()! || GetTimerCount() > MinRespawnDelay)
+			if(!IsTimerActive() || GetTimerCount() > MinRespawnDelay)
 			{
 				bFrozen = false;
 			}
@@ -8273,7 +8273,7 @@ state Dead
 		local Rotator DeltaRot, ViewRotation;
 
 		// End:0x15E
-		if(bFrozen!)
+		if(!bFrozen)
 		{
 			// End:0x34
 			if(bPressedJump)
@@ -8296,7 +8296,7 @@ state Dead
 		else
 		{
 			// End:0x197
-			if(IsTimerActive()! || GetTimerCount() > MinRespawnDelay)
+			if(!IsTimerActive() || GetTimerCount() > MinRespawnDelay)
 			{
 				bFrozen = false;
 			}
@@ -8350,7 +8350,7 @@ state Dead
 	event Timer()
 	{
 		// End:0x11
-		if(bFrozen!)
+		if(!bFrozen)
 		{
 			return;
 		}
@@ -8383,7 +8383,7 @@ state Dead
 		Velocity = vect(0.0000000, 0.0000000, 0.0000000);
 		Acceleration = vect(0.0000000, 0.0000000, 0.0000000);
 		// End:0x66
-		if(PlayerReplicationInfo.bOutOfLives!)
+		if(!PlayerReplicationInfo.bOutOfLives)
 		{
 			ResetCameraMode();
 		}

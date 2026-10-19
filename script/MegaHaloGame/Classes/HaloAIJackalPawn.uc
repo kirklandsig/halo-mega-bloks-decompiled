@@ -55,7 +55,7 @@ simulated event Tick(float Delta)
 	{
 		BlendTarget = 0;
 		// End:0x7C
-		if(IsShieldUp()!)
+		if(!IsShieldUp())
 		{
 			BlendTarget = 1;
 			// End:0x79

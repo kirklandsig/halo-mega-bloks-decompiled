@@ -134,7 +134,7 @@ simulated function OnToggle(SeqAct_Toggle Action)
 		if(Action.InputLinks[0].bHasImpulse)
 		{
 			// End:0xFC
-			if(SeqNode.bPlaying!)
+			if(!SeqNode.bPlaying)
 			{
 				SeqNode.PlayAnim(SeqNode.bLooping, SeqNode.Rate, 0.0000000);
 			}			
@@ -265,7 +265,7 @@ simulated function OnPlayFaceFXAnim(SeqAct_PlayFaceFXAnim inAction)
 simulated event FaceFXAsset GetActorFaceFXAsset()
 {
 	// End:0x81
-	if((SkeletalMeshComponent.SkeletalMesh != none) && SkeletalMeshComponent.bDisableFaceFX!)
+	if((SkeletalMeshComponent.SkeletalMesh != none) && !SkeletalMeshComponent.bDisableFaceFX)
 	{
 		return SkeletalMeshComponent.SkeletalMesh.FaceFXAsset;		
 	}
@@ -374,7 +374,7 @@ function DoKismetAttachment(Actor Attachment, SeqAct_AttachToActor Action)
 		bValidSocket = SkeletalMeshComponent.GetSocketByName(Action.BoneName) != none;
 		bValidBone = SkeletalMeshComponent.MatchRefBone(Action.BoneName) != -1;
 		// End:0x19E
-		if(bValidBone! && bValidSocket!)
+		if(!bValidBone && !bValidSocket)
 		{
 			LogInternal((((((((string(WorldInfo.TimeSeconds) @ string(Class)) @ string(GetFuncName())) @ "bone or socket") @ string(Action.BoneName)) @ "not found on actor") @ string(self)) @ "with mesh") @ string(SkeletalMeshComponent));
 		}
@@ -387,7 +387,7 @@ function DoKismetAttachment(Actor Attachment, SeqAct_AttachToActor Action)
 		Attachment.SetCollision(false, false);
 		Attachment.SetHardAttach(Action.bHardAttach);
 		// End:0x37F
-		if(bValidBone && bValidSocket!)
+		if(bValidBone && !bValidSocket)
 		{
 			// End:0x2FD
 			if(Action.bUseRelativeOffset)

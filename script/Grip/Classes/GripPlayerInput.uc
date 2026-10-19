@@ -11,7 +11,7 @@ function bool InputKey(int ControllerId, name Key, Object.EInputEvent Event, opt
 static function bool ProcessKey(PlayerController OwnerCtrl, name Key, Object.EInputEvent Event)
 {
 	// End:0x26
-	if(Class'Grip.GripDebug'.static.IsDebugEnabled()!)
+	if(!Class'Grip.GripDebug'.static.IsDebugEnabled())
 	{
 		return false;
 	}

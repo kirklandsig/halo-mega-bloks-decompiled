@@ -177,7 +177,7 @@ function CCSCoverData FindClosestValidCover(GripBlackboard BB)
 	if(I < CoverDatas.Length)
 	{
 		// End:0xBE
-		if(CoverDatas[I].IsValid!)
+		if(!CoverDatas[I].IsValid)
 		{			
 		}
 		else
@@ -189,7 +189,7 @@ function CCSCoverData FindClosestValidCover(GripBlackboard BB)
 				ClosestDist = int(CoverDatas[I].DirectDistance);
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x77;
 	}

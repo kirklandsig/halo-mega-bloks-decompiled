@@ -9,7 +9,7 @@ event bool ExecutePre(GripBTInterface BTInterface)
 event GripBTNode.BTExecutionResult Execute(GripBTInterface BTInterface, bool PushToFinish)
 {
 	// End:0x70
-	if(Controller.CCSPawn.IsCrouched()!)
+	if(!Controller.CCSPawn.IsCrouched())
 	{
 		Controller.CCSPawn.SetCrouched(true);
 	}

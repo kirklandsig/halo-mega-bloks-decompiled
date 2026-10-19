@@ -54,7 +54,7 @@ function Class<Projectile> GetProjectileClass()
 function bool ShouldTickOverheating()
 {
 	// End:0x3E
-	if((IsFiring()) && bChargedShotIsReady!)
+	if((IsFiring()) && !bChargedShotIsReady)
 	{
 		return GetTimerCount('SetChargeShotAsReady') >= BeginChargingDelay;
 	}
@@ -79,7 +79,7 @@ function ApplyHeatFromShot()
 function ApplySpreadFromShot()
 {
 	// End:0x19
-	if(bChargedShotIsReady!)
+	if(!bChargedShotIsReady)
 	{
 		super.ApplySpreadFromShot();
 	}
@@ -286,7 +286,7 @@ simulated state WeaponFiring
 		local bool doFire;
 
 		// End:0x29
-		if(PendingFire(int(CurrentFireMode))!)
+		if(!PendingFire(int(CurrentFireMode)))
 		{
 			doFire = true;			
 		}

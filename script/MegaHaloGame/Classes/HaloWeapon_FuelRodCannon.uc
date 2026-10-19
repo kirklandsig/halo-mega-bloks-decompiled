@@ -163,7 +163,7 @@ simulated state WeaponFiring
 	{
 		super(Actor).Tick(DeltaTime);
 		// End:0x6D
-		if(PendingFire(int(CurrentFireMode))!)
+		if(!PendingFire(int(CurrentFireMode)))
 		{
 			FireAmmunition();
 			SpawnMuzzleFx();

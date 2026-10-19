@@ -126,7 +126,7 @@ function UpdateCurrentTargets()
 				}
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0xD9;
 	}
@@ -137,7 +137,7 @@ function UpdateCurrentTargets()
 	if(I >= 0)
 	{
 		Targets.Remove(toRemove[I], 1);
-		I--;
+		--I;
 		// [Loop Continue]
 		goto J0x2C2;
 	}
@@ -351,7 +351,7 @@ simulated state AquireTargets
 			{
 				T = float(I);
 				T /= float(MaxAmmoCount - 1);
-				theta = Lerp(maxTheta-, maxTheta, T);
+				theta = Lerp(-maxTheta, maxTheta, T);
 				projDir.X = Cos(theta);
 				projDir.Y = Sin(theta);
 				projDir.Z = 0.0000000;
@@ -373,7 +373,7 @@ simulated state AquireTargets
 					Rocket.SetTarget(Targets[J].Actor);
 				}
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x55;
 		}

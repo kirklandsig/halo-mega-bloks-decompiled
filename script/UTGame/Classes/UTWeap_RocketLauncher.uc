@@ -180,11 +180,11 @@ function AdjustLockTarget(Actor NewLockTarget)
 simulated function bool CanLockOnTo(Actor TA)
 {
 	// End:0xBD
-	if((((((TA == none) || TA.bProjTarget!) || TA.bDeleteMe) || Pawn(TA) == none) || TA == Instigator) || Pawn(TA).Health <= 0)
+	if((((((TA == none) || !TA.bProjTarget) || TA.bDeleteMe) || Pawn(TA) == none) || TA == Instigator) || Pawn(TA).Health <= 0)
 	{
 		return false;
 	}
-	return (((WorldInfo.Game == none) || WorldInfo.Game.bTeamGame!) || WorldInfo.GRI == none) || WorldInfo.GRI.OnSameTeam(Instigator, TA)!;
+	return (((WorldInfo.Game == none) || !WorldInfo.Game.bTeamGame) || WorldInfo.GRI == none) || !WorldInfo.GRI.OnSameTeam(Instigator, TA);
 	//return ReturnValue;	
 }
 
@@ -294,7 +294,7 @@ function CheckTargetLock()
 		EndTrace = StartTrace + (Aim * LockRange);
 		HitActor = Trace(HitLocation, HitNormal, EndTrace, StartTrace, true,,, 1);
 		// End:0x683
-		if((HitActor == none) || CanLockOnTo(HitActor)!)
+		if((HitActor == none) || !CanLockOnTo(HitActor))
 		{
 			bestAim = (((UDKPlayerController(Instigator.Controller) != none) && UDKPlayerController(Instigator.Controller).bConsolePlayer) ? ConsoleLockAim : LockAim);
 			bestDist = 0.0000000;
@@ -322,7 +322,7 @@ function CheckTargetLock()
 		else
 		{
 			// End:0x77C
-			if((LockedTarget != none) && ((WorldInfo.TimeSeconds - LastLockedOnTime) > LockTolerance) || CanLockOnTo(LockedTarget)!)
+			if((LockedTarget != none) && ((WorldInfo.TimeSeconds - LastLockedOnTime) > LockTolerance) || !CanLockOnTo(LockedTarget))
 			{
 				AdjustLockTarget(none);
 			}
@@ -348,12 +348,12 @@ function CheckTargetLock()
 	else
 	{
 		// End:0x9A1
-		if((LockedTarget != none) && ((WorldInfo.TimeSeconds - LastLockedOnTime) > LockTolerance) || CanLockOnTo(LockedTarget)!)
+		if((LockedTarget != none) && ((WorldInfo.TimeSeconds - LastLockedOnTime) > LockTolerance) || !CanLockOnTo(LockedTarget))
 		{
 			AdjustLockTarget(none);
 		}
 		// End:0xA0E
-		if((PendingLockedTarget != none) && ((WorldInfo.TimeSeconds - LastValidTargetTime) > LockTolerance) || CanLockOnTo(PendingLockedTarget)!)
+		if((PendingLockedTarget != none) && ((WorldInfo.TimeSeconds - LastValidTargetTime) > LockTolerance) || !CanLockOnTo(PendingLockedTarget))
 		{
 			PendingLockedTarget = none;
 		}
@@ -560,7 +560,7 @@ simulated event CauseMuzzleFlash()
 	{
 		P = UTPawn(Instigator);
 		// End:0x7C
-		if((P == none) || P.bUpdateEyeheight!)
+		if((P == none) || !P.bUpdateEyeheight)
 		{
 			return;
 		}
@@ -571,7 +571,7 @@ simulated event CauseMuzzleFlash()
 		return;
 	}
 	// End:0xC1
-	if(bMuzzleFlashAttached!)
+	if(!bMuzzleFlashAttached)
 	{
 		AttachMuzzleFlash();
 	}
@@ -719,7 +719,7 @@ function float GetAIRating()
 		return AIRating;
 	}
 	// End:0x10C
-	if(((Instigator.Base != none) && Instigator.Base.Velocity != vect(0.0000000, 0.0000000, 0.0000000)) && B.CheckFutureSight(0.1000000)!)
+	if(((Instigator.Base != none) && Instigator.Base.Velocity != vect(0.0000000, 0.0000000, 0.0000000)) && !B.CheckFutureSight(0.1000000))
 	{
 		return 0.1000000;
 	}
@@ -786,7 +786,7 @@ function byte BestMode()
 	{
 		return 0;
 	}
-	return ((((FRand() < 0.3000000) && B.IsStrafing()!) && int(Instigator.Physics) != int(2)) ? 1 : 0);
+	return ((((FRand() < 0.3000000) && !B.IsStrafing()) && int(Instigator.Physics) != int(2)) ? 1 : 0);
 	//return ReturnValue;	
 }
 
@@ -895,7 +895,7 @@ function FireLoad()
 		goto J0xAE;
 	}
 	// End:0x652
-	if(bLockedOnTarget! && int(LoadedFireMode) == int(1))
+	if(!bLockedOnTarget && int(LoadedFireMode) == int(1))
 	{
 		FlockIndex++;
 		bCurl = false;
@@ -927,7 +927,7 @@ function FireLoad()
 					// [Loop Continue]
 					goto J0x52A;
 				}
-				bCurl = bCurl!;
+				bCurl = !bCurl;
 				// End:0x644
 				if(int(WorldInfo.NetMode) != int(NM_DedicatedServer))
 				{
@@ -1064,7 +1064,7 @@ simulated function UpdateAmmoVisibility()
 			else
 			{
 				// End:0x294
-				if(bIsAnyAmmoHidden!)
+				if(!bIsAnyAmmoHidden)
 				{
 					// End:0x1A3
 					if((LoadedShotCount + AmmoCount) == 3)
@@ -1252,7 +1252,7 @@ simulated state WeaponLoadAmmo
 			ConsumeAmmo(CurrentFireMode);
 		}
 		// End:0x280
-		if(StillFiring(1)!)
+		if(!StillFiring(1))
 		{
 			// End:0x26F
 			if(LoadedShotCount > 0)
@@ -1271,7 +1271,7 @@ simulated state WeaponLoadAmmo
 		else
 		{
 			// End:0x2C3
-			if(HasAmmo(CurrentFireMode)! || LoadedShotCount >= MaxLoadCount)
+			if(!HasAmmo(CurrentFireMode) || LoadedShotCount >= MaxLoadCount)
 			{
 				GotoState('WeaponWaitingForFire');				
 			}
@@ -1452,7 +1452,7 @@ simulated state WeaponPlayingFire
 			return;
 		}
 		// End:0x35
-		if(HasAnyAmmo()!)
+		if(!HasAnyAmmo())
 		{
 			WeaponEmpty();			
 		}
@@ -1491,7 +1491,7 @@ simulated state WeaponFiring
 	simulated event ReplicatedEvent(name VarName)
 	{
 		// End:0x32
-		if((VarName == 'AmmoCount') && HasAnyAmmo()!)
+		if((VarName == 'AmmoCount') && !HasAnyAmmo())
 		{
 			UpdateAmmoVisibility();
 		}

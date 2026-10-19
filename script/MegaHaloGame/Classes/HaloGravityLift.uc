@@ -23,7 +23,7 @@ simulated function TickPawn(Pawn Pawn, float DeltaTime)
 	toCenter = Location - Pawn.Location;
 	toCenter.Z = 0.0000000;
 	// End:0x120
-	if(IsZero(toCenter)!)
+	if(!IsZero(toCenter))
 	{
 		Dist = VSize2D(toCenter);
 		theta = float(Min(int((Dist / 256.0000000) * 3.1415927), int(3.1415927)));

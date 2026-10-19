@@ -54,7 +54,7 @@ function bool NeedToTurn(Vector targ)
 	// End:0x50
 	if(VWeapon != none)
 	{
-		return VWeapon.IsAimCorrect()!;		
+		return !VWeapon.IsAimCorrect();		
 	}
 	else
 	{
@@ -67,7 +67,7 @@ simulated function DrivingStatusChanged()
 {
 	super(SVehicle).DrivingStatusChanged();
 	// End:0x23
-	if(bDriving!)
+	if(!bDriving)
 	{
 		StopFiringWeapon();
 	}
@@ -253,10 +253,10 @@ function HandleDeadVehicleDriver()
 			VehicleBase = UDKVehicle(GetVehicleBase());
 		}
 		// End:0x21F
-		if((((VehicleBase != none) && VehicleBase.bEjectKilledBodies) && (WorldInfo.TimeSeconds - LastRenderTime) < 1.0000000) && bDriverIsVisible || (int(WorldInfo.GetDetailMode()) != int(0)) && WorldInfo.bDropDetail!)
+		if((((VehicleBase != none) && VehicleBase.bEjectKilledBodies) && (WorldInfo.TimeSeconds - LastRenderTime) < 1.0000000) && bDriverIsVisible || (int(WorldInfo.GetDetailMode()) != int(0)) && !WorldInfo.bDropDetail)
 		{
 			// End:0x177
-			if(bDriverIsVisible! && PlaceExitingDriver())
+			if(!bDriverIsVisible && PlaceExitingDriver())
 			{
 				Driver.StopDriving(self);
 				Driver.DrivenVehicle = self;

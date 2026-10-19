@@ -70,7 +70,7 @@ replication
 		bWaitingPlayer;
 
 	// Pos:0x00A
-	if(bNetDirty && bNetOwner!)
+	if(bNetDirty && !bNetOwner)
 		Ping;
 
 	// Pos:0x025
@@ -252,7 +252,7 @@ native final function UpdatePing(float TimeStamp);
 
 simulated function bool ShouldBroadCastWelcomeMessage(optional bool bExiting)
 {
-	return bIsInactive! && int(WorldInfo.NetMode) != int(NM_Standalone);
+	return !bIsInactive && int(WorldInfo.NetMode) != int(NM_Standalone);
 	//return ReturnValue;	
 }
 
@@ -475,7 +475,7 @@ simulated function RegisterPlayerWithSession()
 	{
 		Online.GameInterface.RegisterPlayer(SessionName, UniqueId, false);
 		// End:0x1B7
-		if(bNetOwner!)
+		if(!bNetOwner)
 		{
 			PlayersList = OnlineRecentPlayersList(Online.GetNamedInterface('RecentPlayersList'));
 			// End:0x1B7
@@ -498,7 +498,7 @@ simulated function UnregisterPlayerFromSession()
 	{
 		OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 		// End:0x1D5
-		if((((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none))) && OnlineSub.GameInterface.GetGameSettings(SessionName) != none) && WorldInfo.PeerHostMigration.bHostMigrationEnabled && int(WorldInfo.PeerHostMigration.HostMigrationProgress) != int(0)!)
+		if((((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none))) && OnlineSub.GameInterface.GetGameSettings(SessionName) != none) && !WorldInfo.PeerHostMigration.bHostMigrationEnabled && int(WorldInfo.PeerHostMigration.HostMigrationProgress) != int(0))
 		{
 			OnlineSub.GameInterface.UnregisterPlayer(SessionName, UniqueId);
 		}

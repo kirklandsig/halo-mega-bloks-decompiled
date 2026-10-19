@@ -65,7 +65,7 @@ function TickGhostedMesh(float DeltaTime)
 	if(VisualizationActor != none)
 	{
 		// End:0x1CE
-		if(bHasGhostedTheMesh!)
+		if(!bHasGhostedTheMesh)
 		{
 			// End:0xC2
 			if(GhostedVisualizationMesh == none)
@@ -85,7 +85,7 @@ function TickGhostedMesh(float DeltaTime)
 				}
 			}
 			// End:0x1CE
-			if((GhostedVisualizationMesh != none) && bHasGhostedTheMesh!)
+			if((GhostedVisualizationMesh != none) && !bHasGhostedTheMesh)
 			{
 				I = 0;
 				J0xED:
@@ -100,7 +100,7 @@ function TickGhostedMesh(float DeltaTime)
 						ghostedMaterial.SetParent(GhostedMaterialTemplate);
 						GhostedVisualizationMesh.SetMaterial(I, ghostedMaterial);
 					}
-					I++;
+					++I;
 					// [Loop Continue]
 					goto J0xED;
 				}
@@ -122,7 +122,7 @@ function TickGhostedMesh(float DeltaTime)
 				{
 					ghostedMaterial.SetScalarParameterValue('Translucency', 1.0000000 - (SightPct * MaxOpacity));
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x1F7;
 			}

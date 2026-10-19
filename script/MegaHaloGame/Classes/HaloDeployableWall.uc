@@ -44,11 +44,11 @@ simulated function PostBeginPlay()
 			}
 			else
 			{
-				offsetMult = 1.0000000 + (float(I - 1) * 0.5000000)-;
+				offsetMult = -1.0000000 + (float(I - 1) * 0.5000000);
 			}
 			SpawnedWall = HaloDestructibleActor(Spawn(WallArchetypeRef.Class, self,, (self.Location + (rightWorldspaceOffset * offsetMult)) + upWorldspaceOffset, self.Rotation, WallArchetypeRef, true));
 			SpawnedWalls.AddItem(SpawnedWall);
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x163;
 		}		
@@ -68,11 +68,11 @@ simulated function PostBeginPlay()
 			}
 			else
 			{
-				offsetMult = 0.5000000 + (float(I - 1) * 0.5000000)-;
+				offsetMult = -0.5000000 + (float(I - 1) * 0.5000000);
 			}
 			SpawnedWall = HaloDestructibleActor(Spawn(WallArchetypeRef.Class, self,, (self.Location + (rightWorldspaceOffset * offsetMult)) + upWorldspaceOffset, self.Rotation, WallArchetypeRef, true));
 			SpawnedWalls.AddItem(SpawnedWall);
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x2A5;
 		}
@@ -98,7 +98,7 @@ event Tick(float DeltaTime)
 			{
 				Children[I].SetHidden(bHidden);
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x24;
 		}
@@ -115,7 +115,7 @@ event Tick(float DeltaTime)
 		{
 			liveChildWalls += 1;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x10F;
 	}
@@ -143,7 +143,7 @@ simulated event ScriptSetTeamNum(byte newTeamNum)
 		{
 			Children[I].SetTeamNum(newTeamNum);
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x1E;
 	}

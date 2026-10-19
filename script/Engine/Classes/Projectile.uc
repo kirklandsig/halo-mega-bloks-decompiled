@@ -44,7 +44,7 @@ event PreBeginPlay()
 	}
 	super.PreBeginPlay();
 	// End:0x10C
-	if(((bDeleteMe! && InstigatorController != none) && InstigatorController.ShotTarget != none) && InstigatorController.ShotTarget.Controller != none)
+	if(((!bDeleteMe && InstigatorController != none) && InstigatorController.ShotTarget != none) && InstigatorController.ShotTarget.Controller != none)
 	{
 		InstigatorController.ShotTarget.Controller.ReceiveProjectileWarning(self);
 	}
@@ -165,7 +165,7 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation, Vector HitNorma
 	if(Other != Instigator)
 	{
 		// End:0xAD
-		if(Other.bStatic! && DamageRadius == 0.0000000)
+		if(!Other.bStatic && DamageRadius == 0.0000000)
 		{
 			Other.TakeDamage(int(Damage), InstigatorController, Location, MomentumTransfer * Normal(Velocity), MyDamageType,, self);
 		}
@@ -197,7 +197,7 @@ singular simulated event HitWall(Vector HitNormal, Actor Wall, PrimitiveComponen
 	}
 	ImpactedActor = Wall;
 	// End:0x191
-	if(Wall.bStatic! && DamageRadius == float(0))
+	if(!Wall.bStatic && DamageRadius == float(0))
 	{
 		Wall.TakeDamage(int(Damage), InstigatorController, Location, MomentumTransfer * Normal(Velocity), MyDamageType,, self);
 	}

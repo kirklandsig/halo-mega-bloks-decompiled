@@ -24,7 +24,7 @@ event bool SubmitGameSearch(byte ControllerIndex, optional bool bInvalidateExist
 	GameInterface.AddFindOnlineGamesCompleteDelegate(OnSearchComplete);
 	bResult = super.SubmitGameSearch(ControllerIndex, bInvalidateExistingSearchResults);
 	// End:0x9E
-	if(bResult!)
+	if(!bResult)
 	{
 		GameInterface.ClearFindOnlineGamesCompleteDelegate(OnSearchComplete);
 	}
@@ -35,7 +35,7 @@ event bool SubmitGameSearch(byte ControllerIndex, optional bool bInvalidateExist
 function OnSearchComplete(bool bWasSuccessful)
 {
 	// End:0x41
-	if(HasOutstandingQueries(true)!)
+	if(!HasOutstandingQueries(true))
 	{
 		GameInterface.ClearFindOnlineGamesCompleteDelegate(OnSearchComplete);
 	}

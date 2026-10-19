@@ -112,7 +112,7 @@ exec function Invisible(bool B)
 
 exec function FreeCamera()
 {
-	UTPlayerController(Outer).bFreeCamera = UTPlayerController(Outer).bFreeCamera!;
+	UTPlayerController(Outer).bFreeCamera = !UTPlayerController(Outer).bFreeCamera;
 	UTPlayerController(Outer).SetBehindView(UTPlayerController(Outer).bFreeCamera);
 	//return;	
 }
@@ -175,7 +175,7 @@ exec function KillBadGuys()
 		foreach Outer.DynamicActors(Class'UTGame.UTPawn', P)
 		{
 			// End:0x170
-			if(Outer.WorldInfo.GRI.OnSameTeam(P, PC)! && (PC.Pawn != none) && PC.Pawn != P)
+			if(!Outer.WorldInfo.GRI.OnSameTeam(P, PC) && (PC.Pawn != none) && PC.Pawn != P)
 			{
 				P.TakeDamage(20000, PC, P.Location, vect(0.0000000, 0.0000000, 0.0000000), Class'UTGame.UTDmgType_Rocket');
 			}			
@@ -210,7 +210,7 @@ exec function SuicideBy(string Type, optional int DeathHealth)
 			// End:0x1CC
 			if(Outer.Pawn.IsA('UTPawn'))
 			{
-				UTPawn(Outer.Pawn).AccumulateDamage = float(DeathHealth-);
+				UTPawn(Outer.Pawn).AccumulateDamage = float(-DeathHealth);
 				UTPawn(Outer.Pawn).AccumulationTime = Outer.WorldInfo.TimeSeconds;
 			}
 			Outer.Pawn.Died(Outer, DamageType, Outer.Pawn.Location);
@@ -304,7 +304,7 @@ simulated function LeaveADecal(Vector HitLoc, Vector HitNorm)
 	{
 		MIC_Decal = new (Outer) Class'Engine.MaterialInstanceTimeVarying';
 		MIC_Decal.SetParent(MaterialInstanceTimeVarying'CH_Gibs.Decals.BloodSplatter');
-		Outer.WorldInfo.MyDecalManager.SpawnDecal(MIC_Decal, out_HitLocation, Rotator(out_HitNormal-), 200.0000000, 200.0000000, 10.0000000, false,, HitInfo.HitComponent, true, false, HitInfo.BoneName, HitInfo.Item, HitInfo.LevelIndex);
+		Outer.WorldInfo.MyDecalManager.SpawnDecal(MIC_Decal, out_HitLocation, Rotator(-out_HitNormal), 200.0000000, 200.0000000, 10.0000000, false,, HitInfo.HitComponent, true, false, HitInfo.BoneName, HitInfo.Item, HitInfo.LevelIndex);
 		MaterialInstanceTimeVarying(MIC_Decal).SetScalarStartTime('DissolveAmount', 3.0000000);
 		MaterialInstanceTimeVarying(MIC_Decal).SetScalarStartTime('BloodAlpha', 3.0000000);
 		MIC_Decal.SetScalarParameterValue('DissolveAmount', 3.0000000);
@@ -335,7 +335,7 @@ exec function ShowStickBindings()
 		{
 			LogInternal(((" name: " $ string(Outer.PlayerInput.Bindings[BindIndex].Name)) $ " command: ") $ Outer.PlayerInput.Bindings[BindIndex].Command);
 		}
-		BindIndex++;
+		++BindIndex;
 		// [Loop Continue]
 		goto J0x44;
 	}
@@ -361,7 +361,7 @@ exec function SetStickBind(float val)
 			Outer.PlayerInput.Bindings[BindIndex].Command = Cmd;
 			LogInternal((" command: " $ Cmd) @ Outer.PlayerInput.Bindings[BindIndex].Command);
 		}
-		BindIndex++;
+		++BindIndex;
 		// [Loop Continue]
 		goto J0x1C;
 	}
@@ -517,7 +517,7 @@ function KillAllPawns(Class<Pawn> aClass)
 	foreach Outer.DynamicActors(Class'Engine.Pawn', P)
 	{
 		// End:0x13C
-		if(ClassIsChildOf(P.Class, aClass) && P.IsPlayerPawn()!)
+		if(ClassIsChildOf(P.Class, aClass) && !P.IsPlayerPawn())
 		{
 			// End:0x124
 			if(P.Controller != none)

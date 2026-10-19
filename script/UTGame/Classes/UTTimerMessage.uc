@@ -13,7 +13,7 @@ static simulated function ClientReceive(PlayerController P, optional int Switch,
 	{
 		HUD = UTHUD(P.myHUD);
 		// End:0xF3
-		if(((HUD != none) && HUD.bIsSplitScreen) && HUD.bIsFirstPlayer!)
+		if(((HUD != none) && HUD.bIsSplitScreen) && !HUD.bIsFirstPlayer)
 		{
 			return;
 		}

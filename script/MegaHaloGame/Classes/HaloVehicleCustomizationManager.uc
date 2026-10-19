@@ -128,7 +128,7 @@ simulated function ResolveClassReferences()
 		{
 			HVCC_MasterVehicleArray[I].ClassToSpawn = Class<HaloVCustomizationComponent>(FindObject(HVCC_MasterVehicleArray[I].ClassToSpawnName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -148,7 +148,7 @@ simulated function ResolveClassReferences()
 		{
 			HVCC_MasterAddonArray[I].ClassToSpawn = Class<HaloVCustomizationComponent>(FindObject(HVCC_MasterAddonArray[I].ClassToSpawnName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x168;
 	}
@@ -168,7 +168,7 @@ simulated function ResolveClassReferences()
 		{
 			HVCC_MasterWheelsetArray[I].ClassToSpawn = Class<HaloVCustomizationComponent>(FindObject(HVCC_MasterWheelsetArray[I].ClassToSpawnName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x2C5;
 	}
@@ -188,7 +188,7 @@ simulated function ResolveClassReferences()
 		{
 			HVCC_MasterSkinArray[I].ClassToSpawn = Class<HaloVCustomizationComponent>(FindObject(HVCC_MasterSkinArray[I].ClassToSpawnName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x422;
 	}
@@ -208,7 +208,7 @@ simulated function ResolveClassReferences()
 		{
 			HVCC_MasterDecalArray[I].ClassToSpawn = Class<HaloVCustomizationComponent>(FindObject(HVCC_MasterDecalArray[I].ClassToSpawnName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x57F;
 	}
@@ -228,7 +228,7 @@ simulated function ResolveClassReferences()
 		{
 			HVCC_MasterWeaponArray[I].ClassToSpawn = Class<HaloVCustomizationComponent>(FindObject(HVCC_MasterWeaponArray[I].ClassToSpawnName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x6DC;
 	}

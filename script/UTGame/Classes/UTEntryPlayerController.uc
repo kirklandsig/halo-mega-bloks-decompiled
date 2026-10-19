@@ -137,10 +137,10 @@ exec function OnLinkStatusChanged(bool bConnected)
 	Registry = UIDataStore_Registry(Class'Engine.UIRoot'.static.StaticResolveDataStore('Registry'));
 	LogInternal(((((((("(" $ string(Name)) $ ") UTEntryPlayerController::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "bConnected:'") $ string(bConnected)) $ "'", 'DevNet');
 	// End:0x187
-	if(bConnected!)
+	if(!bConnected)
 	{
 		// End:0x187
-		if(Registry.GetData("FrontEndError_Display", ErrorDisplay)! || int(ErrorDisplay) == 0)
+		if(!Registry.GetData("FrontEndError_Display", ErrorDisplay) || int(ErrorDisplay) == 0)
 		{
 			SetFrontEndErrorMessage("<Strings:UTGameUI.Errors.Error_Title>", "<Strings:UTGameUI.Errors.NetworkLinkLost_Message>");
 			QuitToMainMenu();

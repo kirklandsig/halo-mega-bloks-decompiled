@@ -146,7 +146,7 @@ function PostBeginPlay()
 	{
 		AnimInstPool[Idx] = new (self) Class'Engine.CameraAnimInst';
 		FreeAnims[Idx] = AnimInstPool[Idx];
-		Idx++;
+		++Idx;
 		// [Loop Continue]
 		goto J0x5B;
 	}
@@ -214,7 +214,7 @@ final function Rotator GetCameraRotation()
 simulated function SetDesiredColorScale(Vector NewColorScale, float InterpTime)
 {
 	// End:0x81
-	if(bEnableColorScaling!)
+	if(!bEnableColorScaling)
 	{
 		bEnableColorScaling = true;
 		ColorScale.X = 1.0000000;
@@ -236,7 +236,7 @@ simulated function SetDesiredColorScale(Vector NewColorScale, float InterpTime)
 simulated event UpdateCamera(float DeltaTime)
 {
 	// End:0x17F
-	if((PCOwner.IsLocalPlayerController() || bUseClientSideCameraUpdates!) || bDebugClientSideCamera)
+	if((PCOwner.IsLocalPlayerController() || !bUseClientSideCameraUpdates) || bDebugClientSideCamera)
 	{
 		DoUpdateCamera(DeltaTime);
 		// End:0x17F
@@ -268,7 +268,7 @@ simulated function DoUpdateCamera(float DeltaTime)
 	bConstrainAspectRatio = false;
 	CamOverridePostProcessAlpha = 0.0000000;
 	// End:0x135
-	if((PendingViewTarget.Target == none) || BlendParams.bLockOutgoing!)
+	if((PendingViewTarget.Target == none) || !BlendParams.bLockOutgoing)
 	{
 		CheckViewTarget(ViewTarget);
 		UpdateViewTarget(ViewTarget, DeltaTime);
@@ -417,7 +417,7 @@ function UpdateViewTarget(out TViewTarget OutVT, float DeltaTime)
 	{
 		TPawn = Pawn(OutVT.Target);
 		// End:0x7E9
-		if((TPawn == none) || TPawn.CalcCamera(DeltaTime, OutVT.POV.Location, OutVT.POV.Rotation, OutVT.POV.FOV)!)
+		if((TPawn == none) || !TPawn.CalcCamera(DeltaTime, OutVT.POV.Location, OutVT.POV.Rotation, OutVT.POV.FOV))
 		{
 			bDoNotApplyModifiers = true;
 			switch(CameraStyle)
@@ -469,7 +469,7 @@ function UpdateViewTarget(out TViewTarget OutVT, float DeltaTime)
 		}
 	}
 	// End:0x827
-	if(bDoNotApplyModifiers!)
+	if(!bDoNotApplyModifiers)
 	{
 		ApplyCameraModifiers(DeltaTime, OutVT.POV);
 	}
@@ -544,7 +544,7 @@ function EmitterCameraLensEffectBase FindCameraLensEffect(Class<EmitterCameraLen
 	foreach CameraLensEffects(LensEffect)
 	{
 		// End:0xF7
-		if(LensEffect.bDeleteMe! && ((LensEffect.Class == LensEffectEmitterClass) || LensEffect.EmittersToTreatAsSame.Find(LensEffectEmitterClass) != -1) || LensEffectEmitterClass.default.EmittersToTreatAsSame.Find(LensEffect.Class) != -1)
+		if(!LensEffect.bDeleteMe && ((LensEffect.Class == LensEffectEmitterClass) || LensEffect.EmittersToTreatAsSame.Find(LensEffectEmitterClass) != -1) || LensEffectEmitterClass.default.EmittersToTreatAsSame.Find(LensEffect.Class) != -1)
 		{			
 			return LensEffect;
 		}		
@@ -563,7 +563,7 @@ function AddCameraLensEffect(Class<EmitterCameraLensEffectBase> LensEffectEmitte
 	if(LensEffectEmitterClass != none)
 	{
 		// End:0x7E
-		if(LensEffectEmitterClass.default.bAllowMultipleInstances!)
+		if(!LensEffectEmitterClass.default.bAllowMultipleInstances)
 		{
 			LensEffect = FindCameraLensEffect(LensEffectEmitterClass);
 			// End:0x7E

@@ -189,7 +189,7 @@ exec function TestHttp(string Verb, string Payload, string URL, optional bool bS
 	LogInternal("URL =" @ R.GetURL());
 	LogInternal("Verb =" @ R.GetVerb());
 	// End:0x426
-	if(R.ProcessRequest()!)
+	if(!R.ProcessRequest())
 	{
 		LogInternal("ProcessRequest failed. Unsuppress DevHttpRequest to see more details.");		
 	}
@@ -201,7 +201,7 @@ exec function TestHttp(string Verb, string Payload, string URL, optional bool bS
 	if(bSendParallelRequest)
 	{
 		// End:0x575
-		if(Class'Engine.HttpFactory'.static.CreateRequest().SetURL("http://www.epicgames.com").SetVerb("GET").SetHeader("Test", "Value").SetProcessRequestCompleteDelegate(OnRequestComplete).ProcessRequest()!)
+		if(!Class'Engine.HttpFactory'.static.CreateRequest().SetURL("http://www.epicgames.com").SetVerb("GET").SetHeader("Test", "Value").SetProcessRequestCompleteDelegate(OnRequestComplete).ProcessRequest())
 		{
 			LogInternal("ProcessRequest for parallel request failed. Unsuppress DevHttpRequest to see more details.");			
 		}

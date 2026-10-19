@@ -65,7 +65,7 @@ function OnConsoleCommand(SeqAct_ConsoleCommand inAction)
 		else
 		{
 			// End:0xE4
-			if(Left(Command, 4) ComplementEqual "set "! && Left(Command, 9) ComplementEqual "setnopec "!)
+			if(!Left(Command, 4) ComplementEqual "set " && !Left(Command, 9) ComplementEqual "setnopec ")
 			{				
 				ConsoleCommand(Command);
 			}			
@@ -234,7 +234,7 @@ function ProcessViewRotation(float DeltaTime, out Rotator out_ViewRotation, Rota
 	}
 	UpdateCameraBreathing();
 	// End:0x17E
-	if(bLookAtDestination || bCameraBreathing!)
+	if(bLookAtDestination || !bCameraBreathing)
 	{
 		RotationAccelRate = AutoRotationAccelRate;
 		RotationBreakDecelRate = AutoRotationBrakeDecelRate;
@@ -279,7 +279,7 @@ function ProcessViewRotation(float DeltaTime, out Rotator out_ViewRotation, Rota
 			TargetRotationPitchOnly = RLerp(CameraRotationPitchOnly, TargetRotationPitchOnly, LookAtDestAutoPitchAmount, true);
 		}
 		// End:0x4A0
-		if(bCameraBreathing!)
+		if(!bCameraBreathing)
 		{
 			MaxVelocityScalar.X *= (1.0000000 - FMax(0.0000000, Vector(CameraRotationYawOnly) Dot Vector(TargetRotationYawOnly)));
 			MaxVelocityScalar.Y *= (1.0000000 - FMax(0.0000000, Vector(CameraRotationPitchOnly) Dot Vector(TargetRotationPitchOnly)));
@@ -344,9 +344,9 @@ function ProcessViewRotation(float DeltaTime, out Rotator out_ViewRotation, Rota
 	else
 	{
 		// End:0xA02
-		if(AutoRotationVelocity.X < (MaxRotationVelocity- * MaxVelocityScalar.X))
+		if(AutoRotationVelocity.X < (-MaxRotationVelocity * MaxVelocityScalar.X))
 		{
-			AutoRotationVelocity.X = MaxRotationVelocity- * MaxVelocityScalar.X;
+			AutoRotationVelocity.X = -MaxRotationVelocity * MaxVelocityScalar.X;
 		}
 	}
 	// End:0xA91
@@ -357,9 +357,9 @@ function ProcessViewRotation(float DeltaTime, out Rotator out_ViewRotation, Rota
 	else
 	{
 		// End:0xB21
-		if(AutoRotationVelocity.Y < (MaxRotationVelocity- * MaxVelocityScalar.Y))
+		if(AutoRotationVelocity.Y < (-MaxRotationVelocity * MaxVelocityScalar.Y))
 		{
-			AutoRotationVelocity.Y = MaxRotationVelocity- * MaxVelocityScalar.Y;
+			AutoRotationVelocity.Y = -MaxRotationVelocity * MaxVelocityScalar.Y;
 		}
 	}
 	// End:0xD2D
@@ -480,7 +480,7 @@ function PlayerTick(float DeltaTime)
 	local Actor TraceActor;
 
 	// End:0xAA
-	if(bApplyBackTouchToViewOffset && bFingerIsDown!)
+	if(bApplyBackTouchToViewOffset && !bFingerIsDown)
 	{
 		MatineeOffset.Yaw *= 0.9900000;
 		MatineeOffset.Pitch *= 0.9900000;

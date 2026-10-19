@@ -146,7 +146,7 @@ simulated function AttachWeaponTo(SkeletalMeshComponent MeshCpnt, optional name 
 {
 	super(UTWeapon).AttachWeaponTo(MeshCpnt, SocketName);
 	// End:0xA6
-	if(((PoweredUpEffect != none) && PoweredUpEffect.bAttached!) && SkeletalMeshComponent(Mesh) != none)
+	if(((PoweredUpEffect != none) && !PoweredUpEffect.bAttached) && SkeletalMeshComponent(Mesh) != none)
 	{
 		SkeletalMeshComponent(Mesh).AttachComponentToSocket(PoweredUpEffect, PoweredUpEffectSocket);
 	}
@@ -248,7 +248,7 @@ simulated function UpdateBeamEmitter(Vector FlashLocation, Vector HitNormal, Act
 	if(((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && Instigator != none) && Instigator.IsFirstPerson())
 	{
 		// End:0x792
-		if((BeamEndpointEffect != none) && BeamEndpointEffect.bDeleteMe!)
+		if((BeamEndpointEffect != none) && !BeamEndpointEffect.bDeleteMe)
 		{
 			BeamEndpointEffect.SetLocation(FlashLocation);
 			BeamEndpointEffect.SetRotation(Rotator(HitNormal));
@@ -353,7 +353,7 @@ function ConsumeBeamAmmo(float Amount)
 	// End:0x97
 	if(PartialAmmo >= 1.0000000)
 	{
-		AddAmmo(int(PartialAmmo)-);
+		AddAmmo(-int(PartialAmmo));
 		PartialAmmo -= float(int(PartialAmmo));
 	}
 	//return;	
@@ -416,7 +416,7 @@ simulated function ProcessBeamHit(Vector StartTrace, Vector AimDir, out ImpactIn
 			if(LinkedTo != none)
 			{
 				// End:0x321
-				if(LinkedTo.IsA('UTPawn')!)
+				if(!LinkedTo.IsA('UTPawn'))
 				{
 					// End:0x30E
 					if(LinkedTo.IsA('UTVehicle') || LinkedTo.IsA('UTGameObjective'))
@@ -437,9 +437,9 @@ simulated function ProcessBeamHit(Vector StartTrace, Vector AimDir, out ImpactIn
 			{
 				ConsumeBeamAmmo(SavedAmmoUse);
 				// End:0x598
-				if((Victim != none) && WorldInfo.Game.GameReplicationInfo.OnSameTeam(Victim, Instigator)!)
+				if((Victim != none) && !WorldInfo.Game.GameReplicationInfo.OnSameTeam(Victim, Instigator))
 				{
-					bBeamHit = Victim.bWorldGeometry!;
+					bBeamHit = !Victim.bWorldGeometry;
 					// End:0x598
 					if(DamageAmount > float(0))
 					{
@@ -472,7 +472,7 @@ simulated function ProcessBeamHit(Vector StartTrace, Vector AimDir, out ImpactIn
 		// End:0x8A6
 		if((Victim != none) && int(Victim.Role) == int(ROLE_Authority))
 		{
-			bBeamHit = Victim.bWorldGeometry!;
+			bBeamHit = !Victim.bWorldGeometry;
 			// End:0x8A6
 			if(DamageAmount > float(0))
 			{
@@ -514,7 +514,7 @@ simulated function Vector GetLinkedToLocation()
 			}
 			ToTarget = UTVehicle(LinkedTo).GetTargetLocation();
 			// End:0x168
-			if(bHitVehicleAimingAt!)
+			if(!bHitVehicleAimingAt)
 			{
 				bHitVehicleAimingAt = TraceComponent(HitLocation, HitNormal, UTVehicle(LinkedTo).Mesh, ToTarget, Loc);
 			}
@@ -575,10 +575,10 @@ function AttemptLinkTo(Actor Who, PrimitiveComponent HitComponent)
 	if((UTV != none) && UTV.bValidLinkTarget)
 	{
 		// End:0x2C3
-		if(WorldInfo.Game.GameReplicationInfo.OnSameTeam(UTV, Instigator) || UTV.bTeamLocked! && UTV.CanEnterVehicle(Instigator))
+		if(WorldInfo.Game.GameReplicationInfo.OnSameTeam(UTV, Instigator) || !UTV.bTeamLocked && UTV.CanEnterVehicle(Instigator))
 		{
 			// End:0x259
-			if(WorldInfo.Game.GameReplicationInfo.OnSameTeam(UTV, Instigator)! && int(Instigator.GetTeamNum()) != int(255))
+			if(!WorldInfo.Game.GameReplicationInfo.OnSameTeam(UTV, Instigator) && int(Instigator.GetTeamNum()) != int(255))
 			{
 				UTV.SetTeamNum(Instigator.GetTeamNum());
 			}
@@ -638,7 +638,7 @@ function UnLink(optional bool bDelayed)
 	local UTVehicle V;
 
 	// End:0x73
-	if(bDelayed!)
+	if(!bDelayed)
 	{
 		V = UTVehicle(LinkedTo);
 		// End:0x5A
@@ -673,7 +673,7 @@ function FindLinkedWeapons()
 		foreach WorldInfo.AllPawns(Class'UTGame.UTPawn', P, Instigator.Location, WeaponLinkDistance)
 		{
 			// End:0x1E6
-			if(((P != Instigator) && P.bNoWeaponFiring!) && P.DrivenVehicle == none)
+			if(((P != Instigator) && !P.bNoWeaponFiring) && P.DrivenVehicle == none)
 			{
 				Link = UTWeap_LinkGun(P.Weapon);
 				// End:0x1E6
@@ -692,7 +692,7 @@ function FindLinkedWeapons()
 		if(LinkStrength > 1)
 		{
 			// End:0x27F
-			if(PoweredUpEffect.bIsActive!)
+			if(!PoweredUpEffect.bIsActive)
 			{
 				PoweredUpEffect.ActivateSystem();
 			}			
@@ -747,7 +747,7 @@ simulated function ChangeVisibility(bool bIsVisible)
 	// End:0x4E
 	if(PoweredUpEffect != none)
 	{
-		PoweredUpEffect.SetHidden(bIsVisible!);
+		PoweredUpEffect.SetHidden(!bIsVisible);
 	}
 	//return;	
 }
@@ -761,7 +761,7 @@ simulated event ReplicatedEvent(name VarName)
 		if(LinkStrength > 1)
 		{
 			// End:0x6A
-			if(PoweredUpEffect.bIsActive!)
+			if(!PoweredUpEffect.bIsActive)
 			{
 				PoweredUpEffect.ActivateSystem();
 			}			
@@ -879,7 +879,7 @@ function bool FocusOnLeader(bool bLeaderFiring)
 		}
 	}
 	// End:0x263
-	if((((B.Enemy != none) && LinkVehicle.bKeyVehicle!) || LinkVehicle.Health >= LinkVehicle.HealthMax) || LinkVehicle.LinkHealMult <= float(0))
+	if((((B.Enemy != none) && !LinkVehicle.bKeyVehicle) || LinkVehicle.Health >= LinkVehicle.HealthMax) || LinkVehicle.LinkHealMult <= float(0))
 	{
 		return false;
 	}
@@ -952,7 +952,7 @@ function byte BestMode()
 function bool CanHeal(Actor Other)
 {
 	// End:0x17
-	if(HasAmmo(1)!)
+	if(!HasAmmo(1))
 	{
 		return false;		
 	}
@@ -1173,7 +1173,7 @@ simulated state WeaponEquipping
 
 		super.BeginState(PreviousStateName);
 		// End:0x1CE
-		if(((((bFullPower! && WorldInfo.GRI != none) && WorldInfo.GRI.GameClass.default.bTeamGame) && Instigator != none) && Instigator.PlayerReplicationInfo != none) && Instigator.PlayerReplicationInfo.Team != none)
+		if(((((!bFullPower && WorldInfo.GRI != none) && WorldInfo.GRI.GameClass.default.bTeamGame) && Instigator != none) && Instigator.PlayerReplicationInfo != none) && Instigator.PlayerReplicationInfo.Team != none)
 		{
 			// End:0x17B
 			if(Instigator.PlayerReplicationInfo.Team.TeamIndex == 0)

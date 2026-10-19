@@ -5,7 +5,7 @@ class GripDebugCameraInput extends DebugCameraInput within PlayerController
 function bool InputKey(int ControllerId, name Key, Object.EInputEvent Event, optional float AmountDepressed = 1.0000000, optional bool bGamepad = false)
 {
 	// End:0x6B
-	if(Class'Grip.GripDebug'.static.IsDebugEnabled()!)
+	if(!Class'Grip.GripDebug'.static.IsDebugEnabled())
 	{
 		return super.InputKey(ControllerId, Key, Event, AmountDepressed, bGamepad);
 	}

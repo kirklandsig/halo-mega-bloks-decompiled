@@ -80,7 +80,7 @@ function Unregister(HaloDroppedPickup Pickup)
 		if(I < Trackers.Length)
 		{
 			Trackers[I].Pickups.RemoveItem(Pickup);
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x7F;
 		}
@@ -165,7 +165,7 @@ function int GetTrackerIndexByClass(Class<Inventory> InvClass, bool bCreateIfNot
 		{
 			return I;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -208,7 +208,7 @@ function DestroyLeastDesirablePickup()
 		{
 			indexToDestroyFrom = I;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x16;
 	}

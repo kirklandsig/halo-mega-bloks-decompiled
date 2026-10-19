@@ -225,14 +225,14 @@ exec function GrowHUD()
 		return;
 	}
 	// End:0x43
-	if(bShowDoll!)
+	if(!bShowDoll)
 	{
 		bShowDoll = true;		
 	}
 	else
 	{
 		// End:0x7E
-		if(bShowAmmo! || bShowVehicle!)
+		if(!bShowAmmo || !bShowVehicle)
 		{
 			bShowAmmo = true;
 			bShowVehicle = true;			
@@ -240,35 +240,35 @@ exec function GrowHUD()
 		else
 		{
 			// End:0x9C
-			if(bShowScoring!)
+			if(!bShowScoring)
 			{
 				bShowScoring = true;				
 			}
 			else
 			{
 				// End:0xBA
-				if(bShowWeaponbar!)
+				if(!bShowWeaponbar)
 				{
 					bShowWeaponbar = true;					
 				}
 				else
 				{
 					// End:0xD8
-					if(bShowVehicleArmorCount!)
+					if(!bShowVehicleArmorCount)
 					{
 						bShowVehicleArmorCount = true;						
 					}
 					else
 					{
 						// End:0xF6
-						if(bShowPowerups!)
+						if(!bShowPowerups)
 						{
 							bShowPowerups = true;							
 						}
 						else
 						{
 							// End:0x131
-							if(bShowMap! || bShowLeaderboard!)
+							if(!bShowMap || !bShowLeaderboard)
 							{
 								bShowMap = true;
 								bShowLeaderboard = true;								
@@ -276,7 +276,7 @@ exec function GrowHUD()
 							else
 							{
 								// End:0x14C
-								if(bShowClock!)
+								if(!bShowClock)
 								{
 									bShowClock = true;
 								}
@@ -481,7 +481,7 @@ function GetScreenCoords(float PosY, out float ScreenX, out float ScreenY, out H
 	ScreenX -= (InMessage.DX * 0.5000000);
 	ScreenY -= (InMessage.DY * 0.5000000);
 	// End:0x3DE
-	if((bHasMap && bShowMap) && bIsSplitScreen!)
+	if((bHasMap && bShowMap) && !bIsSplitScreen)
 	{
 		MapSize = (MapDefaultSize * Canvas.ClipY) / float(768);
 		// End:0x3DE
@@ -603,7 +603,7 @@ function DrawHUD()
 	local Rotator ViewRotation;
 
 	// End:0xCC
-	if((((UTGRI != none) && UTGRI.bMatchIsOver!) && bShowHUD) && PawnOwner != none)
+	if((((UTGRI != none) && !UTGRI.bMatchIsOver) && bShowHUD) && PawnOwner != none)
 	{
 		Canvas.Font = GetFontSizeIndex(0);
 		PlayerOwner.GetPlayerViewPoint(ViewPoint, ViewRotation);
@@ -637,7 +637,7 @@ function DrawHUD()
 	RenderDelta = WorldInfo.TimeSeconds - LastHUDRenderTime;
 	LastHUDRenderTime = WorldInfo.TimeSeconds;
 	// End:0x39B
-	if((UTGRI != none) && UTGRI.bMatchIsOver!)
+	if((UTGRI != none) && !UTGRI.bMatchIsOver)
 	{
 		PlayerOwner.DrawHUD(self);
 		DrawGameHud();		
@@ -661,7 +661,7 @@ function DrawHUD()
 
 exec function ShowAllAI()
 {
-	bShowAllAI = bShowAllAI!;
+	bShowAllAI = !bShowAllAI;
 	//return;	
 }
 
@@ -843,7 +843,7 @@ function DrawGameHud()
 		DisplayPortrait(RenderDelta);
 	}
 	// End:0xA88
-	if(bShowClock && bIsSplitScreen!)
+	if(bShowClock && !bIsSplitScreen)
 	{
 		DisplayClock();
 	}
@@ -853,7 +853,7 @@ function DrawGameHud()
 		DisplayScoring();
 	}
 	// End:0xADC
-	if(UTPlayerOwner.IsDead()!)
+	if(!UTPlayerOwner.IsDead())
 	{
 		DrawLivingHud();
 	}
@@ -892,7 +892,7 @@ function DrawMicIcon()
 function DisplayLocalMessages()
 {
 	// End:0x4A
-	if(PlayerOwner.bCinematicMode!)
+	if(!PlayerOwner.bCinematicMode)
 	{
 		MaxHUDAreaMessageCount = ((bIsSplitScreen) ? 1 : 2);
 		super(HUD).DisplayLocalMessages();
@@ -906,7 +906,7 @@ function DrawLivingHud()
 	local float Alpha;
 
 	// End:0x28
-	if(bIsSplitScreen! && bShowScoring)
+	if(!bIsSplitScreen && bShowScoring)
 	{
 		DisplayScoring();
 	}
@@ -984,7 +984,7 @@ function DrawPostGameHud()
 	local bool bWinner;
 
 	// End:0x224
-	if((((WorldInfo.GRI != none) && PlayerOwner.PlayerReplicationInfo != none) && PlayerOwner.PlayerReplicationInfo.bOnlySpectator!) && PlayerOwner.IsInState('InQueue')!)
+	if((((WorldInfo.GRI != none) && PlayerOwner.PlayerReplicationInfo != none) && !PlayerOwner.PlayerReplicationInfo.bOnlySpectator) && !PlayerOwner.IsInState('InQueue'))
 	{
 		// End:0x145
 		if(UTPlayerReplicationInfo(WorldInfo.GRI.Winner) != none)
@@ -1284,7 +1284,7 @@ function DisplayWeaponBar()
 		goto J0x1443;
 	}
 	// End:0x192D
-	if(bNoWeaponNumbers!)
+	if(!bNoWeaponNumbers)
 	{
 		OffsetX = ((HUDScaleX * (WeaponAmmoOffsetX + WeaponXOffset)) * 0.5000000) + (0.5000000 * (Canvas.ClipX - TotalOffsetX));
 		OffsetY = Canvas.ClipY - (HUDScaleY * (WeaponBarY + WeaponYOffset));
@@ -1896,7 +1896,7 @@ function DisplayHUDMessage(string Message, optional float XOffsetPct = 0.0500000
 		YCenter;
 
 	// End:0x380
-	if(bHudMessageRendered!)
+	if(!bHudMessageRendered)
 	{
 		Canvas.SetDrawColor(255, 255, 255, 255);
 		Canvas.Font = GetFontSizeIndex(2);
@@ -2194,7 +2194,7 @@ function DisplayLeaderBoard(Vector2D pos)
 	if(I < UTGRI.PRIArray.Length)
 	{
 		// End:0x1DD
-		if(bTravelling || UTGRI.PRIArray[I].bFromPreviousLevel!)
+		if(bTravelling || !UTGRI.PRIArray[I].bFromPreviousLevel)
 		{
 			// [Explicit Break]
 			goto J0x1EB;
@@ -2260,7 +2260,7 @@ function DisplayLeaderBoard(Vector2D pos)
 		if((I < UTGRI.PRIArray.Length) && LeaderboardCount < 3)
 		{
 			// End:0x9D8
-			if(((UTGRI.PRIArray[I] != none) && UTGRI.PRIArray[I].bOnlySpectator!) && bTravelling || UTGRI.PRIArray[I].bFromPreviousLevel!)
+			if(((UTGRI.PRIArray[I] != none) && !UTGRI.PRIArray[I].bOnlySpectator) && bTravelling || !UTGRI.PRIArray[I].bFromPreviousLevel)
 			{
 				Work = ((string(I + 1) $ PlaceMarks[I]) $ ":") @ UTGRI.PRIArray[I].PlayerName;
 				Canvas.StrLen(Work, XL, YL);

@@ -27,7 +27,7 @@ simulated function PostBeginPlay()
 		if(I < StaticMeshComponent.GetNumElements())
 		{
 			StaticMeshComponent.CreateAndSetMaterialInstanceConstant(I);
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x24;
 		}
@@ -73,7 +73,7 @@ simulated function SetActionableState(Pawn actioningPawn, bool canAction)
 		if(actioningPawn == PotentialActioningPawn)
 		{
 			// End:0x76
-			if(canAction!)
+			if(!canAction)
 			{
 				PotentialActioningPawn = none;
 			}
@@ -139,7 +139,7 @@ event RampUpGlintVisuals()
 			{
 				alterableMaterial.SetScalarParameterValue(GlintIntensityParamName, GlintVisualPct);
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x44;
 		}
@@ -173,7 +173,7 @@ event RampDownGlintVisuals()
 			{
 				alterableMaterial.SetScalarParameterValue(GlintIntensityParamName, GlintVisualPct);
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x44;
 		}
@@ -219,7 +219,7 @@ event UpdateSelfHighlighting()
 	else
 	{
 		// End:0x1A6
-		if(foundANearbyPlayer! && GlintVisualPct > 0.0000000)
+		if(!foundANearbyPlayer && GlintVisualPct > 0.0000000)
 		{
 			ClearTimer('RampUpGlintVisuals');
 			ClearTimer('RampDownGlintVisuals');

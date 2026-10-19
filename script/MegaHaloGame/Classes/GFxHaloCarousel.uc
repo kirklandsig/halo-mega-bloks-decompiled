@@ -16,7 +16,7 @@ function Init(int NumNodes, int SelectedIndex, string ClipIdentifier, array<Vect
 	local GFxObject MC;
 
 	// End:0x2D4
-	if(bInitialized!)
+	if(!bInitialized)
 	{
 		ItemContainer = GetObject("itemContainer");
 		NodeCount = NumNodes;

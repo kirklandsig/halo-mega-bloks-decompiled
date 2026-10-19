@@ -79,7 +79,7 @@ simulated function BeginReplay(Pawn NewInstigator, Vector NewLocation)
 simulated function ProcessTouch(Actor Other, Vector HitLocation, Vector HitNormal)
 {
 	// End:0x5F
-	if(StickToActor(Other)!)
+	if(!StickToActor(Other))
 	{
 		// End:0x3A
 		if(Other == SeekTarget)
@@ -94,7 +94,7 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation, Vector HitNorma
 simulated event HitWall(Vector HitNormal, Actor Wall, PrimitiveComponent WallComp)
 {
 	// End:0x3D
-	if(StickToActor(Wall)!)
+	if(!StickToActor(Wall))
 	{
 		super(Projectile).HitWall(HitNormal, Wall, WallComp);
 	}
@@ -172,7 +172,7 @@ simulated function bool StickToActor(Actor HitActor)
 	StartTrace = Location - (100.0000000 * DirTrace);
 	EndTrace = Location + (300.0000000 * DirTrace);
 	// End:0x31E
-	if(TraceAllPhysicsAssetInteractions(hitMesh, EndTrace, StartTrace, ImpactList)!)
+	if(!TraceAllPhysicsAssetInteractions(hitMesh, EndTrace, StartTrace, ImpactList))
 	{
 		TraceAllPhysicsAssetInteractions(hitMesh, HitActor.Location, StartTrace, ImpactList);
 	}
@@ -273,9 +273,9 @@ function TickTargetSeeking(float DeltaTime)
 	{
 		return;
 	}
-	WanderTarget.X += RandRange(WanderRandomness-, WanderRandomness);
-	WanderTarget.Y += RandRange(WanderRandomness-, WanderRandomness);
-	WanderTarget.Z += RandRange(WanderRandomness-, WanderRandomness);
+	WanderTarget.X += RandRange(-WanderRandomness, WanderRandomness);
+	WanderTarget.Y += RandRange(-WanderRandomness, WanderRandomness);
+	WanderTarget.Z += RandRange(-WanderRandomness, WanderRandomness);
 	WanderTarget = Normal(WanderTarget);
 	wanderDir = WanderTarget;
 	wanderDir.X += WanderTargetDistance;

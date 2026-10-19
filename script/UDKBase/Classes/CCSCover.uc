@@ -27,7 +27,7 @@ static function bool IsLocked(CCSCoverData CoverData)
 {
 	local bool IsLocked;
 
-	IsLocked = (CoverData.CoverLink.Slots[CoverData.SlotIdx].SlotOwner != none) && CoverData.CoverLink.Slots[CoverData.SlotIdx].SlotOwner.IsPendingKill()!;
+	IsLocked = (CoverData.CoverLink.Slots[CoverData.SlotIdx].SlotOwner != none) && !CoverData.CoverLink.Slots[CoverData.SlotIdx].SlotOwner.IsPendingKill();
 	return IsLocked;
 	//return ReturnValue;	
 }

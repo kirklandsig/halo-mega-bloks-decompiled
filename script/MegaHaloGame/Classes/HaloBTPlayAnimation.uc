@@ -50,7 +50,7 @@ function GripBTNode.BTExecutionResult Execute(GripBTInterface BTInterface, bool 
 
 	ExecRes = 2;
 	// End:0x89
-	if(HaloPawn.IsPlayingCustomAnimation()! || WorldInfo.TimeSeconds >= TimeBlendingStarts)
+	if(!HaloPawn.IsPlayingCustomAnimation() || WorldInfo.TimeSeconds >= TimeBlendingStarts)
 	{
 		// End:0x7A
 		if(PushToFinish)

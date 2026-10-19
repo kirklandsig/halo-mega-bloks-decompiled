@@ -75,7 +75,7 @@ simulated function SetStaticColorizedMesh(StaticMesh desiredMesh, LinearColor ne
 		if(I < StaticMeshComponent.GetNumElements())
 		{
 			StaticMeshComponent.SetMaterial(I, ghostedMaterial);
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x8A;
 		}

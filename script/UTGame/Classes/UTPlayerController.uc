@@ -361,7 +361,7 @@ protected simulated function RegisterCustomPlayerDataStores()
 					if(BoundEventsStringDataStore != none)
 					{
 						// End:0x326
-						if(DataStoreManager.RegisterDataStore(BoundEventsStringDataStore, LP)!)
+						if(!DataStoreManager.RegisterDataStore(BoundEventsStringDataStore, LP))
 						{
 							LogInternal(((("Failed to register 'StringAliasBindings' data store for player:" @ string(self)) @ "(") $ PlayerName) $ ")");
 						}						
@@ -402,7 +402,7 @@ simulated function UnregisterPlayerDataStores()
 			if(BoundEventsStringDataStore != none)
 			{
 				// End:0x198
-				if(DataStoreManager.UnregisterDataStore(BoundEventsStringDataStore)!)
+				if(!DataStoreManager.UnregisterDataStore(BoundEventsStringDataStore))
 				{
 					LogInternal(((("Failed to unregister 'StringAliasBindings' data store for player:" @ string(self)) @ "(") $ PlayerName) $ ")");
 				}
@@ -560,7 +560,7 @@ exec function OnConnectionStatusChange(OnlineSubsystem.EOnlineServerConnectionSt
 			if(GameSettings != none)
 			{
 				// End:0x21A
-				if(GameSettings.bIsLanMatch!)
+				if(!GameSettings.bIsLanMatch)
 				{
 					switch(ConnectionStatus)
 					{
@@ -608,13 +608,13 @@ exec function OnLinkStatusChanged(bool bConnected)
 	Registry = UIDataStore_Registry(Class'Engine.UIRoot'.static.StaticResolveDataStore('Registry'));
 	LogInternal(((((((("(" $ string(Name)) $ ") UTPlayerController::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "bConnected:'") $ string(bConnected)) $ "'", 'DevNet');
 	// End:0x1E2
-	if((bConnected! && WorldInfo != none) && WorldInfo.Game != none)
+	if((!bConnected && WorldInfo != none) && WorldInfo.Game != none)
 	{
 		// End:0x1E2
 		if(int(WorldInfo.NetMode) != int(NM_Standalone))
 		{
 			// End:0x1E2
-			if(Registry.GetData("FrontEndError_Display", ErrorDisplay)! || int(ErrorDisplay) == 0)
+			if(!Registry.GetData("FrontEndError_Display", ErrorDisplay) || int(ErrorDisplay) == 0)
 			{
 				SetFrontEndErrorMessage("<Strings:UTGameUI.Errors.Error_Title>", "<Strings:UTGameUI.Errors.NetworkLinkLost_Message>");
 				QuitToMainMenu();
@@ -904,7 +904,7 @@ unreliable client simulated event ClientHearSound(SoundCue ASound, Actor SourceA
 				return;
 			}
 			// End:0x213
-			if(IsZero(SourceLocation)! && SourceLocation != SourceActor.Location)
+			if(!IsZero(SourceLocation) && SourceLocation != SourceActor.Location)
 			{
 				AC.bUseOwnerLocation = false;
 				AC.Location = SourceLocation;
@@ -986,13 +986,13 @@ function UTVehicle CheckPickedVehicle(UTVehicle V, bool bEnterVehicle)
 	local UTPlayerReplicationInfo PRI;
 
 	// End:0x2A
-	if((V == none) || bEnterVehicle!)
+	if((V == none) || !bEnterVehicle)
 	{
 		return V;
 	}
 	PRI = UTPlayerReplicationInfo(PlayerReplicationInfo);
 	// End:0x196
-	if((PRI.bHasFlag && V.bCanCarryFlag!) && V.bTeamLocked! || WorldInfo.GRI.OnSameTeam(self, V))
+	if((PRI.bHasFlag && !V.bCanCarryFlag) && !V.bTeamLocked || WorldInfo.GRI.OnSameTeam(self, V))
 	{
 		// End:0x152
 		if(V.bRequestedEntryWithFlag)
@@ -1066,7 +1066,7 @@ function UTVehicle CheckVehicleToDrive(bool bEnterVehicle)
 		return PickedVehicle;
 	}
 	// End:0x3B5
-	if(bUsePawnRotationToCheckForVehicles!)
+	if(!bUsePawnRotationToCheckForVehicles)
 	{
 		ViewRotation.Pitch = 0;
 		ViewDir = CheckDist * Vector(ViewRotation);
@@ -1117,7 +1117,7 @@ function UTVehicle CheckVehicleToDrive(bool bEnterVehicle)
 
 exec function ToggleMinimap()
 {
-	bRotateMinimap = bRotateMinimap!;
+	bRotateMinimap = !bRotateMinimap;
 	//return;	
 }
 
@@ -1163,7 +1163,7 @@ event ReceiveWarning(Pawn shooter, float projSpeed, Vector FireDir)
 	}
 	LastWarningTime = WorldInfo.TimeSeconds;
 	// End:0xBC
-	if((shooter != none) && WorldInfo.GRI.OnSameTeam(shooter, self)!)
+	if((shooter != none) && !WorldInfo.GRI.OnSameTeam(shooter, self))
 	{
 		ClientMusicEvent(0);
 	}
@@ -1179,7 +1179,7 @@ function ReceiveProjectileWarning(Projectile Proj)
 	}
 	LastWarningTime = WorldInfo.TimeSeconds;
 	// End:0x171
-	if(((Proj.Instigator != none) && WorldInfo.GRI.OnSameTeam(Proj.Instigator, self)!) && Proj.Speed > float(0))
+	if(((Proj.Instigator != none) && !WorldInfo.GRI.OnSameTeam(Proj.Instigator, self)) && Proj.Speed > float(0))
 	{
 		SetTimer(VSize(Proj.Location - Pawn.Location) / Proj.Speed, false, 'ProjectileWarningTimer');
 	}
@@ -1364,7 +1364,7 @@ function OnControllerChanged(int ControllerId, bool bIsConnected)
 	super(PlayerController).OnControllerChanged(ControllerId, bIsConnected);
 	LocPlayer = LocalPlayer(Player);
 	// End:0x10F
-	if(WorldInfo.IsConsoleBuild() && (WorldInfo.Game == none) || WorldInfo.Game.IsAutomatedPerfTesting()!)
+	if(WorldInfo.IsConsoleBuild() && (WorldInfo.Game == none) || !WorldInfo.Game.IsAutomatedPerfTesting())
 	{
 		// End:0x10F
 		if((LocPlayer != none) && LocPlayer.ControllerId == ControllerId)
@@ -1388,7 +1388,7 @@ event SoakPause(Pawn P)
 function DrawHUD(HUD H)
 {
 	// End:0x52
-	if(bDedicatedServerSpectator && H.bShowScores!)
+	if(bDedicatedServerSpectator && !H.bShowScores)
 	{
 		H.ShowScores();
 	}
@@ -1474,7 +1474,7 @@ function Restart(bool bVehicleTransition)
 {
 	super(PlayerController).Restart(bVehicleTransition);
 	// End:0x36
-	if(bVehicleTransition!)
+	if(!bVehicleTransition)
 	{
 		SetTimer(0.1000000, false, 'CheckAutoObjective');
 	}
@@ -1508,7 +1508,7 @@ reliable client simulated function ClientRestart(Pawn NewPawn)
 			FixFOV();
 		}
 		// End:0x1B1
-		if((NewPawn.Weapon != none) && NewPawn.Weapon.HasAnyAmmo()!)
+		if((NewPawn.Weapon != none) && !NewPawn.Weapon.HasAnyAmmo())
 		{
 			SwitchToBestWeapon();
 		}		
@@ -1628,7 +1628,7 @@ function SetAutoObjective(Actor ObjectiveActor, bool bOnlyNotifyDifferent)
 		DesiredObjective = UTGameObjective(ObjectiveActor);
 	}
 	// End:0x229
-	if((ObjectiveActor != LastAutoObjective) || bOnlyNotifyDifferent!)
+	if((ObjectiveActor != LastAutoObjective) || !bOnlyNotifyDifferent)
 	{
 		LastAutoObjective = ObjectiveActor;
 		ClientSetAutoObjective(LastAutoObjective);
@@ -1770,7 +1770,7 @@ event ResetCameraMode()
 
 function bool UsingFirstPersonCamera()
 {
-	return bBehindView!;
+	return !bBehindView;
 	//return ReturnValue;	
 }
 
@@ -2021,7 +2021,7 @@ exec function BehindView()
 	// End:0x3F
 	if(int(WorldInfo.NetMode) == int(NM_Standalone))
 	{
-		SetBehindView(bBehindView!);
+		SetBehindView(!bBehindView);
 	}
 	//return;	
 }
@@ -2030,7 +2030,7 @@ function SetBehindView(bool bNewBehindView)
 {
 	bBehindView = bNewBehindView;
 	// End:0x30
-	if(bBehindView!)
+	if(!bBehindView)
 	{
 		bFreeCamera = false;
 	}
@@ -2076,7 +2076,7 @@ function SetCameraMode(name NewCamMode)
 		if(NewCamMode == 'ThirdPerson')
 		{
 			// End:0x62
-			if(bBehindView!)
+			if(!bBehindView)
 			{
 				SetBehindView(true);
 			}			
@@ -2087,7 +2087,7 @@ function SetCameraMode(name NewCamMode)
 			if(NewCamMode == 'FreeCam')
 			{
 				// End:0x96
-				if(bBehindView!)
+				if(!bBehindView)
 				{
 					SetBehindView(true);
 				}
@@ -2300,7 +2300,7 @@ function PlayCameraAnim(CameraAnim AnimToPlay, optional float Scale = 1.0000000,
 		}
 	}
 	// End:0x1CC
-	if((bIsDamageShake! && bLoop!) && int(WorldInfo.NetMode) != int(NM_DedicatedServer))
+	if((!bIsDamageShake && !bLoop) && int(WorldInfo.NetMode) != int(NM_DedicatedServer))
 	{
 		// End:0x1B8
 		if(AnimToPlay.AnimLength <= float(1))
@@ -2363,7 +2363,7 @@ function OnStopCameraAnim(UTSeqAct_StopCameraAnim inAction)
 function ViewShake(float DeltaTime)
 {
 	// End:0x89
-	if((CameraAnimPlayer != none) && CameraAnimPlayer.bFinished!)
+	if((CameraAnimPlayer != none) && !CameraAnimPlayer.bFinished)
 	{
 		CamOverridePostProcess = Class'Engine.CameraActor'.default.CamOverridePostProcess;
 		CameraAnimPlayer.AdvanceAnim(DeltaTime, false);		
@@ -2397,7 +2397,7 @@ simulated exec function ToggleMelee()
 simulated exec function ToggleTranslocator()
 {
 	// End:0x2C
-	if((Pawn != none) && IsMoveInputIgnored()!)
+	if((Pawn != none) && !IsMoveInputIgnored())
 	{
 		SwitchWeapon(0);
 	}
@@ -2426,7 +2426,7 @@ function CallServerMove(SavedMove NewMove, Vector ClientLoc, byte ClientRoll, in
 	else
 	{
 		// End:0x3A6
-		if((((NewMove.Acceleration * float(10)) == vect(0.0000000, 0.0000000, 0.0000000)) && int(NewMove.DoubleClickMove) == int(0)) && NewMove.bDoubleJump!)
+		if((((NewMove.Acceleration * float(10)) == vect(0.0000000, 0.0000000, 0.0000000)) && int(NewMove.DoubleClickMove) == int(0)) && !NewMove.bDoubleJump)
 		{
 			ShortServerMove(NewMove.TimeStamp, ClientLoc, NewMove.CompressedFlags(), ClientRoll, View);			
 		}
@@ -2569,7 +2569,7 @@ exec function PrevWeapon()
 	else
 	{
 		// End:0x68
-		if(Pawn.IsInState('FeigningDeath')!)
+		if(!Pawn.IsInState('FeigningDeath'))
 		{
 			super(PlayerController).PrevWeapon();
 		}
@@ -2587,7 +2587,7 @@ exec function NextWeapon()
 	else
 	{
 		// End:0x68
-		if(Pawn.IsInState('FeigningDeath')!)
+		if(!Pawn.IsInState('FeigningDeath'))
 		{
 			super(PlayerController).NextWeapon();
 		}
@@ -2653,7 +2653,7 @@ reliable client simulated function ClientGameEnded(Actor EndGameFocus, bool bIsW
 		SetViewTarget(EndGameFocus);
 	}
 	// End:0x79
-	if((PlayerReplicationInfo != none) && PlayerReplicationInfo.bOnlySpectator!)
+	if((PlayerReplicationInfo != none) && !PlayerReplicationInfo.bOnlySpectator)
 	{
 		PlayWinMessage(bIsWinner);
 	}
@@ -2768,7 +2768,7 @@ reliable server function ServerBecomeActivePlayer()
 
 	Game = UTGame(WorldInfo.Game);
 	// End:0x310
-	if((((PlayerReplicationInfo.bOnlySpectator && WorldInfo.IsInSeamlessTravel()!) && HasClientLoadedCurrentWorld()) && Game != none) && Game.AllowBecomeActivePlayer(self))
+	if((((PlayerReplicationInfo.bOnlySpectator && !WorldInfo.IsInSeamlessTravel()) && HasClientLoadedCurrentWorld()) && Game != none) && Game.AllowBecomeActivePlayer(self))
 	{
 		SetBehindView(false);
 		FixFOV();
@@ -2784,7 +2784,7 @@ reliable server function ServerBecomeActivePlayer()
 			Game.ChangeTeam(self, int(Game.PickTeam(0, none)), false);
 		}
 		// End:0x2E4
-		if(Game.bDelayedStart!)
+		if(!Game.bDelayedStart)
 		{
 			Game.bRestartLevel = false;
 			// End:0x282
@@ -2832,7 +2832,7 @@ function AdjustFOV(float DeltaTime)
 	local float DeltaFOV;
 
 	// End:0x147
-	if((FOVAngle != DesiredFOV) && bCurrentCamAnimAffectsFOV! || CameraAnimPlayer.bFinished)
+	if((FOVAngle != DesiredFOV) && !bCurrentCamAnimAffectsFOV || CameraAnimPlayer.bFinished)
 	{
 		// End:0x94
 		if(bNonlinearZoomInterpolation)
@@ -2954,7 +2954,7 @@ function CharacterProcessingComplete()
 	if(LP != none)
 	{
 		// End:0x163
-		if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.SystemInterface, OnlineSystemInterface(none))) && OnlineSub.SystemInterface.IsControllerConnected(LP.ControllerId)!)
+		if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.SystemInterface, OnlineSystemInterface(none))) && !OnlineSub.SystemInterface.IsControllerConnected(LP.ControllerId))
 		{
 			OnControllerChanged(LP.ControllerId, false);
 		}
@@ -2971,7 +2971,7 @@ function bool CanRestartPlayer()
 function SendMessage(PlayerReplicationInfo Recipient, name MessageType, float Wait, optional Class<DamageType> DamageType)
 {
 	// End:0x9E
-	if((((MessageType == 'Taunt') && Recipient != none) && UTPlayerController(Recipient.Owner) != none) && UTPlayerController(Recipient.Owner).bAutoTaunt!)
+	if((((MessageType == 'Taunt') && Recipient != none) && UTPlayerController(Recipient.Owner) != none) && !UTPlayerController(Recipient.Owner).bAutoTaunt)
 	{
 		return;
 	}
@@ -3015,7 +3015,7 @@ function BullseyeMessage()
 reliable server function ServerChangeTeam(int N)
 {
 	// End:0xB2
-	if((WorldInfo.TimeSeconds > (LastTeamChangeTime + 1.0000000)) && UTGameReplicationInfo(WorldInfo.GRI).bStoryMode!)
+	if((WorldInfo.TimeSeconds > (LastTeamChangeTime + 1.0000000)) && !UTGameReplicationInfo(WorldInfo.GRI).bStoryMode)
 	{
 		LastTeamChangeTime = WorldInfo.TimeSeconds;
 		super(PlayerController).ServerChangeTeam(N);
@@ -3051,7 +3051,7 @@ reliable server function ServerKickBan(string PlayerToKick, bool bBan)
 unreliable server function ServerSay(string msg)
 {
 	// End:0x22
-	if(bServerMutedText!)
+	if(!bServerMutedText)
 	{
 		super(PlayerController).ServerSay(msg);
 	}
@@ -3061,7 +3061,7 @@ unreliable server function ServerSay(string msg)
 unreliable server function ServerTeamSay(string msg)
 {
 	// End:0x22
-	if(bServerMutedText!)
+	if(!bServerMutedText)
 	{
 		super(PlayerController).ServerTeamSay(msg);
 	}
@@ -3465,12 +3465,12 @@ event bool NotifyDisconnect(string Command)
 		return false;
 	}
 	// End:0x6B
-	if(bCleanupInProgress!)
+	if(!bCleanupInProgress)
 	{
 		DisconnectCommand = Command;
 		QuitToMainMenu();
 	}
-	return bCleanupInProgress && bCleanupComplete!;
+	return bCleanupInProgress && !bCleanupComplete;
 	//return ReturnValue;	
 }
 
@@ -3607,7 +3607,7 @@ state RoundEnded
 
 		GRI = UTGameReplicationInfo(WorldInfo.GRI);
 		// End:0xA1
-		if(((GRI != none) && GRI.bMatchIsOver) && GRI.bStoryMode!)
+		if(((GRI != none) && GRI.bMatchIsOver) && !GRI.bStoryMode)
 		{
 			ShowMidGameMenu('ScoreTab', true);			
 		}
@@ -3682,7 +3682,7 @@ state Dead
 		if(bFrozen)
 		{
 			// End:0x47
-			if(IsTimerActive()! || GetTimerCount() > MinRespawnDelay)
+			if(!IsTimerActive() || GetTimerCount() > MinRespawnDelay)
 			{
 				bFrozen = false;
 			}
@@ -3703,7 +3703,7 @@ state Dead
 	function Timer()
 	{
 		// End:0x11
-		if(bFrozen!)
+		if(!bFrozen)
 		{
 			return;
 		}
@@ -4036,7 +4036,7 @@ state Spectating
 
 	exec function BehindView()
 	{
-		bForceBehindView = bForceBehindView!;
+		bForceBehindView = !bForceBehindView;
 		//return;		
 	}
 

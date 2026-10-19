@@ -31,7 +31,7 @@ function Init(optional LocalPlayer Player)
 	if(Start())
 	{
 		// End:0x209
-		if(bIsInit!)
+		if(!bIsInit)
 		{
 			ExternalInterface = self;
 			Text_PuzzlePctComplete = GetVariableObject("_root.Menu_Tab.base.pct");
@@ -180,7 +180,7 @@ function UpdateConstructionStripData(array<HaloConstructionUIPrimitive> ItemInfo
 	if(I < NumItems)
 	{
 		ConstructionStrip.SetItemImage(I, ItemInfo[I].IconPkgPath);
-		ConstructionStrip.SetItemUnlocked(I, Last_bPuzzleLocked!);
+		ConstructionStrip.SetItemUnlocked(I, !Last_bPuzzleLocked);
 		ConstructionStrip.SetItemText(I, string(ItemInfo[I].Count) $ "x");
 		ConstructionStrip.UpdateItemState(I);
 		I++;
@@ -193,7 +193,7 @@ function UpdateConstructionStripData(array<HaloConstructionUIPrimitive> ItemInfo
 function PlacementError()
 {
 	// End:0x2F
-	if(Last_bPuzzleLocked!)
+	if(!Last_bPuzzleLocked)
 	{
 		ConstructionStrip.HighlightSelection(false);
 	}
@@ -203,7 +203,7 @@ function PlacementError()
 function PlacementSuccess()
 {
 	// End:0x2F
-	if(Last_bPuzzleLocked!)
+	if(!Last_bPuzzleLocked)
 	{
 		ConstructionStrip.HighlightSelection(true);
 	}

@@ -56,7 +56,7 @@ function AddMapping(string McpId, string ExternalId, string ExternalType)
 		AddMappingRequests[AddAt].ExternalType = ExternalType;
 		AddMappingRequests[AddAt].Request = Request;
 		// End:0x296
-		if(Request.ProcessRequest()!)
+		if(!Request.ProcessRequest())
 		{
 			LogInternal(("Failed to start AddMapping web request for URL(" $ URL) $ ")");
 		}
@@ -122,7 +122,7 @@ function QueryMappings(const out array<string> ExternalIds, string ExternalType)
 			if(Len(ExternalIds[Index]) > 0)
 			{
 				// End:0x106
-				if(bFirst!)
+				if(!bFirst)
 				{					
 					JsonPayload $= ",";
 				}
@@ -145,7 +145,7 @@ function QueryMappings(const out array<string> ExternalIds, string ExternalType)
 		QueryMappingRequests[AddAt].ExternalType = ExternalType;
 		QueryMappingRequests[AddAt].Request = Request;
 		// End:0x373
-		if(Request.ProcessRequest()!)
+		if(!Request.ProcessRequest())
 		{
 			LogInternal(("Failed to start QueryMappings web request for URL(" $ URL) $ ")");
 		}
@@ -197,7 +197,7 @@ function OnQueryMappingsRequestComplete(HttpRequestInterface Request, HttpRespon
 					J0x350:
 
 					// End:0x42F [Loop If]
-					if((AccountIndex < AccountMappings.Length) && bWasFound!)
+					if((AccountIndex < AccountMappings.Length) && !bWasFound)
 					{
 						bWasFound = ((McpId == AccountMappings[AccountIndex].McpId) && ExternalId == AccountMappings[AccountIndex].ExternalId) && ExternalType == AccountMappings[AccountIndex].ExternalType;
 						AccountIndex++;
@@ -205,7 +205,7 @@ function OnQueryMappingsRequestComplete(HttpRequestInterface Request, HttpRespon
 						goto J0x350;
 					}
 					// End:0x4F9
-					if(bWasFound!)
+					if(!bWasFound)
 					{
 						AddAt = AccountMappings.Length;
 						AccountMappings.Length = AddAt + 1;

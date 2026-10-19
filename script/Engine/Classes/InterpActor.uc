@@ -118,12 +118,12 @@ event bool EncroachingOn(Actor Other)
 			// End:0x44A
 			if(bDestroyProjectilesOnEncroach && Other.IsA('Projectile'))
 			{
-				Projectile(Other).Explode(Other.Location, Normal(Velocity)-);
+				Projectile(Other).Explode(Other.Location, -Normal(Velocity));
 				return false;
 			}
 		}
 		// End:0x4F2
-		if(bLandingPawn!)
+		if(!bLandingPawn)
 		{
 			I = 0;
 			J0x464:
@@ -156,7 +156,7 @@ event RanInto(Actor Other)
 	// End:0x88
 	if(bDestroyProjectilesOnEncroach && Other.IsA('Projectile'))
 	{
-		Projectile(Other).Explode(Other.Location, Normal(Velocity)-);		
+		Projectile(Other).Explode(Other.Location, -Normal(Velocity));		
 	}
 	else
 	{
@@ -202,7 +202,7 @@ event Attach(Actor Other)
 	local SeqEvent_Mover MoverEvent;
 
 	// End:0xA7
-	if(IsTimerActive('FinishedOpen')!)
+	if(!IsTimerActive('FinishedOpen'))
 	{
 		I = 0;
 		J0x24:

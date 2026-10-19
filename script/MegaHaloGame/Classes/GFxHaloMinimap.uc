@@ -778,16 +778,16 @@ function Update()
 	CompassIcon.SetDisplayInfo(D);
 	D.Rotation = D.Rotation - (float(PC.Rotation.Yaw & 65535) * (-360.0000000 / 65536.0000000));
 	PlayerIcon.SetDisplayInfo(D);
-	F = float((PC.PlayerCamera.ViewTarget.POV.Rotation.Yaw + 16384) & 65535-) * (3.1415927 / 32768.0000000);
+	F = float(-(PC.PlayerCamera.ViewTarget.POV.Rotation.Yaw + 16384) & 65535) * (3.1415927 / 32768.0000000);
 	IconMatrix.XPlane.X = Cos(F) * Scale;
 	IconMatrix.XPlane.Y = Sin(F) * Scale;
-	IconMatrix.YPlane.X = Sin(F)- * Scale;
+	IconMatrix.YPlane.X = -Sin(F) * Scale;
 	IconMatrix.YPlane.Y = Cos(F) * Scale;
 	IconMatrix.WPlane.X = 0.0000000;
 	IconMatrix.WPlane.Y = 0.0000000;
 	IconMatrix.WPlane.Z = 0.0000000;
 	IconMatrix.WPlane.W = 1.0000000;
-	IconMatrix.WPlane = TransformVector(IconMatrix, PC.Pawn.Location-);
+	IconMatrix.WPlane = TransformVector(IconMatrix, -PC.Pawn.Location);
 	D.hasRotation = false;
 	// End:0x115E
 	foreach ThisWorld.AllPawns(Class'Engine.Pawn', P)

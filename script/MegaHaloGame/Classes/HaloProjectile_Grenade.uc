@@ -70,7 +70,7 @@ simulated function ExplodeNow()
 {
 	local Rotator fxRot;
 
-	fxRot.Yaw = NormalizeRotAxis(Rotation.Yaw)-;
+	fxRot.Yaw = -NormalizeRotAxis(Rotation.Yaw);
 	Explode(Location, Vector(fxRot));
 	//return;	
 }
@@ -137,7 +137,7 @@ simulated function HandleCollision(Actor Other, Vector HitNormal)
 			BounceOffActor(Other, HitNormal, VdotN, WallBounce, WallFriction);
 		}
 		// End:0x174
-		if(IsTimerActive('ExplodeNow')!)
+		if(!IsTimerActive('ExplodeNow'))
 		{
 			TimePassedSinceThrown = 0.0000000;
 			ExplodingNowDelay = ExplodeFromTouchDelay;
@@ -177,7 +177,7 @@ simulated function BounceOffActor(Actor Other, Vector HitNormal, float VdotN, fl
 
 	VProj = VdotN * HitNormal;
 	VPerp = Velocity - VProj;
-	VProj *= Bounce-;
+	VProj *= -Bounce;
 	// End:0x90
 	if(VSizeSq(VPerp) < (Fric * Fric))
 	{

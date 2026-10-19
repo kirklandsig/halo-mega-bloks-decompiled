@@ -21,7 +21,7 @@ simulated function PostBeginPlay()
 function Tick(float DeltaTime)
 {
 	// End:0x36
-	if(ContactMade! && FlyingBack!)
+	if(!ContactMade && !FlyingBack)
 	{
 		FlyTowardsTarget(DeltaTime);		
 	}
@@ -80,7 +80,7 @@ function FlyBackToVehicle(float DeltaTime)
 	else
 	{
 		Velocity = Normal(toVehicle) * ProjectileReturnSpeed;
-		SetRotation(RInterpTo(Rotation, Rotator(toVehicle-), DeltaTime, 45.0000000));
+		SetRotation(RInterpTo(Rotation, Rotator(-toVehicle), DeltaTime, 45.0000000));
 		SetLocation(Location + (Velocity * DeltaTime));
 	}
 	//return;	

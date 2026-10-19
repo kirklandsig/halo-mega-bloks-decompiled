@@ -56,7 +56,7 @@ replication
 		Target;
 
 	// Pos:0x00A
-	if(bNetDirty && bNetOwner!)
+	if(bNetDirty && !bNetOwner)
 		TurretRotation;
 }
 
@@ -105,7 +105,7 @@ simulated function Rotator GetAdjustedAim()
 	GetBoundingCylinder(Width, Height);
 	StartLocation -= (Vector(StartRotation) * Width);
 	// End:0xD7
-	if((Controller != none) && Controller.IsA('CCSController')!)
+	if((Controller != none) && !Controller.IsA('CCSController'))
 	{
 		return Controller.GetAdjustedAimFor(Seats[0].Gun, StartLocation);
 	}
@@ -134,7 +134,7 @@ simulated function UpdateTurrets(float DeltaTime)
 	local Vector TargetLocation;
 
 	// End:0x4D
-	if((Controller != none) && Controller.IsA('CCSController')!)
+	if((Controller != none) && !Controller.IsA('CCSController'))
 	{
 		TurretRotation = GetAdjustedAim();		
 	}
@@ -265,7 +265,7 @@ simulated event Tick(float DeltaTime)
 	local HaloPawn HaloDriver;
 
 	// End:0x151
-	if((Health > 0) && bHidden!)
+	if((Health > 0) && !bHidden)
 	{
 		UpdateAITimer += DeltaTime;
 		// End:0x13E
@@ -291,7 +291,7 @@ simulated event Tick(float DeltaTime)
 				}
 			}
 			// End:0x13E
-			if(bSleepTurret! && UpdateAITimer >= UpdateAIMaxTime)
+			if(!bSleepTurret && UpdateAITimer >= UpdateAIMaxTime)
 			{
 				UpdateAITimer = 0.0000000;
 				UpdateAI(DeltaTime);
@@ -385,7 +385,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	Dist = VSize(CameraPosition - Location);
 	EnteringPlayers.Length = 0;
 	// End:0x45E
-	if(bPlayingSpawnEffect! && (UTPawn(PC.Pawn) != none) || UTVehicle_Hoverboard(PC.Pawn) != none)
+	if(!bPlayingSpawnEffect && (UTPawn(PC.Pawn) != none) || UTVehicle_Hoverboard(PC.Pawn) != none)
 	{
 		// End:0x3C8
 		if(bShowUseable || ShouldShowUseable(PC, Dist))
@@ -412,7 +412,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 		else
 		{
 			// End:0x418
-			if(WorldInfo.GRI.GameClass.default.bTeamGame!)
+			if(!WorldInfo.GRI.GameClass.default.bTeamGame)
 			{
 				return;
 			}
@@ -427,7 +427,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	else
 	{
 		// End:0x4AE
-		if(WorldInfo.GRI.GameClass.default.bTeamGame!)
+		if(!WorldInfo.GRI.GameClass.default.bTeamGame)
 		{
 			return;
 		}
@@ -754,7 +754,7 @@ function SetMeshColor(LinearColor newColor)
 			MIC.SetVectorParameterValue('CLR_Tinting', newColor);
 			LogInternal("SHOULD BE SETTING NEW COLOR HERE");
 		}
-		M++;
+		++M;
 		// [Loop Continue]
 		goto J0x7C;
 	}
@@ -882,7 +882,7 @@ function HaloUpgrade GetUpgrade()
 function bool AnySeatAvailable()
 {
 	// End:0x14
-	if(bTurretManable!)
+	if(!bTurretManable)
 	{
 		return false;		
 	}

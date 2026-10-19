@@ -84,7 +84,7 @@ simulated function bool DoOverridePrevWeapon()
 function DropFrom(Vector StartLocation, Vector StartVelocity)
 {
 	// End:0x11
-	if(CanThrow()!)
+	if(!CanThrow())
 	{
 		return;
 	}
@@ -336,7 +336,7 @@ simulated function float GetWeaponRating()
 		return InvManager.GetWeaponRatingFor(self);
 	}
 	// End:0x45
-	if(HasAnyAmmo()!)
+	if(!HasAnyAmmo())
 	{
 		return -1.0000000;
 	}
@@ -462,7 +462,7 @@ simulated function float GetFireInterval(byte FireModeNum)
 simulated function TimeWeaponFiring(byte FireModeNum)
 {
 	// End:0x3A
-	if(IsTimerActive('RefireCheckTimer')!)
+	if(!IsTimerActive('RefireCheckTimer'))
 	{
 		SetTimer(GetFireInterval(FireModeNum), true, 'RefireCheckTimer');
 	}
@@ -489,7 +489,7 @@ simulated function TimeWeaponEquipping()
 simulated function Activate()
 {
 	// End:0x1D
-	if(IsFiring()!)
+	if(!IsFiring())
 	{
 		GotoState('WeaponEquipping');
 	}
@@ -601,7 +601,7 @@ reliable client simulated function ClientWeaponSet(bool bOptionalSet, optional b
 simulated function StartFire(byte FireModeNum)
 {
 	// End:0x6F
-	if((Instigator == none) || Instigator.bNoWeaponFiring!)
+	if((Instigator == none) || !Instigator.bNoWeaponFiring)
 	{
 		// End:0x5C
 		if(int(Role) < int(ROLE_Authority))
@@ -616,7 +616,7 @@ simulated function StartFire(byte FireModeNum)
 reliable server function ServerStartFire(byte FireModeNum)
 {
 	// End:0x48
-	if((Instigator == none) || Instigator.bNoWeaponFiring!)
+	if((Instigator == none) || !Instigator.bNoWeaponFiring)
 	{
 		BeginFire(FireModeNum);
 	}
@@ -838,7 +838,7 @@ simulated function ImpactInfo CalcWeaponFire(Vector StartTrace, Vector EndTrace,
 
 static simulated function bool PassThroughDamage(Actor HitActor)
 {
-	return (HitActor.bBlockActors! && HitActor.IsA('Trigger') || HitActor.IsA('TriggerVolume')) || HitActor.IsA('InteractiveFoliageActor');
+	return (!HitActor.bBlockActors && HitActor.IsA('Trigger') || HitActor.IsA('TriggerVolume')) || HitActor.IsA('InteractiveFoliageActor');
 	//return ReturnValue;	
 }
 
@@ -924,7 +924,7 @@ simulated function Projectile ProjectileFire()
 		}
 		SpawnedProjectile = Spawn(GetProjectileClass(), self,, RealStartLoc);
 		// End:0x1AA
-		if((SpawnedProjectile != none) && SpawnedProjectile.bDeleteMe!)
+		if((SpawnedProjectile != none) && !SpawnedProjectile.bDeleteMe)
 		{
 			SpawnedProjectile.Init(AimDir);
 		}
@@ -989,7 +989,7 @@ function NotifyWeaponFinishedFiring(byte FireMode)
 simulated function bool ShouldRefire()
 {
 	// End:0x1B
-	if(HasAmmo(CurrentFireMode)!)
+	if(!HasAmmo(CurrentFireMode))
 	{
 		return false;
 	}
@@ -1137,7 +1137,7 @@ simulated state Active
 		else
 		{
 			// End:0x104
-			if(HasAnyAmmo()!)
+			if(!HasAnyAmmo())
 			{
 				WeaponEmpty();				
 			}
@@ -1170,7 +1170,7 @@ simulated state Active
 	simulated function BeginFire(byte FireModeNum)
 	{
 		// End:0x77
-		if(bDeleteMe! && Instigator != none)
+		if(!bDeleteMe && Instigator != none)
 		{
 			global.BeginFire(FireModeNum);
 			// End:0x77

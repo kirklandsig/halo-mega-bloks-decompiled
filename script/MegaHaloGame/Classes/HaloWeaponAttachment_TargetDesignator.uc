@@ -84,7 +84,7 @@ simulated function UpdateBeam(byte FireModeNum)
 				BeamColor = LinearColorToColor(ownerTD.BadPlacementColor);
 			}
 			BeamEmitter[0].SetColorParameter('Color', BeamColor);
-			HideEmitter(0, ownerTD.IsCurrentItemUnlocked()!);			
+			HideEmitter(0, !ownerTD.IsCurrentItemUnlocked());			
 		}
 		else
 		{

@@ -98,7 +98,7 @@ state MoveDown extends DebugState
 			else
 			{
 				// End:0x3C2
-				if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+				if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 				{
 					Outer.AILog_Internal(string(GetFuncName()) @ "Could not find good hover height!");
 				}
@@ -124,7 +124,7 @@ state Moving extends DebugState
 
 		latDistSq = VSizeSq2D(Outer.Pawn.Location - Dest.Location);
 		// End:0xDB
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("LatDist:" @ string(Sqrt(latDistSq)));
 		}
@@ -133,7 +133,7 @@ state Moving extends DebugState
 		{
 			VertDist = Abs(Outer.Pawn.Location.Z - Dest.Location.Z);
 			// End:0x1F5
-			if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+			if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 			{
 				Outer.AILog_Internal("VertDist:" @ string(VertDist));
 			}
@@ -157,13 +157,13 @@ state Moving extends DebugState
 			if(ReachedDest(Outer.RouteCache[0]))
 			{
 				// End:0x111
-				if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+				if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 				{
 					Outer.AILog_Internal("Reached route cache 0:" @ string(Outer.RouteCache[0]));
 				}
 				Outer.Pawn.SetAnchor(Outer.RouteCache[0]);
 				// End:0x200
-				if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+				if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 				{
 					Outer.AILog_Internal("Remove from route:" @ string(Outer.RouteCache[0]), 'Move');
 				}
@@ -173,7 +173,7 @@ state Moving extends DebugState
 			else
 			{
 				// End:0x2D4
-				if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+				if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 				{
 					Outer.AILog_Internal("Did NOT reach route cache 0:" @ string(Outer.RouteCache[0]));
 				}
@@ -198,7 +198,7 @@ state Moving extends DebugState
 Begin:
 
 	// End:0x6D
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("BEGIN TAG" @ string(GetStateName()));
 	}
@@ -217,7 +217,7 @@ Begin:
 		MoveVectDest = Find.Location;
 		MoveVectDest.Z += CurrentHoverHeight;
 		// End:0x27C
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("Moving directly to " $ string(Find));
 		}

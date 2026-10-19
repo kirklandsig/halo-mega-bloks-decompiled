@@ -137,7 +137,7 @@ function bool IsGoodDeploy(IHaloDeployable DeployedItem)
 				J0x323:
 
 				// End:0x341
-				if(bCurrentCustomizationFound!)
+				if(!bCurrentCustomizationFound)
 				{
 					bIsGoodDeploy = false;
 					// [Explicit Break]

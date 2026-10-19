@@ -92,7 +92,7 @@ function OnToggle(SeqAct_Toggle Action)
 			if(Action.InputLinks[2].bHasImpulse)
 			{
 				// End:0x165
-				if(ParticleSystemComponent.bSuppressSpawning || bCurrentlyActive!)
+				if(ParticleSystemComponent.bSuppressSpawning || !bCurrentlyActive)
 				{
 					ParticleSystemComponent.ActivateSystem();
 					bCurrentlyActive = true;					

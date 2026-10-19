@@ -173,22 +173,22 @@ function Vector GetAccuracy()
 	// End:0x30A
 	if(Rand >= 0.7500000)
 	{
-		V.X = V.X-;
-		V.Z = V.Z-;		
+		V.X = -V.X;
+		V.Z = -V.Z;		
 	}
 	else
 	{
 		// End:0x35B
 		if(Rand >= 0.5000000)
 		{
-			V.Z = V.Z-;			
+			V.Z = -V.Z;			
 		}
 		else
 		{
 			// End:0x3A9
 			if(Rand >= 0.2500000)
 			{
-				V.X = V.X-;
+				V.X = -V.X;
 			}
 		}
 	}
@@ -239,7 +239,7 @@ event bool StartFireBurstObj(Actor Target)
 
 function NotifyWeaponFired(Weapon W, byte FireMode)
 {
-	AccuracyRecalcBurstCount++;
+	++AccuracyRecalcBurstCount;
 	//return;	
 }
 
@@ -370,10 +370,10 @@ event bool FireWeapon(optional bool charge = false, optional bool lastShot = fal
 	if(bFireSuccess)
 	{
 		// End:0x2B1
-		if(Pawn.IsFiring()!)
+		if(!Pawn.IsFiring())
 		{
 			// End:0x2AC
-			if(Pawn.NeedToTurn(AimingFocus.Location)! && (alwaysFire == true) || Pawn.CanAttack(AimingFocus))
+			if(!Pawn.NeedToTurn(AimingFocus.Location) && (alwaysFire == true) || Pawn.CanAttack(AimingFocus))
 			{
 				// End:0x24E
 				if(GwNavVehicle(Pawn) != none)
@@ -644,7 +644,7 @@ function UpdateThreatInformation(Controller EnemyController, int EnemyDamage, op
 		goto J0x3A;
 	}
 	// End:0x6DB
-	if(Found!)
+	if(!Found)
 	{
 		enemyInfo.DamageInstigator = EnemyController;
 		enemyInfo.TotalDamageAmount = EnemyDamage;

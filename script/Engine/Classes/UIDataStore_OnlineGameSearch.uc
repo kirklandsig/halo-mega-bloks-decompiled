@@ -81,7 +81,7 @@ event bool SubmitGameSearch(byte ControllerIndex, optional bool bInvalidateExist
 				InvalidateCurrentSearchResults();
 			}
 			// End:0xCD
-			if((ActiveSearchIndex == -1) || GameSearchCfgList[ActiveSearchIndex].Search.bIsSearchInProgress!)
+			if((ActiveSearchIndex == -1) || !GameSearchCfgList[ActiveSearchIndex].Search.bIsSearchInProgress)
 			{
 				ActiveSearchIndex = SelectedIndex;
 			}
@@ -225,7 +225,7 @@ event SetCurrentByIndex(int NewIndex, optional bool bInvalidateExistingSearchRes
 	{
 		SelectedIndex = NewIndex;
 		// End:0x9C
-		if(bInvalidateExistingSearchResults! || InvalidateCurrentSearchResults()!)
+		if(!bInvalidateExistingSearchResults || !InvalidateCurrentSearchResults())
 		{
 			RefreshSubscribers(SearchResultsName, true, GameSearchCfgList[SelectedIndex].DesiredSettingsProvider);
 		}		
@@ -247,7 +247,7 @@ event SetCurrentByName(name SearchName, optional bool bInvalidateExistingSearchR
 	{
 		SelectedIndex = Index;
 		// End:0xA3
-		if(bInvalidateExistingSearchResults! || InvalidateCurrentSearchResults()!)
+		if(!bInvalidateExistingSearchResults || !InvalidateCurrentSearchResults())
 		{
 			RefreshSubscribers(SearchResultsName, true, GameSearchCfgList[SelectedIndex].DesiredSettingsProvider);
 		}		
@@ -263,7 +263,7 @@ event MoveToNext(optional bool bInvalidateExistingSearchResults = true)
 {
 	SelectedIndex = Min(SelectedIndex + 1, GameSearchCfgList.Length - 1);
 	// End:0x85
-	if(bInvalidateExistingSearchResults! || InvalidateCurrentSearchResults()!)
+	if(!bInvalidateExistingSearchResults || !InvalidateCurrentSearchResults())
 	{
 		RefreshSubscribers(SearchResultsName, true, GameSearchCfgList[SelectedIndex].DesiredSettingsProvider);
 	}
@@ -274,7 +274,7 @@ event MoveToPrevious(optional bool bInvalidateExistingSearchResults = true)
 {
 	SelectedIndex = Max(SelectedIndex - 1, 0);
 	// End:0x79
-	if(bInvalidateExistingSearchResults! || InvalidateCurrentSearchResults()!)
+	if(!bInvalidateExistingSearchResults || !InvalidateCurrentSearchResults())
 	{
 		RefreshSubscribers(SearchResultsName, true, GameSearchCfgList[SelectedIndex].DesiredSettingsProvider);
 	}
@@ -297,7 +297,7 @@ function ClearAllSearchResults()
 		{
 			ActiveSearchIndex = GameTypeIndex;
 			// End:0x15D
-			if(GameInterface.FreeSearchResults(GameSearchCfgList[GameTypeIndex].Search)!)
+			if(!GameInterface.FreeSearchResults(GameSearchCfgList[GameTypeIndex].Search))
 			{
 				WarnInternal(((((string(Name) $ ".ClearAllSearchResults: Failed to free search results for") @ string(GameSearchCfgList[GameTypeIndex].SearchName)) @ "(") $ string(GameTypeIndex)) $ ") - search is still in progress");
 			}

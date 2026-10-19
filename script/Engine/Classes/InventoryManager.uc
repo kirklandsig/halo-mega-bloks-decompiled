@@ -11,7 +11,7 @@ var private array<int> PendingFire;
 replication
 {
 	// Pos:0x000
-	if((((bSkipActorPropertyReplication! || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bNetOwner)
+	if((((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bNetOwner)
 		InventoryChain;
 }
 
@@ -139,7 +139,7 @@ simulated function Inventory CreateInventory(Class<Inventory> NewInventoryItemCl
 		if(Inv != none)
 		{
 			// End:0xE9
-			if(AddInventory(Inv, bDoNotActivate)!)
+			if(!AddInventory(Inv, bDoNotActivate))
 			{
 				WarnInternal("InventoryManager::CreateInventory - Couldn't Add newly created inventory" @ string(Inv));
 				Inv.Destroy();
@@ -160,7 +160,7 @@ simulated function bool AddInventory(Inventory NewItem, optional bool bDoNotActi
 	local Inventory Item, LastItem;
 
 	// End:0x275
-	if((NewItem != none) && NewItem.bDeleteMe!)
+	if((NewItem != none) && !NewItem.bDeleteMe)
 	{
 		// End:0x5B
 		if(InventoryChain == none)
@@ -284,7 +284,7 @@ simulated event DiscardInventory()
 	foreach InventoryActors(Class'Engine.Inventory', Inv)
 	{
 		// End:0x206
-		if(Inv.bDropOnDeath && bBelowKillZ!)
+		if(Inv.bDropOnDeath && !bBelowKillZ)
 		{
 			TossVelocity = Vector(Instigator.GetViewRotation());
 			TossVelocity = ((TossVelocity * ((Instigator.Velocity Dot TossVelocity) + 500.0000000)) + (250.0000000 * VRand())) + vect(0.0000000, 0.0000000, 250.0000000);
@@ -334,12 +334,12 @@ simulated function float GetWeaponRatingFor(Weapon W)
 	local float Rating;
 
 	// End:0x2A
-	if(W.HasAnyAmmo()!)
+	if(!W.HasAnyAmmo())
 	{
 		return -1.0000000;
 	}
 	// End:0x118
-	if(Instigator.IsHumanControlled()!)
+	if(!Instigator.IsHumanControlled())
 	{
 		Rating = W.GetAIRating();
 		// End:0x115
@@ -365,7 +365,7 @@ simulated function Weapon GetBestWeapon(optional bool bForceADifferentWeapon)
 	foreach InventoryActors(Class'Engine.Weapon', W)
 	{
 		// End:0x1B2
-		if((W.HasAnyAmmo() || BestWeapon == none) || BestWeapon.HasAnyAmmo()!)
+		if((W.HasAnyAmmo() || BestWeapon == none) || !BestWeapon.HasAnyAmmo())
 		{
 			Rating = W.GetWeaponRating();
 			// End:0x11A
@@ -374,7 +374,7 @@ simulated function Weapon GetBestWeapon(optional bool bForceADifferentWeapon)
 				continue;				
 			}
 			// End:0x1B2
-			if(((BestWeapon == none) || W.HasAnyAmmo() && BestWeapon.HasAnyAmmo()!) || Rating > BestRating)
+			if(((BestWeapon == none) || W.HasAnyAmmo() && !BestWeapon.HasAnyAmmo()) || Rating > BestRating)
 			{
 				BestWeapon = W;
 				BestRating = Rating;
@@ -522,10 +522,10 @@ private final simulated function InternalSetCurrentWeapon(Weapon DesiredWeapon)
 	PrevWeapon = Instigator.Weapon;
 	LogInternal(((((((((((string(WorldInfo.TimeSeconds) @ "Self:") @ string(self)) @ "Instigator:") @ string(Instigator)) @ string(GetStateName())) $ "::") $ string(GetFuncName())) @ "PrevWeapon:") @ string(PrevWeapon)) @ "DesiredWeapon:") @ string(DesiredWeapon), 'Inventory');
 	// End:0x229
-	if(((PrevWeapon != none) && DesiredWeapon == PrevWeapon) && PrevWeapon.IsInState('WeaponPuttingDown')!)
+	if(((PrevWeapon != none) && DesiredWeapon == PrevWeapon) && !PrevWeapon.IsInState('WeaponPuttingDown'))
 	{
 		// End:0x229
-		if(DesiredWeapon.IsInState('Inactive')! && DesiredWeapon.IsInState('PendingClientWeaponSet')!)
+		if(!DesiredWeapon.IsInState('Inactive') && !DesiredWeapon.IsInState('PendingClientWeaponSet'))
 		{
 			LogInternal(((((((((string(WorldInfo.TimeSeconds) @ "Self:") @ string(self)) @ "Instigator:") @ string(Instigator)) @ string(GetStateName())) $ "::") $ string(GetFuncName())) @ "DesiredWeapon == PrevWeapon - abort") @ string(DesiredWeapon.GetStateName()), 'Inventory');
 			return;
@@ -533,7 +533,7 @@ private final simulated function InternalSetCurrentWeapon(Weapon DesiredWeapon)
 	}
 	SetPendingWeapon(DesiredWeapon);
 	// End:0x36F
-	if((((PrevWeapon != none) && PrevWeapon != DesiredWeapon) && PrevWeapon.bDeleteMe!) && PrevWeapon.IsInState('Inactive')!)
+	if((((PrevWeapon != none) && PrevWeapon != DesiredWeapon) && !PrevWeapon.bDeleteMe) && !PrevWeapon.IsInState('Inactive'))
 	{
 		LogInternal((((((((string(WorldInfo.TimeSeconds) @ "Self:") @ string(self)) @ "Instigator:") @ string(Instigator)) @ string(GetStateName())) $ "::") $ string(GetFuncName())) @ "Try to put down previous weapon first.", 'Inventory');
 		PrevWeapon.TryPutDown();		
@@ -616,7 +616,7 @@ simulated function ClientWeaponSet(Weapon NewWeapon, bool bOptionalSet, optional
 
 	LogInternal(((((((((((((string(WorldInfo.TimeSeconds) @ "Self:") @ string(self)) @ "Instigator:") @ string(Instigator)) @ string(GetStateName())) $ "::") $ string(GetFuncName())) @ "NewWeapon:") @ string(NewWeapon)) @ "bOptionalSet:") @ string(bOptionalSet)) @ "bDoNotActivate:") @ string(bDoNotActivate), 'Inventory');
 	// End:0x70C
-	if(bDoNotActivate!)
+	if(!bDoNotActivate)
 	{
 		OldWeapon = Instigator.Weapon;
 		// End:0x22C
@@ -653,10 +653,10 @@ simulated function ClientWeaponSet(Weapon NewWeapon, bool bOptionalSet, optional
 			}
 		}
 		// End:0x70C
-		if(((PendingWeapon == none) || PendingWeapon.HasAnyAmmo()!) || PendingWeapon.GetWeaponRating() < NewWeapon.GetWeaponRating())
+		if(((PendingWeapon == none) || !PendingWeapon.HasAnyAmmo()) || PendingWeapon.GetWeaponRating() < NewWeapon.GetWeaponRating())
 		{
 			// End:0x70C
-			if(Instigator.Weapon.HasAnyAmmo()! || Instigator.Weapon.GetWeaponRating() < NewWeapon.GetWeaponRating())
+			if(!Instigator.Weapon.HasAnyAmmo() || Instigator.Weapon.GetWeaponRating() < NewWeapon.GetWeaponRating())
 			{
 				LogInternal(((((((((string(WorldInfo.TimeSeconds) @ "Self:") @ string(self)) @ "Instigator:") @ string(Instigator)) @ string(GetStateName())) $ "::") $ string(GetFuncName())) @ "Switch to new weapon:") @ string(NewWeapon), 'Inventory');
 				SetCurrentWeapon(NewWeapon);

@@ -67,7 +67,7 @@ simulated function ResolveClassReferences()
 		{
 			UpgradeLevels[I].BaseClass = Class<Actor>(FindObject(UpgradeLevels[I].BaseClassName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -86,7 +86,7 @@ simulated function LogContents()
 	if(I < UpgradeLevels.Length)
 	{
 		LogInternal((("    > BASE CLASS: " $ string(UpgradeLevels[I].BaseClass)) $ ", ARCHETYPE: ") $ string(UpgradeLevels[I].BaseArchetype));
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x35;
 	}

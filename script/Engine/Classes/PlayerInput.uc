@@ -67,7 +67,7 @@ native function CancelMobileInput();
 
 exec function bool InvertMouse()
 {
-	bInvertMouse = bInvertMouse!;
+	bInvertMouse = !bInvertMouse;
 	SaveConfig();
 	return bInvertMouse;
 	//return ReturnValue;	
@@ -75,7 +75,7 @@ exec function bool InvertMouse()
 
 exec function bool InvertTurn()
 {
-	bInvertTurn = bInvertTurn!;
+	bInvertTurn = !bInvertTurn;
 	SaveConfig();
 	return bInvertTurn;
 	//return ReturnValue;	
@@ -215,7 +215,7 @@ event PlayerInput(float DeltaTime)
 function CatchDoubleClickInput()
 {
 	// End:0x11C
-	if(Outer.IsMoveInputIgnored()!)
+	if(!Outer.IsMoveInputIgnored())
 	{
 		bEdgeForward = bWasForward ^^ (aBaseY > float(0));
 		bEdgeBack = bWasBack ^^ (aBaseY < float(0));

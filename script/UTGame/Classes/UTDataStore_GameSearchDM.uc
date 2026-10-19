@@ -55,7 +55,7 @@ event Registered(LocalPlayer PlayerOwner)
 event bool SubmitGameSearch(byte ControllerIndex, optional bool bInvalidateExistingSearchResults = true)
 {
 	// End:0x2D
-	if(bInvalidateExistingSearchResults || HasExistingSearchResults()!)
+	if(bInvalidateExistingSearchResults || !HasExistingSearchResults())
 	{
 		SaveGameSearchParameters();
 	}
@@ -69,11 +69,11 @@ function bool HasOutstandingQueries(optional bool bRestrictCheckToSelf)
 
 	bResult = super.HasOutstandingQueries(bRestrictCheckToSelf);
 	// End:0xF1
-	if((bResult! && bRestrictCheckToSelf!) && HistoryGameSearchDataStore != none)
+	if((!bResult && !bRestrictCheckToSelf) && HistoryGameSearchDataStore != none)
 	{
 		bResult = HistoryGameSearchDataStore.HasOutstandingQueries(true);
 		// End:0xF1
-		if(bResult! && HistoryGameSearchDataStore.FavoritesGameSearchDataStore != none)
+		if(!bResult && HistoryGameSearchDataStore.FavoritesGameSearchDataStore != none)
 		{
 			bResult = HistoryGameSearchDataStore.FavoritesGameSearchDataStore.HasOutstandingQueries(true);
 		}

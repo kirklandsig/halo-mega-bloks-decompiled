@@ -189,7 +189,7 @@ function SetMeshColor(LinearColor newColor)
 		{
 			MIC.SetVectorParameterValue('CLR_Tinting', newColor);
 		}
-		M++;
+		++M;
 		// [Loop Continue]
 		goto J0x0B;
 	}

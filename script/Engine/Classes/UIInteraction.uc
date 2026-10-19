@@ -209,7 +209,7 @@ static final event bool IsLoggedIn(int ControllerId, optional bool bRequireOnlin
 	local OnlineSubsystem.ELoginStatus LoginStatus;
 
 	LoginStatus = GetLoginStatus(ControllerId);
-	bResult = (int(LoginStatus) == int(2)) || (int(LoginStatus) == int(1)) && bRequireOnlineLogin!;
+	bResult = (int(LoginStatus) == int(2)) || (int(LoginStatus) == int(1)) && !bRequireOnlineLogin;
 	return bResult;
 	//return ReturnValue;	
 }

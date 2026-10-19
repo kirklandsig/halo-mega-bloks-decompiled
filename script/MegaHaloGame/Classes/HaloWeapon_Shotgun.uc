@@ -33,7 +33,7 @@ function SpawnRingOfProjectiles(int Count, Class<Projectile> ProjectileClass, Ve
 		ProjectileDir = VRandCone2(ProjectileDir, PelletYawSpread, PelletPitchSpread);
 		ProjectileDir = ProjectileDir >> BaseProjectileRot;
 		SpawnProjectile(ProjectileClass, ProjectileStart, ProjectileDir);
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x25;
 	}
@@ -73,7 +73,7 @@ function BeginFireDuringReload(byte FireModeNum)
 		}
 	}
 	// End:0xC9
-	if(bDeleteMe! && Instigator != none)
+	if(!bDeleteMe && Instigator != none)
 	{
 		global.BeginFire(FireModeNum);
 		// End:0xC9
@@ -188,7 +188,7 @@ simulated state ReloadingAmmo_Loop extends ReloadingAmmo
 	{
 		AmmoCount += 1;
 		// End:0x27
-		if(bInfiniteExtraAmmo!)
+		if(!bInfiniteExtraAmmo)
 		{
 			ExtraAmmoCount -= 1;
 		}

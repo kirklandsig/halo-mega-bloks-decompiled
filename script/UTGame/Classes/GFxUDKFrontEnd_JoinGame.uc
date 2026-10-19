@@ -104,7 +104,7 @@ function OnViewActivated()
 	}
 	OnGameTypeChanged();
 	// End:0x285
-	if(bIssuedInitialQuery!)
+	if(!bIssuedInitialQuery)
 	{
 		bIssuedInitialQuery = true;
 		RefreshServerList(0);
@@ -144,7 +144,7 @@ function ValidateServerType()
 	PlayerIndex = GetPlayerIndex();
 	PlayerControllerId = GetPlayerControllerId(PlayerIndex);
 	// End:0x7A
-	if(IsLoggedIn(PlayerControllerId, true)! || Class'Engine.WorldInfo'.static.IsConsoleBuild(2))
+	if(!IsLoggedIn(PlayerControllerId, true) || Class'Engine.WorldInfo'.static.IsConsoleBuild(2))
 	{
 		ForceLANOption();
 	}
@@ -225,7 +225,7 @@ function ConditionalRefreshServerList(int PlayerIndex)
 	bHasExistingResults = SearchDataStore.HasExistingSearchResults();
 	bHasOutstandingQueries = SearchDataStore.HasOutstandingQueries();
 	// End:0x8C
-	if(bHasExistingResults! && bHasOutstandingQueries!)
+	if(!bHasExistingResults && !bHasOutstandingQueries)
 	{
 		RefreshServerList(PlayerIndex);		
 	}
@@ -349,7 +349,7 @@ function RefreshServerList(int InPlayerIndex, optional int MaxResults = 1000)
 
 	LogInternal(((("GFx: RefreshServerList(" @ string(InPlayerIndex)) $ ", ") $ string(MaxResults)) @ ")");
 	// End:0x362
-	if(SearchDataStore.HasOutstandingQueries()!)
+	if(!SearchDataStore.HasOutstandingQueries())
 	{
 		GameSearch = SearchDataStore.GetCurrentGameSearch();
 		GameSearch.MaxSearchResults = MaxResults;
@@ -396,7 +396,7 @@ function SubmitServerListQuery(int PlayerIndex)
 	SetRefreshing(true);
 	GameInterface.AddFindOnlineGamesCompleteDelegate(OnFindOnlineGamesCompleteDelegate);
 	// End:0x161
-	if(SearchDataStore.SubmitGameSearch(byte(Class'Engine.UIInteraction'.static.GetPlayerControllerId(PlayerIndex)), false)!)
+	if(!SearchDataStore.SubmitGameSearch(byte(Class'Engine.UIInteraction'.static.GetPlayerControllerId(PlayerIndex)), false))
 	{
 		SetRefreshing(false);
 	}
@@ -409,7 +409,7 @@ function OnFindOnlineGamesCompleteDelegate(bool bWasSuccessful)
 {
 	local bool bSearchCompleted;
 
-	bSearchCompleted = SearchDataStore.HasOutstandingQueries()!;
+	bSearchCompleted = !SearchDataStore.HasOutstandingQueries();
 	LogInternal((((((((((("(" $ string(Name)) $ ") GFxUDKFrontEnd_JoinGame::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "bWasSuccessful:'") $ string(bWasSuccessful)) $ "'") @ "bSearchCompleted:'") $ string(bSearchCompleted)) $ "'", 'DevOnline');
 	SetRefreshing(false);
 	UpdateServerCount();
@@ -620,7 +620,7 @@ private final function ProcessJoin()
 				GameInterface.AddJoinOnlineGameCompleteDelegate(OnJoinGameComplete);
 				ControllerId = 0;
 				// End:0x1AE
-				if(GameInterface.JoinOnlineGame(byte(ControllerId), 'Game', GameToJoin)!)
+				if(!GameInterface.JoinOnlineGame(byte(ControllerId), 'Game', GameToJoin))
 				{
 					bProcessingJoin = false;
 				}				
@@ -706,7 +706,7 @@ function bool AllowJoinServer()
 	local bool bResult;
 
 	// End:0xA6
-	if(bProcessingJoin!)
+	if(!bProcessingJoin)
 	{
 		bResult = true;
 		// End:0xA6
@@ -947,7 +947,7 @@ event bool WidgetInitialized(name WidgetName, name WidgetPath, GFxObject Widget)
 			break;
 	}
 	// End:0x6E0
-	if(bWasHandled!)
+	if(!bWasHandled)
 	{
 		bWasHandled = super.WidgetInitialized(WidgetName, WidgetPath, Widget);
 	}
@@ -1053,7 +1053,7 @@ final function ForceLANOption()
 			// [Explicit Break]
 			goto J0x1AB;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x101;
 	}

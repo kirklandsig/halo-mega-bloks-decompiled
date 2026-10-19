@@ -228,7 +228,7 @@ simulated function CreateOverlayMesh()
 		{
 			P = UTPawn(Instigator);
 			// End:0xC7
-			if((P == none) || P.bUpdateEyeheight!)
+			if((P == none) || !P.bUpdateEyeheight)
 			{
 				return;
 			}
@@ -286,7 +286,7 @@ simulated event ReplicatedEvent(name VarName)
 	if(VarName == 'AmmoCount')
 	{
 		// End:0x30
-		if(HasAnyAmmo()!)
+		if(!HasAnyAmmo())
 		{
 			WeaponEmpty();
 		}		
@@ -403,7 +403,7 @@ simulated function ActiveRenderOverlays(HUD H)
 
 	PC = UTPlayerController(Instigator.Controller);
 	// End:0xB9
-	if((PC != none) && PC.bNoCrosshair!)
+	if((PC != none) && !PC.bNoCrosshair)
 	{
 		CrossHairCoordinates = ((PC.bSimpleCrosshair) ? SimpleCrossHairCoordinates : default.CrossHairCoordinates);
 		DrawWeaponCrosshair(H);
@@ -482,7 +482,7 @@ simulated function DrawLockedOn(HUD H)
 
 	TargetDist = GetTargetDistance();
 	// End:0x6D
-	if(bWasLocked!)
+	if(!bWasLocked)
 	{
 		LockedStartTime = WorldInfo.TimeSeconds;
 		CurrentLockedScale = StartLockedScale;
@@ -550,7 +550,7 @@ simulated function PlayArmAnimation(name Sequence, float fDesiredDuration, optio
 	local AnimNodeSequence WeapNode;
 
 	// End:0x65
-	if(((int(WorldInfo.NetMode) == int(NM_DedicatedServer)) || Instigator == none) || Instigator.IsFirstPerson()!)
+	if(((int(WorldInfo.NetMode) == int(NM_DedicatedServer)) || Instigator == none) || !Instigator.IsFirstPerson())
 	{
 		return;
 	}
@@ -564,7 +564,7 @@ simulated function PlayArmAnimation(name Sequence, float fDesiredDuration, optio
 	if(UTP.bArmsAttached)
 	{
 		// End:0xF0
-		if(OffHand!)
+		if(!OffHand)
 		{
 			ArmMeshComp = UTP.ArmsMesh[0];			
 		}
@@ -651,7 +651,7 @@ simulated function WeaponCalcCamera(float fDeltaTime, out Vector out_CamLoc, out
 simulated function WeaponPlaySound(SoundCue Sound, optional float NoiseLoudness)
 {
 	// End:0x60
-	if(((Sound != none) && Instigator != none) && bSuppressSounds!)
+	if(((Sound != none) && Instigator != none) && !bSuppressSounds)
 	{
 		Instigator.PlaySound(Sound, false, true);
 	}
@@ -676,7 +676,7 @@ simulated function PlayFiringSound()
 simulated event MuzzleFlashTimer()
 {
 	// End:0x3F
-	if((MuzzleFlashPSC != none) && bMuzzleFlashPSCLoops!)
+	if((MuzzleFlashPSC != none) && !bMuzzleFlashPSCLoops)
 	{
 		MuzzleFlashPSC.DeactivateSystem();
 	}
@@ -686,7 +686,7 @@ simulated event MuzzleFlashTimer()
 simulated event CauseMuzzleFlashLight()
 {
 	// End:0x4C
-	if(WorldInfo.bDropDetail && WorldInfo.IsConsoleBuild(3)!)
+	if(WorldInfo.bDropDetail && !WorldInfo.IsConsoleBuild(3))
 	{
 		return;
 	}
@@ -717,7 +717,7 @@ simulated event CauseMuzzleFlash()
 	{
 		P = UTPawn(Instigator);
 		// End:0x7C
-		if((P == none) || P.bUpdateEyeheight!)
+		if((P == none) || !P.bUpdateEyeheight)
 		{
 			return;
 		}
@@ -727,7 +727,7 @@ simulated event CauseMuzzleFlash()
 	if((int(GetHand()) != int(3)) || ((bShowAltMuzzlePSCWhenWeaponHidden && Instigator != none) && int(Instigator.FiringMode) == int(1)) && MuzzleFlashAltPSCTemplate != none)
 	{
 		// End:0x110
-		if(bMuzzleFlashAttached!)
+		if(!bMuzzleFlashAttached)
 		{
 			AttachMuzzleFlash();
 		}
@@ -735,7 +735,7 @@ simulated event CauseMuzzleFlash()
 		if(MuzzleFlashPSC != none)
 		{
 			// End:0x2AB
-			if(bMuzzleFlashPSCLoops! || MuzzleFlashPSC.bIsActive! || MuzzleFlashPSC.bWasDeactivated)
+			if(!bMuzzleFlashPSCLoops || !MuzzleFlashPSC.bIsActive || MuzzleFlashPSC.bWasDeactivated)
 			{
 				// End:0x202
 				if(((Instigator != none) && int(Instigator.FiringMode) == int(1)) && MuzzleFlashAltPSCTemplate != none)
@@ -987,12 +987,12 @@ simulated function ChangeVisibility(bool bIsVisible)
 	if(Mesh != none)
 	{
 		// End:0x5F
-		if(bIsVisible && Mesh.bAttached!)
+		if(bIsVisible && !Mesh.bAttached)
 		{
 			AttachComponent(Mesh);
 			EnsureWeaponOverlayComponentLast();
 		}
-		SetHidden(bIsVisible!);
+		SetHidden(!bIsVisible);
 		SkelMesh = SkeletalMeshComponent(Mesh);
 		// End:0x101
 		if(SkelMesh != none)
@@ -1000,7 +1000,7 @@ simulated function ChangeVisibility(bool bIsVisible)
 			// End:0x100
 			foreach SkelMesh.AttachedComponents(Class'Engine.PrimitiveComponent', Primitive)
 			{
-				Primitive.SetHidden(bIsVisible!);				
+				Primitive.SetHidden(!bIsVisible);				
 			}			
 		}
 	}
@@ -1011,13 +1011,13 @@ simulated function ChangeVisibility(bool bIsVisible)
 		// End:0x1BC
 		if((UTP != none) && UTP.ArmsMesh[0] != none)
 		{
-			UTP.ArmsMesh[0].SetHidden(bIsVisible!);
+			UTP.ArmsMesh[0].SetHidden(!bIsVisible);
 		}
 	}
 	// End:0x20D
 	if(OverlayMesh != none)
 	{
-		OverlayMesh.SetHidden(bIsVisible! || int(GetHand()) == int(3));
+		OverlayMesh.SetHidden(!bIsVisible || int(GetHand()) == int(3));
 	}
 	//return;	
 }
@@ -1106,7 +1106,7 @@ simulated event SetPosition(UDKPawn Holder)
 	local Vector SpecViewLoc;
 
 	// End:0x26
-	if(Holder.IsFirstPerson()!)
+	if(!Holder.IsFirstPerson())
 	{
 		return;
 	}
@@ -1383,7 +1383,7 @@ function float RelativeStrengthVersus(Pawn P, float Dist)
 simulated function float GetWeaponRating()
 {
 	// End:0x65
-	if(((Instigator == none) || UTBot(Instigator.Controller) == none) || HasAnyAmmo()!)
+	if(((Instigator == none) || UTBot(Instigator.Controller) == none) || !HasAnyAmmo())
 	{
 		CurrentRating = Priority;		
 	}
@@ -1429,7 +1429,7 @@ function bool CanAttack(Actor Other)
 	else
 	{
 		// End:0x20B
-		if(Other.bHasAlternateTargetLocation! && Instigator.Controller.LineOfSightTo(Other, projStart, true)!)
+		if(!Other.bHasAlternateTargetLocation && !Instigator.Controller.LineOfSightTo(Other, projStart, true))
 		{
 			return false;
 		}
@@ -1440,7 +1440,7 @@ function bool CanAttack(Actor Other)
 		}
 	}
 	// End:0x3D1
-	if(bInstantHit!)
+	if(!bInstantHit)
 	{
 		projClass = GetProjectileClass();
 		// End:0x2FB
@@ -1506,7 +1506,7 @@ function bool CanAttack(Actor Other)
 		}		
 	}
 	// End:0x699
-	if((((HitActor == none) || HitActor == Other) || HitActor.IsA('Pawn')! && HitActor.IsA('UTGameObjective')!) || WorldInfo.GRI.OnSameTeam(Instigator, HitActor)!)
+	if((((HitActor == none) || HitActor == Other) || !HitActor.IsA('Pawn') && !HitActor.IsA('UTGameObjective')) || !WorldInfo.GRI.OnSameTeam(Instigator, HitActor))
 	{
 		return true;
 	}
@@ -1547,7 +1547,7 @@ static function float BotDesireability(Actor PickupHolder, Pawn P, Controller C)
 			return 0.0000000;
 		}
 		// End:0x19D
-		if((UTWeaponPickupFactory(PickupHolder) != none) && UTWeaponPickupFactory(PickupHolder).AllowPickup(Bot)!)
+		if((UTWeaponPickupFactory(PickupHolder) != none) && !UTWeaponPickupFactory(PickupHolder).AllowPickup(Bot))
 		{
 			return 0.0000000;
 		}
@@ -1715,7 +1715,7 @@ simulated function bool StillFiring(byte FireMode)
 
 function ConsumeAmmo(byte FireModeNum)
 {
-	AddAmmo(ShotCost[int(FireModeNum)]-);
+	AddAmmo(-ShotCost[int(FireModeNum)]);
 	//return;	
 }
 
@@ -1865,7 +1865,7 @@ simulated function InstantFire()
 	RealImpact = CalcWeaponFire(StartTrace, EndTrace, ImpactList);
 	FinalImpactIndex = ImpactList.Length - 1;
 	// End:0x17E
-	if((FinalImpactIndex >= 0) && (ImpactList[FinalImpactIndex].HitActor == none) || ImpactList[FinalImpactIndex].HitActor.bProjTarget!)
+	if((FinalImpactIndex >= 0) && (ImpactList[FinalImpactIndex].HitActor == none) || !ImpactList[FinalImpactIndex].HitActor.bProjTarget)
 	{
 		NearImpact = InstantAimHelp(StartTrace, EndTrace, RealImpact);
 		// End:0x17E
@@ -1956,7 +1956,7 @@ simulated function Projectile ProjectileFire()
 		RealStartLoc = GetPhysicalFireStartLoc();
 		SpawnedProjectile = Spawn(GetProjectileClass(),,, RealStartLoc);
 		// End:0xC9
-		if((SpawnedProjectile != none) && SpawnedProjectile.bDeleteMe!)
+		if((SpawnedProjectile != none) && !SpawnedProjectile.bDeleteMe)
 		{
 			SpawnedProjectile.Init(Vector(GetAdjustedAim(RealStartLoc)));
 		}
@@ -1991,10 +1991,10 @@ simulated function ProcessInstantHit(byte FiringMode, ImpactInfo Impact, optiona
 			}
 		}
 		// End:0x3C9
-		if(Impact.HitActor.bStatic! && Impact.HitActor != Instigator)
+		if(!Impact.HitActor.bStatic && Impact.HitActor != Instigator)
 		{
 			// End:0x30B
-			if(((((int(Impact.HitActor.Role) == int(ROLE_Authority)) && Impact.HitActor.bProjTarget) && WorldInfo.GRI.OnSameTeam(Instigator, Impact.HitActor)!) && Impact.HitActor.Instigator != Instigator) && PhysicsVolume(Impact.HitActor) == none)
+			if(((((int(Impact.HitActor.Role) == int(ROLE_Authority)) && Impact.HitActor.bProjTarget) && !WorldInfo.GRI.OnSameTeam(Instigator, Impact.HitActor)) && Impact.HitActor.Instigator != Instigator) && PhysicsVolume(Impact.HitActor) == none)
 			{
 				HitEnemy++;
 				LastHitEnemyTime = WorldInfo.TimeSeconds;
@@ -2174,7 +2174,7 @@ simulated function bool TryPutDown()
 
 	bWeaponPutDown = true;
 	// End:0x32
-	if(IsTimerActive('RefireCheckTimer')!)
+	if(!IsTimerActive('RefireCheckTimer'))
 	{
 		PutDownWeapon();		
 	}
@@ -2295,7 +2295,7 @@ simulated function Vector GetEffectLocation()
 		if((SkeletalMeshComponent(Mesh) != none) && EffectSockets[int(CurrentFireMode)] != 'None')
 		{
 			// End:0xDD
-			if(SkeletalMeshComponent(Mesh).GetSocketWorldLocationAndRotation(EffectSockets[int(CurrentFireMode)], SocketLocation)!)
+			if(!SkeletalMeshComponent(Mesh).GetSocketWorldLocationAndRotation(EffectSockets[int(CurrentFireMode)], SocketLocation))
 			{
 				SocketLocation = Location;
 			}			
@@ -2430,7 +2430,7 @@ simulated function SetWeaponOverlayFlags(UTPawn OwnerPawn)
 					goto J0x182;
 				}
 				// End:0x263
-				if(OverlayMesh.bAttached!)
+				if(!OverlayMesh.bAttached)
 				{
 					OverlayMesh.SetHidden(Mesh.HiddenGame);
 					AttachComponent(OverlayMesh);
@@ -2586,7 +2586,7 @@ simulated state WeaponFiring
 	simulated event ReplicatedEvent(name VarName)
 	{
 		// End:0x2A
-		if((VarName == 'AmmoCount') && HasAnyAmmo()!)
+		if((VarName == 'AmmoCount') && !HasAnyAmmo())
 		{
 			return;
 		}
@@ -2603,7 +2603,7 @@ simulated state WeaponFiring
 		}
 		global.BeginFire(FireModeNum);
 		// End:0x50
-		if(HasAmmo(FireModeNum)!)
+		if(!HasAmmo(FireModeNum))
 		{
 			WeaponEmpty();
 			return;
@@ -2787,7 +2787,7 @@ simulated state Active
 		global.PlayWeaponAnimation(Sequence, fDesiredDuration, bLoop, SkelMesh);
 		ClearTimer('OnAnimEnd');
 		// End:0x6B
-		if(bLoop!)
+		if(!bLoop)
 		{
 			SetTimer(fDesiredDuration, false, 'OnAnimEnd');
 		}
@@ -2798,7 +2798,7 @@ simulated state Active
 	{
 		local bool bNeedToPlayAnim;
 
-		bNeedToPlayAnim = Mesh.bAttached!;
+		bNeedToPlayAnim = !Mesh.bAttached;
 		global.ChangeVisibility(bIsVisible);
 		// End:0x62
 		if(bNeedToPlayAnim)

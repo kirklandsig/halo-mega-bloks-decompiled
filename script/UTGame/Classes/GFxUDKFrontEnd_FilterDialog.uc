@@ -83,7 +83,7 @@ function ValidateServerType()
 	PlayerIndex = GetPlayerIndex();
 	PlayerControllerId = GetPlayerControllerId(PlayerIndex);
 	// End:0xDC
-	if(IsLoggedIn(PlayerControllerId, true)! || Class'Engine.WorldInfo'.static.IsConsoleBuild(2))
+	if(!IsLoggedIn(PlayerControllerId, true) || Class'Engine.WorldInfo'.static.IsConsoleBuild(2))
 	{
 		// End:0xD9
 		if((MenuManager != none) && MenuManager.JoinGameView != none)
@@ -180,7 +180,7 @@ function SetFilterNetworkType(bool bLAN, optional bool bSkipUIUpdate)
 		SearchDataStore.SetCurrentByName('UTGameSearchCustom', true);
 	}
 	// End:0x31F
-	if(bSkipUIUpdate!)
+	if(!bSkipUIUpdate)
 	{
 		I = 0;
 		J0x1AB:
@@ -194,7 +194,7 @@ function SetFilterNetworkType(bool bLAN, optional bool bSkipUIUpdate)
 				// [Explicit Break]
 				goto J0x205;
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x1AB;
 		}
@@ -210,12 +210,12 @@ function SetFilterNetworkType(bool bLAN, optional bool bSkipUIUpdate)
 			if(J < ListOptions[I].OptionData.Length)
 			{
 				// End:0x2A8
-				if((ListOptions[I].OptionData[J] ComplementEqual "LAN") ^^ bLAN!)
+				if((ListOptions[I].OptionData[J] ComplementEqual "LAN") ^^ !bLAN)
 				{
 					// [Explicit Break]
 					goto J0x2B6;
 				}
-				J++;
+				++J;
 				// [Loop Continue]
 				goto J0x228;
 			}
@@ -339,7 +339,7 @@ event bool WidgetInitialized(name WidgetName, name WidgetPath, GFxObject Widget)
 			break;
 	}
 	// End:0x172
-	if(bWasHandled!)
+	if(!bWasHandled)
 	{
 		bWasHandled = super.WidgetInitialized(WidgetName, WidgetPath, Widget);
 	}

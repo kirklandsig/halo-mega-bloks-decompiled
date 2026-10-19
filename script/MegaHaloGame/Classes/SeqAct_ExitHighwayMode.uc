@@ -9,7 +9,7 @@ event Activated()
 	{
 		Vehicle.PopState();
 		// End:0x74
-		if(OutputLinks[1].bHasImpulse!)
+		if(!OutputLinks[1].bHasImpulse)
 		{
 			OutputLinks[0].bHasImpulse = true;
 		}

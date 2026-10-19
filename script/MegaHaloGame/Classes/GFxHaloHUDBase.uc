@@ -88,7 +88,7 @@ function TogglePauseMenu()
 			SetMenuVisible(PauseMenu);
 			PauseMenu.Start();
 			// End:0x1D1
-			if(WorldInfo.IsPlayInMobilePreview()!)
+			if(!WorldInfo.IsPlayInMobilePreview())
 			{
 				PauseMenu.AddFocusIgnoreKey('Escape');
 			}
@@ -113,7 +113,7 @@ function CompletePauseMenuClose()
 exec function ShowCheatMenu()
 {
 	// End:0x2E
-	if(PlayerOwner.bCinematicMode!)
+	if(!PlayerOwner.bCinematicMode)
 	{
 		ToggleCheatMenu();
 	}
@@ -169,7 +169,7 @@ event PostRender()
 {
 	super.PostRender();
 	// End:0xA9
-	if(bVisible!)
+	if(!bVisible)
 	{
 		Canvas.OrgX = -1280.0000000;
 		Canvas.OrgY = -720.0000000;

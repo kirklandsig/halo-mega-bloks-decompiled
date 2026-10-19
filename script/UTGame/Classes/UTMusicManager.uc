@@ -336,7 +336,7 @@ function Tick(float DeltaTime)
 		else
 		{
 			// End:0x6CB
-			if(UTGameReplicationInfo(WorldInfo.GRI).FlagsAreHome()!)
+			if(!UTGameReplicationInfo(WorldInfo.GRI).FlagsAreHome())
 			{
 				// End:0x5EA
 				if(UTPlayerReplicationInfo(PlayerOwner.PlayerReplicationInfo).bHasFlag)

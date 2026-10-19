@@ -334,7 +334,7 @@ replication
 		bIsDisabled, bTeamLocked;
 
 	// Pos:0x00A
-	if(bNetDirty && bNetOwner! || bDemoRecording)
+	if(bNetDirty && !bNetOwner || bDemoRecording)
 		WeaponRotation, bForceSpinWarmup, 
 		bTrickJumping;
 

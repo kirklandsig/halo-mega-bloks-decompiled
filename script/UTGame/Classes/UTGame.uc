@@ -158,12 +158,12 @@ static function bool UseLowGore(WorldInfo WI)
 static function bool AllowMutator(string MutatorClassName)
 {
 	// End:0x40
-	if(default.bTeamGame! && MutatorClassName ComplementEqual "UTGame.UTMutator_FriendlyFire")
+	if(!default.bTeamGame && MutatorClassName ComplementEqual "UTGame.UTMutator_FriendlyFire")
 	{
 		return false;
 	}
 	// End:0x82
-	if(default.bWeaponStay! && MutatorClassName ComplementEqual "UTGame.UTMutator_WeaponsRespawn")
+	if(!default.bWeaponStay && MutatorClassName ComplementEqual "UTGame.UTMutator_WeaponsRespawn")
 	{
 		return false;
 	}
@@ -311,7 +311,7 @@ function DriverLeftVehicle(Vehicle V, Pawn P)
 function bool AllowBecomeActivePlayer(PlayerController P)
 {
 	// End:0xD9
-	if((((((P.PlayerReplicationInfo == none) || GameReplicationInfo.bMatchHasBegun!) || bMustJoinBeforeStart) || NumPlayers >= MaxPlayers) || MaxLives > 0) || P.IsInState('RoundEnded'))
+	if((((((P.PlayerReplicationInfo == none) || !GameReplicationInfo.bMatchHasBegun) || bMustJoinBeforeStart) || NumPlayers >= MaxPlayers) || MaxLives > 0) || P.IsInState('RoundEnded'))
 	{
 		P.ReceiveLocalizedMessage(GameMessageClass, 13);
 		return false;
@@ -332,7 +332,7 @@ function Reset()
 	foreach WorldInfo.AllControllers(Class'Engine.Controller', C)
 	{
 		// End:0xC7
-		if((C.PlayerReplicationInfo != none) && C.PlayerReplicationInfo.bOnlySpectator!)
+		if((C.PlayerReplicationInfo != none) && !C.PlayerReplicationInfo.bOnlySpectator)
 		{
 			RestartPlayer(C);
 		}		
@@ -368,7 +368,7 @@ function NotifyNavigationChanged(NavigationPoint N)
 	local UTBot B;
 
 	// End:0x7B
-	if(N.bBlocked!)
+	if(!N.bBlocked)
 	{
 		// End:0x7A
 		foreach WorldInfo.AllControllers(Class'UTGame.UTBot', B)
@@ -487,7 +487,7 @@ function ScoreKill(Controller Killer, Controller Other)
 	}
 	GRI = UTGameReplicationInfo(GameReplicationInfo);
 	// End:0x230
-	if((GRI.bStoryMode && bTeamGame!) && Killer.IsA('PlayerController') || Other.IsA('PlayerController'))
+	if((GRI.bStoryMode && !bTeamGame) && Killer.IsA('PlayerController') || Other.IsA('PlayerController'))
 	{
 		// End:0x1DE
 		if(Killer.IsA('AIController'))
@@ -556,7 +556,7 @@ function Killed(Controller Killer, Controller KilledPlayer, Pawn KilledPawn, Cla
 	{
 		KilledPRI = UTPlayerReplicationInfo(KilledPlayer.PlayerReplicationInfo);
 	}
-	bEnemyKill = (((KillerPRI != none) && KillerPRI != KilledPRI) && KilledPRI != none) && bTeamGame! || KillerPRI.Team != KilledPRI.Team;
+	bEnemyKill = (((KillerPRI != none) && KillerPRI != KilledPRI) && KilledPRI != none) && !bTeamGame || KillerPRI.Team != KilledPRI.Team;
 	// End:0x1CE
 	if((KillerPRI != none) && UTVehicle(KilledPawn) != none)
 	{
@@ -602,7 +602,7 @@ function Killed(Controller Killer, Controller KilledPlayer, Pawn KilledPawn, Cla
 			{
 				V = UTVehicle(KilledPawn);
 				// End:0x42D
-				if(bFirstBlood!)
+				if(!bFirstBlood)
 				{
 					bFirstBlood = true;
 					BroadcastLocalizedMessage(Class'UTGame.UTFirstBloodMessage', 0, KillerPRI);
@@ -704,7 +704,7 @@ event InitGame(string Options, out string ErrorMessage)
 	{
 		TimeLimit = 0;
 	}
-	GoalScore = ((IsAutomatedPerfTesting()!) ? Max(0, GetIntOption(Options, "GoalScore", GoalScore)) : 0);
+	GoalScore = ((!IsAutomatedPerfTesting()) ? Max(0, GetIntOption(Options, "GoalScore", GoalScore)) : 0);
 	InOpt = ParseOption(Options, "Console");
 	// End:0x33A
 	if((InOpt != "") || WorldInfo.IsConsoleBuild())
@@ -802,7 +802,7 @@ event InitGame(string Options, out string ErrorMessage)
 function GenericPlayerInitialization(Controller C)
 {
 	// End:0x3A
-	if(bUseClassicHUD!)
+	if(!bUseClassicHUD)
 	{
 		HUDType = ((bTeamGame) ? Class'UTGame.UTGFxTeamHUDWrapper' : Class'UTGame.UTGFxHudWrapper');
 	}
@@ -813,7 +813,7 @@ function GenericPlayerInitialization(Controller C)
 function bool SetPause(PlayerController PC, optional delegate<CanUnpause> CanUnpauseDelegate = CanUnpause)
 {
 	// End:0x3B
-	if(PC.IsLocalPlayerController()!)
+	if(!PC.IsLocalPlayerController())
 	{
 		return false;
 	}
@@ -873,7 +873,7 @@ event PlayerController Login(string Portal, string Options, const UniqueNetId Un
 		}
 	}
 	// End:0x30B
-	if((bUseClassicHUD! && NewPlayer != none) && Class'Engine.Engine'.static.IsSplitScreen())
+	if((!bUseClassicHUD && NewPlayer != none) && Class'Engine.Engine'.static.IsSplitScreen())
 	{
 		bUseClassicHUD = true;
 		HUDType = default.HUDType;
@@ -975,7 +975,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', P)
 		{
 			// End:0xD7
-			if((P.PlayerReplicationInfo != none) && P.PlayerReplicationInfo.bOutOfLives!)
+			if((P.PlayerReplicationInfo != none) && !P.PlayerReplicationInfo.bOutOfLives)
 			{
 				bLastMan = false;
 				// End:0xD8
@@ -990,7 +990,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 	}
 	bLastMan = Reason ComplementEqual "LastMan";
 	// End:0x139
-	if(bLastMan! && CheckModifiedEndGame(Winner, Reason))
+	if(!bLastMan && CheckModifiedEndGame(Winner, Reason))
 	{
 		return false;
 	}
@@ -1001,23 +1001,23 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', P)
 		{
 			// End:0x26A
-			if((P.bIsPlayer && P.PlayerReplicationInfo.bOutOfLives!) && (Winner == none) || P.PlayerReplicationInfo.Score >= Winner.Score)
+			if((P.bIsPlayer && !P.PlayerReplicationInfo.bOutOfLives) && (Winner == none) || P.PlayerReplicationInfo.Score >= Winner.Score)
 			{
 				Winner = P.PlayerReplicationInfo;
 			}			
 		}		
 	}
 	// End:0x3C8
-	if(bLastMan!)
+	if(!bLastMan)
 	{
 		// End:0x3C7
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', P)
 		{
 			// End:0x3C6
-			if(((P.bIsPlayer && Winner != P.PlayerReplicationInfo) && P.PlayerReplicationInfo.Score == Winner.Score) && P.PlayerReplicationInfo.bOutOfLives!)
+			if(((P.bIsPlayer && Winner != P.PlayerReplicationInfo) && P.PlayerReplicationInfo.Score == Winner.Score) && !P.PlayerReplicationInfo.bOutOfLives)
 			{
 				// End:0x3C3
-				if(bOverTimeBroadcast!)
+				if(!bOverTimeBroadcast)
 				{
 					StartupStage = 7;
 					PlayStartupMessage();
@@ -1048,7 +1048,7 @@ function SetEndGameFocus(PlayerReplicationInfo Winner)
 	}
 	V = Vehicle(EndGameFocus);
 	// End:0x19A
-	if(((V != none) && V.bAttachDriver!) && V.Driver != none)
+	if(((V != none) && !V.bAttachDriver) && V.Driver != none)
 	{
 		EndGameFocus = V.Driver;
 	}
@@ -1097,7 +1097,7 @@ function bool AtCapacity(bool bSpectator)
 		}		
 	}	
 	// End:0x143
-	if(bForcedSpectator!)
+	if(!bForcedSpectator)
 	{
 		return super(GameInfo).AtCapacity(bSpectator);
 	}
@@ -1119,7 +1119,7 @@ event PostLogin(PlayerController NewPlayer)
 		PC.ClientSetSpeechRecognitionObject(SpeechRecognitionData);
 		GRI = UTGameReplicationInfo(GameReplicationInfo);
 		// End:0x15E
-		if(((bForceMidGameMenuAtStart && GRI.bStoryMode!) && GRI.bMatchHasBegun!) && (NetWait - PendingMatchElapsedTime) > 5)
+		if(((bForceMidGameMenuAtStart && !GRI.bStoryMode) && !GRI.bMatchHasBegun) && (NetWait - PendingMatchElapsedTime) > 5)
 		{
 			UTPlayerReplicationInfo(PC.PlayerReplicationInfo).ShowMidGameMenu(true);
 		}
@@ -1234,7 +1234,7 @@ function RestartPlayer(Controller aPlayer)
 		if(V != none)
 		{
 			// End:0x2AB
-			if(bTeamGame! && V.bTeamLocked)
+			if(!bTeamGame && V.bTeamLocked)
 			{
 				V.bTeamLocked = false;
 			}
@@ -1405,7 +1405,7 @@ function Logout(Controller Exiting)
 	}
 	super(GameInfo).Logout(Exiting);
 	// End:0x1C6
-	if(Exiting.IsA('UTBot') && UTBot(Exiting).bSpawnedByKismet!)
+	if(Exiting.IsA('UTBot') && !UTBot(Exiting).bSpawnedByKismet)
 	{
 		I = ActiveBots.Find('BotName', Exiting.PlayerReplicationInfo.PlayerName);
 		// End:0x1BB
@@ -1738,14 +1738,14 @@ function ReduceDamage(out int Damage, Pawn injured, Controller InstigatedBy, Vec
 		if(InstigatedBy != injured.Controller)
 		{
 			// End:0xD6
-			if(((WorldInfo.TimeSeconds - injured.SpawnTime) < SpawnProtectionTime) && DamageType.default.bCausedByWorld!)
+			if(((WorldInfo.TimeSeconds - injured.SpawnTime) < SpawnProtectionTime) && !DamageType.default.bCausedByWorld)
 			{
 				Damage = 0;
 				return;
 			}
 			V = UTVehicle(injured);
 			// End:0x18E
-			if(((V != none) && V.bHasBeenDriven!) && bUndrivenVehicleDamage!)
+			if(((V != none) && !V.bHasBeenDriven) && !bUndrivenVehicleDamage)
 			{
 				Damage = 0;
 				super(GameInfo).ReduceDamage(Damage, injured, InstigatedBy, HitLocation, Momentum, DamageType, DamageCauser);
@@ -1886,11 +1886,11 @@ function SetupPlayerMuteList(UTPlayerController PC, bool bForceSpectatorChannel)
 		MyTeam = PC.PlayerReplicationInfo.Team;
 		MyVoiceChannel = 0;
 		// End:0x15D
-		if(bForceSpectatorChannel! && PC.PlayerReplicationInfo.bIsSpectator!)
+		if(!bForceSpectatorChannel && !PC.PlayerReplicationInfo.bIsSpectator)
 		{
 			MyVoiceChannel = 1;
 			// End:0x15D
-			if((bIgnoreTeamForVoiceChat! && MyTeam != none) && MyTeam.TeamIndex > 0)
+			if((!bIgnoreTeamForVoiceChat && MyTeam != none) && MyTeam.TeamIndex > 0)
 			{
 				MyVoiceChannel = 2;
 			}
@@ -1906,12 +1906,12 @@ function SetupPlayerMuteList(UTPlayerController PC, bool bForceSpectatorChannel)
 				{
 					OtherVoiceChannel = 0;
 					// End:0x305
-					if(bForceSpectatorChannel! && OtherPC.PlayerReplicationInfo.bIsSpectator!)
+					if(!bForceSpectatorChannel && !OtherPC.PlayerReplicationInfo.bIsSpectator)
 					{
 						OtherVoiceChannel = 1;
 						OtherTeam = OtherPC.PlayerReplicationInfo.Team;
 						// End:0x305
-						if((bIgnoreTeamForVoiceChat! && OtherTeam != none) && OtherTeam.TeamIndex > 0)
+						if((!bIgnoreTeamForVoiceChat && OtherTeam != none) && OtherTeam.TeamIndex > 0)
 						{
 							OtherVoiceChannel = 2;
 						}
@@ -1974,7 +1974,7 @@ function StartMatch()
 	local UTPlayerController PC;
 
 	// End:0x80
-	if(((GameplayEventsWriter != none) && GameplayEventsWriter.IsSessionInProgress()!) && Class'Engine.WorldInfo'.static.IsMenuLevel()!)
+	if(((GameplayEventsWriter != none) && !GameplayEventsWriter.IsSessionInProgress()) && !Class'Engine.WorldInfo'.static.IsMenuLevel())
 	{
 		GameplayEventsWriter.StartLogging(0.5000000);
 	}
@@ -2146,7 +2146,7 @@ function PlayRegularEndOfMatchMessage()
 	foreach WorldInfo.AllControllers(Class'UTGame.UTPlayerController', PC)
 	{
 		// End:0x104
-		if((PC.PlayerReplicationInfo != none) && PC.PlayerReplicationInfo.bOnlySpectator!)
+		if((PC.PlayerReplicationInfo != none) && !PC.PlayerReplicationInfo.bOnlySpectator)
 		{
 			// End:0xD8
 			if(IsAWinner(PC))
@@ -2184,7 +2184,7 @@ function EndRound(Actor EndRoundFocus)
 	local Controller C;
 
 	// End:0x6D
-	if(bGameEnded!)
+	if(!bGameEnded)
 	{
 		// End:0x6C
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', C)
@@ -2354,7 +2354,7 @@ function float RatePlayerStart(PlayerStart P, byte Team, Controller Player)
 				}
 				NextDist = VSize(OtherPlayer.Pawn.Location - P.Location);
 				// End:0x534
-				if(((NextDist < float(3000)) && WorldInfo.GRI.OnSameTeam(Player, OtherPlayer)!) && FastTrace(P.Location, OtherPlayer.Pawn.Location + (vect(0.0000000, 0.0000000, 1.0000000) * OtherPlayer.Pawn.CylinderComponent.CollisionHeight)))
+				if(((NextDist < float(3000)) && !WorldInfo.GRI.OnSameTeam(Player, OtherPlayer)) && FastTrace(P.Location, OtherPlayer.Pawn.Location + (vect(0.0000000, 0.0000000, 1.0000000) * OtherPlayer.Pawn.CylinderComponent.CollisionHeight)))
 				{
 					// End:0x510
 					if((OtherPlayer.PlayerReplicationInfo != none) && UTPlayerReplicationInfo(Player.PlayerReplicationInfo).LastKillerPRI == OtherPlayer.PlayerReplicationInfo)
@@ -2399,7 +2399,7 @@ function bool CheckMaxLives(PlayerReplicationInfo Scorer)
 	if(MaxLives > 0)
 	{
 		// End:0x57
-		if((Scorer != none) && Scorer.bOutOfLives!)
+		if((Scorer != none) && !Scorer.bOutOfLives)
 		{
 			Living = Scorer;
 		}
@@ -2408,7 +2408,7 @@ function bool CheckMaxLives(PlayerReplicationInfo Scorer)
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', C)
 		{
 			// End:0x1CA
-			if((((C.PlayerReplicationInfo != none) && C.bIsPlayer) && C.PlayerReplicationInfo.bOutOfLives!) && C.PlayerReplicationInfo.bOnlySpectator!)
+			if((((C.PlayerReplicationInfo != none) && C.bIsPlayer) && !C.PlayerReplicationInfo.bOutOfLives) && !C.PlayerReplicationInfo.bOnlySpectator)
 			{
 				// End:0x18F
 				if(Living == none)
@@ -2464,7 +2464,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 			if(Scorer.Score == float(GoalScore - 10))
 			{
 				// End:0x112
-				if(bPlayedTenKills! && GoalScore > 19)
+				if(!bPlayedTenKills && GoalScore > 19)
 				{
 					UTGameReplicationInfo(GameReplicationInfo).SortPRIArray();
 					// End:0x112
@@ -2481,7 +2481,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 				if(Scorer.Score == float(GoalScore - 5))
 				{
 					// End:0x1E2
-					if(bPlayedFiveKills! && GoalScore > 9)
+					if(!bPlayedFiveKills && GoalScore > 9)
 					{
 						UTGameReplicationInfo(GameReplicationInfo).SortPRIArray();
 						// End:0x1E2
@@ -2495,7 +2495,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 				else
 				{
 					// End:0x2A2
-					if((Scorer.Score == float(GoalScore - 1)) && bPlayedOneKill!)
+					if((Scorer.Score == float(GoalScore - 1)) && !bPlayedOneKill)
 					{
 						UTGameReplicationInfo(GameReplicationInfo).SortPRIArray();
 						// End:0x2A2
@@ -2548,7 +2548,7 @@ function ActivateVehicleFactory(UTVehicleFactory VF)
 	local float bestDist, newdist;
 
 	// End:0x30
-	if(bTeamGame!)
+	if(!bTeamGame)
 	{
 		VF.bStartNeutral = true;
 	}
@@ -2853,7 +2853,7 @@ function ProcessServerTravel(string URL, optional bool bAbsolute)
 	local Controller C;
 
 	// End:0x78
-	if(IsInState('MatchOver')!)
+	if(!IsInState('MatchOver'))
 	{
 		// End:0x69
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', C)
@@ -3009,7 +3009,7 @@ function WriteOnlineStats()
 		CurSettings = GameInterface.GetGameSettings(PlayerReplicationInfoClass.default.SessionName);
 	}
 	// End:0xFC
-	if((CurSettings == none) || CurSettings.bUsesStats!)
+	if((CurSettings == none) || !CurSettings.bUsesStats)
 	{
 		// End:0xFB
 		foreach WorldInfo.AllControllers(Class'Engine.PlayerController', PC)
@@ -3171,13 +3171,13 @@ auto state PendingMatch
 		bReady = true;
 		StartupStage = 1;
 		// End:0x3FE
-		if(bStartedCountDown! && bPlayersMustBeReady || int(WorldInfo.NetMode) == int(NM_Standalone))
+		if(!bStartedCountDown && bPlayersMustBeReady || int(WorldInfo.NetMode) == int(NM_Standalone))
 		{
 			// End:0x3FD
 			foreach WorldInfo.AllControllers(Class'Engine.PlayerController', P)
 			{
 				// End:0x3FC
-				if((((P.PlayerReplicationInfo != none) && P.bIsPlayer) && P.PlayerReplicationInfo.bWaitingPlayer) && P.PlayerReplicationInfo.bReadyToPlay!)
+				if((((P.PlayerReplicationInfo != none) && P.bIsPlayer) && P.PlayerReplicationInfo.bWaitingPlayer) && !P.PlayerReplicationInfo.bReadyToPlay)
 				{
 					bReady = false;
 				}				
@@ -3187,7 +3187,7 @@ auto state PendingMatch
 		if(bReady)
 		{
 			// End:0x466
-			if(bStartedCountDown!)
+			if(!bStartedCountDown)
 			{
 				// End:0x45A
 				if(DemoPrefix != "")
@@ -3233,7 +3233,7 @@ auto state PendingMatch
 Begin:
 
 	// End:0x77
-	if((int(WorldInfo.NetMode) == int(NM_Standalone)) || (int(WorldInfo.NetMode) == int(NM_ListenServer)) && IsConsoleDedicatedServer()!)
+	if((int(WorldInfo.NetMode) == int(NM_Standalone)) || (int(WorldInfo.NetMode) == int(NM_ListenServer)) && !IsConsoleDedicatedServer())
 	{
 		Sleep(0.0000000);
 		AddInitialBots();
@@ -3286,7 +3286,7 @@ state MatchInProgress
 
 		global.Timer();
 		// End:0x2F
-		if(bFinalStartup!)
+		if(!bFinalStartup)
 		{
 			bFinalStartup = true;
 			PlayStartupMessage();
@@ -3298,7 +3298,7 @@ state MatchInProgress
 			foreach WorldInfo.AllControllers(Class'Engine.PlayerController', P)
 			{
 				// End:0x11E
-				if(((P.Pawn == none) && P.PlayerReplicationInfo.bOnlySpectator!) && P.IsTimerActive('DoForcedRespawn')!)
+				if(((P.Pawn == none) && !P.PlayerReplicationInfo.bOnlySpectator) && !P.IsTimerActive('DoForcedRespawn'))
 				{
 					P.ServerRestartPlayer();
 				}				
@@ -3397,7 +3397,7 @@ state MatchOver
 
 		global.Timer();
 		// End:0x5E
-		if(bGameRestarted! && WorldInfo.TimeSeconds > (EndTime + float(RestartWait)))
+		if(!bGameRestarted && WorldInfo.TimeSeconds > (EndTime + float(RestartWait)))
 		{
 			RestartGame();
 		}
@@ -3414,7 +3414,7 @@ state MatchOver
 				J0x103:
 
 				// End:0x261 [Loop If]
-				if((I < AllInterpActions.Length) && bIsInCinematic!)
+				if((I < AllInterpActions.Length) && !bIsInCinematic)
 				{
 					InterpAction = SeqAct_Interp(AllInterpActions[I]);
 					// End:0x253
@@ -3446,7 +3446,7 @@ state MatchOver
 				}
 			}
 			// End:0x2CF
-			if(bIsInCinematic!)
+			if(!bIsInCinematic)
 			{
 				// End:0x2CE
 				foreach WorldInfo.AllControllers(Class'Engine.PlayerController', PC)

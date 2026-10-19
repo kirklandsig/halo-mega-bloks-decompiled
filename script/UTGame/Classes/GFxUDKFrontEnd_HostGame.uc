@@ -59,7 +59,7 @@ function ValidateServerType()
 	PlayerIndex = GetPlayerIndex();
 	PlayerControllerId = GetPlayerControllerId(PlayerIndex);
 	// End:0x11C
-	if(IsLoggedIn(PlayerControllerId, true)! || Class'Engine.WorldInfo'.static.IsConsoleBuild(2))
+	if(!IsLoggedIn(PlayerControllerId, true) || Class'Engine.WorldInfo'.static.IsConsoleBuild(2))
 	{
 		ValueIndex = StringListDataStore.GetCurrentValueIndex(MatchTypeName);
 		// End:0x11C
@@ -344,7 +344,7 @@ function OnStartGame_Confirm()
 
 	LocalGameSettings = SettingsDataStore.GetCurrentGameSettings();
 	// End:0x7F
-	if(LocalGameSettings.bIsDedicated && Class'Engine.WorldInfo'.static.IsConsoleBuild()!)
+	if(LocalGameSettings.bIsDedicated && !Class'Engine.WorldInfo'.static.IsConsoleBuild())
 	{
 		FinishStartDedicated();		
 	}

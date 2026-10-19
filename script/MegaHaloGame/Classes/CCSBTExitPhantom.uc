@@ -53,10 +53,10 @@ function GripBTNode.BTExecutionResult Execute(GripBTInterface BTInterface, bool 
 
 	ExecRes = 2;
 	// End:0x131
-	if(ExitSequence.bPlaying!)
+	if(!ExitSequence.bPlaying)
 	{
 		// End:0x7A
-		if(startedFalling!)
+		if(!startedFalling)
 		{
 			startedFalling = true;
 			Controller.Pawn.SetPhysics(2);

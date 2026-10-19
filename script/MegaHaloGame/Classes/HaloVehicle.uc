@@ -314,7 +314,7 @@ simulated function SwapAddon(HVCCAddon Attachment)
 		bValidSocket = Mesh.GetSocketByName(Attachment.HVCParentBoneName) != none;
 		bValidBone = Mesh.MatchRefBone(Attachment.HVCParentBoneName) != -1;
 		// End:0x1E4
-		if(bValidBone! && bValidSocket!)
+		if(!bValidBone && !bValidSocket)
 		{
 			LogInternal((((((((string(WorldInfo.TimeSeconds) @ string(Class)) @ string(GetFuncName())) @ "bone or socket") @ string(Attachment.HVCParentBoneName)) @ "not found on actor") @ string(self)) @ "with mesh") @ string(Mesh));
 		}
@@ -324,7 +324,7 @@ simulated function SwapAddon(HVCCAddon Attachment)
 	{
 		Attachment.SetCollision(false, false);
 		// End:0x2EF
-		if(bValidBone && bValidSocket!)
+		if(bValidBone && !bValidSocket)
 		{
 			Attachment.SetLocation(Mesh.GetBoneLocation(Attachment.HVCParentBoneName));
 			Attachment.SetRotation(QuatToRotator(Mesh.GetBoneQuaternion(Attachment.HVCParentBoneName)));
@@ -715,7 +715,7 @@ function Tick(float DeltaSeconds)
 	}
 	UpdateSuspensionSounds(DeltaSeconds);
 	// End:0x110
-	if((bStayUpright! && bWasChassisTouchingGroundLastTick) && bChassisTouchingGround!)
+	if((!bStayUpright && bWasChassisTouchingGroundLastTick) && !bChassisTouchingGround)
 	{
 		SetSwitch('Object_Type', AkObjectType);
 		SetRTPCValue('Impulse_Value', float(AkBreakSmall));
@@ -731,7 +731,7 @@ simulated function GetRotation(out Rotator CameraRotation)
 	local float Pitch, LookDown, downbuffer, upbuffer;
 
 	CameraRotation.Yaw = Mesh.GetRotation().Yaw;
-	LookDown = LookdownPitch- * 182.0444031;
+	LookDown = -LookdownPitch * 182.0444031;
 	downbuffer = LookdownPitchBuffer * 182.0444031;
 	upbuffer = LookupPitchBuffer * 182.0444031;
 	Pitch = float(Mesh.GetRotation().Pitch) + LookDown;
@@ -795,7 +795,7 @@ simulated function UpdateEngineGearPitch(float DeltaSeconds)
 		}
 		else
 		{
-			CurrentRPMPitch += FMax(PitchDifference, MaxRPMChangeRate-);
+			CurrentRPMPitch += FMax(PitchDifference, -MaxRPMChangeRate);
 		}
 		CurrentRPMPitch = FMax(FMin(CurrentRPMPitch, 100.0000000), 0.0000000);
 		CurrentRPMPitchInt = float(int(CurrentRPMPitch));
@@ -910,7 +910,7 @@ function FakeTurretCollision(HaloTurret Other)
 			HitDir = Location - Other.Location;
 			HitDir.Z = 0.0000000;
 			HitDir = Normal(HitDir);
-			PlayHDACollisionForcefeedback(Speed, HitDir-);
+			PlayHDACollisionForcefeedback(Speed, -HitDir);
 		}
 	}
 	//return;	
@@ -934,7 +934,7 @@ function HandleHDACollision(HaloDestructibleActor Other)
 			HitDir = Location - Other.Location;
 			HitDir.Z = 0.0000000;
 			HitDir = Normal(HitDir);
-			PlayHDACollisionForcefeedback(Speed, HitDir-);
+			PlayHDACollisionForcefeedback(Speed, -HitDir);
 		}
 	}
 	//return;	
@@ -1176,7 +1176,7 @@ simulated function bool ShouldStopSkidLoop(float Accel)
 {
 	local bool B;
 
-	B = (bVehicleOnGround! || bDriving!) || (IsEasingOffAcceleration(Accel)) && IsDrifting()!;
+	B = (!bVehicleOnGround || !bDriving) || (IsEasingOffAcceleration(Accel)) && !IsDrifting();
 	return B;
 	//return ReturnValue;	
 }
@@ -1443,7 +1443,7 @@ simulated function UpdateBoost(float DeltaSeconds)
 		if(bTryToBoost)
 		{
 			// End:0x33
-			if(bBoostersActivated!)
+			if(!bBoostersActivated)
 			{
 				ActivateRocketBoosters();
 			}
@@ -1470,7 +1470,7 @@ simulated function UpdateBoost(float DeltaSeconds)
 			else
 			{
 				// End:0x13D
-				if(bBoostChargeIsDelayed! && BoostAmount < float(100))
+				if(!bBoostChargeIsDelayed && BoostAmount < float(100))
 				{
 					BoostAmount += (DeltaSeconds * (100.0000000 / BoostChargeTime));
 					// End:0x13D
@@ -1546,7 +1546,7 @@ simulated function PlayBoostForceFeedback()
 	local VehicleSeat Seat;
 
 	// End:0xE3
-	if(EngineFeedbackEnabled! && BoostFeedbackEnabled)
+	if(!EngineFeedbackEnabled && BoostFeedbackEnabled)
 	{
 		// End:0xE2
 		foreach Seats(Seat)
@@ -1921,7 +1921,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	Dist = VSize(CameraPosition - Location);
 	EnteringPlayers.Length = 0;
 	// End:0x568
-	if(bPlayingSpawnEffect! && (UTPawn(PC.Pawn) != none) || UTVehicle_Hoverboard(PC.Pawn) != none)
+	if(!bPlayingSpawnEffect && (UTPawn(PC.Pawn) != none) || UTVehicle_Hoverboard(PC.Pawn) != none)
 	{
 		// End:0x4D2
 		if(bShowUseable || ShouldShowUseable(PC, Dist))
@@ -1965,7 +1965,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 		else
 		{
 			// End:0x522
-			if(WorldInfo.GRI.GameClass.default.bTeamGame!)
+			if(!WorldInfo.GRI.GameClass.default.bTeamGame)
 			{
 				return;
 			}
@@ -1980,7 +1980,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	else
 	{
 		// End:0x5B8
-		if(WorldInfo.GRI.GameClass.default.bTeamGame!)
+		if(!WorldInfo.GRI.GameClass.default.bTeamGame)
 		{
 			return;
 		}
@@ -2035,7 +2035,7 @@ simulated function float GetJoystickAngle(float Forward, float Strafe)
 			// End:0x67
 			if(Strafe < float(0))
 			{
-				Angle = 3.1415927- / 2.0000000;				
+				Angle = -3.1415927 / 2.0000000;				
 			}
 			else
 			{
@@ -2117,7 +2117,7 @@ simulated function float GetBoundedCircularAngle(float Angle)
 	J0x2D:
 
 	// End:0x5C [Loop If]
-	if(Angle < 3.1415927-)
+	if(Angle < -3.1415927)
 	{
 		Angle += (2.0000000 * 3.1415927);
 		// [Loop Continue]
@@ -2145,7 +2145,7 @@ simulated function float GetCircularAngle(float XVal, float YVal)
 		}
 		else
 		{
-			Angle = 3.1415927- / 2.0000000;
+			Angle = -3.1415927 / 2.0000000;
 		}
 	}
 	// End:0xE5
@@ -2159,7 +2159,7 @@ simulated function float GetCircularAngle(float XVal, float YVal)
 		}
 		else
 		{
-			Angle = 3.1415927- - Angle;
+			Angle = -3.1415927 - Angle;
 		}
 	}
 	return Angle;
@@ -2348,7 +2348,7 @@ event bool DriverLeave(bool bForceLeave)
 		StopSkidSound();
 	}
 	// End:0x10F
-	if(bForceLeave!)
+	if(!bForceLeave)
 	{
 		HaloDriver = HaloPawn(Driver);
 		// End:0x10F
@@ -2464,11 +2464,11 @@ function float ScoreEnemyTarget(const Vector aLocation, float MaxDistance, float
 	aYaw.Yaw = Rotator(aDirection).Yaw;
 	bYaw.Yaw = BRotation.Yaw;
 	YawAngle = RDiff(aYaw, bYaw);
-	maxAngleYaw = maxAngleYaw - ((maxAngleYaw - maxAngleYaw-) * (Distance / MaxDistance));
+	maxAngleYaw = maxAngleYaw - ((maxAngleYaw - -maxAngleYaw) * (Distance / MaxDistance));
 	aPitch.Pitch = Rotator(aDirection).Pitch;
 	bPitch.Pitch = BRotation.Pitch;
 	PitchAngle = RDiff(aPitch, bPitch);
-	maxAnglePitch = maxAnglePitch - ((maxAnglePitch - maxAnglePitch-) * (Distance / MaxDistance));
+	maxAnglePitch = maxAnglePitch - ((maxAnglePitch - -maxAnglePitch) * (Distance / MaxDistance));
 	// End:0x2A3
 	if(((Distance < MaxDistance) && YawAngle < maxAngleYaw) && PitchAngle < maxAnglePitch)
 	{
@@ -2851,7 +2851,7 @@ simulated function Vector GetCameraFocus(int SeatIndex)
 	local Actor HitActor;
 
 	// End:0xFB
-	if(bDeadVehicle! && Seats[SeatIndex].CameraTag != 'None')
+	if(!bDeadVehicle && Seats[SeatIndex].CameraTag != 'None')
 	{
 		Mesh.GetSocketWorldLocationAndRotation(Seats[SeatIndex].CameraTag, CamStart);
 		HitActor = Trace(HitLocation, HitNormal, CamStart, Location, false, vect(12.0000000, 12.0000000, 12.0000000));
@@ -2963,7 +2963,7 @@ state HighwayMode
 
 	simulated function bool CanEnterVehicle(Pawn P)
 	{
-		return ((((((bDeleteMe! && AnySeatAvailable()) && bAttachDriver! || P.bIsCrouched!) && P.DrivenVehicle == none) && P.Controller != none) && P.Controller.bIsPlayer) && P.IsA('Vehicle')!) && Health > 0;
+		return ((((((!bDeleteMe && AnySeatAvailable()) && !bAttachDriver || !P.bIsCrouched) && P.DrivenVehicle == none) && P.Controller != none) && P.Controller.bIsPlayer) && !P.IsA('Vehicle')) && Health > 0;
 		//return ReturnValue;		
 	}
 

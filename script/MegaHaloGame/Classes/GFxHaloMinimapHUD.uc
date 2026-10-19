@@ -784,7 +784,7 @@ function TickBlokAccumulator(float DeltaTime)
 			else
 			{
 				bezierX = ((BADepositStartX >= BADepositEndX) ? BADepositStartX + (BADepositStartX * 0.1000000) : BADepositStartX - (BADepositStartX * 0.1000000));
-				bezierY = BADepositStartY- * 0.2000000;
+				bezierY = -BADepositStartY * 0.2000000;
 				TimeRemaining = 1.0000000 - ((BATimer_DepositEnd - CurrentTime) / BADepositTime);
 				trSquared = TimeRemaining * TimeRemaining;
 				trInvSquared = (1.0000000 - TimeRemaining) * (float(1) - TimeRemaining);
@@ -1413,7 +1413,7 @@ function TickAbility(bool bShowAbility)
 	if(Last_bAbilityAvailable != bAbilityAvaible)
 	{
 		// End:0x4EA
-		if(Last_bAbilityAvailable!)
+		if(!Last_bAbilityAvailable)
 		{
 			Clip_AbilityState.GotoAndPlay("transIn");			
 		}
@@ -1473,7 +1473,7 @@ function TickMissionTimer()
 						break;
 				}
 				// End:0x2B4
-				if(bTimerIsActive!)
+				if(!bTimerIsActive)
 				{
 					// End:0x2B4
 					if(Objective.bIsTimed)
@@ -1485,7 +1485,7 @@ function TickMissionTimer()
 				}
 			}
 			// End:0x34C
-			if(bTimerIsActive!)
+			if(!bTimerIsActive)
 			{
 				// End:0x34C
 				if(mission.bIsTimed)
@@ -1690,7 +1690,7 @@ function TickBuildMessage()
 		}
 	}
 	// End:0x110
-	if(bShowBuildMessage!)
+	if(!bShowBuildMessage)
 	{
 		// End:0x110
 		if(PC.ActiveVehiclePanel != none)
@@ -1703,7 +1703,7 @@ function TickBuildMessage()
 	if(bShowBuildMessage)
 	{
 		// End:0x72A
-		if(Last_BMShowing!)
+		if(!Last_BMShowing)
 		{
 			CurrentFrame = Clip_BuildMessageBox.GetInt("_currentframe");
 			// End:0x72A
@@ -1801,7 +1801,7 @@ function TickMessages()
 	MessageIcon = 'None';
 	MessageProgress = -1.0000000;
 	// End:0x1EB
-	if((PC.bCinematicMode! && PC.bIsAimingTargetDesignator!) && PC.bPawnControlsLocked!)
+	if((!PC.bCinematicMode && !PC.bIsAimingTargetDesignator) && !PC.bPawnControlsLocked)
 	{
 		bShowMessage = TickTakedown();
 		// End:0x1EB
@@ -1948,7 +1948,7 @@ function bool TickActionableBuildPads()
 	local string Message;
 
 	// End:0xD7
-	if((PC.bIsAimingTargetDesignator! && PC.ActionableStudGrid != none) && PC.ActionableStudGrid.CanBeActionedNow())
+	if((!PC.bIsAimingTargetDesignator && PC.ActionableStudGrid != none) && PC.ActionableStudGrid.CanBeActionedNow())
 	{
 		Message = PC.ActionableStudGrid.StudGridInteractMessage;
 		MessageLine1 = name(Message);
@@ -2126,7 +2126,7 @@ function bool TickNoAmmo()
 	if((int(Last_PlayerPawnType) == int(1)) || int(Last_PlayerPawnType) == int(2))
 	{
 		// End:0xC7
-		if(Last_bHasAmmo!)
+		if(!Last_bHasAmmo)
 		{
 			// End:0x88
 			if(SecondaryWeaponHasAmmo())
@@ -2319,7 +2319,7 @@ function TickGrenadeMarkers()
 	foreach HaloGameDefault(Class'Engine.WorldInfo'.static.GetWorldInfo().Game).ActiveGrenades(grenade)
 	{
 		// End:0x986
-		if(grenade.IsInState('Inactive')!)
+		if(!grenade.IsInState('Inactive'))
 		{
 			DistSq = VSizeSq(grenade.Location - PC.Pawn.Location);
 			// End:0x986
@@ -2333,9 +2333,9 @@ function TickGrenadeMarkers()
 				YOffset = -72;
 				ScreenLocation = ProjectLocation;
 				// End:0x28E
-				if(ScreenLocation.X < float(XOffset-))
+				if(ScreenLocation.X < float(-XOffset))
 				{
-					ScreenLocation.X = float(XOffset-);
+					ScreenLocation.X = float(-XOffset);
 					ScreenLocation.Y += float(32);					
 				}
 				else
@@ -2348,9 +2348,9 @@ function TickGrenadeMarkers()
 					}
 				}
 				// End:0x39F
-				if(ScreenLocation.Y < float(YOffset-))
+				if(ScreenLocation.Y < float(-YOffset))
 				{
-					ScreenLocation.Y = float(YOffset-);					
+					ScreenLocation.Y = float(-YOffset);					
 				}
 				else
 				{
@@ -2361,7 +2361,7 @@ function TickGrenadeMarkers()
 					}
 				}
 				// End:0x4F4
-				if(IsInfrontOfCamera(grenade.Location)!)
+				if(!IsInfrontOfCamera(grenade.Location))
 				{
 					ScreenLocation.X = Canvas.ClipX - ScreenLocation.X;
 					ScreenLocation.Y = Canvas.ClipY;
@@ -2376,14 +2376,14 @@ function TickGrenadeMarkers()
 				else
 				{
 					// End:0x65C
-					if(IsInfrontOfCamera(grenade.Location)!)
+					if(!IsInfrontOfCamera(grenade.Location))
 					{
 						Rotation = 3.1415927 + Atan((ProjectLocation.X - ScreenLocation.X) / (ProjectLocation.Y - ScreenLocation.Y));						
 					}
 					else
 					{
 						// End:0x6A2
-						if(ScreenLocation.X == float(XOffset-))
+						if(ScreenLocation.X == float(-XOffset))
 						{
 							Rotation = 3.1415927 / float(2);							
 						}
@@ -2392,14 +2392,14 @@ function TickGrenadeMarkers()
 							// End:0x708
 							if(ScreenLocation.X == (Canvas.ClipX + float(XOffset)))
 							{
-								Rotation = 3.1415927- / float(2);								
+								Rotation = -3.1415927 / float(2);								
 							}
 							else
 							{
 								// End:0x74A
-								if(ScreenLocation.Y == float(YOffset-))
+								if(ScreenLocation.Y == float(-YOffset))
 								{
-									Rotation = 3.1415927-;									
+									Rotation = -3.1415927;									
 								}
 								else
 								{
@@ -2514,7 +2514,7 @@ function ShowNonMMClips(bool bShow)
 	if(I < NonMMClips.Length)
 	{
 		// End:0xA6
-		if(bShow!)
+		if(!bShow)
 		{
 			NonMMClipsVisibility[I] = NonMMClips[I].GetBool("_visible");
 			NonMMClips[I].SetVisible(false);			
@@ -2561,7 +2561,7 @@ function TickGameMessage()
 			else
 			{
 				// End:0x10F
-				if((GameMessages.Length > 0) && Last_BMShowing!)
+				if((GameMessages.Length > 0) && !Last_BMShowing)
 				{
 					Clip_GameMessageBox.SetVisible(true);
 					Clip_GameMessageBox.GotoAndPlay("transIn");
@@ -2621,7 +2621,7 @@ function TickGameMessage()
 				else
 				{
 					// End:0x3C1
-					if((GameMessages.Length > 0) && Last_BMShowing!)
+					if((GameMessages.Length > 0) && !Last_BMShowing)
 					{
 						InitializeGameMessageText();
 						GMState = 3;						
@@ -2970,8 +2970,8 @@ function ClampToEdge(out Vector ScreenLocation)
 		// End:0x17A
 		if(ScreenLocation.Z < 0.0000000)
 		{
-			ScreenLocation.X = FClamp(ScreenLocation.X-, 0.0000000, Canvas.ClipX);
-			ScreenLocation.Y = FClamp(ScreenLocation.Y-, 0.0000000, Canvas.ClipY);			
+			ScreenLocation.X = FClamp(-ScreenLocation.X, 0.0000000, Canvas.ClipX);
+			ScreenLocation.Y = FClamp(-ScreenLocation.Y, 0.0000000, Canvas.ClipY);			
 		}
 		else
 		{
@@ -3000,8 +3000,8 @@ function ProjectToScreenSpace(Vector WorldPosition, bool bClamp, out Vector scre
 			// End:0x2C8
 			if(bClamp)
 			{
-				screenPosition.X = FClamp(screenPosition.X-, 0.0000000, Canvas.ClipX);
-				screenPosition.Y = FClamp(screenPosition.Y-, 0.0000000, Canvas.ClipY);
+				screenPosition.X = FClamp(-screenPosition.X, 0.0000000, Canvas.ClipX);
+				screenPosition.Y = FClamp(-screenPosition.Y, 0.0000000, Canvas.ClipY);
 				// End:0x2C5
 				if((screenPosition.X > 0.0000000) && screenPosition.X < Canvas.ClipX)
 				{

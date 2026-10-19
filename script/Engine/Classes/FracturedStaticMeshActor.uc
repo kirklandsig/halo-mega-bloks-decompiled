@@ -66,7 +66,7 @@ simulated event PostBeginPlay()
 	super.PostBeginPlay();
 	ResetHealth();
 	// End:0x2E
-	if(bBreakChunksOnActorTouch!)
+	if(!bBreakChunksOnActorTouch)
 	{
 		SetTickIsDisabled(true);
 	}
@@ -270,7 +270,7 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 
 	super.TakeDamage(Damage, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
 	// End:0x9C
-	if(((DamageType != none) && DamageType.default.bCausesFracture!) || IsFracturedByDamageType(DamageType)!)
+	if(((DamageType != none) && !DamageType.default.bCausesFracture) || !IsFracturedByDamageType(DamageType))
 	{
 		return;
 	}
@@ -285,7 +285,7 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 		TraceComponent(NewHitLocation, HitNormal, FracturedStaticMeshComponent, HitLocation + (float(100) * Normal(Momentum)), HitLocation,, HitInfo, true);
 	}
 	// End:0x212
-	if(((HitInfo.Item == FracturedStaticMeshComponent.GetCoreFragmentIndex()) || FracturedStaticMeshComponent.IsFragmentVisible(HitInfo.Item)!) || FracturedStaticMeshComponent.IsFragmentDestroyable(HitInfo.Item)!)
+	if(((HitInfo.Item == FracturedStaticMeshComponent.GetCoreFragmentIndex()) || !FracturedStaticMeshComponent.IsFragmentVisible(HitInfo.Item)) || !FracturedStaticMeshComponent.IsFragmentDestroyable(HitInfo.Item))
 	{
 		return;
 	}
@@ -303,7 +303,7 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 		}
 	}
 	// End:0x2A7
-	if(FractureEffectIsRelevant(false, InstigatorPawn, bWantPhysChunksAndParticles)!)
+	if(!FractureEffectIsRelevant(false, InstigatorPawn, bWantPhysChunksAndParticles))
 	{
 		return;
 	}
@@ -362,7 +362,7 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 			PhysChance = ((FractureSettings.bEnableChanceOfPhysicsChunkOverride) ? FractureSettings.ChanceOfPhysicsChunkOverride : FracMesh.ChanceOfPhysicsChunk);
 			PhysChance *= WorldInfo.MyFractureManager.GetFSMDirectSpawnChanceScale();
 			// End:0x8CB
-			if((((int(bWantPhysChunksAndParticles) == int(1)) && FracMesh.bSpawnPhysicsChunks) && FRand() < PhysChance) && FracturedStaticMeshComponent.IsNoPhysFragment(HitInfo.Item)!)
+			if((((int(bWantPhysChunksAndParticles) == int(1)) && FracMesh.bSpawnPhysicsChunks) && FRand() < PhysChance) && !FracturedStaticMeshComponent.IsNoPhysFragment(HitInfo.Item))
 			{
 				PartScale = FracMesh.NormalPhysicsChunkScaleMin + (FRand() * (FracMesh.NormalPhysicsChunkScaleMax - FracMesh.NormalPhysicsChunkScaleMin));
 				FracPart = SpawnPart(HitInfo.Item, (ChunkDir * FracMesh.ChunkLinVel) + Velocity, VRand() * FracMesh.ChunkAngVel, PartScale, false);
@@ -397,7 +397,7 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 			}
 		}
 		// End:0xB6D
-		if((FracMesh.bAlwaysBreakOffIsolatedIslands || FracturedStaticMeshComponent.GetCoreFragmentIndex() == -1) && FracMesh.bFixIsolatedChunks!)
+		if((FracMesh.bAlwaysBreakOffIsolatedIslands || FracturedStaticMeshComponent.GetCoreFragmentIndex() == -1) && !FracMesh.bFixIsolatedChunks)
 		{
 			IgnoreFrags[0] = HitInfo.Item;
 			// End:0xB27

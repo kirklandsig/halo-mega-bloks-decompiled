@@ -425,7 +425,7 @@ function ExitBuildMode()
 						{
 							highlightMaterial.SetScalarParameterValue('GlintIntensity', 0.0000000);
 						}
-						I++;
+						++I;
 						// [Loop Continue]
 						goto J0x1B2;
 					}

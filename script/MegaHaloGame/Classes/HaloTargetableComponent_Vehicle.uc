@@ -31,7 +31,7 @@ simulated function Vector GetAimLocation(Vector FromLoc)
 	if(AimLocationSocket != 'None')
 	{
 		// End:0xAC
-		if(Vehicle.Mesh.GetSocketWorldLocationAndRotation(AimLocationSocket, AimLoc)!)
+		if(!Vehicle.Mesh.GetSocketWorldLocationAndRotation(AimLocationSocket, AimLoc))
 		{
 			AimLoc = Vehicle.Mesh.GetBoneLocation(AimLocationSocket);
 		}

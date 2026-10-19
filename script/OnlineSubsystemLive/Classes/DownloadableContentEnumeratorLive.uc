@@ -33,7 +33,7 @@ function FindDLC()
 					if(PlayerIndex < 4)
 					{
 						// End:0x1E2
-						if((int(PlayerInt.GetLoginStatus(byte(PlayerIndex))) > int(0)) && PlayerInt.IsGuestLogin(byte(PlayerIndex))!)
+						if((int(PlayerInt.GetLoginStatus(byte(PlayerIndex))) > int(0)) && !PlayerInt.IsGuestLogin(byte(PlayerIndex)))
 						{
 							ContentInt.AddReadContentComplete(byte(PlayerIndex), 0, OnReadContentComplete);
 							ReadsOutstanding += int(ContentInt.ReadContentList(byte(PlayerIndex), 0));							

@@ -29,7 +29,7 @@ event Activated()
 			goto J0xDA;
 		}
 		// End:0x20E
-		if(OutputLinks[1].bHasImpulse!)
+		if(!OutputLinks[1].bHasImpulse)
 		{
 			OutputLinks[0].bHasImpulse = true;
 		}

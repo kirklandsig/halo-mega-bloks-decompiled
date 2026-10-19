@@ -67,7 +67,7 @@ function Init(optional LocalPlayer Player)
 	if(Start())
 	{
 		// End:0xE09
-		if(bIsInit!)
+		if(!bIsInit)
 		{
 			ExternalInterface = self;
 			Clip_Category_Vehicle = GetVariableObject("_root.Menu_Tab.base.cat_vehicle");
@@ -214,7 +214,7 @@ function Tick(float DeltaTime)
 			currentSelectedIndex = int(HVCM.GetCurrentSelectedIndex());
 			bForceUpdate = (int(currentUpgradeType) == int(0)) && Last_VCIndex != CurrentIndex;
 			// End:0x1BE
-			if(bForceUpdate!)
+			if(!bForceUpdate)
 			{
 				bForceUpdate = UpdateCategoryItem(Text_ItemStd_Vehicle, Text_ItemSel_Vehicle, HVCM.SelectedVehicleIdx, Last_VCIndex_Vehicle, HVCM.HVCC_MasterVehicleArray, false);				
 			}
@@ -246,7 +246,7 @@ function Tick(float DeltaTime)
 			// End:0x6AD
 			if(((Last_VCIndex != CurrentIndex) || Last_SelectedIndex != currentSelectedIndex) || bCategoryChanged)
 			{
-				ConstructionStrip.MoveToIndex(CurrentIndex, bCategoryChanged!);
+				ConstructionStrip.MoveToIndex(CurrentIndex, !bCategoryChanged);
 				Last_VCIndex = CurrentIndex;
 				Last_SelectedIndex = currentSelectedIndex;
 			}
@@ -311,7 +311,7 @@ function UpdateConstructionStripData(array<HVCCInfo> ItemInfo)
 function UpdateCategoryState(GFxObject MC, GFxObject NewMC, bool bUnlocked, int CategoryIndex, int SelectedIndex)
 {
 	// End:0x39
-	if(bUnlocked!)
+	if(!bUnlocked)
 	{
 		MC.GotoAndStop("locked");		
 	}

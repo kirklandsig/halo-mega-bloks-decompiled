@@ -134,7 +134,7 @@ function InitConstructionObject(HaloConstructionManager man, HaloConstructionMan
 	{
 		PrimitiveMesh.SkeletalMeshComponent.SetMaterial(I, CManager.GetDistortionMaterial());
 		DistortionMICs.AddItem(PrimitiveMesh.SkeletalMeshComponent.CreateAndSetMaterialInstanceConstant(I));
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x148;
 	}
@@ -153,7 +153,7 @@ function InitConstructionObject(HaloConstructionManager man, HaloConstructionMan
 		MIC = DetailedMesh.StaticMeshComponent.CreateAndSetMaterialInstanceConstant(I);
 		HologramMICs.AddItem(MIC);
 		MIC.SetTextureParameterValue('EMIS_Texture', CInfo.TextureParameter);
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x34C;
 	}
@@ -167,7 +167,7 @@ function InitConstructionObject(HaloConstructionManager man, HaloConstructionMan
 		MIC = DetailedMesh.StaticMeshComponent.CreateAndSetMaterialInstanceConstant(I);
 		ClearMICs.AddItem(MIC);
 		MIC.SetTextureParameterValue('EMIS_Texture', CInfo.TextureParameter);
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x4A4;
 	}
@@ -181,7 +181,7 @@ function InitConstructionObject(HaloConstructionManager man, HaloConstructionMan
 		MIC = DetailedMesh.StaticMeshComponent.CreateAndSetMaterialInstanceConstant(I);
 		SolidMICs.AddItem(MIC);
 		MIC.SetTextureParameterValue('EMIS_Texture', CInfo.TextureParameter);
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x5FC;
 	}
@@ -569,7 +569,7 @@ function ShowPrimitiveMesh(bool show)
 	if(I < SocketPrimitives.Length)
 	{
 		SetMaterialSocketPrimitiveClear(I);
-		SocketPrimitives[I].Actor.SetHidden(show!);
+		SocketPrimitives[I].Actor.SetHidden(!show);
 		I++;
 		// [Loop Continue]
 		goto J0x0B;
@@ -635,7 +635,7 @@ function TickPrimitiveMeshFade(float DeltaTime)
 				{
 					Mat.SetScalarParameterValue(PrimitiveScalarParamFadeTimeName, PrimitiveMeshFadePct);
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x1A7;
 			}
@@ -652,7 +652,7 @@ function TickPrimitiveMeshFade(float DeltaTime)
 			{
 				Mat.SetScalarParameterValue(PrimitiveScalarParamFadeDistName, CManager.GetActivatorBuildTriggerDistanceRatio());
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x292;
 		}
@@ -827,7 +827,7 @@ function TickDetailedMeshFade(float DeltaTime)
 				{
 					Mat.SetScalarParameterValue(DetailedScalarParamFadeTimeName, DetailedMeshFadePct);
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x1A7;
 			}
@@ -844,7 +844,7 @@ function TickDetailedMeshFade(float DeltaTime)
 			{
 				Mat.SetScalarParameterValue(DetailedScalarParamFadeDistName, CManager.GetActivatorBuildTriggerDistanceRatio());
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x292;
 		}
@@ -1258,7 +1258,7 @@ function TickSelectedSocketPrimitive(float DeltaTime)
 				{
 					MIC.SetScalarParameterValue(PrimitiveScalarParamFadeTimeName, SocketPrimitives[SocketPrimitiveIndex].FadePct);
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x545;
 			}
@@ -1279,7 +1279,7 @@ function TickSelectedSocketPrimitive(float DeltaTime)
 				{
 					MIC.SetVectorParameterValue(PrimitiveVectorParamColorName, newColor);
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x6EB;
 			}
@@ -1407,7 +1407,7 @@ function SetMaterialSocketPrimitiveClearSelected(int Index, optional bool hardSe
 				{
 					MIC.SetScalarParameterValue(PrimitiveScalarParamFadeTimeName, SocketPrimitives[Index].FadePct);
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x174;
 			}			

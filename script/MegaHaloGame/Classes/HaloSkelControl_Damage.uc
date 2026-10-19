@@ -9,7 +9,7 @@ simulated event BreakApart(Vector PartLocation, bool bIsVisible)
 
 	OwnerPawn = HaloPawn(SkelComponent.Owner);
 	// End:0x8B
-	if(((bOnDamageActive! || BreakMesh == none) || OwnerPawn == none) || bIsBroken)
+	if(((!bOnDamageActive || BreakMesh == none) || OwnerPawn == none) || bIsBroken)
 	{
 		bIsBreaking = false;
 		bIsBroken = true;
@@ -38,7 +38,7 @@ simulated event BreakApartAtBone()
 
 	OwnerPawn = HaloPawn(SkelComponent.Owner);
 	// End:0x8B
-	if(((bOnDamageActive! || BreakMesh == none) || OwnerPawn == none) || bIsBroken)
+	if(((!bOnDamageActive || BreakMesh == none) || OwnerPawn == none) || bIsBroken)
 	{
 		bIsBreaking = false;
 		bIsBroken = true;

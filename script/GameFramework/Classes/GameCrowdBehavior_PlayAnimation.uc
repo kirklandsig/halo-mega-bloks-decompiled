@@ -63,7 +63,7 @@ function InitBehavior(GameCrowdAgent Agent)
 	}
 	AnimationIndex = 0;
 	// End:0x221
-	if(bFaceActionTargetFirst!)
+	if(!bFaceActionTargetFirst)
 	{
 		PlayAgentAnimationNow();
 	}

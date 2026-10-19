@@ -92,7 +92,7 @@ event Touch(Actor Other, PrimitiveComponent OtherComp, Vector HitLocation, Vecto
 	local editinline UDKTargetableComponent targetComp;
 
 	// End:0x24C
-	if(((bSwitchScheduled! && HaloPawn(Other) != none) && NextPawnToControl != none) && HaloPlayerPawnController(HaloPawn(Other).Controller) != none)
+	if(((!bSwitchScheduled && HaloPawn(Other) != none) && NextPawnToControl != none) && HaloPlayerPawnController(HaloPawn(Other).Controller) != none)
 	{
 		ControllerToBeSwitched = HaloPlayerPawnController(HaloPawn(Other).Controller);
 		PrevPawnControlled = HaloPawn(Other);

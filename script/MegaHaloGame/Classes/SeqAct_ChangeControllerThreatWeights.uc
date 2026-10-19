@@ -50,7 +50,7 @@ event Activated()
 		}		
 	}	
 	// End:0x3B2
-	if(OutputLinks[1].bHasImpulse!)
+	if(!OutputLinks[1].bHasImpulse)
 	{
 		OutputLinks[0].bHasImpulse = true;
 	}

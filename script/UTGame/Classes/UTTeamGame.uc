@@ -142,7 +142,7 @@ function UTTeamInfo GetBotTeam(optional int TeamBots, optional bool bUseTeamInde
 		if(Teams[0].AllBotsSpawned())
 		{
 			// End:0x100
-			if(Teams[1].AllBotsSpawned()!)
+			if(!Teams[1].AllBotsSpawned())
 			{
 				return Teams[1];
 			}			
@@ -219,7 +219,7 @@ function bool CheckMaxLives(PlayerReplicationInfo Scorer)
 	if(MaxLives > 0)
 	{
 		// End:0x57
-		if((Scorer != none) && Scorer.bOutOfLives!)
+		if((Scorer != none) && !Scorer.bOutOfLives)
 		{
 			Living = Scorer;
 		}
@@ -228,7 +228,7 @@ function bool CheckMaxLives(PlayerReplicationInfo Scorer)
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', C)
 		{
 			// End:0x222
-			if((((C.PlayerReplicationInfo != none) && C.bIsPlayer) && C.PlayerReplicationInfo.bOutOfLives!) && C.PlayerReplicationInfo.bOnlySpectator!)
+			if((((C.PlayerReplicationInfo != none) && C.bIsPlayer) && !C.PlayerReplicationInfo.bOutOfLives) && !C.PlayerReplicationInfo.bOnlySpectator)
 			{
 				// End:0x18F
 				if(Living == none)
@@ -320,7 +320,7 @@ function bool TooManyBots(Controller botToRemove)
 		return false;
 	}
 	// End:0x1D8
-	if((((bPlayersVsBots! || int(WorldInfo.NetMode) == int(NM_Standalone)) && UTBot(botToRemove) != none) && bCustomBots! || int(WorldInfo.NetMode) != int(NM_Standalone)) && botToRemove.PlayerReplicationInfo.Team != none)
+	if((((!bPlayersVsBots || int(WorldInfo.NetMode) == int(NM_Standalone)) && UTBot(botToRemove) != none) && !bCustomBots || int(WorldInfo.NetMode) != int(NM_Standalone)) && botToRemove.PlayerReplicationInfo.Team != none)
 	{
 		BotTeam = botToRemove.PlayerReplicationInfo.Team;
 		OtherTeam = Teams[1 - BotTeam.TeamIndex];
@@ -378,7 +378,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', P)
 		{
 			// End:0xD7
-			if((P.PlayerReplicationInfo != none) && P.PlayerReplicationInfo.bOutOfLives!)
+			if((P.PlayerReplicationInfo != none) && !P.PlayerReplicationInfo.bOutOfLives)
 			{
 				bLastMan = false;
 				// End:0xD8
@@ -393,7 +393,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 	}
 	bLastMan = Reason ComplementEqual "LastMan";
 	// End:0x139
-	if(bLastMan! && CheckModifiedEndGame(Winner, Reason))
+	if(!bLastMan && CheckModifiedEndGame(Winner, Reason))
 	{
 		return false;
 	}
@@ -410,10 +410,10 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 	else
 	{
 		// End:0x24F
-		if(bLastMan! && Teams[1].Score == Teams[0].Score)
+		if(!bLastMan && Teams[1].Score == Teams[0].Score)
 		{
 			// End:0x24D
-			if(bOverTimeBroadcast!)
+			if(!bOverTimeBroadcast)
 			{
 				StartupStage = 7;
 				PlayStartupMessage();
@@ -498,7 +498,7 @@ function RestartGame()
 	local array<PlayerController> RedPlayers, BluePlayers;
 
 	// End:0x31D
-	if((bPlayersVsBots! && bPlayersBalanceTeams) && int(WorldInfo.NetMode) != int(NM_Standalone))
+	if((!bPlayersVsBots && bPlayersBalanceTeams) && int(WorldInfo.NetMode) != int(NM_Standalone))
 	{
 		// End:0x1CE
 		foreach WorldInfo.AllControllers(Class'Engine.PlayerController', PC)
@@ -701,7 +701,7 @@ function bool ChangeTeam(Controller Other, int Num, bool bNewTeam)
 	if(Other.PlayerReplicationInfo.Team == NewTeam)
 	{
 		// End:0x46D
-		if(((((Num < 2) && Num != NewTeam.TeamIndex) && bPlayersVsBots!) && PlayerController(Other) != none) && UTTeamInfo(Other.PlayerReplicationInfo.Team) != none)
+		if(((((Num < 2) && Num != NewTeam.TeamIndex) && !bPlayersVsBots) && PlayerController(Other) != none) && UTTeamInfo(Other.PlayerReplicationInfo.Team) != none)
 		{
 			// End:0x3F5
 			if(PendingTeamSwap != none)
@@ -754,7 +754,7 @@ function SetTeam(Controller Other, UTTeamInfo NewTeam, bool bNewTeam)
 		return;
 	}
 	// End:0x99
-	if((Other.PlayerReplicationInfo.Team != none) || ShouldSpawnAtStartSpot(Other)!)
+	if((Other.PlayerReplicationInfo.Team != none) || !ShouldSpawnAtStartSpot(Other))
 	{
 		Other.StartSpot = none;
 	}
@@ -816,7 +816,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 	else
 	{
 		// End:0x51
-		if((bOverTime! && GoalScore == 0) || Scorer == none)
+		if((!bOverTime && GoalScore == 0) || Scorer == none)
 		{
 			return false;			
 		}
@@ -845,7 +845,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 						if(Scorer.Team.Score == float(GoalScore - 10))
 						{
 							// End:0x249
-							if(bPlayedTenKills! && GoalScore > 19)
+							if(!bPlayedTenKills && GoalScore > 19)
 							{
 								// End:0x249
 								if(Scorer.Team.Score > Teams[1 - Scorer.Team.TeamIndex].Score)
@@ -861,7 +861,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 							if(Scorer.Team.Score == float(GoalScore - 5))
 							{
 								// End:0x365
-								if(bPlayedFiveKills! && GoalScore > 9)
+								if(!bPlayedFiveKills && GoalScore > 9)
 								{
 									// End:0x365
 									if(Scorer.Team.Score > Teams[1 - Scorer.Team.TeamIndex].Score)
@@ -874,7 +874,7 @@ function bool CheckScore(PlayerReplicationInfo Scorer)
 							else
 							{
 								// End:0x471
-								if((Scorer.Team.Score == float(GoalScore - 1)) && bPlayedOneKill!)
+								if((Scorer.Team.Score == float(GoalScore - 1)) && !bPlayedOneKill)
 								{
 									// End:0x471
 									if(Scorer.Team.Score > Teams[1 - Scorer.Team.TeamIndex].Score)
@@ -926,11 +926,11 @@ function ScoreKill(Controller Killer, Controller Other)
 	local UTBot B;
 
 	// End:0x11C
-	if(Other.bIsPlayer! || (Killer != none) && Killer.bIsPlayer! || Killer.PlayerReplicationInfo == none)
+	if(!Other.bIsPlayer || (Killer != none) && !Killer.bIsPlayer || Killer.PlayerReplicationInfo == none)
 	{
 		super(UTGame).ScoreKill(Killer, Other);
 		// End:0x11A
-		if(((bScoreTeamKills! && Killer != none) && Killer.bIsPlayer) && MaxLives > 0)
+		if(((!bScoreTeamKills && Killer != none) && Killer.bIsPlayer) && MaxLives > 0)
 		{
 			CheckScore(Killer.PlayerReplicationInfo);
 		}
@@ -1010,7 +1010,7 @@ function ScoreKill(Controller Killer, Controller Other)
 		ModifyScoreKill(Killer, Other);
 	}
 	// End:0x8D8
-	if(bScoreTeamKills!)
+	if(!bScoreTeamKills)
 	{
 		// End:0x88E
 		if(((((Other.bIsPlayer && Killer != none) && Killer.bIsPlayer) && Killer != Other) && Killer.PlayerReplicationInfo != none) && Killer.PlayerReplicationInfo.Team == Other.PlayerReplicationInfo.Team)
@@ -1160,7 +1160,7 @@ function AdjustSkill(AIController B, PlayerController P, bool bWinner)
 function SendFlagKillMessage(Controller Killer, UTPlayerReplicationInfo KillerPRI)
 {
 	// End:0x49
-	if((UTPlayerController(Killer) != none) && UTPlayerController(Killer).bAutoTaunt!)
+	if((UTPlayerController(Killer) != none) && !UTPlayerController(Killer).bAutoTaunt)
 	{
 		return;
 	}
@@ -1239,7 +1239,7 @@ function ReduceDamage(out int Damage, Pawn injured, Controller InstigatedBy, Vec
 			else
 			{
 				// End:0x6AD
-				if(((injured.IsHumanControlled()! && injured.Controller != none) && UTPlayerReplicationInfo(injured.PlayerReplicationInfo) != none) && UTPlayerReplicationInfo(injured.PlayerReplicationInfo).bHasFlag)
+				if(((!injured.IsHumanControlled() && injured.Controller != none) && UTPlayerReplicationInfo(injured.PlayerReplicationInfo) != none) && UTPlayerReplicationInfo(injured.PlayerReplicationInfo).bHasFlag)
 				{
 					injured.Controller.SendMessage(none, 'injured', 15.0000000);
 				}
@@ -1423,7 +1423,7 @@ function Logout(Controller Exiting)
 	local bool bFound;
 
 	// End:0x9A
-	if(WorldInfo.IsInSeamlessTravel()! && Exiting.PlayerReplicationInfo.bFromPreviousLevel)
+	if(!WorldInfo.IsInSeamlessTravel() && Exiting.PlayerReplicationInfo.bFromPreviousLevel)
 	{
 		OldTeam = Exiting.PlayerReplicationInfo.Team;
 	}
@@ -1451,7 +1451,7 @@ function Logout(Controller Exiting)
 		J0x13B:
 
 		// End:0x162
-		if(bFound!)
+		if(!bFound)
 		{
 			OldTeam.Destroy();
 		}
@@ -1493,7 +1493,7 @@ event HandleSeamlessTravelPlayer(out Controller C)
 		else
 		{
 			// End:0x38E
-			if(C.PlayerReplicationInfo.bOnlySpectator! && AIController(C) == none)
+			if(!C.PlayerReplicationInfo.bOnlySpectator && AIController(C) == none)
 			{
 				ChangeTeam(C, 0, false);
 			}

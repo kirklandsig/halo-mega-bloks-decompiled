@@ -343,7 +343,7 @@ exec function ToggleZoom()
 exec function EnableCameraAim()
 {
 	// End:0x38
-	if(bPawnControlsLocked! && bCinematicMode!)
+	if(!bPawnControlsLocked && !bCinematicMode)
 	{
 		IsAutoAimEnabled = bIsAimingTargetDesignator == false;
 	}
@@ -358,13 +358,13 @@ exec function DisableCameraAim()
 
 exec function ToggleVehicleAccel()
 {
-	bAltVehicleAccel = bAltVehicleAccel!;
+	bAltVehicleAccel = !bAltVehicleAccel;
 	//return;	
 }
 
 exec function ToggleVehicleBrake()
 {
-	bVehicleAutoBrake = bVehicleAutoBrake!;
+	bVehicleAutoBrake = !bVehicleAutoBrake;
 	//return;	
 }
 
@@ -773,7 +773,7 @@ exec function SwapWeapons(optional bool bOnlyIfNextWeaponHasAmmo = false)
 	if((newWeaponIdx >= 0) && regularWeaponList[newWeaponIdx] != CurrentWeapon)
 	{
 		// End:0x3ED
-		if(bOnlyIfNextWeaponHasAmmo! || regularWeaponList[newWeaponIdx].HasAnyAmmo())
+		if(!bOnlyIfNextWeaponHasAmmo || regularWeaponList[newWeaponIdx].HasAnyAmmo())
 		{
 			InvManager.SetCurrentWeapon(regularWeaponList[newWeaponIdx]);
 		}
@@ -919,7 +919,7 @@ simulated function bool ToggleTargetDesignatorAutoMode()
 	else
 	{
 		// End:0x3FE
-		if(bIsAimingTargetDesignator!)
+		if(!bIsAimingTargetDesignator)
 		{
 			CurrentWeapon = UTWeapon(InvManager.PendingWeapon);
 			// End:0x318
@@ -948,7 +948,7 @@ simulated function bool ToggleTargetDesignatorAutoMode()
 exec function PrevCategoryItem()
 {
 	// End:0x4E
-	if((bIsAimingTargetDesignator && TDWeapon != none) && bCinematicMode!)
+	if((bIsAimingTargetDesignator && TDWeapon != none) && !bCinematicMode)
 	{
 		TDWeapon.ChoosePrevItem();
 	}
@@ -958,7 +958,7 @@ exec function PrevCategoryItem()
 exec function NextCategoryItem()
 {
 	// End:0x4E
-	if((bIsAimingTargetDesignator && TDWeapon != none) && bCinematicMode!)
+	if((bIsAimingTargetDesignator && TDWeapon != none) && !bCinematicMode)
 	{
 		TDWeapon.ChooseNextItem();
 	}
@@ -968,7 +968,7 @@ exec function NextCategoryItem()
 exec function ToggleTargetDesignator()
 {
 	// End:0x2A
-	if(bCinematicMode! && bPawnControlsLocked!)
+	if(!bCinematicMode && !bPawnControlsLocked)
 	{
 		ToggleTargetDesignatorAutoMode();
 	}
@@ -978,7 +978,7 @@ exec function ToggleTargetDesignator()
 exec function CancelTargetDesignator()
 {
 	// End:0x4A
-	if(((bIsAimingTargetDesignator && TDWeapon != none) && bCinematicMode!) && bPawnControlsLocked!)
+	if(((bIsAimingTargetDesignator && TDWeapon != none) && !bCinematicMode) && !bPawnControlsLocked)
 	{
 		ToggleTargetDesignatorAutoMode();
 	}
@@ -1039,7 +1039,7 @@ exec function ToggleVehicleBuildCheat()
 	// End:0x50
 	if(TDWeapon != none)
 	{
-		TDWeapon.bCheatToBuildVehiclesAnywhere = TDWeapon.bCheatToBuildVehiclesAnywhere!;
+		TDWeapon.bCheatToBuildVehiclesAnywhere = !TDWeapon.bCheatToBuildVehiclesAnywhere;
 	}
 	//return;	
 }
@@ -1162,7 +1162,7 @@ static function int LerpAngle(int ang, int desiredAng, float turnSpeed, float De
 	// End:0x7A
 	if(deltaAng < 0)
 	{
-		deltaAng = Max(deltaAng, Turn-);		
+		deltaAng = Max(deltaAng, -Turn);		
 	}
 	else
 	{
@@ -1178,7 +1178,7 @@ static function int TetherAngle(int ang, int desiredAng, int tetherAng)
 
 	deltaAng = NormalizeRotAxis(desiredAng - ang);
 	// End:0x6C
-	if(deltaAng < tetherAng-)
+	if(deltaAng < -tetherAng)
 	{
 		ang = NormalizeRotAxis(desiredAng + tetherAng);		
 	}
@@ -1212,7 +1212,7 @@ function bool CanSprint()
 	if(PlayerInput != none)
 	{
 		// End:0x78
-		if(bIsAimingTargetDesignator! && (Abs(PlayerInput.aBaseY) > 0.1000000) || Abs(PlayerInput.aStrafe) > 0.1000000)
+		if(!bIsAimingTargetDesignator && (Abs(PlayerInput.aBaseY) > 0.1000000) || Abs(PlayerInput.aStrafe) > 0.1000000)
 		{
 			return true;
 		}
@@ -1231,7 +1231,7 @@ exec function OnUseButtonPressed()
 	local HaloPawn P;
 
 	// End:0x122
-	if((bCinematicMode! && bIsAimingTargetDesignator!) && bPawnControlsLocked!)
+	if((!bCinematicMode && !bIsAimingTargetDesignator) && !bPawnControlsLocked)
 	{
 		// End:0x40
 		if(TryToUnpause())
@@ -1346,7 +1346,7 @@ function OnUseButtonQuickRelease()
 exec function OnAltUseButtonPressed()
 {
 	// End:0x4A
-	if((bCinematicMode! && bIsAimingTargetDesignator!) && bPawnControlsLocked!)
+	if((!bCinematicMode && !bIsAimingTargetDesignator) && !bPawnControlsLocked)
 	{
 		// End:0x40
 		if(TryToAltActionABuildPad())
@@ -1582,7 +1582,7 @@ simulated function TickActionableBuildPads(float DeltaTime)
 	prevActionableGrid = ActionableStudGrid;
 	newActionableGrid = ActionableStudGrid;
 	// End:0xFE
-	if((ActionableStudGrid == none) || ActionableStudGrid.CanBeActionedNow()!)
+	if((ActionableStudGrid == none) || !ActionableStudGrid.CanBeActionedNow())
 	{
 		newActionableGrid = none;
 		I = 0;
@@ -1598,7 +1598,7 @@ simulated function TickActionableBuildPads(float DeltaTime)
 				// [Explicit Break]
 				goto J0xFE;
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x71;
 		}
@@ -1694,7 +1694,7 @@ exec function UseAbility()
 	local HaloPawn P;
 
 	// End:0x7B
-	if((bIsAimingTargetDesignator! && bCinematicMode!) && bPawnControlsLocked!)
+	if((!bIsAimingTargetDesignator && !bCinematicMode) && !bPawnControlsLocked)
 	{
 		P = HaloPawn(Pawn);
 		// End:0x7B
@@ -2061,7 +2061,7 @@ function SetCinematicMode(bool bInCinematicMode, bool bHidePlayer, bool bAffects
 				{
 					V.Seats[I].StoragePawn.SetHidden(true);
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0xB4;
 			}
@@ -2093,7 +2093,7 @@ function SetCinematicMode(bool bInCinematicMode, bool bHidePlayer, bool bAffects
 				{
 					V.Seats[I].StoragePawn.SetHidden(false);
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x224;
 			}
@@ -2350,7 +2350,7 @@ function TickCompass(float DeltaTime)
 			// End:0x62
 			if(bIsCompassPathValid)
 			{
-				bUpdateCompassPath = IsPathStillValid()!;				
+				bUpdateCompassPath = !IsPathStillValid();				
 			}
 			else
 			{
@@ -2819,7 +2819,7 @@ exec function UpdateLocalCacheOfProfileSettings()
 
 	Game = HaloGameDefault(WorldInfo.Game);
 	// End:0x263
-	if((Game != none) && Game.bIsDemoMode!)
+	if((Game != none) && !Game.bIsDemoMode)
 	{
 		UpdateControllerConfig();
 		ProfileSettings.GetProfileSettingValueId(ProfileSettings.34, Value);
@@ -2897,7 +2897,7 @@ reliable client simulated function ClientSaveAllPlayerData(optional bool bShould
 		SavePersistentData();
 	}
 	// End:0x128
-	if(bSkipCacheUpdate!)
+	if(!bSkipCacheUpdate)
 	{
 		UpdateLocalCacheOfProfileSettings();
 		bProfileSettingsUpdated = false;
@@ -2940,7 +2940,7 @@ private final function SaveProfile()
 		if(ControllerId != -1)
 		{
 			// End:0xE2
-			if(bHasSigninChanged!)
+			if(!bHasSigninChanged)
 			{
 				OnlineSub.PlayerInterface.WriteProfileSettings(byte(ControllerId), ProfileSettings);
 			}
@@ -3011,7 +3011,7 @@ state PlayerWalking
 	exec function StartFire(optional byte FireModeNum)
 	{
 		// End:0x34
-		if(bIsAimingTargetDesignator! && bPawnControlsLocked!)
+		if(!bIsAimingTargetDesignator && !bPawnControlsLocked)
 		{
 			super(PlayerController).StartFire(FireModeNum);
 		}
@@ -3021,7 +3021,7 @@ state PlayerWalking
 	exec function StopFire(optional byte FireModeNum)
 	{
 		// End:0x23
-		if(bIsAimingTargetDesignator!)
+		if(!bIsAimingTargetDesignator)
 		{
 			super(PlayerController).StopFire(FireModeNum);
 		}
@@ -3031,7 +3031,7 @@ state PlayerWalking
 	exec function StartBuilding()
 	{
 		// End:0x5F
-		if(((bIsAimingTargetDesignator && TDWeapon != none) && bCinematicMode!) && bPawnControlsLocked!)
+		if(((bIsAimingTargetDesignator && TDWeapon != none) && !bCinematicMode) && !bPawnControlsLocked)
 		{
 			TDWeapon.StartPullingTrigger();
 		}
@@ -3089,7 +3089,7 @@ state PlayerWalking
 				}
 			}
 			// End:0x289
-			if((isAiming && bIsAimingTargetDesignator!) && IsZooming()!)
+			if((isAiming && !bIsAimingTargetDesignator) && !IsZooming())
 			{
 				AimTarget = GetCameraAutoAimTarget();
 				// End:0x289
@@ -3268,7 +3268,7 @@ state PlayerWalking
 		local Rotator ViewRotation;
 
 		// End:0xB4
-		if(IsMoveInputIgnored()! && IsGrabbingLedge()!)
+		if(!IsMoveInputIgnored() && !IsGrabbingLedge())
 		{
 			Direction.X = leftStick.Y;
 			Direction.Y = leftStick.X;
@@ -3313,18 +3313,18 @@ state PlayerWalking
 				// End:0x18C
 				if(PlayerInput.bInvertMouse)
 				{
-					PlayerInputRawViewMotion.Z = PlayerInputRawViewMotion.Z-;
+					PlayerInputRawViewMotion.Z = -PlayerInputRawViewMotion.Z;
 				}				
 			}
 			else
 			{
 				PlayerInputRawViewMotion.X = rightStick.X;
 				PlayerInputRawViewMotion.Y = 0.0000000;
-				PlayerInputRawViewMotion.Z = rightStick.Y-;
+				PlayerInputRawViewMotion.Z = -rightStick.Y;
 				// End:0x282
 				if(PlayerInput.bInvertMouse)
 				{
-					PlayerInputRawViewMotion.Z = PlayerInputRawViewMotion.Z-;
+					PlayerInputRawViewMotion.Z = -PlayerInputRawViewMotion.Z;
 				}
 			}
 		}
@@ -3366,7 +3366,7 @@ state PlayerWalking
 		leftStick = ApplyDeadZone(PlayerInput.RawJoyRight, PlayerInput.RawJoyUp);
 		rightStick = ApplyDeadZone(PlayerInput.RawJoyLookRight, PlayerInput.RawJoyLookUp);
 		rightStick.X = ((rightStick.X == float(0)) ? PlayerInput.aMouseX / 600.0000000 : rightStick.X);
-		rightStick.Y = ((rightStick.Y == float(0)) ? PlayerInput.aMouseY- / 600.0000000 : rightStick.Y);
+		rightStick.Y = ((rightStick.Y == float(0)) ? -PlayerInput.aMouseY / 600.0000000 : rightStick.Y);
 		ProcessPlayerAim(DeltaTime, leftStick, rightStick);
 		ProcessPlayerMotion(DeltaTime, leftStick);
 		//return;		
@@ -3415,11 +3415,11 @@ state PlayerWalking
 		local HaloPawn P;
 
 		// End:0xBB
-		if((bCinematicMode! && bPawnControlsLocked!) && bIsAimingTargetDesignator!)
+		if((!bCinematicMode && !bPawnControlsLocked) && !bIsAimingTargetDesignator)
 		{
 			P = HaloPawn(Pawn);
 			// End:0xBB
-			if(((P != none) && P.IsBusy()!) && P.IsGrabbingLedge()!)
+			if(((P != none) && !P.IsBusy()) && !P.IsGrabbingLedge())
 			{
 				NetworkGotoState('PlayerSprinting');
 			}
@@ -3432,10 +3432,10 @@ state PlayerWalking
 		local HaloPawn P;
 
 		// End:0xA6
-		if((bCinematicMode! && bIsAimingTargetDesignator!) && bPawnControlsLocked!)
+		if((!bCinematicMode && !bIsAimingTargetDesignator) && !bPawnControlsLocked)
 		{
 			P = HaloPawn(Pawn);
-			return ((P != none) && P.IsBusy()!) && P.IsGrabbingLedge()!;
+			return ((P != none) && !P.IsBusy()) && !P.IsGrabbingLedge();
 		}
 		return false;
 		//return ReturnValue;		
@@ -3463,10 +3463,10 @@ state PlayerWalking
 		local HaloPawn P;
 
 		// End:0x95
-		if(bCinematicMode! && bIsAimingTargetDesignator!)
+		if(!bCinematicMode && !bIsAimingTargetDesignator)
 		{
 			P = HaloPawn(Pawn);
-			return ((P != none) && P.IsBusy()!) && P.IsGrabbingLedge()!;
+			return ((P != none) && !P.IsBusy()) && !P.IsGrabbingLedge();
 		}
 		return false;
 		//return ReturnValue;		
@@ -3536,7 +3536,7 @@ state PlayerSprinting extends PlayerWalking
 	function PlayerMove(float DeltaTime)
 	{
 		// End:0x19
-		if(CanSprint()!)
+		if(!CanSprint())
 		{
 			EndSprint();
 		}
@@ -3560,7 +3560,7 @@ state PlayerSprinting extends PlayerWalking
 	{
 		EndSprint();
 		// End:0x2D
-		if(bPawnControlsLocked!)
+		if(!bPawnControlsLocked)
 		{
 			super.StartFire(FireModeNum);
 		}
@@ -3618,7 +3618,7 @@ state PlayerDriving
 			if(HV.KidFriendlyControls)
 			{
 				// End:0x123
-				if(bVehicleAccel && bVehicleBrake!)
+				if(bVehicleAccel && !bVehicleBrake)
 				{
 					Throttle = 1.0000000;
 					HV.ApplyNormalVariables();					
@@ -3626,7 +3626,7 @@ state PlayerDriving
 				else
 				{
 					// End:0x172
-					if(bVehicleAccel! && bVehicleBrake)
+					if(!bVehicleAccel && bVehicleBrake)
 					{
 						Throttle = -1.0000000;
 						HV.ApplyBrakingVariables();						
@@ -3660,7 +3660,7 @@ state PlayerDriving
 						else
 						{
 							// End:0x2ED
-							if(HV.ForwardVel <= SimCar.StopThreshold-)
+							if(HV.ForwardVel <= -SimCar.StopThreshold)
 							{
 								Throttle = 1.0000000;
 							}
@@ -3688,7 +3688,7 @@ state PlayerDriving
 			ViewRotation = Rotation;
 			HV = HaloVehicle(Pawn);
 			// End:0x138
-			if((HV != none) && HV.bLookSteerOnAllPlatforms!)
+			if((HV != none) && !HV.bLookSteerOnAllPlatforms)
 			{
 				HV.GetRotation(ViewRotation);
 				InterpRate = HV.GetCamInterpRate();
@@ -3732,7 +3732,7 @@ state PlayerDriving
 						// End:0x4B5
 						if(Abs(PlayerInput.RawJoyUp) >= Abs(PlayerInput.RawJoyLookUp))
 						{
-							DeltaRot.Pitch = int((((PlayerInput.RawJoyUp- * 50.0000000) * DeltaTime) * PlayerInput.LookUpScale) * 0.6500000);							
+							DeltaRot.Pitch = int((((-PlayerInput.RawJoyUp * 50.0000000) * DeltaTime) * PlayerInput.LookUpScale) * 0.6500000);							
 						}
 						else
 						{
@@ -3741,7 +3741,7 @@ state PlayerDriving
 						// End:0x584
 						if(PlayerInput.bInvertMouse == true)
 						{
-							DeltaRot.Pitch = DeltaRot.Pitch-;
+							DeltaRot.Pitch = -DeltaRot.Pitch;
 						}						
 					}
 					else
@@ -3806,7 +3806,7 @@ state PlayerDriving
 
 		HV = HaloVehicle(Pawn);
 		// End:0xAB
-		if((((HV != none) && HV.CanBoost) && HV.bBoostersActivated! && bCinematicMode!) && bPawnControlsLocked!)
+		if((!((HV != none) && HV.CanBoost) && HV.bBoostersActivated && !bCinematicMode) && !bPawnControlsLocked)
 		{
 			super(PlayerController).StartFire(FireModeNum);
 		}
@@ -3819,7 +3819,7 @@ state PlayerDriving
 
 		HV = HaloVehicle(Pawn);
 		// End:0x92
-		if((((HV != none) && HV.Health > 0) && bCinematicMode!) && bPawnControlsLocked!)
+		if((((HV != none) && HV.Health > 0) && !bCinematicMode) && !bPawnControlsLocked)
 		{
 			HV.AttemptPlayHornSound();
 		}
@@ -3845,7 +3845,7 @@ state PlayerDriving
 
 		HV = HaloVehicle(Pawn);
 		// End:0x92
-		if((((HV != none) && HV.Health > 0) && bCinematicMode!) && bPawnControlsLocked!)
+		if((((HV != none) && HV.Health > 0) && !bCinematicMode) && !bPawnControlsLocked)
 		{
 			HV.StartBoosting();
 		}
@@ -3881,7 +3881,7 @@ state PlayerDriving
 	exec function StartVehicleAccel()
 	{
 		// End:0x2C
-		if(bCinematicMode! && bPawnControlsLocked!)
+		if(!bCinematicMode && !bPawnControlsLocked)
 		{
 			bVehicleAccel = true;
 		}
@@ -3897,7 +3897,7 @@ state PlayerDriving
 	exec function StartVehicleBrake()
 	{
 		// End:0x2C
-		if(bCinematicMode! && bPawnControlsLocked!)
+		if(!bCinematicMode && !bPawnControlsLocked)
 		{
 			bVehicleBrake = true;
 		}
@@ -3913,7 +3913,7 @@ state PlayerDriving
 	exec function StartVehicleStrafe()
 	{
 		// End:0x2C
-		if(bCinematicMode! && bPawnControlsLocked!)
+		if(!bCinematicMode && !bPawnControlsLocked)
 		{
 			bVehicleStrafe = true;
 		}
@@ -3929,7 +3929,7 @@ state PlayerDriving
 	exec function UseVehicleAbility()
 	{
 		// End:0x62
-		if(((HaloVehicle(Pawn) != none) && bCinematicMode!) && bPawnControlsLocked!)
+		if(((HaloVehicle(Pawn) != none) && !bCinematicMode) && !bPawnControlsLocked)
 		{
 			HaloVehicle(Pawn).UseAddonAbility();
 		}
@@ -3939,7 +3939,7 @@ state PlayerDriving
 	exec function CancelVehicleAbility()
 	{
 		// End:0x62
-		if(((HaloVehicle(Pawn) != none) && bCinematicMode!) && bPawnControlsLocked!)
+		if(((HaloVehicle(Pawn) != none) && !bCinematicMode) && !bPawnControlsLocked)
 		{
 			HaloVehicle(Pawn).CancelAddonAbility();
 		}
@@ -4064,7 +4064,7 @@ state VehicleBuilding
 		Pawn.Acceleration = zero;
 		TheGame = HaloGameDefault(WorldInfo.Game);
 		// End:0x119
-		if(((HVCP != none) && TheGame.TheCustomizationManager.IsActive()!) && bShowHVCCPrompt!)
+		if(((HVCP != none) && !TheGame.TheCustomizationManager.IsActive()) && !bShowHVCCPrompt)
 		{
 			TheGame.TheCustomizationManager.OpenHVCMenu(HVCP);
 		}
@@ -4074,7 +4074,7 @@ state VehicleBuilding
 	exec function CloseHVCMenu()
 	{
 		// End:0x66
-		if(bShowHVCCPrompt!)
+		if(!bShowHVCCPrompt)
 		{
 			GFxHaloHUD(myHUD).VCMovie.PlayAkEvent(AkEvent'Global.Play_UI_Construction_Exit');
 			GotoState('VehicleCustomizationBuildStateTransitionOut');			
@@ -4092,7 +4092,7 @@ state VehicleBuilding
 
 		TheGame = HaloGameDefault(WorldInfo.Game);
 		// End:0xEE
-		if(TheGame.TheCustomizationManager.IsActive() && bShowHVCCPrompt!)
+		if(TheGame.TheCustomizationManager.IsActive() && !bShowHVCCPrompt)
 		{
 			GFxHaloHUD(myHUD).VCMovie.PlayMenuSound("up");
 			TheGame.TheCustomizationManager.IncrementCurrentCategoryIndex();
@@ -4106,7 +4106,7 @@ state VehicleBuilding
 
 		TheGame = HaloGameDefault(WorldInfo.Game);
 		// End:0xF0
-		if(TheGame.TheCustomizationManager.IsActive() && bShowHVCCPrompt!)
+		if(TheGame.TheCustomizationManager.IsActive() && !bShowHVCCPrompt)
 		{
 			GFxHaloHUD(myHUD).VCMovie.PlayMenuSound("down");
 			TheGame.TheCustomizationManager.DecrementCurrentCategoryIndex();
@@ -4120,7 +4120,7 @@ state VehicleBuilding
 
 		TheGame = HaloGameDefault(WorldInfo.Game);
 		// End:0xF0
-		if(TheGame.TheCustomizationManager.IsActive() && bShowHVCCPrompt!)
+		if(TheGame.TheCustomizationManager.IsActive() && !bShowHVCCPrompt)
 		{
 			GFxHaloHUD(myHUD).VCMovie.PlayMenuSound("left");
 			TheGame.TheCustomizationManager.DecrementCurrentItemIndex();
@@ -4134,7 +4134,7 @@ state VehicleBuilding
 
 		TheGame = HaloGameDefault(WorldInfo.Game);
 		// End:0xF1
-		if(TheGame.TheCustomizationManager.IsActive() && bShowHVCCPrompt!)
+		if(TheGame.TheCustomizationManager.IsActive() && !bShowHVCCPrompt)
 		{
 			GFxHaloHUD(myHUD).VCMovie.PlayMenuSound("right");
 			TheGame.TheCustomizationManager.IncrementCurrentItemIndex();
@@ -4148,7 +4148,7 @@ state VehicleBuilding
 
 		TheGame = HaloGameDefault(WorldInfo.Game);
 		// End:0xB6
-		if(TheGame.TheCustomizationManager.IsActive() && bShowHVCCPrompt!)
+		if(TheGame.TheCustomizationManager.IsActive() && !bShowHVCCPrompt)
 		{
 			TheGame.TheCustomizationManager.ProcessJoyStickInput(PlayerInput);
 		}
@@ -4161,7 +4161,7 @@ state VehicleBuilding
 
 		HVCCManager = HaloGameDefault(WorldInfo.Game).TheCustomizationManager;
 		// End:0xDC
-		if(HVCCManager.IsActive() && bShowHVCCPrompt!)
+		if(HVCCManager.IsActive() && !bShowHVCCPrompt)
 		{
 			GFxHaloHUD(myHUD).VCMovie.PlayMenuSound("start");
 			HVCCManager.StartConfirm();
@@ -4175,7 +4175,7 @@ state VehicleBuilding
 
 		HVCCManager = HaloGameDefault(WorldInfo.Game).TheCustomizationManager;
 		// End:0xDB
-		if(HVCCManager.IsActive() && bShowHVCCPrompt!)
+		if(HVCCManager.IsActive() && !bShowHVCCPrompt)
 		{
 			GFxHaloHUD(myHUD).VCMovie.PlayMenuSound("back");
 			HVCCManager.AbortConfirm();
@@ -4718,7 +4718,7 @@ state ConstructionBuildState
 		// End:0xB4
 		if(ConstructionCameraAlreadyActive == false)
 		{
-			PlayerInputRawViewMotion.X = rightStick.X- * 0.8000000;
+			PlayerInputRawViewMotion.X = -rightStick.X * 0.8000000;
 			PlayerInputRawViewMotion.Y = rightStick.Y * 0.8000000;
 			PlayerInputRawViewMotion.Z = 0.0000000;
 		}
@@ -4749,7 +4749,7 @@ state ConstructionBuildState
 		leftStick = ApplyDeadZone(PlayerInput.RawJoyRight, PlayerInput.RawJoyUp);
 		rightStick = ApplyDeadZone(PlayerInput.RawJoyLookRight, PlayerInput.RawJoyLookUp);
 		rightStick.X = ((rightStick.X == float(0)) ? PlayerInput.aMouseX / 600.0000000 : rightStick.X);
-		rightStick.Y = ((rightStick.Y == float(0)) ? PlayerInput.aMouseY- / 600.0000000 : rightStick.Y);
+		rightStick.Y = ((rightStick.Y == float(0)) ? -PlayerInput.aMouseY / 600.0000000 : rightStick.Y);
 		ProcessPlayerAim(DeltaTime, leftStick, rightStick);
 		//return;		
 	}
@@ -4798,7 +4798,7 @@ state PlayerLedgeGrab extends PlayerWalking
 	function NotifyLedgeGrab(bool Enabled, optional bool Jumping)
 	{
 		// End:0x36
-		if(Enabled!)
+		if(!Enabled)
 		{
 			GotoState(((Jumping) ? 'PlayerLedgeJump' : 'PlayerWalking'));
 		}
@@ -4828,7 +4828,7 @@ state PlayerLedgeGrab extends PlayerWalking
 
 		P = HaloPawn(Pawn);
 		// End:0x6C
-		if(((P != none) && bCinematicMode!) && bPawnControlsLocked!)
+		if(((P != none) && !bCinematicMode) && !bPawnControlsLocked)
 		{
 			P.LetGoOfLedge();
 		}
@@ -4841,7 +4841,7 @@ state PlayerLedgeGrab extends PlayerWalking
 
 		P = HaloPawn(Pawn);
 		// End:0x6C
-		if(((P != none) && bCinematicMode!) && bPawnControlsLocked!)
+		if(((P != none) && !bCinematicMode) && !bPawnControlsLocked)
 		{
 			P.TryToAbortJumpToLedge();
 		}
@@ -4946,7 +4946,7 @@ state PlayerLocked extends PlayerWalking
 	function EnableLockedState(bool Enabled)
 	{
 		// End:0x1D
-		if(Enabled!)
+		if(!Enabled)
 		{
 			GotoState('PlayerWalking');
 		}

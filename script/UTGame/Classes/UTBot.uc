@@ -269,7 +269,7 @@ event bool NotifyHitWall(Vector HitNormal, Actor Wall)
 	if((UTPawn(Pawn) != none) && int(Pawn.Physics) == int(3))
 	{
 		// End:0x1A8
-		if(((InLatentExecution(503) && MoveTarget != none) && MoveTarget.PhysicsVolume.bWaterVolume!) && Pawn.HeadVolume.bWaterVolume!)
+		if(((InLatentExecution(503) && MoveTarget != none) && !MoveTarget.PhysicsVolume.bWaterVolume) && !Pawn.HeadVolume.bWaterVolume)
 		{
 			JumpDir = MoveTarget.Location - Pawn.Location;
 			JumpDir.Z = 0.0000000;
@@ -348,7 +348,7 @@ function FearThisSpot(UTAvoidMarker aSpot)
 		return;
 	}
 	// End:0x44
-	if(LineOfSightTo(aSpot)!)
+	if(!LineOfSightTo(aSpot))
 	{
 		return;
 	}
@@ -495,10 +495,10 @@ function bool WeaponFireAgain(bool bFinishedFire)
 	if(Focus != none)
 	{
 		// End:0x1F7
-		if(Pawn.IsFiring()!)
+		if(!Pawn.IsFiring())
 		{
 			// End:0x1E8
-			if(((Pawn.Weapon != none) && Pawn.Weapon.bMeleeWeapon) || Pawn.NeedToTurn(GetFocalPoint())! && CanAttack(Focus))
+			if(((Pawn.Weapon != none) && Pawn.Weapon.bMeleeWeapon) || !Pawn.NeedToTurn(GetFocalPoint()) && CanAttack(Focus))
 			{
 				LastCanAttackCheckTime = WorldInfo.TimeSeconds;
 				bCanFire = true;
@@ -518,7 +518,7 @@ function bool WeaponFireAgain(bool bFinishedFire)
 			if(bCanFire && ShouldFireAgain())
 			{
 				// End:0x295
-				if(Focus.bDeleteMe!)
+				if(!Focus.bDeleteMe)
 				{
 					bStoppedFiring = false;
 					bFireSuccess = Pawn.BotFire(bFinishedFire);
@@ -558,7 +558,7 @@ function bool ShouldFireAgain()
 		{
 			LastCanAttackCheckTime = WorldInfo.TimeSeconds;
 			// End:0xF9
-			if(CanAttack(Focus)!)
+			if(!CanAttack(Focus))
 			{
 				return false;
 			}
@@ -571,14 +571,14 @@ function bool ShouldFireAgain()
 		else
 		{
 			// End:0x16A
-			if(UTWeap.bLockedAimWhileFiring && Focus.IsStationary()!)
+			if(UTWeap.bLockedAimWhileFiring && !Focus.IsStationary())
 			{
 				return false;
 			}
 		}
 	}
 	// End:0x779
-	if((Pawn.Weapon == none) || Pawn.Weapon.bMeleeWeapon!)
+	if((Pawn.Weapon == none) || !Pawn.Weapon.bMeleeWeapon)
 	{
 		// End:0x260
 		if(Pawn.FireOnRelease())
@@ -613,7 +613,7 @@ function bool ShouldFireAgain()
 								TargetLoc = Focus.Location;
 								TargetLoc.Z = HitLocation.Z;
 								TargetGravityZ = Focus.GetGravityZ();
-								LandTime = (Focus.Velocity.Z- - Sqrt(Square(Focus.Velocity.Z) - ((2.0000000 * TargetGravityZ) * (Focus.Location.Z - TargetLoc.Z)))) / TargetGravityZ;
+								LandTime = (-Focus.Velocity.Z - Sqrt(Square(Focus.Velocity.Z) - ((2.0000000 * TargetGravityZ) * (Focus.Location.Z - TargetLoc.Z)))) / TargetGravityZ;
 								ProjTime = UTWeap.WeaponProjectiles[int(UTWeap.CurrentFireMode)].static.StaticGetTimeToLocation(TargetLoc, UTWeap.GetPhysicalFireStartLoc(), self);
 								// End:0x76B
 								if((LandTime + 0.1000000) > ProjTime)
@@ -658,7 +658,7 @@ function TimedFireWeaponAtEnemy()
 	if((Enemy == none) || FireWeaponAt(Enemy))
 	{
 		// End:0x4C
-		if(bResetCombatTimer!)
+		if(!bResetCombatTimer)
 		{
 			SetCombatTimer();
 		}		
@@ -666,7 +666,7 @@ function TimedFireWeaponAtEnemy()
 	else
 	{
 		// End:0x69
-		if(bResetCombatTimer!)
+		if(!bResetCombatTimer)
 		{
 			SetTimer(0.1000000, true);
 		}
@@ -954,7 +954,7 @@ simulated function DisplayDebug(HUD HUD, out float YL, out float YPos)
 		J0x474:
 
 		// End:0x557
-		if(bFound!)
+		if(!bFound)
 		{
 			Moving = W;
 			I = 0;
@@ -1143,7 +1143,7 @@ event HearNoise(float Loudness, Actor NoiseMaker, optional name NoiseType)
 	if(NoiseMaker.Instigator.IsInvisible())
 	{
 		// End:0x118
-		if((((Skill < float(3)) || (PickupFactory(NoiseMaker) != none) && Projectile(NoiseMaker) != none) || (Vector(Rotation) Dot Normal(NoiseMaker.Instigator.Location - Pawn.Location)) < 0.7000000) || LineOfSightTo(NoiseMaker.Instigator)!)
+		if((((Skill < float(3)) || (PickupFactory(NoiseMaker) != none) && Projectile(NoiseMaker) != none) || (Vector(Rotation) Dot Normal(NoiseMaker.Instigator.Location - Pawn.Location)) < 0.7000000) || !LineOfSightTo(NoiseMaker.Instigator))
 		{
 			return;
 		}
@@ -1159,7 +1159,7 @@ event HearNoise(float Loudness, Actor NoiseMaker, optional name NoiseType)
 event SeePlayer(Pawn SeenPlayer)
 {
 	// End:0x8B
-	if((Squad == none) && WorldInfo.GRI.OnSameTeam(self, SeenPlayer)!)
+	if((Squad == none) && !WorldInfo.GRI.OnSameTeam(self, SeenPlayer))
 	{
 		Pawn.TriggerEventClass(Class'Engine.SeqEvent_AISeeEnemy', SeenPlayer);		
 	}
@@ -1207,17 +1207,17 @@ function bool ClearShot(Vector TargetLoc, bool bImmediateFire)
 	}
 	bSeeTarget = FastTrace(TargetLoc, Pawn.Location + (Pawn.EyeHeight * vect(0.0000000, 0.0000000, 1.0000000)),, true);
 	// End:0x15B
-	if((bImmediateFire! && bSeeTarget!) && Pawn.bIsCrouched)
+	if((!bImmediateFire && !bSeeTarget) && Pawn.bIsCrouched)
 	{
 		bSeeTarget = FastTrace(TargetLoc, Pawn.Location + (Pawn.GetCollisionHeight() * vect(0.0000000, 0.0000000, 1.0000000)),, true);
 	}
 	// End:0x16C
-	if(bSeeTarget!)
+	if(!bSeeTarget)
 	{
 		return false;
 	}
 	// End:0x248
-	if((VSize(Pawn.Location - TargetLoc) < UTWeapon(Pawn.Weapon).GetDamageRadius()) || FastTrace(TargetLoc + (vect(0.0000000, 0.0000000, 0.9000000) * Enemy.GetCollisionHeight()), Pawn.Location,, true)!)
+	if((VSize(Pawn.Location - TargetLoc) < UTWeapon(Pawn.Weapon).GetDamageRadius()) || !FastTrace(TargetLoc + (vect(0.0000000, 0.0000000, 0.9000000) * Enemy.GetCollisionHeight()), Pawn.Location,, true))
 	{
 		StopFiring();
 		return false;
@@ -1232,7 +1232,7 @@ function bool CanStakeOut()
 
 	relstr = RelativeStrength(Enemy);
 	// End:0x13E
-	if((((bFrustrated || bEnemyInfoValid!) || VSize(Enemy.Location - Pawn.Location) > (0.5000000 * (float(2000) + (((FRand() * relstr) - CombatStyle) * float(2000))))) || (WorldInfo.TimeSeconds - FMax(LastSeenTime, AcquireTime)) > (2.5000000 + FMax(-1.0000000, 3.0000000 * (FRand() + (float(2) * (relstr - CombatStyle)))))) || ClearShot(LastSeenPos, false)!)
+	if((((bFrustrated || !bEnemyInfoValid) || VSize(Enemy.Location - Pawn.Location) > (0.5000000 * (float(2000) + (((FRand() * relstr) - CombatStyle) * float(2000))))) || (WorldInfo.TimeSeconds - FMax(LastSeenTime, AcquireTime)) > (2.5000000 + FMax(-1.0000000, 3.0000000 * (FRand() + (float(2) * (relstr - CombatStyle)))))) || !ClearShot(LastSeenPos, false))
 	{
 		return false;
 	}
@@ -1246,7 +1246,7 @@ function CheckIfShouldCrouch(Vector StartPosition, Vector TargetPosition, float 
 	local Vector HitNormal, HitLocation, projStart;
 
 	// End:0xCC
-	if((((WorldInfo.bUseConsoleInput || Pawn.bCanCrouch!) || Pawn.bIsCrouched! && FRand() > probability) || IsSniping()!) || Skill < (float(3) * FRand()))
+	if((((WorldInfo.bUseConsoleInput || !Pawn.bCanCrouch) || !Pawn.bIsCrouched && FRand() > probability) || !IsSniping()) || Skill < (float(3) * FRand()))
 	{
 		Pawn.bWantsToCrouch = false;
 		return;
@@ -1468,7 +1468,7 @@ event NotifyPhysicsVolumeChange(PhysicsVolume NewVolume)
 	{
 		bPlannedJump = false;
 		// End:0x7E
-		if(Pawn.bCanSwim!)
+		if(!Pawn.bCanSwim)
 		{
 			MoveTimer = -1.0000000;			
 		}
@@ -1881,7 +1881,7 @@ function ResetSkill()
 function SetMaxDesiredSpeed()
 {
 	// End:0x1C4
-	if((Pawn != none) && bSpawnedByKismet!)
+	if((Pawn != none) && !bSpawnedByKismet)
 	{
 		// End:0xD7
 		if((UTGame(WorldInfo.Game) != none) && UTGame(WorldInfo.Game).bDemoMode)
@@ -1979,7 +1979,7 @@ event WhatToDoNext()
 	if(((Enemy == none) || Enemy.bDeleteMe) || Enemy.Health <= 0)
 	{
 		// End:0x23E
-		if(bSpawnedByKismet! && UTGame(WorldInfo.Game).TooManyBots(self))
+		if(!bSpawnedByKismet && UTGame(WorldInfo.Game).TooManyBots(self))
 		{
 			// End:0x239
 			if(Pawn != none)
@@ -2044,7 +2044,7 @@ protected event ExecuteWhatToDoNext()
 		return;
 	}
 	// End:0x23E
-	if((StartleActor != none) && StartleActor.bDeleteMe!)
+	if((StartleActor != none) && !StartleActor.bDeleteMe)
 	{
 		StartleActor.GetBoundingCylinder(StartleRadius, StartleHeight);
 		// End:0x23E
@@ -2068,7 +2068,7 @@ protected event ExecuteWhatToDoNext()
 	else
 	{
 		// End:0x39D
-		if(UTSquadAI(Squad).MustKeepEnemy(Enemy)! && LineOfSightTo(Enemy)!)
+		if(!UTSquadAI(Squad).MustKeepEnemy(Enemy) && !LineOfSightTo(Enemy))
 		{
 			// End:0x381
 			if(UTSquadAI(Squad).IsDefending(self))
@@ -2129,7 +2129,7 @@ protected event ExecuteWhatToDoNext()
 				{
 					NumRandomJumps++;
 					// End:0x643
-					if((Pawn.IsA('Vehicle')! && int(Pawn.Physics) != int(2)) && Pawn.DoJump(false))
+					if((!Pawn.IsA('Vehicle') && int(Pawn.Physics) != int(2)) && Pawn.DoJump(false))
 					{
 						Pawn.SetPhysics(2);
 						Pawn.Velocity = (0.5000000 * Pawn.GroundSpeed) * VRand();
@@ -2174,7 +2174,7 @@ event DelayedLeaveVehicle()
 
 	V = Vehicle(Pawn);
 	// End:0x5D
-	if((V != none) && V.DriverLeave(false)!)
+	if((V != none) && !V.DriverLeave(false))
 	{
 		LeaveVehicle(true);
 	}
@@ -2203,7 +2203,7 @@ function VehicleFightEnemy(bool bCanCharge, float EnemyStrength)
 	if((Pawn.bStationary || UTWeaponPawn(Pawn) != none) || V.bKeyVehicle)
 	{
 		// End:0xF1
-		if(LineOfSightTo(Enemy)!)
+		if(!LineOfSightTo(Enemy))
 		{
 			GoalString = "Stake Out";
 			DoStakeOut();			
@@ -2215,7 +2215,7 @@ function VehicleFightEnemy(bool bCanCharge, float EnemyStrength)
 		return;
 	}
 	// End:0x185
-	if((bFrustrated! && Pawn.HasRangedAttack()) && Pawn.TooCloseToAttack(Enemy))
+	if((!bFrustrated && Pawn.HasRangedAttack()) && Pawn.TooCloseToAttack(Enemy))
 	{
 		GoalString = "Retreat";
 		DoRetreat();
@@ -2237,7 +2237,7 @@ function VehicleFightEnemy(bool bCanCharge, float EnemyStrength)
 		return;
 	}
 	// End:0x3E2
-	if(LineOfSightTo(Enemy)!)
+	if(!LineOfSightTo(Enemy))
 	{
 		// End:0x2DD
 		if(UTSquadAI(Squad).MustKeepEnemy(Enemy))
@@ -2247,7 +2247,7 @@ function VehicleFightEnemy(bool bCanCharge, float EnemyStrength)
 			return;
 		}
 		// End:0x350
-		if(bCanCharge! || UTSquadAI(Squad).IsDefending(self) && LostContact(4.0000000))
+		if(!bCanCharge || UTSquadAI(Squad).IsDefending(self) && LostContact(4.0000000))
 		{
 			GoalString = "Stake Out";
 			DoStakeOut();			
@@ -2255,7 +2255,7 @@ function VehicleFightEnemy(bool bCanCharge, float EnemyStrength)
 		else
 		{
 			// End:0x3C2
-			if((((Aggression < float(1)) && LostContact(3.0000000 + (float(2) * FRand()))!) || IsSniping()) && CanStakeOut())
+			if((((Aggression < float(1)) && !LostContact(3.0000000 + (float(2) * FRand()))) || IsSniping()) && CanStakeOut())
 			{
 				GoalString = "Stake Out2";
 				DoStakeOut();				
@@ -2278,7 +2278,7 @@ function VehicleFightEnemy(bool bCanCharge, float EnemyStrength)
 		return;
 	}
 	// End:0x584
-	if(((Pawn.bCanFly && Enemy.bCanFly!) && (Pawn.Weapon == none) || VSize(Pawn.Location - Enemy.Location) < Pawn.Weapon.MaxRange()) && FRand() < (0.1700000 * ((Skill + Tactics) - float(1))))
+	if(((Pawn.bCanFly && !Enemy.bCanFly) && (Pawn.Weapon == none) || VSize(Pawn.Location - Enemy.Location) < Pawn.Weapon.MaxRange()) && FRand() < (0.1700000 * ((Skill + Tactics) - float(1))))
 	{
 		GoalString = "Do tactical move";
 		DoTacticalMove();
@@ -2391,7 +2391,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
 		}
 	}
 	// End:0xA1A
-	if(Pawn.CanAttack(Enemy)!)
+	if(!Pawn.CanAttack(Enemy))
 	{
 		// End:0x6E5
 		if(UTSquadAI(Squad).MustKeepEnemy(Enemy))
@@ -2401,7 +2401,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
 			return;
 		}
 		// End:0x722
-		if(bCanCharge!)
+		if(!bCanCharge)
 		{
 			GoalString = "Stake Out - no charge";
 			DoStakeOut();			
@@ -2417,7 +2417,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
 			else
 			{
 				// End:0x81D
-				if((((Aggression < float(1)) && LostContact(3.0000000 + (float(2) * FRand()))!) || IsSniping()) && CanStakeOut())
+				if((((Aggression < float(1)) && !LostContact(3.0000000 + (float(2) * FRand()))) || IsSniping()) && CanStakeOut())
 				{
 					GoalString = "Stake Out2";
 					DoStakeOut();					
@@ -2425,7 +2425,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
 				else
 				{
 					// End:0x9FA
-					if(((((((((((Skill + Tactics) >= (3.5000000 + FRand())) && LostContact(1.0000000)!) && VSize(Enemy.Location - Pawn.Location) < float(2000)) && Pawn.Weapon != none) && Pawn.Weapon.AIRating > 0.5000000) && Pawn.Weapon.bMeleeWeapon!) && FRand() < 0.7500000) && LineOfSightTo(Enemy)!) && Enemy.LineOfSightTo(Pawn)!) && (Squad == none) || UTSquadAI(Squad).HasOtherVisibleEnemy(self)!)
+					if(((((((((((Skill + Tactics) >= (3.5000000 + FRand())) && !LostContact(1.0000000)) && VSize(Enemy.Location - Pawn.Location) < float(2000)) && Pawn.Weapon != none) && Pawn.Weapon.AIRating > 0.5000000) && !Pawn.Weapon.bMeleeWeapon) && FRand() < 0.7500000) && !LineOfSightTo(Enemy)) && !Enemy.LineOfSightTo(Pawn)) && (Squad == none) || !UTSquadAI(Squad).HasOtherVisibleEnemy(self))
 					{
 						GoalString = "Stake Out 3";
 						DoStakeOut();						
@@ -2464,7 +2464,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
 		return;
 	}
 	// End:0xC36
-	if((UTWeapon(Pawn.Weapon).RecommendRangedAttack() || IsSniping()) || (FRand() > (0.1700000 * ((Skill + Tactics) - float(1)))) && DefendMelee(enemyDist)!)
+	if((UTWeapon(Pawn.Weapon).RecommendRangedAttack() || IsSniping()) || (FRand() > (0.1700000 * ((Skill + Tactics) - float(1)))) && !DefendMelee(enemyDist))
 	{
 		GoalString = "Ranged Attack";
 		DoRangedAttackOn(Enemy);
@@ -2483,7 +2483,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
 	}
 	GoalString = "Do tactical move";
 	// End:0xDA5
-	if((UTWeapon(Pawn.Weapon).bRecommendSplashDamage! && FRand() < 0.7000000) && ((float(3) * Jumpiness) + (FRand() * Skill)) > float(3))
+	if((!UTWeapon(Pawn.Weapon).bRecommendSplashDamage && FRand() < 0.7000000) && ((float(3) * Jumpiness) + (FRand() * Skill)) > float(3))
 	{
 		GetAxes(Pawn.Rotation, X, Y, Z);
 		GoalString = "Try to Duck ";
@@ -2542,7 +2542,7 @@ function ChooseAttackMode()
 		return;
 	}
 	// End:0x38C
-	if(bFrustrated! && UTSquadAI(Squad).MustKeepEnemy(Enemy)!)
+	if(!bFrustrated && !UTSquadAI(Squad).MustKeepEnemy(Enemy))
 	{
 		RetreatThreshold = Aggressiveness;
 		// End:0x2AD
@@ -2619,12 +2619,12 @@ function bool FindSuperPickup(float MaxDist)
 	local UTPickupFactory P;
 
 	// End:0x7F
-	if((LastSearchTime == WorldInfo.TimeSeconds) || (Pawn.bCanPickupInventory! || Vehicle(Pawn) != none) && bCheckDriverPickups!)
+	if((LastSearchTime == WorldInfo.TimeSeconds) || (!Pawn.bCanPickupInventory || Vehicle(Pawn) != none) && !bCheckDriverPickups)
 	{
 		return false;
 	}
 	// End:0xF3
-	if((UTDeathmatch(WorldInfo.Game) != none) && UTDeathmatch(WorldInfo.Game).WantsPickups(self)!)
+	if((UTDeathmatch(WorldInfo.Game) != none) && !UTDeathmatch(WorldInfo.Game).WantsPickups(self))
 	{
 		return false;
 	}
@@ -2664,12 +2664,12 @@ function bool FindInventoryGoal(float BestWeight)
 		return false;
 	}
 	// End:0xBB
-	if((UTDeathmatch(WorldInfo.Game) != none) && UTDeathmatch(WorldInfo.Game).WantsPickups(self)!)
+	if((UTDeathmatch(WorldInfo.Game) != none) && !UTDeathmatch(WorldInfo.Game).WantsPickups(self))
 	{
 		return false;
 	}
 	// End:0x107
-	if(((Vehicle(Pawn) != none) ? bCheckDriverPickups! : Pawn.bCanPickupInventory!))
+	if(((Vehicle(Pawn) != none) ? !bCheckDriverPickups : !Pawn.bCanPickupInventory))
 	{
 		return false;
 	}
@@ -2822,7 +2822,7 @@ function bool FindRoamDest()
 	NumRandomJumps = 0;	
 	GoalString @= ("- Find roam dest " $ string(WorldInfo.TimeSeconds));
 	// End:0x11D
-	if(((RouteGoal != none) && Pawn.Anchor != RouteGoal) && Pawn.ReachedDestination(RouteGoal)!)
+	if(((RouteGoal != none) && Pawn.Anchor != RouteGoal) && !Pawn.ReachedDestination(RouteGoal))
 	{
 		BestPath = FindPathToward(RouteGoal, false);
 	}
@@ -2853,7 +2853,7 @@ function bool FindRoamDest()
 function Restart(bool bVehicleTransition)
 {
 	// End:0x50
-	if(bVehicleTransition!)
+	if(!bVehicleTransition)
 	{
 		super(Controller).Restart(bVehicleTransition);
 		ResetSkill();
@@ -2902,7 +2902,7 @@ function ClearPathFor(Controller C)
 	else
 	{
 		// End:0xE4
-		if((Stopped()) && Pawn.bStationary!)
+		if((Stopped()) && !Pawn.bStationary)
 		{
 			MoveAwayFrom(C);
 		}
@@ -2915,7 +2915,7 @@ function bool AdjustAround(Pawn Other)
 	local Vector VelDir, OtherDir, SideDir, HitLocation, HitNormal, Adj;
 
 	// End:0x16
-	if(InLatentExecution(503)!)
+	if(!InLatentExecution(503))
 	{
 		return false;
 	}
@@ -3046,11 +3046,11 @@ function SetFall()
 				Dir.Z = 0.0000000;
 				AdjustedDest -= (Normal(Dir) * Nav.CylinderComponent.CollisionRadius);
 				// End:0x3A1
-				if(FastTrace(AdjustedDest, AdjustedDest - (vect(0.0000000, 0.0000000, 1.0000000) * (Nav.CylinderComponent.CollisionHeight + 5.0000000)))!)
+				if(!FastTrace(AdjustedDest, AdjustedDest - (vect(0.0000000, 0.0000000, 1.0000000) * (Nav.CylinderComponent.CollisionHeight + 5.0000000))))
 				{
 					Pawn.SuggestJumpVelocity(TestVelocity, AdjustedDest, Pawn.Location);
 					// End:0x3A1
-					if(P.bRequiresDoubleJump!)
+					if(!P.bRequiresDoubleJump)
 					{
 						P.Velocity = TestVelocity;
 					}
@@ -3170,13 +3170,13 @@ event bool AllowDetourTo(NavigationPoint N)
 function bool FindBestPathToward(Actor A, bool bCheckedReach, bool bAllowDetour)
 {
 	// End:0x36
-	if(bCheckedReach! && ActorReachable(A))
+	if(!bCheckedReach && ActorReachable(A))
 	{
 		MoveTarget = A;		
 	}
 	else
 	{
-		MoveTarget = FindPathToward(A, (((bAllowDetour && Pawn.bCanPickupInventory) && Vehicle(Pawn) == none) && NavigationPoint(A) != none) && bForceNoDetours!);
+		MoveTarget = FindPathToward(A, (((bAllowDetour && Pawn.bCanPickupInventory) && Vehicle(Pawn) == none) && NavigationPoint(A) != none) && !bForceNoDetours);
 	}
 	// End:0xD5
 	if(MoveTarget != none)
@@ -3238,7 +3238,7 @@ function bool CheckFutureSight(float DeltaTime)
 		FutureLoc += (Pawn.Base.Velocity * DeltaTime);
 	}
 	// End:0x19B
-	if(FastTrace(FutureLoc, Pawn.Location)! && int(Pawn.Physics) != int(2))
+	if(!FastTrace(FutureLoc, Pawn.Location) && int(Pawn.Physics) != int(2))
 	{
 		return false;
 	}
@@ -3320,7 +3320,7 @@ event float AdjustAimError(float TargetDist, bool bInstantProj)
 		}
 	}
 	// End:0x57F
-	if(bDefendMelee!)
+	if(!bDefendMelee)
 	{
 		aimerror *= (3.3000000 - (0.4000000 * (FClamp(Skill + Accuracy, 0.0000000, 8.0000000) + (0.3000000 * FRand()))));
 	}
@@ -3477,7 +3477,7 @@ function Rotator GetAdjustedAimFor(Weapon InWeapon, Vector projStart)
 				HitActor = Trace(HitLocation, HitNormal, FireSpot - vect(0.0000000, 0.0000000, 1000.0000000), FireSpot, false);
 				bClean = HitActor == none;
 				// End:0x7E2
-				if(bClean!)
+				if(!bClean)
 				{
 					FireSpot = HitLocation + vect(0.0000000, 0.0000000, 20.0000000);
 					bClean = FastTrace(FireSpot, projStart);					
@@ -3495,7 +3495,7 @@ function Rotator GetAdjustedAimFor(Weapon InWeapon, Vector projStart)
 					HitActor = Trace(HitLocation, HitNormal, FireSpot - (vect(0.0000000, 0.0000000, 1.0000000) * (TargetHeight + float(6))), FireSpot, false);
 					bClean = HitActor == none;
 					// End:0x9FA
-					if(bClean!)
+					if(!bClean)
 					{
 						FireSpot = HitLocation + vect(0.0000000, 0.0000000, 3.0000000);
 						bClean = FastTrace(FireSpot, projStart);						
@@ -3514,13 +3514,13 @@ function Rotator GetAdjustedAimFor(Weapon InWeapon, Vector projStart)
 			bClean = FastTrace(FireSpot, projStart);
 		}
 		// End:0xB6F
-		if(bClean!)
+		if(!bClean)
 		{
 			FireSpot.Z = GetFocalPoint().Z;
 			bClean = FastTrace(FireSpot, projStart);
 		}
 		// End:0xC5D
-		if((((ProjectileClass != none) && int(ProjectileClass.default.Physics) == int(2)) && bClean!) && bEnemyInfoValid)
+		if((((ProjectileClass != none) && int(ProjectileClass.default.Physics) == int(2)) && !bClean) && bEnemyInfoValid)
 		{
 			FireSpot = LastSeenPos;
 			HitActor = Trace(HitLocation, HitNormal, FireSpot, projStart, false);
@@ -3533,13 +3533,13 @@ function Rotator GetAdjustedAimFor(Weapon InWeapon, Vector projStart)
 			bClean = true;
 		}
 		// End:0xCDA
-		if(bClean!)
+		if(!bClean)
 		{
 			FireSpot.Z = GetFocalPoint().Z + (0.9000000 * TargetHeight);
 			bClean = FastTrace(FireSpot, projStart);
 		}
 		// End:0xF7C
-		if((bClean! && Focus == Enemy) && bEnemyInfoValid)
+		if((!bClean && Focus == Enemy) && bEnemyInfoValid)
 		{
 			FireSpot = LastSeenPos;
 			// End:0xDA4
@@ -3563,7 +3563,7 @@ function Rotator GetAdjustedAimFor(Weapon InWeapon, Vector projStart)
 					}
 				}
 				// End:0xF7C
-				if((UTWeapon(Pawn.Weapon) != none) && UTWeapon(Pawn.Weapon).bFastRepeater!)
+				if((UTWeapon(Pawn.Weapon) != none) && !UTWeapon(Pawn.Weapon).bFastRepeater)
 				{
 					bCanFire = false;
 				}
@@ -3669,7 +3669,7 @@ event DelayedWarning()
 			return;
 		}
 		// End:0x44C
-		if(((int(WarningProjectile.Physics) == int(6)) && Dist > (Pawn.GetCollisionHeight() + float(100))) && WarningProjectile.IsA('UTProj_Shockball')!)
+		if(((int(WarningProjectile.Physics) == int(6)) && Dist > (Pawn.GetCollisionHeight() + float(100))) && !WarningProjectile.IsA('UTProj_Shockball'))
 		{
 			HitActor = Trace(HitLocation, HitNormal, WarningProjectile.Location + WarningProjectile.Velocity, WarningProjectile.Location, false);
 			// End:0x44C
@@ -3690,7 +3690,7 @@ event DelayedWarning()
 		return;
 	}
 	// End:0x5D9
-	if(TryDuckTowardsMoveTarget(Dir, Y)!)
+	if(!TryDuckTowardsMoveTarget(Dir, Y))
 	{
 		// End:0x5C5
 		if((WarningProjectile.Velocity Dot Y) > float(0))
@@ -3805,12 +3805,12 @@ function DelayedInstantWarning()
 	Dir.Z = 0.0000000;
 	Dir = Normal(Dir);
 	// End:0x1D1
-	if(((Dir Dot Normal(X)) < 0.7000000) || LineOfSightTo(InstantWarningShooter)!)
+	if(((Dir Dot Normal(X)) < 0.7000000) || !LineOfSightTo(InstantWarningShooter))
 	{
 		return;
 	}
 	// End:0x23B
-	if(TryDuckTowardsMoveTarget(Dir, Y)!)
+	if(!TryDuckTowardsMoveTarget(Dir, Y))
 	{
 		// End:0x227
 		if(FRand() < 0.5000000)
@@ -3839,7 +3839,7 @@ event ReceiveWarning(Pawn shooter, float projSpeed, Vector FireDir)
 	}
 	LastWarningTime = WorldInfo.TimeSeconds;
 	// End:0xF5
-	if((Pawn.bStationary || Pawn.bCanStrafe!) || Pawn.Health <= 0)
+	if((Pawn.bStationary || !Pawn.bCanStrafe) || Pawn.Health <= 0)
 	{
 		return;
 	}
@@ -3870,7 +3870,7 @@ event ReceiveWarning(Pawn shooter, float projSpeed, Vector FireDir)
 	}
 	enemyDist = VSize(shooter.Location - Pawn.Location);
 	// End:0x294
-	if(((enemyDist > (2000.0000000 * ((Skill + StrafingAbility) - 2.0000000))) && Vehicle(shooter) == none) && Stopped()!)
+	if(((enemyDist > (2000.0000000 * ((Skill + StrafingAbility) - 2.0000000))) && Vehicle(shooter) == none) && !Stopped())
 	{
 		return;
 	}
@@ -3916,7 +3916,7 @@ event ReceiveWarning(Pawn shooter, float projSpeed, Vector FireDir)
 		if(((DodgeTime > 0.0000000) && DodgeTime >= (0.3500000 - (0.0300000 * (Skill + ReactionTime)))) && DodgeTime >= (2.0000000 - ((0.2650000 + (FRand() * 0.2000000)) * (Skill + ReactionTime))))
 		{
 			// End:0x65D
-			if(((((InstantWarningShooter == none) || InstantWarningShooter.bDeleteMe) || InstantWarningShooter.Controller == none) || IsTimerActive('DelayedInstantWarning')!) || (GetTimerRate('DelayedInstantWarning') - GetTimerCount('DelayedInstantWarning')) > DodgeTime)
+			if(((((InstantWarningShooter == none) || InstantWarningShooter.bDeleteMe) || InstantWarningShooter.Controller == none) || !IsTimerActive('DelayedInstantWarning')) || (GetTimerRate('DelayedInstantWarning') - GetTimerCount('DelayedInstantWarning')) > DodgeTime)
 			{
 				InstantWarningShooter = shooter;
 				SetTimer(DodgeTime, false, 'DelayedInstantWarning');
@@ -3968,7 +3968,7 @@ event ReceiveWarning(Pawn shooter, float projSpeed, Vector FireDir)
 event ReceiveRunOverWarning(UDKVehicle V, float projSpeed, Vector VehicleDir)
 {
 	// End:0x6A
-	if(WorldInfo.GRI.OnSameTeam(V, self)!)
+	if(!WorldInfo.GRI.OnSameTeam(V, self))
 	{
 		ReceiveWarning(V, projSpeed, VehicleDir);
 		return;
@@ -4031,7 +4031,7 @@ function bool TryWallDodge(Vector HitNormal, Actor HitActor)
 	local Actor NewHitActor;
 
 	// End:0x50
-	if((Abs(HitNormal.Z) > 0.7000000) || HitActor.bWorldGeometry!)
+	if((Abs(HitNormal.Z) > 0.7000000) || !HitActor.bWorldGeometry)
 	{
 		return false;
 	}
@@ -4180,9 +4180,9 @@ function bool TryToDuck(Vector duckDir, bool bReversed)
 		MinDist = (30.0000000 + MinDist) - Dist;
 	}
 	// End:0x65A
-	if(bSuccess!)
+	if(!bSuccess)
 	{
-		bDuckLeft = bDuckLeft!;
+		bDuckLeft = !bDuckLeft;
 		duckDir *= float(-1);
 		HitActor = Trace(HitLocation, HitNormal, Start + duckDir, Start, false, Extent);
 		bSuccess = (HitActor == none) || VSize(HitLocation - Pawn.Location) > MinDist;
@@ -4199,7 +4199,7 @@ function bool TryToDuck(Vector duckDir, bool bReversed)
 		}
 	}
 	// End:0x682
-	if(bSuccess!)
+	if(!bSuccess)
 	{
 		// End:0x680
 		if(bChangeStrafe)
@@ -4216,7 +4216,7 @@ function bool TryToDuck(Vector duckDir, bool bReversed)
 	// End:0x6EE
 	if(bNotifyFallingHitWall && bWallHit)
 	{
-		bDuckLeft = bDuckLeft!;
+		bDuckLeft = !bDuckLeft;
 	}
 	// End:0x728
 	if(bDuckLeft)
@@ -4260,12 +4260,12 @@ function bool ShouldStrafeTo(Actor WayPoint)
 	local NavigationPoint N;
 
 	// End:0x49
-	if((UTVehicle(Pawn) != none) && UTVehicle(Pawn).bFollowLookDir!)
+	if((UTVehicle(Pawn) != none) && !UTVehicle(Pawn).bFollowLookDir)
 	{
 		return true;
 	}
 	// End:0x97
-	if(((Skill + StrafingAbility) < float(3)) && UTPlayerReplicationInfo(PlayerReplicationInfo).bHasFlag!)
+	if(((Skill + StrafingAbility) < float(3)) && !UTPlayerReplicationInfo(PlayerReplicationInfo).bHasFlag)
 	{
 		return false;
 	}
@@ -4313,7 +4313,7 @@ function bool ShouldStrafeTo(Actor WayPoint)
 		return false;
 	}
 	// End:0x2FF
-	if(bFinalStretch! && Enemy == none)
+	if(!bFinalStretch && Enemy == none)
 	{
 		return FRand() < 0.4000000;
 	}
@@ -4359,12 +4359,12 @@ function Actor FaceActor(float StrafingModifier)
 	}
 	bRecommendFastMove = false;
 	// End:0x23C
-	if(((Pawn.bCanStrafe! && (UTVehicle(Pawn) == none) || UTVehicle(Pawn).bSeparateTurretFocus!) || Enemy == none) || (WorldInfo.TimeSeconds - LastSeenTime) > (float(6) - StrafingModifier))
+	if(((!Pawn.bCanStrafe && (UTVehicle(Pawn) == none) || !UTVehicle(Pawn).bSeparateTurretFocus) || Enemy == none) || (WorldInfo.TimeSeconds - LastSeenTime) > (float(6) - StrafingModifier))
 	{
 		return FaceMoveTarget();
 	}
 	// End:0x34E
-	if((((MoveTarget == Enemy) || Vehicle(Pawn) != none) || ((Skill + StrafingAbility) >= float(6)) && Pawn.Weapon.bMeleeWeapon!) || (MoveTarget != none) && VSize(MoveTarget.Location - Pawn.Location) < (float(4) * Pawn.GetCollisionRadius()))
+	if((((MoveTarget == Enemy) || Vehicle(Pawn) != none) || ((Skill + StrafingAbility) >= float(6)) && !Pawn.Weapon.bMeleeWeapon) || (MoveTarget != none) && VSize(MoveTarget.Location - Pawn.Location) < (float(4) * Pawn.GetCollisionRadius()))
 	{
 		return Enemy;
 	}
@@ -4415,7 +4415,7 @@ function bool NeedWeapon()
 	// End:0x91
 	if(Pawn.Weapon.AIRating > 0.5000000)
 	{
-		return Pawn.Weapon.HasAmmo(0)!;
+		return !Pawn.Weapon.HasAmmo(0);
 	}
 	// End:0x12D
 	foreach Pawn.InvManager.InventoryActors(Class'UTGame.UTWeapon', W)
@@ -4444,7 +4444,7 @@ event float RatePickup(Actor PickupHolder, Class<Inventory> InvClass)
 event float SuperDesireability(PickupFactory P)
 {
 	// End:0x27
-	if(SuperPickupNotSpokenFor(UTPickupFactory(P))!)
+	if(!SuperPickupNotSpokenFor(UTPickupFactory(P)))
 	{
 		return 0.0000000;
 	}
@@ -4587,7 +4587,7 @@ function ForceGiveWeapon()
 
 	LeaderPawn = UTSquadAI(Squad).SquadLeader.Pawn;
 	// End:0xA3
-	if((((Pawn == none) || Pawn.Weapon == none) || LeaderPawn == none) || LineOfSightTo(LeaderPawn)!)
+	if((((Pawn == none) || Pawn.Weapon == none) || LeaderPawn == none) || !LineOfSightTo(LeaderPawn))
 	{
 		return;
 	}
@@ -4686,7 +4686,7 @@ function DoCharge()
 	if(Enemy.PhysicsVolume.bWaterVolume)
 	{
 		// End:0x8F
-		if(Pawn.bCanSwim!)
+		if(!Pawn.bCanSwim)
 		{
 			DoTacticalMove();
 			return;
@@ -4695,7 +4695,7 @@ function DoCharge()
 	else
 	{
 		// End:0xE8
-		if(Pawn.bCanFly! && Pawn.bCanWalk!)
+		if(!Pawn.bCanFly && !Pawn.bCanWalk)
 		{
 			DoTacticalMove();
 			return;
@@ -4708,7 +4708,7 @@ function DoCharge()
 function DoTacticalMove()
 {
 	// End:0x69
-	if(Pawn.bCanStrafe!)
+	if(!Pawn.bCanStrafe)
 	{
 		// End:0x5C
 		if(Pawn.HasRangedAttack())
@@ -4894,7 +4894,7 @@ event bool HandlePathObstruction(Actor BlockedBy)
 		}
 	}
 	// End:0x29E
-	if(Pawn.IsA('Vehicle')!)
+	if(!Pawn.IsA('Vehicle'))
 	{
 		V = UTVehicle(BlockedBy);
 		// End:0x29E
@@ -4918,7 +4918,7 @@ event bool HandlePathObstruction(Actor BlockedBy)
 	}
 	P = Pawn(BlockedBy);
 	// End:0x4DD
-	if((P != none) && WorldInfo.GRI.OnSameTeam(self, P)!)
+	if((P != none) && !WorldInfo.GRI.OnSameTeam(self, P))
 	{
 		GoalString = ((string(P) @ "is blocking path to") @ string(MoveTarget)) @ " - kill it";
 		Focus = P;
@@ -5013,7 +5013,7 @@ state Defending
 			if(I < CurrentPosition.PathList.Length)
 			{
 				// End:0x329
-				if(CurrentPosition.PathList[I].IsBlockedFor(Pawn)!)
+				if(!CurrentPosition.PathList[I].IsBlockedFor(Pawn))
 				{
 					CurrentDot = Abs(Normal(CurrentPosition.PathList[I].GetEnd().Location - Pawn.Location) Dot BlockedDir);
 					// End:0x329
@@ -5252,7 +5252,7 @@ Pausing:
 		UTVehicle(Pawn).DriverLeave(false);
 	}
 	StopMovement();
-	Pawn.bWantsToCrouch = (IsSniping()) && WorldInfo.bUseConsoleInput!;
+	Pawn.bWantsToCrouch = (IsSniping()) && !WorldInfo.bUseConsoleInput;
 	// End:0x273
 	if(DefensePoint != none)
 	{
@@ -5326,7 +5326,7 @@ state MoveToGoal
 
 		PBot = UTBot(P.Controller);
 		// End:0xAD
-		if(((MoveTarget == none) || PBot == none) || WorldInfo.GRI.OnSameTeam(self, P.Controller)!)
+		if(((MoveTarget == none) || PBot == none) || !WorldInfo.GRI.OnSameTeam(self, P.Controller))
 		{
 			return false;
 		}
@@ -5375,7 +5375,7 @@ state Roaming extends MoveToGoal
 
 	function MayFall(bool bFloor, Vector FloorNormal)
 	{
-		Pawn.bCanJump = (MoveTarget != none) && (int(MoveTarget.Physics) != int(2)) || MoveTarget.IsA('DroppedPickup')!;
+		Pawn.bCanJump = (MoveTarget != none) && (int(MoveTarget.Physics) != int(2)) || !MoveTarget.IsA('DroppedPickup');
 		//return;		
 	}
 Begin:
@@ -5469,7 +5469,7 @@ state Fallback extends MoveToGoalWithEnemy
 			return false;
 		}
 		// End:0x387
-		if(((((RouteCache.Length > 0) && WorldInfo.GRI.OnSameTeam(self, P.Controller)!) && MoveTarget == RouteCache[0]) && RouteCache.Length > 1) && P.ReachedDestination(MoveTarget))
+		if(((((RouteCache.Length > 0) && !WorldInfo.GRI.OnSameTeam(self, P.Controller)) && MoveTarget == RouteCache[0]) && RouteCache.Length > 1) && P.ReachedDestination(MoveTarget))
 		{
 			MoveTimer = (VSize(RouteCache[1].Location - Pawn.Location) / (Pawn.GroundSpeed * Pawn.DesiredSpeed)) + float(1);
 			MoveTarget = RouteCache[1];
@@ -5493,7 +5493,7 @@ state Fallback extends MoveToGoalWithEnemy
 
 	function MayFall(bool bFloor, Vector FloorNormal)
 	{
-		Pawn.bCanJump = (MoveTarget != none) && (int(MoveTarget.Physics) != int(2)) || MoveTarget.IsA('DroppedPickup')!;
+		Pawn.bCanJump = (MoveTarget != none) && (int(MoveTarget.Physics) != int(2)) || !MoveTarget.IsA('DroppedPickup');
 		//return;		
 	}
 
@@ -5577,7 +5577,7 @@ state Charging extends MoveToGoalWithEnemy
 		}
 		Pawn.bCanJump = ActorReachable(Enemy);
 		// End:0x78
-		if(Pawn.bCanJump!)
+		if(!Pawn.bCanJump)
 		{
 			MoveTimer = -1.0000000;
 		}
@@ -5587,7 +5587,7 @@ state Charging extends MoveToGoalWithEnemy
 	function bool TryToDuck(Vector duckDir, bool bReversed)
 	{
 		// End:0x26
-		if(Pawn.bCanStrafe!)
+		if(!Pawn.bCanStrafe)
 		{
 			return false;
 		}
@@ -5615,7 +5615,7 @@ state Charging extends MoveToGoalWithEnemy
 			return false;
 		}
 		// End:0x68
-		if(bFindDest!)
+		if(!bFindDest)
 		{
 			return true;
 		}
@@ -5700,7 +5700,7 @@ state Charging extends MoveToGoalWithEnemy
 				// End:0x254
 				if(FRand() < 0.2000000)
 				{
-					bStrafeDir = bStrafeDir!;
+					bStrafeDir = !bStrafeDir;
 				}
 			}
 		}
@@ -5710,7 +5710,7 @@ state Charging extends MoveToGoalWithEnemy
 	event bool NotifyBump(Actor Other, Vector HitNormal)
 	{
 		// End:0xAD
-		if((((Other == Enemy) && Pawn.Weapon != none) && Pawn.Weapon.bMeleeWeapon!) && FRand() > (0.4000000 + (0.1000000 * Skill)))
+		if((((Other == Enemy) && Pawn.Weapon != none) && !Pawn.Weapon.bMeleeWeapon) && FRand() > (0.4000000 + (0.1000000 * Skill)))
 		{
 			DoRangedAttackOn(Enemy);
 			return false;
@@ -5756,7 +5756,7 @@ Begin:
 		LatentWhatToDoNext();
 	}
 	// End:0xA6
-	if(FindBestPathToward(Enemy, false, true)!)
+	if(!FindBestPathToward(Enemy, false, true))
 	{
 		DoTacticalMove();
 	}
@@ -5864,7 +5864,7 @@ Begin:
 	else
 	{
 		// End:0x197
-		if(FindBestPathToward(Enemy, false, true)!)
+		if(!FindBestPathToward(Enemy, false, true))
 		{
 			// End:0x18D
 			if(Pawn.HasRangedAttack())
@@ -5965,7 +5965,7 @@ state TacticalMove
 	{
 		Focus = Enemy;
 		// End:0x40
-		if((Enemy != none) && bNotifyApex!)
+		if((Enemy != none) && !bNotifyApex)
 		{
 			TimedFireWeaponAtEnemy();			
 		}
@@ -6033,7 +6033,7 @@ state TacticalMove
 		}
 		bChangeDir = false;
 		// End:0x126
-		if((Pawn.PhysicsVolume.bWaterVolume && Pawn.bCanSwim!) && Pawn.bCanFly)
+		if((Pawn.PhysicsVolume.bWaterVolume && !Pawn.bCanSwim) && Pawn.bCanFly)
 		{
 			SetDestinationPosition((Pawn.Location + (float(75) * (VRand() + vect(0.0000000, 0.0000000, 1.0000000)))) + vect(0.0000000, 0.0000000, 100.0000000));
 			return;
@@ -6073,11 +6073,11 @@ state TacticalMove
 			// End:0x589
 			if((LookDir Dot ((Pawn.Location + ((enemyPart + pickdir) * float(200))) - SquadLeader.Pawn.Location)) > FMax(0.0000000, LookDir Dot ((Pawn.Location + ((enemyPart - pickdir) * float(200))) - SquadLeader.Pawn.Location)))
 			{
-				bStrafeDir = bStrafeDir!;
+				bStrafeDir = !bStrafeDir;
 				pickdir *= float(-1);
 			}
 		}
-		bStrafeDir = bStrafeDir!;
+		bStrafeDir = !bStrafeDir;
 		// End:0x5C4
 		if(EngageDirection(enemyPart + pickdir, false))
 		{
@@ -6102,14 +6102,14 @@ state TacticalMove
 
 		MinDest = Pawn.Location + (float(200) * StrafeDir);
 		// End:0x70D
-		if(bForced!)
+		if(!bForced)
 		{
 			collspec = Pawn.GetCollisionRadius() * vect(1.0000000, 1.0000000, 0.0000000);
 			collspec.Z = FMax(6.0000000, Pawn.GetCollisionHeight() - Pawn.MaxStepHeight);
-			bWantJump = ((((Vehicle(Pawn) == none) && int(Pawn.Physics) == int(1)) && (FRand() < ((0.0500000 * Skill) + (0.6000000 * Jumpiness))) || UTWeapon(Pawn.Weapon).SplashJump() && ProficientWithWeapon()) && (Enemy.Location.Z - Enemy.GetCollisionHeight()) <= ((Pawn.Location.Z + Pawn.MaxStepHeight) - Pawn.GetCollisionHeight())) && Pawn.NeedToTurn(((Enemy == Focus) ? GetFocalPoint() : Enemy.Location))!;
+			bWantJump = ((((Vehicle(Pawn) == none) && int(Pawn.Physics) == int(1)) && (FRand() < ((0.0500000 * Skill) + (0.6000000 * Jumpiness))) || UTWeapon(Pawn.Weapon).SplashJump() && ProficientWithWeapon()) && (Enemy.Location.Z - Enemy.GetCollisionHeight()) <= ((Pawn.Location.Z + Pawn.MaxStepHeight) - Pawn.GetCollisionHeight())) && !Pawn.NeedToTurn(((Enemy == Focus) ? GetFocalPoint() : Enemy.Location));
 			HitActor = Trace(HitLocation, HitNormal, MinDest, Pawn.Location, false, collspec);
 			// End:0x350
-			if((HitActor != none) && bWantJump!)
+			if((HitActor != none) && !bWantJump)
 			{
 				return false;
 			}
@@ -6165,7 +6165,7 @@ state TacticalMove
 	event NotifyJumpApex()
 	{
 		// End:0x71
-		if(((bTacticalDoubleJump && bPendingDoubleJump!) && FRand() < 0.4000000) && Skill > (float(2) + (float(5) * FRand())))
+		if(((bTacticalDoubleJump && !bPendingDoubleJump) && FRand() < 0.4000000) && Skill > (float(2) + (float(5) * FRand())))
 		{
 			bTacticalDoubleJump = false;
 			bNotifyApex = true;
@@ -6204,7 +6204,7 @@ state TacticalMove
 	function EndState(name NextStateName)
 	{
 		// End:0x1B
-		if(bPendingDoubleJump!)
+		if(!bPendingDoubleJump)
 		{
 			bNotifyApex = false;
 		}
@@ -6261,7 +6261,7 @@ DoMove:
 	else
 	{
 		// End:0x11F
-		if(Pawn.bCanStrafe!)
+		if(!Pawn.bCanStrafe)
 		{
 			StopFiring();
 			MoveTo(GetDestinationPosition());			
@@ -6278,7 +6278,7 @@ DoStrafeMove:
 	if(bForcedDirection && (WorldInfo.TimeSeconds - StartTacticalTime) < 0.2000000)
 	{
 		// End:0x1D1
-		if(Pawn.HasRangedAttack()! || Skill > (float(2) + (float(3) * FRand())))
+		if(!Pawn.HasRangedAttack() || Skill > (float(2) + (float(3) * FRand())))
 		{
 			bMustCharge = true;
 			LatentWhatToDoNext();
@@ -6287,7 +6287,7 @@ DoStrafeMove:
 		DoRangedAttackOn(Enemy);
 	}
 	// End:0x2CF
-	if((((Enemy == none) || LineOfSightTo(Enemy)) || FastTrace(Enemy.Location, LastSeeingPos)!) || (Pawn.Weapon != none) && Pawn.Weapon.bMeleeWeapon)
+	if((((Enemy == none) || LineOfSightTo(Enemy)) || !FastTrace(Enemy.Location, LastSeeingPos)) || (Pawn.Weapon != none) && Pawn.Weapon.bMeleeWeapon)
 	{
 		goto 'FinishedStrafe';
 	}
@@ -6346,7 +6346,7 @@ state Hunting extends MoveToGoalWithEnemy
 
 	function MayFall(bool bFloor, Vector FloorNormal)
 	{
-		Pawn.bCanJump = ((MoveTarget == none) || int(MoveTarget.Physics) != int(2)) || MoveTarget.IsA('DroppedPickup')!;
+		Pawn.bCanJump = ((MoveTarget == none) || int(MoveTarget.Physics) != int(2)) || !MoveTarget.IsA('DroppedPickup');
 		//return;		
 	}
 
@@ -6495,7 +6495,7 @@ state Hunting extends MoveToGoalWithEnemy
 			}
 		}
 		// End:0x479
-		if(bDirectHunt!)
+		if(!bDirectHunt)
 		{
 			UTSquadAI(Squad).MarkHuntingSpots(self);
 		}
@@ -6511,7 +6511,7 @@ state Hunting extends MoveToGoalWithEnemy
 		}
 		MoveTarget = none;
 		// End:0x520
-		if(bEnemyInfoValid! && LoseEnemy())
+		if(!bEnemyInfoValid && LoseEnemy())
 		{
 			WhatToDoNext();
 			return;
@@ -6552,7 +6552,7 @@ state Hunting extends MoveToGoalWithEnemy
 			{
 				SetDestinationPosition(LastSeenPos);
 				// End:0x90C
-				if(FastTrace(LastSeenPos, ViewSpot)!)
+				if(!FastTrace(LastSeenPos, ViewSpot))
 				{
 					// End:0x895
 					if(PickWallAdjust(Normal(LastSeenPos - ViewSpot)) || FindViewSpot())
@@ -6696,7 +6696,7 @@ state StakeOut
 		LastFireAttempt = WorldInfo.TimeSeconds;
 		bFireSuccess = false;
 		// End:0xCF
-		if(Pawn.NeedToTurn(GetFocalPoint())!)
+		if(!Pawn.NeedToTurn(GetFocalPoint()))
 		{
 			bCanFire = true;
 			bStoppedFiring = false;
@@ -6728,7 +6728,7 @@ state StakeOut
 			EnemyVisibilityTime = WorldInfo.TimeSeconds;
 			bEnemyIsVisible = true;
 			// End:0xA2
-			if(FocusOnLeader(false)! && FRand() < 0.5000000)
+			if(!FocusOnLeader(false) && FRand() < 0.5000000)
 			{
 				Focus = Enemy;
 				FireWeaponAt(Focus);
@@ -6757,7 +6757,7 @@ state StakeOut
 	{
 		FocusOnLeader(false);
 		// End:0xB5
-		if((FRand() < 0.3000000) || FastTrace(GetFocalPoint() + (vect(0.0000000, 0.0000000, 0.9000000) * Enemy.GetCollisionHeight()), Pawn.Location + (vect(0.0000000, 0.0000000, 0.8000000) * Pawn.GetCollisionHeight()))!)
+		if((FRand() < 0.3000000) || !FastTrace(GetFocalPoint() + (vect(0.0000000, 0.0000000, 0.9000000) * Enemy.GetCollisionHeight()), Pawn.Location + (vect(0.0000000, 0.0000000, 0.8000000) * Pawn.GetCollisionHeight())))
 		{
 			FindNewStakeOutDir();
 		}
@@ -6811,7 +6811,7 @@ state StakeOut
 				FireSpot += ((float(2) * Enemy.GetCollisionHeight()) * HitNormal);
 			}
 			// End:0xD2
-			if(FastTrace(FireSpot, projStart)!)
+			if(!FastTrace(FireSpot, projStart))
 			{
 				FireSpot = GetFocalPoint();
 			}
@@ -6866,7 +6866,7 @@ state StakeOut
 		Pawn.bCanJump = false;
 		FocusOnLeader(false);
 		// End:0x139
-		if(((bEnemyInfoValid! || VSize(GetFocalPoint() - Pawn.Location) < float(200)) || ((WorldInfo.TimeSeconds - LastSeenTime) > 6.0000000) && FRand() < 0.5000000) || ClearShot(GetFocalPoint(), false)!)
+		if(((!bEnemyInfoValid || VSize(GetFocalPoint() - Pawn.Location) < float(200)) || ((WorldInfo.TimeSeconds - LastSeenTime) > 6.0000000) && FRand() < 0.5000000) || !ClearShot(GetFocalPoint(), false))
 		{
 			FindNewStakeOutDir();
 		}
@@ -6901,7 +6901,7 @@ Begin:
 	else
 	{
 		// End:0x16B
-		if((((Pawn.Weapon != none) && Pawn.Weapon.bMeleeWeapon!) && UTSquadAI(Squad).ShouldSuppressEnemy(self)) && ClearShot(GetFocalPoint(), true))
+		if((((Pawn.Weapon != none) && !Pawn.Weapon.bMeleeWeapon) && UTSquadAI(Squad).ShouldSuppressEnemy(self)) && ClearShot(GetFocalPoint(), true))
 		{
 			WeaponFireAgain(false);			
 		}
@@ -6920,7 +6920,7 @@ Begin:
 	}
 	Sleep(1.0000000 + FRand());
 	// End:0x2D8
-	if((Pawn.bIsCrouched && FastTrace(GetFocalPoint(), Pawn.Location + (Pawn.EyeHeight * vect(0.0000000, 0.0000000, 1.0000000)))!) && FastTrace(GetFocalPoint(), Pawn.Location + (Pawn.GetCollisionHeight() * vect(0.0000000, 0.0000000, 1.0000000))))
+	if((Pawn.bIsCrouched && !FastTrace(GetFocalPoint(), Pawn.Location + (Pawn.EyeHeight * vect(0.0000000, 0.0000000, 1.0000000)))) && FastTrace(GetFocalPoint(), Pawn.Location + (Pawn.GetCollisionHeight() * vect(0.0000000, 0.0000000, 1.0000000))))
 	{
 		Pawn.bWantsToCrouch = false;
 		Sleep(0.1500000 + ((0.0500000 * (float(1) + FRand())) * (float(10) - Skill)));
@@ -6940,7 +6940,7 @@ state RangedAttack
 
 	function bool Stopped()
 	{
-		return bPreparingMove || InLatentExecution(503)!;
+		return bPreparingMove || !InLatentExecution(503);
 		//return ReturnValue;		
 	}
 
@@ -6968,7 +6968,7 @@ state RangedAttack
 		if(bHasFired)
 		{
 			// End:0xD5
-			if((IsSniping()) && WorldInfo.bUseConsoleInput!)
+			if((IsSniping()) && !WorldInfo.bUseConsoleInput)
 			{
 				Pawn.bWantsToCrouch = Skill > float(2);				
 			}
@@ -6984,7 +6984,7 @@ state RangedAttack
 	function EnemyNotVisible()
 	{
 		// End:0x47
-		if((Focus == Enemy) && Pawn.RecommendLongRangedAttack()!)
+		if((Focus == Enemy) && !Pawn.RecommendLongRangedAttack())
 		{
 			WhatToDoNext();
 		}
@@ -7034,7 +7034,7 @@ state RangedAttack
 	function DoRangedAttackOn(Actor A)
 	{
 		// End:0x23
-		if(FocusOnLeader(false)!)
+		if(!FocusOnLeader(false))
 		{
 			Focus = A;
 		}
@@ -7051,14 +7051,14 @@ state RangedAttack
 		local UTWeapon UTWeap;
 
 		// End:0x77
-		if((Pawn.bCanStrafe! || Pawn.Weapon == none) || (Skill + StrafingAbility) < (1.5000000 + (3.5000000 * FRand())))
+		if((!Pawn.bCanStrafe || Pawn.Weapon == none) || (Skill + StrafingAbility) < (1.5000000 + (3.5000000 * FRand())))
 		{
 			return false;
 		}
 		UTWeap = UTWeapon(Pawn.Weapon);
 		MaxRange = ((UTWeap != none) ? UTWeap.GetOptimalRangeFor(Focus) : Pawn.Weapon.MaxRange());
 		// End:0x30D
-		if(Pawn.ValidAnchor()!)
+		if(!Pawn.ValidAnchor())
 		{
 			Pawn.SetAnchor(Pawn.GetBestAnchor(Pawn, Pawn.Location, true, true, Dist));
 			// End:0x1DC
@@ -7091,7 +7091,7 @@ state RangedAttack
 			{
 				TargetDist = VSize(Focus.Location - Pawn.Location);
 				// End:0x426
-				if(WorldInfo.GRI.OnSameTeam(Focus, self)!)
+				if(!WorldInfo.GRI.OnSameTeam(Focus, self))
 				{
 					bAllowBackwards = (CombatStyle + ((UTWeap != none) ? UTWeap.SuggestAttackStyle() : 0.0000000)) <= 0.0000000;
 				}
@@ -7100,11 +7100,11 @@ state RangedAttack
 				J0x479:
 
 				// End:0x69F [Loop If]
-				if(Pawn.Anchor.PathList[I].IsBlockedFor(Pawn)!)
+				if(!Pawn.Anchor.PathList[I].IsBlockedFor(Pawn))
 				{
 					Nav = Pawn.Anchor.PathList[I].GetEnd();
 					// End:0x69F
-					if(((Nav != Focus) && Nav.bSpecialMove!) && Nav.IsA('Teleporter')!)
+					if(((Nav != Focus) && !Nav.bSpecialMove) && !Nav.IsA('Teleporter'))
 					{
 						Dist = VSize(Nav.Location - Focus.Location);
 						// End:0x69F
@@ -7136,7 +7136,7 @@ state RangedAttack
 		bHasFired = false;
 		StopMovement();
 		// End:0x72
-		if(FocusOnLeader(false)! && Focus == none)
+		if(!FocusOnLeader(false) && Focus == none)
 		{
 			Focus = Enemy;
 		}
@@ -7342,7 +7342,7 @@ state FindAir
 	{
 		global.NotifyHeadVolumeChange(newHeadVolume);
 		// End:0x41
-		if(newHeadVolume.bWaterVolume!)
+		if(!newHeadVolume.bWaterVolume)
 		{
 			WhatToDoNext();
 		}
@@ -7571,7 +7571,7 @@ state EnteringVehicle
 {Begin:
 
 	// End:0x27F
-	if((((Vehicle(RouteGoal) != none) && Vehicle(Pawn) == none) && Vehicle(RouteGoal).Health > 0) && RouteGoal.bDeleteMe!)
+	if((((Vehicle(RouteGoal) != none) && Vehicle(Pawn) == none) && Vehicle(RouteGoal).Health > 0) && !RouteGoal.bDeleteMe)
 	{
 		// End:0xE7
 		if(Vehicle(RouteGoal).TryToDrive(Pawn))
@@ -7680,7 +7680,7 @@ state CustomAction
 	}
 	J0x00:
 	// End:0x24 [Loop If]
-	if(CustomActionFunc(self)!)
+	if(!CustomActionFunc(self))
 	{
 		Sleep(0.0000000);
 		// [Loop Continue]

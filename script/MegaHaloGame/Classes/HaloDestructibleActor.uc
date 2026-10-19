@@ -202,7 +202,7 @@ simulated event TakeDamage(int Damage, Controller InstigatedBy, Vector HitLocati
 		return;
 	}
 	// End:0x56E
-	if(IsLockActor! || ThisDamageType == KeyDamageType)
+	if(!IsLockActor || ThisDamageType == KeyDamageType)
 	{
 		Damage = Max(Damage, 0);
 		super(KAsset).TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, ThisDamageType, HitInfo, DamageCauser);
@@ -279,7 +279,7 @@ simulated event TakeDamage(int Damage, Controller InstigatedBy, Vector HitLocati
 				}
 			}
 			// End:0x56E
-			if(bDamageLoopPlaying! && ((AkObjectType == 'PowerCube') || AkObjectType == 'UNSC_Powercube') || AkObjectType == 'COV_Powercube')
+			if(!bDamageLoopPlaying && ((AkObjectType == 'PowerCube') || AkObjectType == 'UNSC_Powercube') || AkObjectType == 'COV_Powercube')
 			{
 				bDamageLoopPlaying = true;
 				PlayAkEvent(AkEvent'Objects.Play_FX_PowerCube_Damage_Loop');

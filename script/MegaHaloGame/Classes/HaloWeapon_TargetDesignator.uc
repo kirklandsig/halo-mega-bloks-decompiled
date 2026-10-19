@@ -121,7 +121,7 @@ simulated function ResolveDeployableReferences()
 		{
 			DeployableTurretsArray[I].DeployClassRef = Class<Actor>(FindObject(DeployableTurretsArray[I].DeployClassName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -136,7 +136,7 @@ simulated function ResolveDeployableReferences()
 		{
 			DeployableVehiclesArray[I].DeployClassRef = Class<Actor>(FindObject(DeployableVehiclesArray[I].DeployClassName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0xD2;
 	}
@@ -151,7 +151,7 @@ simulated function ResolveDeployableReferences()
 		{
 			DeployableWallsArray[I].DeployClassRef = Class<Actor>(FindObject(DeployableWallsArray[I].DeployClassName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x199;
 	}
@@ -166,7 +166,7 @@ simulated function ResolveDeployableReferences()
 		{
 			DeployableGroundTrapsArray[I].DeployClassRef = Class<Actor>(FindObject(DeployableGroundTrapsArray[I].DeployClassName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x260;
 	}
@@ -181,7 +181,7 @@ simulated function ResolveDeployableReferences()
 		{
 			DeployableWallTrapsArray[I].DeployClassRef = Class<Actor>(FindObject(DeployableWallTrapsArray[I].DeployClassName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x327;
 	}
@@ -196,7 +196,7 @@ simulated function ResolveDeployableReferences()
 		{
 			DeployableFreeObjectsArray[I].DeployClassRef = Class<Actor>(FindObject(DeployableFreeObjectsArray[I].DeployClassName, Class'Core.Class'));
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x3EE;
 	}
@@ -636,7 +636,7 @@ private final simulated function Actor FindSoftLockActor(Vector StartPos, Rotato
 		foreach GetTraceOwner().OverlappingActors(Class'MegaHaloGame.HaloStudGridActor', candidateActor, WeaponRange, Owner.Location, true)
 		{
 			// End:0x7A7
-			if(DoesActorHavePegs(candidateActor, minStudsX, minStudsY) && discardOccupiedActors! || DoesActorHaveUnoccupiedPegs(candidateActor))
+			if(DoesActorHavePegs(candidateActor, minStudsX, minStudsY) && !discardOccupiedActors || DoesActorHaveUnoccupiedPegs(candidateActor))
 			{
 				// End:0x24F
 				if(showdebugtext)
@@ -847,7 +847,7 @@ simulated function ProcessBeamHit(Vector StartTrace, Vector AimDir, out ImpactIn
 			CurrentAimGridOrientation.Roll = 0;
 		}
 		// End:0x63C
-		if(proposedItemInfo.AlignWithFloor && proposedItemInfo.RequiresPegs!)
+		if(proposedItemInfo.AlignWithFloor && !proposedItemInfo.RequiresPegs)
 		{
 			orientQuat = QuatFindBetween(vect(0.0000000, 0.0000000, 1.0000000), aimedAtNormal);
 			CurrentAimGridOrientation = QuatToRotator(orientQuat);
@@ -856,7 +856,7 @@ simulated function ProcessBeamHit(Vector StartTrace, Vector AimDir, out ImpactIn
 		if(((WorldInfo.TimeSeconds - SysTimeOfLastSelectionChange) > SecsDisabledAfterChange) && IsCategoryItemAffordable(CurrentTDCategory, int(CurrentTDItemIdx)))
 		{
 			// End:0x6FA
-			if((proposedItemInfo.RequiresPegs && CurrentlyAimingOnPegs!) && (int(CurrentTDCategory) != int(2)) || bCheatToBuildVehiclesAnywhere!)
+			if((proposedItemInfo.RequiresPegs && !CurrentlyAimingOnPegs) && (int(CurrentTDCategory) != int(2)) || !bCheatToBuildVehiclesAnywhere)
 			{
 				CurrentAimPointOKToDeploy = false;
 			}
@@ -894,14 +894,14 @@ simulated function ProcessBeamHit(Vector StartTrace, Vector AimDir, out ImpactIn
 			deployPoint = CurrentDeployPoint;
 			deployPoint.Z += proposedItemInfo.UpOffset;
 			// End:0x97F
-			if((proposedItemInfo.RequiresPegs! && proposedItemInfo.DeployArchetypeRef != none) && Spawn(proposedItemInfo.DeployArchetypeRef.Class,,, deployPoint, aimOrientation, proposedItemInfo.DeployArchetypeRef,, true) == none)
+			if((!proposedItemInfo.RequiresPegs && proposedItemInfo.DeployArchetypeRef != none) && Spawn(proposedItemInfo.DeployArchetypeRef.Class,,, deployPoint, aimOrientation, proposedItemInfo.DeployArchetypeRef,, true) == none)
 			{
 				CurrentAimPointOKToDeploy = false;				
 			}
 			else
 			{
 				// End:0xA16
-				if((proposedItemInfo.RequiresPegs! && proposedItemInfo.DeployClassRef != none) && Spawn(proposedItemInfo.DeployClassRef,,, deployPoint, aimOrientation,,, true) == none)
+				if((!proposedItemInfo.RequiresPegs && proposedItemInfo.DeployClassRef != none) && Spawn(proposedItemInfo.DeployClassRef,,, deployPoint, aimOrientation,,, true) == none)
 				{
 					CurrentAimPointOKToDeploy = false;
 				}
@@ -1174,7 +1174,7 @@ simulated function UpdateDeploymentTrigger(float DeltaTime)
 	if(CurrentDeployCountdown > 0.0000000)
 	{
 		// End:0x42
-		if(CurrentAimPointOKToDeploy!)
+		if(!CurrentAimPointOKToDeploy)
 		{
 			CurrentDeployCountdown = SecsRequiredToDeploy;
 			StopBuildSoundLoop();			

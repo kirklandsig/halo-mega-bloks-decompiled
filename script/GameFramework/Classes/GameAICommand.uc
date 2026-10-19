@@ -111,7 +111,7 @@ function PostPopped()
 function Pushed()
 {
 	// End:0x71
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal("COMMAND PUSHED:" @ string(self));
 	}
@@ -121,7 +121,7 @@ function Pushed()
 function Popped()
 {
 	// End:0x86
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal((("COMMAND POPPED:" @ string(self)) @ "with") @ string(Status));
 	}
@@ -131,7 +131,7 @@ function Popped()
 function Paused(GameAICommand NewCommand)
 {
 	// End:0x84
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal((("COMMAND PAUSED:" @ string(self)) @ "by") @ string(NewCommand));
 	}
@@ -141,7 +141,7 @@ function Paused(GameAICommand NewCommand)
 function Resumed(name OldCommandName)
 {
 	// End:0x9C
-	if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+	if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 	{
 		Outer.AILog_Internal((((("COMMAND RESUMED:" @ string(self)) @ "from") @ string(OldCommandName)) @ "with") @ string(ChildStatus));
 	}
@@ -195,7 +195,7 @@ state DebugState
 	function BeginState(name PreviousStateName)
 	{
 		// End:0x7C
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("BEGINSTATE" @ string(PreviousStateName), 'State');
 		}
@@ -205,7 +205,7 @@ state DebugState
 	function EndState(name NextStateName)
 	{
 		// End:0x7A
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("ENDSTATE" @ string(NextStateName), 'State');
 		}
@@ -215,7 +215,7 @@ state DebugState
 	function PushedState()
 	{
 		// End:0x6B
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("PUSHED", 'State');
 		}
@@ -225,7 +225,7 @@ state DebugState
 	function PoppedState()
 	{
 		// End:0x6B
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("POPPED", 'State');
 		}
@@ -235,7 +235,7 @@ state DebugState
 	function ContinuedState()
 	{
 		// End:0x6E
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("CONTINUED", 'State');
 		}
@@ -245,7 +245,7 @@ state DebugState
 	function PausedState()
 	{
 		// End:0x6B
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			Outer.AILog_Internal("PAUSED", 'State');
 		}

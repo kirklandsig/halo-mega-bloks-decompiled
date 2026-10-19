@@ -132,7 +132,7 @@ function OnReadStorageComplete(byte LocalUserNum, bool bWasSuccessful)
 	if(bWasSuccessful == true)
 	{
 		// End:0x22
-		if(bWasErrorLastRead!)
+		if(!bWasErrorLastRead)
 		{			
 		}
 		else
@@ -201,7 +201,7 @@ function RefreshStorageData()
 	local bool bFoundCachedData;
 
 	// End:0x181
-	if(bIsExternalUIOpen!)
+	if(!bIsExternalUIOpen)
 	{
 		OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 		// End:0x17E
@@ -209,7 +209,7 @@ function RefreshStorageData()
 		{
 			bFoundCachedData = GetData(OnlineSub.PlayerInterface, byte(PlayerControllerId));
 			// End:0x17E
-			if(bFoundCachedData! || bFoundCachedData && OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded)!)
+			if(!bFoundCachedData || bFoundCachedData && !OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded))
 			{
 				ShowDeviceSelection();
 			}
@@ -269,7 +269,7 @@ function OnStorageDeviceChange()
 	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.SystemInterface, OnlineSystemInterface(none)))
 	{
 		// End:0xFE
-		if(OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded)!)
+		if(!OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded))
 		{
 			Profile.DeviceID = -1;
 			RefreshStorageData();
@@ -282,7 +282,7 @@ function OnExternalUIChange(bool bIsOpening)
 {
 	bIsExternalUIOpen = bIsOpening;
 	// End:0x3D
-	if(bIsOpening! && bNeedsDeferredRefresh)
+	if(!bIsOpening && bNeedsDeferredRefresh)
 	{
 		RefreshStorageData();
 	}

@@ -107,7 +107,7 @@ simulated function SetImpactedActor(Actor HitActor, Vector HitLocation, Vector H
 		{
 			DesiredLinkHitSound = none;
 			// End:0xD4
-			if(bHittingWall!)
+			if(!bHittingWall)
 			{
 				bHittingWall = UTPawn(HitActor) == none;
 				// End:0xD4
@@ -187,19 +187,19 @@ simulated function SetImpactedActor(Actor HitActor, Vector HitLocation, Vector H
 					{
 						MITV_Decal = new (self) Class'Engine.MaterialInstanceTimeVarying';
 						MITV_Decal.SetParent(BeamDecal);
-						WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, HitLocation, Rotator(HitNormal-), DecalWidth, DecalHeight, 10.0000000, false);
+						WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, HitLocation, Rotator(-HitNormal), DecalWidth, DecalHeight, 10.0000000, false);
 						MITV_Decal.SetScalarStartTime(DecalDissolveParamName, DurationOfDecal);						
 					}
 					else
 					{
-						WorldInfo.MyDecalManager.SpawnDecal(BeamDecal, HitLocation, Rotator(HitNormal-), DecalWidth, DecalHeight, 10.0000000, true);
+						WorldInfo.MyDecalManager.SpawnDecal(BeamDecal, HitLocation, Rotator(-HitNormal), DecalWidth, DecalHeight, 10.0000000, true);
 					}
 				}
 				TicksSinceLastDecal = 0;				
 			}
 			else
 			{
-				TicksSinceLastDecal++;
+				++TicksSinceLastDecal;
 			}			
 		}
 		else
@@ -277,7 +277,7 @@ simulated function UpdateBeam(byte FireModeNum)
 		if(int(WorldInfo.NetMode) != int(NM_DedicatedServer))
 		{
 			// End:0x2B0
-			if((BeamEndpointEffect != none) && BeamEndpointEffect.bDeleteMe!)
+			if((BeamEndpointEffect != none) && !BeamEndpointEffect.bDeleteMe)
 			{
 				BeamEndpointEffect.SetLocation(EndPoint);
 				BeamEndpointEffect.SetFloatParameter('Touch', float(((bHittingWall) ? 1 : 0)));				
@@ -413,11 +413,11 @@ simulated function CheckPoweredUp()
 		foreach WorldInfo.AllPawns(Class'UTGame.UTPawn', UTP, Instigator.Location, Class<UTWeap_LinkGun>(WeaponClass).default.WeaponLinkDistance)
 		{
 			// End:0x7A3
-			if((((((UTP != Instigator) && UTP.bNoWeaponFiring!) && UTP.DrivenVehicle == none) && UTAttachment_LinkGun(UTP.CurrentWeaponAttachment) != none) && WorldInfo.GRI.OnSameTeam(Instigator, UTP)) && FastTrace(UTP.Location, Instigator.Location))
+			if((((((UTP != Instigator) && !UTP.bNoWeaponFiring) && UTP.DrivenVehicle == none) && UTAttachment_LinkGun(UTP.CurrentWeaponAttachment) != none) && WorldInfo.GRI.OnSameTeam(Instigator, UTP)) && FastTrace(UTP.Location, Instigator.Location))
 			{
 				bPoweredUp = true;
 				// End:0x7A3
-				if(UTP.IsFirstPerson()!)
+				if(!UTP.IsFirstPerson())
 				{
 					Index = Connections.Find('TargetAttachment', UTP.CurrentWeaponAttachment);
 					// End:0x314
@@ -492,7 +492,7 @@ simulated function ChangeVisibility(bool bIsVisible)
 	// End:0x4E
 	if(PoweredUpEffect != none)
 	{
-		PoweredUpEffect.SetHidden(bIsVisible!);
+		PoweredUpEffect.SetHidden(!bIsVisible);
 	}
 	//return;	
 }

@@ -76,7 +76,7 @@ function UpdateAchievement(int AchievementId, optional int Value = 1, optional b
 	local byte bUnlockEnabled, bProgressEnabled;
 
 	// End:0xA2
-	if(bInitializedAchievementValues!)
+	if(!bInitializedAchievementValues)
 	{
 		I = DeferredAchievementUpdates.Length;
 		DeferredAchievementUpdates.Length = I + 1;
@@ -112,7 +112,7 @@ function UpdateAchievement(int AchievementId, optional int Value = 1, optional b
 				}
 			}
 			// End:0x1D5
-			if(bSkipCommit!)
+			if(!bSkipCommit)
 			{
 				WriteAchievementStats();
 			}			
@@ -157,7 +157,7 @@ function UnlockAchievement(int AchievementId)
 	{
 		Outer.OnlineSub.PlayerInterface.AddUnlockAchievementCompleteDelegate(byte(LocalPlayer(Outer.Player).ControllerId), AchievementDone);
 		// End:0x1AB
-		if(Outer.OnlineSub.PlayerInterface.UnlockAchievement(byte(LocalPlayer(Outer.Player).ControllerId), AchievementId)!)
+		if(!Outer.OnlineSub.PlayerInterface.UnlockAchievement(byte(LocalPlayer(Outer.Player).ControllerId), AchievementId))
 		{
 			AchievementDone(false);
 		}		
@@ -172,7 +172,7 @@ function UnlockAchievement(int AchievementId)
 function AchievementDone(bool bWasSuccessful)
 {
 	// End:0x49
-	if(bWasSuccessful!)
+	if(!bWasSuccessful)
 	{
 		LogInternal("UTAchievements: Achievement unlock attempt has failed");
 	}
@@ -213,7 +213,7 @@ function bool UpdateAchievementBitMask(int AchievementId, int BitMask, optional 
 				{
 					bUnlocked = (Value & UnlockCriteria) == UnlockCriteria;
 					// End:0x1EF
-					if((bUnlocked! && GetAchievementProgressCriteria(AchievementId, ProgressCriteria, bProgressEnabled)) && ProgressCriteria > 0)
+					if((!bUnlocked && GetAchievementProgressCriteria(AchievementId, ProgressCriteria, bProgressEnabled)) && ProgressCriteria > 0)
 					{
 						I = 1;
 						J0x150:
@@ -224,9 +224,9 @@ function bool UpdateAchievementBitMask(int AchievementId, int BitMask, optional 
 							// End:0x18B
 							if(bool(Value & I))
 							{
-								BitCount++;
+								++BitCount;
 							}
-							BitMax++;
+							++BitMax;
 							I = I << 1;
 							// [Loop Continue]
 							goto J0x150;
@@ -280,7 +280,7 @@ function bool UpdateAchievementCount(int AchievementId, optional int Count = 1, 
 				{
 					bUnlocked = Value >= UnlockCriteria;
 					// End:0x14F
-					if((bUnlocked! && GetAchievementProgressCriteria(AchievementId, ProgressCriteria, bProgressEnabled)) && ProgressCriteria > 0)
+					if((!bUnlocked && GetAchievementProgressCriteria(AchievementId, ProgressCriteria, bProgressEnabled)) && ProgressCriteria > 0)
 					{
 						// End:0x14F
 						if((Value % ProgressCriteria) == 0)
@@ -342,7 +342,7 @@ function bool UpdateAchievementByteCount(int AchievementId, int Counter)
 						{
 							Mask = 255 << (I * 8);
 							bUnlockedByte[I] = byte((Value & Mask) >= (UnlockCriteria & Mask));
-							I++;
+							++I;
 							// [Loop Continue]
 							goto J0xEA;
 						}
@@ -427,7 +427,7 @@ final function bool GetAchievementUnlockCriteria(int AchievementId, out int Unlo
 			// [Explicit Break]
 			goto J0xA4;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -457,7 +457,7 @@ final function bool GetAchievementProgressCriteria(int AchievementId, out int Pr
 			// [Explicit Break]
 			goto J0xD8;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0C;
 	}
@@ -487,7 +487,7 @@ final function bool GetAchievementUnlockType(int AchievementId, out int UnlockTy
 			// [Explicit Break]
 			goto J0xDA;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0C;
 	}
@@ -512,7 +512,7 @@ function ReadAchievementStats()
 			Outer.OnlineSub.StatsInterface.AddReadOnlineStatsCompleteDelegate(ReadAchievementStatsComplete);
 			UIDList.AddItem(Outer.PlayerReplicationInfo.UniqueId);
 			// End:0x26A
-			if(Outer.OnlineSub.StatsInterface.ReadOnlineStats(UIDList, AchievementStatsRead)!)
+			if(!Outer.OnlineSub.StatsInterface.ReadOnlineStats(UIDList, AchievementStatsRead))
 			{
 				Outer.OnlineSub.StatsInterface.ClearReadOnlineStatsCompleteDelegate(ReadAchievementStatsComplete);
 				// End:0x211
@@ -541,7 +541,7 @@ function ReadAchievementStatsComplete(bool bWasSuccessful)
 	local int I, J, CurValue;
 
 	// End:0x4D
-	if(bWasSuccessful!)
+	if(!bWasSuccessful)
 	{
 		LogInternal("UTAchievements: Failed to read online achievement stats");
 		return;
@@ -565,7 +565,7 @@ function ReadAchievementStatsComplete(bool bWasSuccessful)
 				AchievementValues[J].Value = CurValue;
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x58;
 	}
@@ -579,7 +579,7 @@ function ReadAchievementStatsComplete(bool bWasSuccessful)
 	if(I < DeferredAchievementUpdates.Length)
 	{
 		UpdateAchievement(DeferredAchievementUpdates[I].Id, DeferredAchievementUpdates[I].Value, I != (DeferredAchievementUpdates.Length - 1));
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x26F;
 	}
@@ -606,7 +606,7 @@ function WriteAchievementStats()
 			if(I < AchievementValues.Length)
 			{
 				StatsWriteObj.SetIntStat(AchievementValues[I].Id, AchievementValues[I].Value);
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x42;
 			}
@@ -615,7 +615,7 @@ function WriteAchievementStats()
 			{
 				Outer.OnlineSub.StatsInterface.AddFlushOnlineStatsCompleteDelegate(FlushAchievementStatsComplete);
 				// End:0x2C5
-				if(Outer.OnlineSub.StatsInterface.FlushOnlineStats('Game')!)
+				if(!Outer.OnlineSub.StatsInterface.FlushOnlineStats('Game'))
 				{
 					Outer.OnlineSub.StatsInterface.ClearFlushOnlineStatsCompleteDelegate(FlushAchievementStatsComplete);
 					LogInternal("UTAchievements: Failed to flush achievement stats to online subsystem backend");
@@ -633,7 +633,7 @@ function WriteAchievementStats()
 function FlushAchievementStatsComplete(name SessionName, bool bWasSuccessful)
 {
 	// End:0x4A
-	if(bWasSuccessful!)
+	if(!bWasSuccessful)
 	{
 		LogInternal("UTAchievements: Achievement stats flush attempt failed");
 	}

@@ -44,12 +44,12 @@ simulated function ProcessInstantHit(byte FiringMode, ImpactInfo Impact, optiona
 				{
 					MITV_Decal = new (self) Class'Engine.MaterialInstanceTimeVarying';
 					MITV_Decal.SetParent(MI);
-					WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, Impact.HitLocation, Rotator(Impact.HitNormal-), ImpactEffect.DecalWidth, ImpactEffect.DecalHeight, 10.0000000, false);
+					WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, Impact.HitLocation, Rotator(-Impact.HitNormal), ImpactEffect.DecalWidth, ImpactEffect.DecalHeight, 10.0000000, false);
 					MITV_Decal.SetScalarStartTime(ImpactEffect.DecalDissolveParamName, ImpactEffect.DurationOfDecal);					
 				}
 				else
 				{
-					WorldInfo.MyDecalManager.SpawnDecal(MI, Impact.HitLocation, Rotator(Impact.HitNormal-), ImpactEffect.DecalWidth, ImpactEffect.DecalHeight, 10.0000000, false);
+					WorldInfo.MyDecalManager.SpawnDecal(MI, Impact.HitLocation, Rotator(-Impact.HitNormal), ImpactEffect.DecalWidth, ImpactEffect.DecalHeight, 10.0000000, false);
 				}
 			}
 		}

@@ -8,7 +8,7 @@ var int BurstFireCounter;
 simulated function StartFire(byte FireModeNum)
 {
 	// End:0x22
-	if(bDisableFiring!)
+	if(!bDisableFiring)
 	{
 		super.StartFire(FireModeNum);
 	}

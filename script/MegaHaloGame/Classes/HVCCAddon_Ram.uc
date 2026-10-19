@@ -59,7 +59,7 @@ function HandleHDACollision(HaloDestructibleActor Other, HaloVehicle MyVehicle)
 			KickbackAmount = FMax(KickbackAmount, 0.0000000);
 			Kickback = HitDir * KickbackAmount;
 			MyVehicle.Mesh.AddImpulse(Kickback, Location);
-			MyVehicle.PlayHDACollisionForcefeedback(Speed, HitDir-);
+			MyVehicle.PlayHDACollisionForcefeedback(Speed, -HitDir);
 		}
 	}
 	//return;	

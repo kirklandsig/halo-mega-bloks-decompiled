@@ -104,7 +104,7 @@ simulated function ProcessAimChange(Vector aimOrigin, Vector AimTarget, Rotator 
 	{
 		GridSpotlight = Light(Spawn(GridSpotlightArchetypeRef.Class,,, AimTarget + GridSpotlightLocationOffset, Rotator(vect(0.0000000, 0.0000000, -1.0000000)), GridSpotlightArchetypeRef));
 		// End:0x113
-		if(bShouldBeVisible!)
+		if(!bShouldBeVisible)
 		{
 			GridSpotlight.LightComponent.SetEnabled(false);
 		}		
@@ -122,7 +122,7 @@ simulated function ProcessAimChange(Vector aimOrigin, Vector AimTarget, Rotator 
 		else
 		{
 			// End:0x2D5
-			if((GridSpotlight.LightComponent.bEnabled == true) && bShouldBeVisible!)
+			if((GridSpotlight.LightComponent.bEnabled == true) && !bShouldBeVisible)
 			{
 				GridSpotlight.LightComponent.SetEnabled(false);
 			}
@@ -168,7 +168,7 @@ simulated function ProcessAimChange(Vector aimOrigin, Vector AimTarget, Rotator 
 		else
 		{
 			// End:0x4EB
-			if(DeploymentPreviewActor.IsTransparent()! && bShouldBeVisible!)
+			if(!DeploymentPreviewActor.IsTransparent() && !bShouldBeVisible)
 			{
 				DeploymentPreviewActor.RampDownOpacity();
 			}
@@ -178,7 +178,7 @@ simulated function ProcessAimChange(Vector aimOrigin, Vector AimTarget, Rotator 
 	else
 	{
 		// End:0x559
-		if(DeploymentPreviewActor.IsTransparent()!)
+		if(!DeploymentPreviewActor.IsTransparent())
 		{
 			DeploymentPreviewActor.RampDownOpacity();
 		}

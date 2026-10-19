@@ -133,7 +133,7 @@ function OnSetMesh(SeqAct_SetMesh Action)
 		{
 			LightEnvironment.bCastShadows = false;
 			LightEnvironment.SetEnabled(true);
-			bForceStaticDecals = Action.bIsAllowedToMove!;
+			bForceStaticDecals = !Action.bIsAllowedToMove;
 			StaticMeshComponent.SetForceStaticDecals(bForceStaticDecals);
 			StaticMeshComponent.bAllowDecalAutomaticReAttach = Action.bAllowDecalsToReattach;
 			StaticMeshComponent.SetStaticMesh(Action.NewStaticMesh, Action.bAllowDecalsToReattach);
@@ -172,7 +172,7 @@ function SetStaticMesh(StaticMesh NewMesh, optional Vector NewTranslation, optio
 	StaticMeshComponent.SetTranslation(NewTranslation);
 	StaticMeshComponent.SetRotation(NewRotation);
 	// End:0xCF
-	if(IsZero(NewScale3D)!)
+	if(!IsZero(NewScale3D))
 	{
 		StaticMeshComponent.SetScale3D(NewScale3D);
 		ReplicatedMeshScale3D = NewScale3D * 100.0000000;
@@ -187,7 +187,7 @@ function SetStaticMesh(StaticMesh NewMesh, optional Vector NewTranslation, optio
 simulated function bool CanBasePawn(Pawn P)
 {
 	// End:0x56
-	if(bPawnCanBaseOn || (bSafeBaseIfAsleep && StaticMeshComponent != none) && StaticMeshComponent.RigidBodyIsAwake()!)
+	if(bPawnCanBaseOn || (bSafeBaseIfAsleep && StaticMeshComponent != none) && !StaticMeshComponent.RigidBodyIsAwake())
 	{
 		return true;
 	}

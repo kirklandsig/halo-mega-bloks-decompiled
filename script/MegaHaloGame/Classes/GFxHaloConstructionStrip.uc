@@ -48,7 +48,7 @@ var float SlideTime;
 function Init(string ClipIdentifier)
 {
 	// End:0xED
-	if(bInitialized!)
+	if(!bInitialized)
 	{
 		SelectionBox = GetObject("selectionBox");
 		// End:0x76
@@ -243,7 +243,7 @@ function JumpContainer(int Index)
 	if(ContainerIndex != Index)
 	{
 		ContainerIndex = Index;
-		ContainerGoalPosition = Multiply_Vector2DFloat(NodeOffset, float(Index-));
+		ContainerGoalPosition = Multiply_Vector2DFloat(NodeOffset, float(-Index));
 		ItemContainer.SetFloat("_x", ContainerGoalPosition.X);
 		ItemContainer.SetFloat("_y", ContainerGoalPosition.Y);
 		bContainerIsSliding = false;
@@ -259,7 +259,7 @@ function SlideContainer(int Index)
 	if(ContainerIndex != Index)
 	{
 		ContainerIndex = Index;
-		ContainerGoalPosition = Multiply_Vector2DFloat(NodeOffset, float(Index-));
+		ContainerGoalPosition = Multiply_Vector2DFloat(NodeOffset, float(-Index));
 		ContainerStartPosition.X = ItemContainer.GetFloat("_x");
 		ContainerStartPosition.Y = ItemContainer.GetFloat("_y");
 		ContainerEndTimer = ThisWorld.TimeSeconds + SlideTime;

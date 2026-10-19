@@ -162,7 +162,7 @@ event TakeDamage(int Damage, Controller InstigatedBy, Vector HitLocation, Vector
 
 	HaloDamageType = Class<HaloDamageType>(DamageType);
 	// End:0x83
-	if((Damage <= Health) && (HaloDamageType == none) || HaloDamageType.default.Staggers!)
+	if((Damage <= Health) && (HaloDamageType == none) || !HaloDamageType.default.Staggers)
 	{
 		Momentum = vect(0.0000000, 0.0000000, 0.0000000);
 	}
@@ -239,7 +239,7 @@ simulated event PostBeginPlay()
 			DeathBehaviors[I].rDirection.Pitch = 0;
 			DeathBehaviors[I].rDirection.Roll = 0;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x2A;
 	}
@@ -459,7 +459,7 @@ simulated function PlayDying(Class<DamageType> DamageType, Vector HitLoc, option
 	{
 		fKillerDistanceSq = 0.0000000;
 	}
-	HitVec = ((IsZero(HitLoc)!) ? HitLoc - Location : HitVec);
+	HitVec = ((!IsZero(HitLoc)) ? HitLoc - Location : HitVec);
 	HitVec.Z = 0.0000000;
 	HDT = Class<HaloDamageType>(DamageType);
 	bAlwaysGib = ((HDT == none) ? false : HDT.default.bAlwaysGibs);
@@ -489,7 +489,7 @@ simulated function PlayDying(Class<DamageType> DamageType, Vector HitLoc, option
 		{
 			DeathAnimRate = DeathBehaviors[I].MinimumDeathAnimRate + (FRand() * (DeathBehaviors[I].MaximumDeathAnimRate - DeathBehaviors[I].MinimumDeathAnimRate));
 			// End:0x664
-			if(DeathBehaviors[I].bIsDirectional!)
+			if(!DeathBehaviors[I].bIsDirectional)
 			{
 				MyGibHealthThreshold = DeathBehaviors[I].GibHealthThreshold;
 				CurrentDeathAnimName = DeathBehaviors[I].DeathAnimName;				
@@ -497,7 +497,7 @@ simulated function PlayDying(Class<DamageType> DamageType, Vector HitLoc, option
 			else
 			{
 				// End:0x7D0
-				if(bIsDirectional!)
+				if(!bIsDirectional)
 				{
 					bIsDirectional = true;
 					MyGibHealthThreshold = DeathBehaviors[I].GibHealthThreshold;
@@ -526,7 +526,7 @@ simulated function PlayDying(Class<DamageType> DamageType, Vector HitLoc, option
 			// [Explicit Break]
 			goto J0x929;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x3CD;
 	}
@@ -595,7 +595,7 @@ simulated function StartGib(Vector HitLoc)
 simulated function SetPawnRBChannelsForRagdoll(bool bTotalGibbing)
 {
 	// End:0xDD
-	if(bTotalGibbing!)
+	if(!bTotalGibbing)
 	{
 		Mesh.SetRBChannel(2);
 		Mesh.SetRBCollidesWithChannel(0, true);
@@ -870,7 +870,7 @@ simulated state Dying
 					// [Explicit Break]
 					goto J0x1E7;
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x9C;
 			}
@@ -892,7 +892,7 @@ simulated state Dying
 
 		FullBodyAnimNode = FullBodyAnimSlot;
 		// End:0x8E
-		if(bGibbed! && bShouldGib)
+		if(!bGibbed && bShouldGib)
 		{
 			// End:0x65
 			if(DeathTick == 0)
@@ -912,7 +912,7 @@ simulated state Dying
 		else
 		{
 			// End:0x172
-			if((((CurrentDeathAnimName != 'None') && DeathAnimRate > 0.0000000) && bGibbed!) && bShouldGib!)
+			if((((CurrentDeathAnimName != 'None') && DeathAnimRate > 0.0000000) && !bGibbed) && !bShouldGib)
 			{
 				// End:0x12E
 				if(DeathTick == 0)

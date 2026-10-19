@@ -103,7 +103,7 @@ event AILog_Internal(coerce string LogText, optional name LogCategory, optional 
 		return;
 	}
 	// End:0x71
-	if(bForce! && bAILogging!)
+	if(!bForce && !bAILogging)
 	{
 		return;
 	}
@@ -113,7 +113,7 @@ event AILog_Internal(coerce string LogText, optional name LogCategory, optional 
 		return;
 	}
 	// End:0xFA
-	if(bForce!)
+	if(!bForce)
 	{
 		Idx = 0;
 		J0xB1:
@@ -157,7 +157,7 @@ event AILog_Internal(coerce string LogText, optional name LogCategory, optional 
 		}
 		AILogFile.bKillDuringLevelTransition = true;
 		AILogFile.bFlushEachWrite = bFlushAILogEachLine;
-		AILogFile.bWantsAsyncWrites = bFlushAILogEachLine!;
+		AILogFile.bWantsAsyncWrites = !bFlushAILogEachLine;
 		AILogFile.OpenLog(Filename, ".ailog");
 	}
 	ActionStr = string(GetStateName());
@@ -224,7 +224,7 @@ state DebugState
 	function BeginState(name PreviousStateName)
 	{
 		// End:0x67
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			AILog_Internal("BEGINSTATE" @ string(PreviousStateName), 'State');
 		}
@@ -234,7 +234,7 @@ state DebugState
 	function EndState(name NextStateName)
 	{
 		// End:0x65
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			AILog_Internal("ENDSTATE" @ string(NextStateName), 'State');
 		}
@@ -244,7 +244,7 @@ state DebugState
 	function PushedState()
 	{
 		// End:0x56
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			AILog_Internal("PUSHED", 'State');
 		}
@@ -254,7 +254,7 @@ state DebugState
 	function PoppedState()
 	{
 		// End:0x56
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			AILog_Internal("POPPED", 'State');
 		}
@@ -264,7 +264,7 @@ state DebugState
 	function ContinuedState()
 	{
 		// End:0x59
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			AILog_Internal("CONTINUED", 'State');
 		}
@@ -274,7 +274,7 @@ state DebugState
 	function PausedState()
 	{
 		// End:0x56
-		if(Class'Engine.Engine'.static.GetEngine().bDisableAILogging!)
+		if(!Class'Engine.Engine'.static.GetEngine().bDisableAILogging)
 		{
 			AILog_Internal("PAUSED", 'State');
 		}

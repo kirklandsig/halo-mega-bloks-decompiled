@@ -52,10 +52,10 @@ function bool ExecutePre(GripBTInterface BTInterface)
 		// End:0x1DB
 		if(TraceHitActor == none)
 		{
-			numValid++;
+			++numValid;
 			bestIndex = I;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x99;
 	}
@@ -90,7 +90,7 @@ function GripBTNode.BTExecutionResult Execute(GripBTInterface BTInterface, bool 
 	Controller.Pawn.SetRotation(InitialRotation);
 	Controller.Pawn.SetPhysics(2);
 	// End:0xF9
-	if(SidestepSequences[activeAnimIndex].bPlaying!)
+	if(!SidestepSequences[activeAnimIndex].bPlaying)
 	{
 		Controller.Pawn.SetPhysics(1);
 		// End:0xEA

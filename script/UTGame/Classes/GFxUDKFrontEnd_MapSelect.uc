@@ -99,7 +99,7 @@ function UpdateListDataProvider()
 	if(I < LocalMapList.Length)
 	{
 		// End:0x341
-		if(LocalMapList[I].ShouldBeFiltered()!)
+		if(!LocalMapList[I].ShouldBeFiltered())
 		{
 			TempObj = Outer.CreateObject("Object");
 			TempObj.SetString("label", Caps(GetMapFriendlyName(LocalMapList[I].MapName)));
@@ -320,7 +320,7 @@ event bool WidgetInitialized(name WidgetName, name WidgetPath, GFxObject Widget)
 			break;
 	}
 	// End:0x1FF
-	if(bWasHandled!)
+	if(!bWasHandled)
 	{
 		bWasHandled = super.WidgetInitialized(WidgetName, WidgetPath, Widget);
 	}

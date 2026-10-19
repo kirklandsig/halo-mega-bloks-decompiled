@@ -116,9 +116,9 @@ simulated function Tick(float DeltaTime)
 			if(ActorsWithDeferredPartsToSpawn[CurActorIndex].SpawnDeferredParts())
 			{
 				ActorsWithDeferredPartsToSpawn.Remove(CurActorIndex, 1);
-				CurActorIndex--;
+				--CurActorIndex;
 			}
-			CurActorIndex++;
+			++CurActorIndex;
 			// [Loop Continue]
 			goto J0x1B;
 		}

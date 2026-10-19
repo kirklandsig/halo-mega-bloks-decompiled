@@ -8,7 +8,7 @@ function MoveToPosition(Vector vTargetPosition)
 	navPawn = GwNavPawn(Pawn);
 	navPawn.MoveToPosition(vTargetPosition);
 	// End:0x6A
-	if(IsInState('Walk')!)
+	if(!IsInState('Walk'))
 	{
 		PushState('Walk');
 	}

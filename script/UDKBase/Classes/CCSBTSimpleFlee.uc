@@ -50,7 +50,7 @@ event bool ExecutePre(GripBTInterface BTInterface)
 	CachedPawnPosition = Controller.Pawn.Location;
 	CachedEnemyPosition = Enemy.Location;
 	// End:0xE4
-	if(CachedResult!)
+	if(!CachedResult)
 	{
 		return false;
 	}
@@ -112,7 +112,7 @@ function bool PickFleePoint(Vector EnemyLocation, out Vector FleePoint)
 		FleeDir = Dir;
 		FleeDir.Yaw += (increment * factor);
 		FleePoints[I] = Controller.Pawn.Location + (Vector(FleeDir) * FleeDistance);
-		increment = increment-;
+		increment = -increment;
 		I++;
 		// [Loop Continue]
 		goto J0x82;

@@ -18,7 +18,7 @@ static simulated function ClientReceive(PlayerController P, optional int Switch,
 	}
 	HUD = UTHUD(P.myHUD);
 	// End:0xF4
-	if(((HUD != none) && HUD.bIsSplitScreen) && HUD.bIsFirstPlayer!)
+	if(((HUD != none) && HUD.bIsSplitScreen) && !HUD.bIsFirstPlayer)
 	{
 		return;
 	}
@@ -26,7 +26,7 @@ static simulated function ClientReceive(PlayerController P, optional int Switch,
 	if(Switch == 5)
 	{
 		// End:0x1F0
-		if((P.WorldInfo != none) && (UTGame(P.WorldInfo.Game) == none) || UTGame(P.WorldInfo.Game).SkipPlaySound()!)
+		if((P.WorldInfo != none) && (UTGame(P.WorldInfo.Game) == none) || !UTGame(P.WorldInfo.Game).SkipPlaySound())
 		{
 			UTP.PlayAnnouncement(default.Class, 1);
 		}		
@@ -85,7 +85,7 @@ static function string GetString(optional int Switch, optional bool bPRI1HUD, op
 			if(I < GRI.PRIArray.Length)
 			{
 				// End:0x308
-				if((((GRI.PRIArray[I] != none) && GRI.PRIArray[I].bOnlySpectator!) && GRI.PRIArray[I].bBot!) && GRI.PRIArray[I].bIsSpectator! || GRI.PRIArray[I].bWaitingPlayer)
+				if((((GRI.PRIArray[I] != none) && !GRI.PRIArray[I].bOnlySpectator) && !GRI.PRIArray[I].bBot) && !GRI.PRIArray[I].bIsSpectator || GRI.PRIArray[I].bWaitingPlayer)
 				{
 					PlayerCount++;
 				}
@@ -105,7 +105,7 @@ static function string GetString(optional int Switch, optional bool bPRI1HUD, op
 			if(Switch == 1)
 			{
 				// End:0x3F0
-				if((RelatedPRI_1 == none) || RelatedPRI_1.bWaitingPlayer!)
+				if((RelatedPRI_1 == none) || !RelatedPRI_1.bWaitingPlayer)
 				{
 					return default.Stage[0];					
 				}

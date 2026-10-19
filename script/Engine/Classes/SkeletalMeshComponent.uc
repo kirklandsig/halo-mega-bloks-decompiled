@@ -713,9 +713,9 @@ function PlayAnim(name AnimName, optional float Duration, optional bool bLoop, o
 		if((AnimNode.AnimSeq != none) && AnimNode.AnimSeq.SequenceName == AnimName)
 		{
 			DesiredRate = ((Duration > 0.0000000) ? AnimNode.AnimSeq.SequenceLength / (Duration * AnimNode.AnimSeq.RateScale) : 1.0000000);
-			DesiredRate = ((bPlayBackwards) ? DesiredRate- : DesiredRate);
+			DesiredRate = ((bPlayBackwards) ? -DesiredRate : DesiredRate);
 			// End:0x2AE
-			if(bRestartIfAlreadyPlaying || AnimNode.bPlaying!)
+			if(bRestartIfAlreadyPlaying || !AnimNode.bPlaying)
 			{
 				AnimNode.PlayAnim(bLoop, DesiredRate, StartTime);				
 			}
@@ -732,7 +732,7 @@ function PlayAnim(name AnimName, optional float Duration, optional bool bLoop, o
 			if(AnimNode.AnimSeq != none)
 			{
 				DesiredRate = ((Duration > 0.0000000) ? AnimNode.AnimSeq.SequenceLength / (Duration * AnimNode.AnimSeq.RateScale) : 1.0000000);
-				DesiredRate = ((bPlayBackwards) ? DesiredRate- : DesiredRate);
+				DesiredRate = ((bPlayBackwards) ? -DesiredRate : DesiredRate);
 				AnimNode.PlayAnim(bLoop, DesiredRate, StartTime);
 			}
 		}
@@ -805,7 +805,7 @@ event bool PlayParticleEffect(const AnimNotify_PlayParticleEffect AnimNotifyData
 	{
 		return false;
 	}
-	bPlayNonExtreme = (AnimNotifyData.bIsExtremeContent && Class'Engine.Engine'.static.IsGame()) && WI.GRI.ShouldShowGore()!;
+	bPlayNonExtreme = (AnimNotifyData.bIsExtremeContent && Class'Engine.Engine'.static.IsGame()) && !WI.GRI.ShouldShowGore();
 	// End:0x17D
 	if(bPlayNonExtreme && AnimNotifyData.PSNonExtremeContentTemplate == none)
 	{

@@ -15,7 +15,7 @@ function Init(optional LocalPlayer Player)
 	if(Start())
 	{
 		// End:0x90
-		if(bIsInit!)
+		if(!bIsInit)
 		{
 			Fullscreen = GetVariableObject("_root.FullScreen");
 			Fullscreen.SetVisible(false);

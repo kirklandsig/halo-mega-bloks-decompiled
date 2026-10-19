@@ -76,10 +76,10 @@ function PreProcessInput(float DeltaTime)
 		return;
 	}
 	// End:0x23A
-	if(bUsingGamepad!)
+	if(!bUsingGamepad)
 	{
 		// End:0x1BD
-		if((UTGameReplicationInfo(Outer.WorldInfo.GRI) != none) && UTGameReplicationInfo(Outer.WorldInfo.GRI).bAllowKeyboardAndMouse!)
+		if((UTGameReplicationInfo(Outer.WorldInfo.GRI) != none) && !UTGameReplicationInfo(Outer.WorldInfo.GRI).bAllowKeyboardAndMouse)
 		{
 			RawJoyLookRight = 0.0000000;
 			RawJoyLookUp = 0.0000000;
@@ -99,7 +99,7 @@ function PreProcessInput(float DeltaTime)
 		aMouseX *= 1.5000000;
 		aMouseY *= 1.5000000;
 		// End:0x23A
-		if(Outer.WorldInfo.IsConsoleBuild(3)!)
+		if(!Outer.WorldInfo.IsConsoleBuild(3))
 		{
 			return;
 		}
@@ -113,7 +113,7 @@ function PreProcessInput(float DeltaTime)
 	bUsingTiltController = UTConsolePlayerController(Outer.Pawn.Controller).IsControllerTiltActive();
 	UW = UTWeapon(Outer.Pawn.Weapon);
 	// End:0x340
-	if(bViewAccelerationEnabled && bUsingTiltController!)
+	if(bViewAccelerationEnabled && !bUsingTiltController)
 	{
 		ApplyViewAcceleration(DeltaTime);
 	}
@@ -128,7 +128,7 @@ function PreProcessInput(float DeltaTime)
 		}
 	}
 	// End:0x410
-	if(bAppliedTargetFriction! && (UW != none) && int(UW.GetZoomedState()) != int(3))
+	if(!bAppliedTargetFriction && (UW != none) && int(UW.GetZoomedState()) != int(3))
 	{
 		// End:0x3F0
 		if(bAutoCenterPitch)
@@ -216,7 +216,7 @@ function ApplyViewAutoVehiclePitchCentering(float DeltaTime)
 	local float OldaBaseY, ForwardMag, AmountToAdjustPitch, CurrentPitch;
 
 	// End:0x4AD
-	if(((UTVehicle(Outer.Pawn) != none) && UTVehicle(Outer.Pawn).bFollowLookDir!) && UTVehicle(Outer.Pawn).bShouldAutoCenterViewPitch)
+	if(((UTVehicle(Outer.Pawn) != none) && !UTVehicle(Outer.Pawn).bFollowLookDir) && UTVehicle(Outer.Pawn).bShouldAutoCenterViewPitch)
 	{
 		// End:0x13D
 		if((aTurn != float(0)) || Outer.Pawn.IsFiring())
@@ -230,7 +230,7 @@ function ApplyViewAutoVehiclePitchCentering(float DeltaTime)
 			{
 				ForwardMag = (aForward * aForward) + (aBaseY * aBaseY);
 				// End:0x428
-				if(UTVehicle(Outer.Pawn).bStickDeflectionThrottle && UTVehicle(Outer.Pawn).bUsingLookSteer!)
+				if(UTVehicle(Outer.Pawn).bStickDeflectionThrottle && !UTVehicle(Outer.Pawn).bUsingLookSteer)
 				{
 					ForwardMag += (aStrafe * aStrafe);
 					// End:0x428
@@ -365,7 +365,7 @@ function ApplyViewAcceleration(float DeltaTime)
 		if((Abs(aTurn) > ViewAccel_YawThreshold) || Square(Abs(RawJoyLookRight) + Square(Abs(RawJoyLookUp / 0.7500000))) > ViewAccel_DiagonalThreshold)
 		{
 			// End:0x278
-			if(((ViewAccel_TimeHeld > ViewAccel_TimeToHoldBeforeFastAcceleration) && bAppliedTargetFriction!) && Outer.Pawn.IsFiring()! || (UW != none) && UW.CanViewAccelerationWhenFiring())
+			if(((ViewAccel_TimeHeld > ViewAccel_TimeToHoldBeforeFastAcceleration) && !bAppliedTargetFriction) && !Outer.Pawn.IsFiring() || (UW != none) && UW.CanViewAccelerationWhenFiring())
 			{
 				ViewAccel_CurrMutliplier += ViewAccel_RampSpeed;
 				aTurn *= FMin(FMax(ViewAccel_CurrMutliplier, ViewAccel_BaseMultiplier), ViewAccel_MaxTurnSpeed);				
@@ -408,7 +408,7 @@ function ApplyTargetAdhesion(float DeltaTime, UTWeapon W, out int out_YawRot, ou
 	local Pawn AdhesionTarget;
 
 	// End:0x37
-	if((W == none) || W.bTargetAdhesionEnabled!)
+	if((W == none) || !W.bTargetAdhesionEnabled)
 	{
 		return;
 	}
@@ -506,7 +506,7 @@ function ApplyTargetFriction(float DeltaTime, UTWeapon W)
 		FrictionMultiplier;
 
 	// End:0x4C
-	if((Outer.Pawn == none) || W.bTargetFrictionEnabled!)
+	if((Outer.Pawn == none) || !W.bTargetFrictionEnabled)
 	{
 		return;
 	}
@@ -586,7 +586,7 @@ exec function DebugViewAcceleration()
 	// End:0xA5
 	if(int(Outer.WorldInfo.NetMode) == int(NM_Standalone))
 	{
-		bDebugViewAcceleration = bDebugViewAcceleration!;
+		bDebugViewAcceleration = !bDebugViewAcceleration;
 		Outer.ClientMessage("bDebugViewAcceleration is now: " $ string(bDebugViewAcceleration));
 	}
 	//return;	
@@ -597,7 +597,7 @@ exec function DebugTargetAdhesion()
 	// End:0xE2
 	if(int(Outer.WorldInfo.NetMode) == int(NM_Standalone))
 	{
-		Outer.bDebugTargetAdhesion = Outer.bDebugTargetAdhesion!;
+		Outer.bDebugTargetAdhesion = !Outer.bDebugTargetAdhesion;
 		Outer.ClientMessage("bDebugTargetAdhesion is now: " $ string(Outer.bDebugTargetAdhesion));
 	}
 	//return;	
@@ -608,7 +608,7 @@ exec function DebugTargetFriction()
 	// End:0xA3
 	if(int(Outer.WorldInfo.NetMode) == int(NM_Standalone))
 	{
-		bDebugTargetFriction = bDebugTargetFriction!;
+		bDebugTargetFriction = !bDebugTargetFriction;
 		Outer.ClientMessage("bDebugTargetFriction is now: " $ string(bDebugTargetFriction));
 	}
 	//return;	
@@ -627,7 +627,7 @@ exec function SmartJump()
 	else
 	{
 		// End:0xAE
-		if(RawJoyRight < Dodge_Threshold-)
+		if(RawJoyRight < -Dodge_Threshold)
 		{
 			ForcedDoubleClick = 1;			
 		}

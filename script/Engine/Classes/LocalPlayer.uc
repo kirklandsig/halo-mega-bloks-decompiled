@@ -235,7 +235,7 @@ function ProcessClientAuthRequest(UniqueNetId ServerUID, int ServerIP, int Serve
 		if(CachedAuthInt.CreateClientAuthSession(ServerUID, ServerIP, ServerPort, bSecure, AuthTicketUID))
 		{
 			// End:0xF8
-			if(CachedAuthInt.SendClientAuthResponse(AuthTicketUID)!)
+			if(!CachedAuthInt.SendClientAuthResponse(AuthTicketUID))
 			{
 				LogInternal("LocalPlayer::ProcessClientAuthRequest: WARNING!!! Failed to send auth ticket to server");
 			}			

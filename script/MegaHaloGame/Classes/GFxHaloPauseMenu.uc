@@ -428,7 +428,7 @@ function SaveSettingsToProfile()
 	if(Game != none)
 	{
 		// End:0x2DA
-		if(Game.bIsDemoMode!)
+		if(!Game.bIsDemoMode)
 		{
 			HPPC = HaloPlayerPawnController(GetPC());
 			// End:0x2DA

@@ -29,7 +29,7 @@ function PostBeginPlay()
 		return;
 	}
 	// End:0xB6
-	if(bEnabled!)
+	if(!bEnabled)
 	{
 		LogInternal("Webserver is not enabled.  Set bEnabled to True in Advanced Options.");
 		Destroy();

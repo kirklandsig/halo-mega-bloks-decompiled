@@ -16,7 +16,7 @@ function Init(Vector Direction)
 {
 	super.Init(Direction);
 	SpiralRate = RandRange(MinSpiralRate, MaxSpiralRate) * 0.0174533;
-	SpiralRate = ((Rand(2) > 0) ? SpiralRate- : SpiralRate);
+	SpiralRate = ((Rand(2) > 0) ? -SpiralRate : SpiralRate);
 	SpiralRadius = RandRange(MinSpiralRadius, MaxSpiralRadius);
 	SpiralLoc = Location;
 	SpiralLoc.Z += SpiralRadius;
@@ -51,7 +51,7 @@ function SetTarget(HaloPawn Target)
 			{
 				A = 0.5000000 * AccelRate;
 				B = Speed;
-				C = targDist-;
+				C = -targDist;
 				Q = (B * B) - ((4.0000000 * A) * C);
 				// End:0x1BD
 				if(Q > 0.0000000)

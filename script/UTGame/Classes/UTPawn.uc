@@ -205,7 +205,7 @@ event HeadVolumeChange(PhysicsVolume newHeadVolume)
 	if((HeadVolume != none) && HeadVolume.bWaterVolume)
 	{
 		// End:0xF5
-		if(newHeadVolume.bWaterVolume!)
+		if(!newHeadVolume.bWaterVolume)
 		{
 			// End:0xE6
 			if((Controller.bIsPlayer && BreathTime > float(0)) && BreathTime < float(8))
@@ -234,7 +234,7 @@ function bool PoweredUp()
 
 function bool InCombat()
 {
-	return ((WorldInfo.TimeSeconds - LastPainSound) < float(1)) && PhysicsVolume.bPainCausing!;
+	return ((WorldInfo.TimeSeconds - LastPainSound) < float(1)) && !PhysicsVolume.bPainCausing;
 	//return ReturnValue;	
 }
 
@@ -287,7 +287,7 @@ simulated function SetInvisible(bool bNowInvisible)
 		}
 		else
 		{
-			UpdateShadowSettings(Class'Engine.Engine'.static.IsSplitScreen()! && int(Class'UTGame.UTPlayerController'.default.PawnShadowMode) == int(2));
+			UpdateShadowSettings(!Class'Engine.Engine'.static.IsSplitScreen() && int(Class'UTGame.UTPlayerController'.default.PawnShadowMode) == int(2));
 		}
 	}
 	//return;	
@@ -533,7 +533,7 @@ simulated function SetCharacterClassFromInfo(Class<UTFamilyInfo> Info)
 		J0x244:
 
 		// End:0x3AE [Loop If]
-		if((I < Mesh.PhysicsAsset.BodySetup.Length) && Mesh.bEnableFullAnimWeightBodies!)
+		if((I < Mesh.PhysicsAsset.BodySetup.Length) && !Mesh.bEnableFullAnimWeightBodies)
 		{
 			// End:0x3A0
 			if(Mesh.PhysicsAsset.BodySetup[I].bAlwaysFullAnimWeight && Mesh.MatchRefBone(Mesh.PhysicsAsset.BodySetup[I].BoneName) != -1)
@@ -711,7 +711,7 @@ simulated function NotifyTeamChanged()
 		ResetCharPhysState();
 	}
 	// End:0x258
-	if(bReceivedValidTeam!)
+	if(!bReceivedValidTeam)
 	{
 		SetTeamColor();
 		bReceivedValidTeam = (GetTeam()) != none;
@@ -825,7 +825,7 @@ simulated function PostBeginPlay()
 	StartedFallingTime = WorldInfo.TimeSeconds;
 	super(Pawn).PostBeginPlay();
 	// End:0x35C
-	if(bDeleteMe!)
+	if(!bDeleteMe)
 	{
 		// End:0x119
 		if(Mesh != none)
@@ -1013,7 +1013,7 @@ simulated function LeaveABloodSplatterDecal(Vector HitLoc, Vector HitNorm)
 	{
 		MITV_Decal = new (Outer) Class'Engine.MaterialInstanceTimeVarying';
 		MITV_Decal.SetParent(static.GetFamilyInfo().default.BloodSplatterDecalMaterial);
-		WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, out_HitLocation, Rotator(out_HitNormal-), 100.0000000, 100.0000000, 50.0000000, false,, HitInfo.HitComponent, true, false, HitInfo.BoneName, HitInfo.Item, HitInfo.LevelIndex);
+		WorldInfo.MyDecalManager.SpawnDecal(MITV_Decal, out_HitLocation, Rotator(-out_HitNormal), 100.0000000, 100.0000000, 50.0000000, false,, HitInfo.HitComponent, true, false, HitInfo.BoneName, HitInfo.Item, HitInfo.LevelIndex);
 		MITV_Decal.SetScalarStartTime(Class'UTGame.UTGib'.default.DecalDissolveParamName, Class'UTGame.UTGib'.default.DecalWaitTimeBeforeDissolve);
 	}
 	//return;	
@@ -1142,7 +1142,7 @@ simulated function DoPlayEmote(name InEmoteTag, int InPlayerID)
 				}
 			}
 			// End:0x2D8
-			if((((Health > 0) && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && UTPRI != none) && IsInState('FeigningDeath')!)
+			if((((Health > 0) && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && UTPRI != none) && !IsInState('FeigningDeath'))
 			{
 				// End:0x2D8
 				if(EInfo.EmoteAnim != 'None')
@@ -1174,7 +1174,7 @@ simulated function DoPlayEmote(name InEmoteTag, int InPlayerID)
 reliable server function ServerPlayEmote(name InEmoteTag, int InPlayerID)
 {
 	EmoteRepInfo.EmoteTag = InEmoteTag;
-	EmoteRepInfo.bNewData = EmoteRepInfo.bNewData!;
+	EmoteRepInfo.bNewData = !EmoteRepInfo.bNewData;
 	DoPlayEmote(InEmoteTag, InPlayerID);
 	LastEmoteTime = WorldInfo.TimeSeconds;
 	//return;	
@@ -1225,7 +1225,7 @@ simulated function Vector WeaponBob(float BobDamping, float JumpDamping)
 	WBob = BobDamping * WalkBob;
 	WBob.Z = (0.4500000 + (0.5500000 * BobDamping)) * WalkBob.Z;
 	// End:0x8F
-	if(bWeaponBob!)
+	if(!bWeaponBob)
 	{
 		WBob *= 2.5000000;
 	}
@@ -1259,7 +1259,7 @@ event EncroachedBy(Actor Other)
 
 	P = UTPawn(Other);
 	// End:0x92
-	if((P == none) || P.IsInState('FeigningDeath')! && int(P.Physics) != int(10))
+	if((P == none) || !P.IsInState('FeigningDeath') && int(P.Physics) != int(10))
 	{
 		super(Pawn).EncroachedBy(Other);
 	}
@@ -1326,7 +1326,7 @@ function AddVelocity(Vector NewVelocity, Vector HitLocation, Class<DamageType> D
 	local bool bRagdoll;
 
 	// End:0x159
-	if(bIgnoreForces! && IsZero(NewVelocity)!)
+	if(!bIgnoreForces && !IsZero(NewVelocity))
 	{
 		// End:0x83
 		if((int(Physics) == int(2)) && UTBot(Controller) != none)
@@ -1400,7 +1400,7 @@ function bool BotFire(bool bFinished)
 
 	Weap = UTWeapon(Weapon);
 	// End:0x83
-	if((Weap == none) || Weap.ReadyToFire(bFinished)! && Weap.IsFiring()!)
+	if((Weap == none) || !Weap.ReadyToFire(bFinished) && !Weap.IsFiring())
 	{
 		return false;
 	}
@@ -1494,7 +1494,7 @@ function float RangedAttackTime()
 simulated function float GetEyeHeight()
 {
 	// End:0x1C
-	if(IsLocallyControlled()!)
+	if(!IsLocallyControlled())
 	{
 		return BaseEyeHeight;		
 	}
@@ -1550,13 +1550,13 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	}
 	PRI = UTPlayerReplicationInfo(PlayerReplicationInfo);
 	// End:0x3D7
-	if(WorldInfo.GRI.OnSameTeam(self, PC)!)
+	if(!WorldInfo.GRI.OnSameTeam(self, PC))
 	{
 		// End:0x3D5
 		if((WorldInfo.TimeSeconds - LastPostRenderTraceTime) > 0.5000000)
 		{
 			// End:0x3A2
-			if((UTPlayerController(PC).AlreadyInActionMusic()! && VSize(CameraPosition - Location) < VSize(PC.ViewTarget.Location - Location)) && IsInvisible()!)
+			if((!UTPlayerController(PC).AlreadyInActionMusic() && VSize(CameraPosition - Location) < VSize(PC.ViewTarget.Location - Location)) && !IsInvisible())
 			{
 				// End:0x3A2
 				if((Abs(ScreenLoc.X - (0.5000000 * Canvas.ClipX)) < (0.1000000 * Canvas.ClipX)) && Abs(ScreenLoc.Y - (0.5000000 * Canvas.ClipY)) < (0.1000000 * Canvas.ClipY))
@@ -1597,7 +1597,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 		bPostRenderTraceSucceeded = FastTrace(Location, CameraPosition) || FastTrace(Location + ((GetCollisionHeight()) * vect(0.0000000, 0.0000000, 1.0000000)), CameraPosition);
 	}
 	// End:0x5F0
-	if(bPostRenderTraceSucceeded!)
+	if(!bPostRenderTraceSucceeded)
 	{
 		return;
 	}
@@ -1625,7 +1625,7 @@ simulated event PostRenderFor(PlayerController PC, Canvas Canvas, Vector CameraP
 	}
 	HUD = UTHUDBase(PC.myHUD);
 	// End:0xB1C
-	if((((HUD != none) && HUD.bCrosshairOnFriendly!) && Abs(ScreenLoc.X - (0.5000000 * Canvas.ClipX)) < (0.1000000 * Canvas.ClipX)) && ScreenLoc.Y <= (0.5000000 * Canvas.ClipY))
+	if((((HUD != none) && !HUD.bCrosshairOnFriendly) && Abs(ScreenLoc.X - (0.5000000 * Canvas.ClipX)) < (0.1000000 * Canvas.ClipX)) && ScreenLoc.Y <= (0.5000000 * Canvas.ClipY))
 	{
 		ScreenLoc = Canvas.Project(Location - ((GetCollisionHeight()) * vect(0.0000000, 0.0000000, 1.0000000)));
 		// End:0xB1C
@@ -1680,7 +1680,7 @@ event UpdateEyeHeight(float DeltaTime)
 		bLandRecovery = false;
 	}
 	// End:0x1F8
-	if(bJustLanded!)
+	if(!bJustLanded)
 	{
 		smooth = FMin(0.9000000, (10.0000000 * DeltaTime) / CustomTimeDilation);
 		LandBob *= (float(1) - smooth);
@@ -1735,7 +1735,7 @@ event UpdateEyeHeight(float DeltaTime)
 		}
 	}
 	// End:0x45D
-	if(bJustLanded || bUpdateEyeheight!)
+	if(bJustLanded || !bUpdateEyeheight)
 	{
 		BobTime = 0.0000000;
 		WalkBob = vect(0.0000000, 0.0000000, 0.0000000);		
@@ -1799,13 +1799,13 @@ event UpdateEyeHeight(float DeltaTime)
 			M = int((0.5000000 * 3.1415927) + ((9.0000000 * OldBobTime) / 3.1415927));
 			N = int((0.5000000 * 3.1415927) + ((9.0000000 * BobTime) / 3.1415927));
 			// End:0x97A
-			if(((M != N) && bIsWalking!) && bIsCrouched!)
+			if(((M != N) && !bIsWalking) && !bIsCrouched)
 			{
 				ActuallyPlayFootstepSound(0);
 			}
 		}
 		// End:0x999
-		if(bWeaponBob!)
+		if(!bWeaponBob)
 		{
 			WalkBob *= 0.1000000;
 		}
@@ -1950,10 +1950,10 @@ simulated function SetMeshVisibility(bool bVisible)
 	// End:0x3A
 	if(Mesh != none)
 	{
-		Mesh.SetOwnerNoSee(bVisible!);
+		Mesh.SetOwnerNoSee(!bVisible);
 	}
 	SetOverlayVisibility(bVisible);
-	SetWeaponVisibility(bVisible!);
+	SetWeaponVisibility(!bVisible);
 	// End:0x90
 	foreach BasedActors(Class'UTGame.UTCarriedObject', Flag)
 	{
@@ -1977,16 +1977,16 @@ exec function FixedView(string VisibleMeshes)
 			// End:0xAB
 			if(VisibleMeshes ComplementEqual "default")
 			{
-				bVisibleMeshes = IsFirstPerson()!;
+				bVisibleMeshes = !IsFirstPerson();
 			}
 			SetMeshVisibility(bVisibleMeshes);
 		}
 		// End:0xF8
-		if(bFixedView!)
+		if(!bFixedView)
 		{
 			CalcCamera(0.0000000, FixedViewLoc, FixedViewRot, FOV);
 		}
-		bFixedView = bFixedView!;
+		bFixedView = !bFixedView;
 		LogInternal("FixedView:" @ string(bFixedView));
 	}
 	//return;	
@@ -2000,7 +2000,7 @@ function DeactivateSpawnProtection()
 		return;
 	}
 	// End:0x149
-	if(bSpawnDone!)
+	if(!bSpawnDone)
 	{
 		bSpawnDone = true;
 		// End:0x13A
@@ -2030,7 +2030,7 @@ function PlayTeleportEffect(bool bOut, bool bSound)
 		TeamNum = PlayerReplicationInfo.Team.TeamIndex;
 	}
 	// End:0x184
-	if(bSpawnIn! && (WorldInfo.TimeSeconds - SpawnTime) < UTGame(WorldInfo.Game).SpawnProtectionTime)
+	if(!bSpawnIn && (WorldInfo.TimeSeconds - SpawnTime) < UTGame(WorldInfo.Game).SpawnProtectionTime)
 	{
 		bSpawnIn = true;
 		SetBodyMatColor(SpawnProtectionColor, UTGame(WorldInfo.Game).SpawnProtectionTime);
@@ -2059,7 +2059,7 @@ function PlayTeleportEffect(bool bOut, bool bSound)
 		if(PC != none)
 		{
 			// End:0x2D1
-			if(((WorldInfo.Game.bTeamGame! || PlayerReplicationInfo == none) || PlayerReplicationInfo.Team == none) || PlayerReplicationInfo.Team.TeamIndex > 1)
+			if(((!WorldInfo.Game.bTeamGame || PlayerReplicationInfo == none) || PlayerReplicationInfo.Team == none) || PlayerReplicationInfo.Team.TeamIndex > 1)
 			{
 				TransCamIndx = 2;				
 			}
@@ -2140,7 +2140,7 @@ simulated event StopDriving(Vehicle V)
 	Mesh.SetLightEnvironment(LightEnvironment);
 	Mesh.SetScale(DefaultMeshScale);
 	// End:0xAF
-	if(((int(Role) < int(ROLE_Authority)) && DrivenWeaponPawn.BaseVehicle != none) && IsLocallyControlled()!)
+	if(((int(Role) < int(ROLE_Authority)) && DrivenWeaponPawn.BaseVehicle != none) && !IsLocallyControlled())
 	{
 		DrivenVehicle = ClientSideWeaponPawn;		
 	}
@@ -2290,7 +2290,7 @@ function DropFlag()
 
 	UTPRI = UTPlayerReplicationInfo(PlayerReplicationInfo);
 	// End:0x53
-	if((UTPRI == none) || UTPRI.bHasFlag!)
+	if((UTPRI == none) || !UTPRI.bHasFlag)
 	{
 		return;
 	}
@@ -2382,7 +2382,7 @@ simulated event PlayFootStepSound(int FootDown)
 	local PlayerController PC;
 
 	// End:0xBA
-	if(IsFirstPerson()!)
+	if(!IsFirstPerson())
 	{
 		// End:0xB9
 		foreach LocalPlayerControllers(Class'Engine.PlayerController', PC)
@@ -2497,7 +2497,7 @@ simulated function SpawnHeadGib(Class<UTDamageType> UTDamageType, Vector HitLoca
 		return;
 	}
 	// End:0x45B
-	if(bHeadGibbed!)
+	if(!bHeadGibbed)
 	{
 		// End:0x7F
 		if(HitLocation == Location)
@@ -2521,7 +2521,7 @@ simulated function SpawnHeadGib(Class<UTDamageType> UTDamageType, Vector HitLoca
 				{
 					OldRealViewTarget = PC.RealViewTarget;
 					// End:0x389
-					if(UTDamageType.default.bHeadGibCamera && PC.UsingFirstPersonCamera() || PC.IsInState('BaseSpectating')!)
+					if(UTDamageType.default.bHeadGibCamera && PC.UsingFirstPersonCamera() || !PC.IsInState('BaseSpectating'))
 					{
 						PC.SetViewTarget(Gib);
 						CameraEffect = UTDamageType.static.GetDeathCameraEffectVictim(self);
@@ -2605,7 +2605,7 @@ simulated function SpawnGibs(Class<UTDamageType> UTDamageType, Vector HitLocatio
 
 	bTearOffGibs = true;
 	// End:0x421
-	if(bGibbed!)
+	if(!bGibbed)
 	{
 		// End:0x52
 		if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
@@ -2629,7 +2629,7 @@ simulated function SpawnGibs(Class<UTDamageType> UTDamageType, Vector HitLocatio
 		if((static.GetFamilyInfo().default.GibExplosionTemplate != none) && EffectIsRelevant(Location, false, 7000.0000000))
 		{
 			WorldInfo.MyEmitterPool.SpawnEmitter(static.GetFamilyInfo().default.GibExplosionTemplate, Location, Rotation);
-			bSpawnHighDetail = WorldInfo.bDropDetail! && (WorldInfo.TimeSeconds - LastRenderTime) < float(1);
+			bSpawnHighDetail = !WorldInfo.bDropDetail && (WorldInfo.TimeSeconds - LastRenderTime) < float(1);
 			I = 0;
 			J0x227:
 
@@ -2638,7 +2638,7 @@ simulated function SpawnGibs(Class<UTDamageType> UTDamageType, Vector HitLocatio
 			{
 				MyGibInfo = CurrCharClassInfo.default.Gibs[I];
 				// End:0x30C
-				if(bSpawnHighDetail || MyGibInfo.bHighDetailOnly!)
+				if(bSpawnHighDetail || !MyGibInfo.bHighDetailOnly)
 				{
 					SpawnGib(MyGibInfo.GibClass, MyGibInfo.BoneName, UTDamageType, HitLocation, true);
 				}
@@ -2648,7 +2648,7 @@ simulated function SpawnGibs(Class<UTDamageType> UTDamageType, Vector HitLocatio
 			}
 		}
 		// End:0x40B
-		if(((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && WorldInfo.IsRecordingDemo()!) && (int(WorldInfo.NetMode) != int(NM_ListenServer)) || (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumSpectators) < 2)
+		if(((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !WorldInfo.IsRecordingDemo()) && (int(WorldInfo.NetMode) != int(NM_ListenServer)) || (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumSpectators) < 2)
 		{
 			Destroy();			
 		}
@@ -2671,7 +2671,7 @@ simulated function TurnOffPawn()
 		SetPhysics(0);
 	}
 	// End:0x7E
-	if(IsInState('Dying')!)
+	if(!IsInState('Dying'))
 	{
 		GotoState('Dying');
 	}
@@ -2736,13 +2736,13 @@ simulated function PlayDying(Class<DamageType> DamageType, Vector HitLoc, option
 		}		
 	}	
 	// End:0x3A3
-	if(((WorldInfo.TimeSeconds - LastRenderTime) > float(3)) && bPlayersRagdoll!)
+	if(((WorldInfo.TimeSeconds - LastRenderTime) > float(3)) && !bPlayersRagdoll)
 	{
 		// End:0x39E
 		if((int(WorldInfo.NetMode) == int(NM_ListenServer)) || WorldInfo.IsRecordingDemo())
 		{
 			// End:0x328
-			if(((WorldInfo.Game.NumPlayers + WorldInfo.Game.NumSpectators) < 2) && WorldInfo.IsRecordingDemo()!)
+			if(((WorldInfo.Game.NumPlayers + WorldInfo.Game.NumSpectators) < 2) && !WorldInfo.IsRecordingDemo())
 			{
 				Destroy();
 				return;
@@ -2766,7 +2766,7 @@ simulated function PlayDying(Class<DamageType> DamageType, Vector HitLoc, option
 	}
 	UTDamageType = Class<UTDamageType>(DamageType);
 	// End:0x434
-	if(((UTDamageType != none) && Class'UTGame.UTGame'.static.UseLowGore(WorldInfo)!) && ShouldGib(UTDamageType))
+	if(((UTDamageType != none) && !Class'UTGame.UTGame'.static.UseLowGore(WorldInfo)) && ShouldGib(UTDamageType))
 	{
 		SpawnGibs(UTDamageType, HitLoc);		
 	}
@@ -2865,11 +2865,11 @@ simulated function PlayDying(Class<DamageType> DamageType, Vector HitLoc, option
 		}
 		GotoState('Dying');
 		// End:0xDDE
-		if((((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && UTDamageType != none) && UTDamageType.default.bSeversHead) && bDeleteMe!)
+		if((((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && UTDamageType != none) && UTDamageType.default.bSeversHead) && !bDeleteMe)
 		{
 			SpawnHeadGib(UTDamageType, HitLoc);
 			// End:0xDDE
-			if(Class'UTGame.UTGame'.static.UseLowGore(WorldInfo)!)
+			if(!Class'UTGame.UTGame'.static.UseLowGore(WorldInfo))
 			{
 				HeadShotSocketName = static.GetFamilyInfo().default.HeadShotGoreSocketName;
 				SMS = Mesh.GetSocketByName(HeadShotSocketName);
@@ -2919,7 +2919,7 @@ simulated function DoingDeathAnim()
 	}
 	SlotSeqNode = AnimNodeSequence(FullBodyAnimSlot.Children[1].Anim);
 	// End:0x304
-	if(SlotSeqNode.bPlaying! || bStopAnim)
+	if(!SlotSeqNode.bPlaying || bStopAnim)
 	{
 		SetPhysics(10);
 		Mesh.PhysicsAssetInstance.SetAllMotorsAngularPositionDrive(false, false);
@@ -2982,7 +2982,7 @@ simulated function bool CalcCamera(float fDeltaTime, out Vector out_CamLoc, out 
 	else
 	{
 		// End:0x76
-		if(IsFirstPerson()!)
+		if(!IsFirstPerson())
 		{
 			CalcThirdPersonCam(fDeltaTime, out_CamLoc, out_CamRot, out_FOV);			
 		}
@@ -3189,7 +3189,7 @@ function bool Dodge(Actor.EDoubleClickDir DoubleClickMove)
 		// End:0xE9
 		if(int(DoubleClickMove) == int(3))
 		{
-			TraceEnd = X-;			
+			TraceEnd = -X;			
 		}
 		else
 		{
@@ -3210,7 +3210,7 @@ function bool Dodge(Actor.EDoubleClickDir DoubleClickMove)
 					// End:0x166
 					if(int(DoubleClickMove) == int(2))
 					{
-						TraceEnd = Y-;
+						TraceEnd = -Y;
 					}
 				}
 			}
@@ -3224,10 +3224,10 @@ function bool Dodge(Actor.EDoubleClickDir DoubleClickMove)
 			return false;
 		}
 		// End:0x2FC
-		if(HitActor.bWorldGeometry!)
+		if(!HitActor.bWorldGeometry)
 		{
 			// End:0x2C8
-			if(HitActor.bBlockActors!)
+			if(!HitActor.bBlockActors)
 			{
 				return false;
 			}
@@ -3322,10 +3322,10 @@ function bool PerformDodge(Actor.EDoubleClickDir DoubleClickMove, Vector Dir, Ve
 function DoDoubleJump(bool bUpdating)
 {
 	// End:0x100
-	if(bIsCrouched! && bWantsToCrouch!)
+	if(!bIsCrouched && !bWantsToCrouch)
 	{
 		// End:0x55
-		if(IsLocallyControlled()! || AIController(Controller) != none)
+		if(!IsLocallyControlled() || AIController(Controller) != none)
 		{
 			MultiJumpRemaining -= 1;
 		}
@@ -3334,7 +3334,7 @@ function DoDoubleJump(bool bUpdating)
 		SetPhysics(2);
 		BaseEyeHeight = DoubleJumpEyeHeight;
 		// End:0x100
-		if(bUpdating!)
+		if(!bUpdating)
 		{
 			SoundGroupClass.static.PlayDoubleJumpSound(self);
 		}
@@ -3361,7 +3361,7 @@ simulated function StopFlying()
 function bool DoJump(bool bUpdating)
 {
 	// End:0xBF
-	if(((bUpdating! && CanDoubleJump()) && Abs(Velocity.Z) < DoubleJumpThreshold) && IsLocallyControlled())
+	if(((!bUpdating && CanDoubleJump()) && Abs(Velocity.Z) < DoubleJumpThreshold) && IsLocallyControlled())
 	{
 		// End:0x9D
 		if(PlayerController(Controller) != none)
@@ -3373,7 +3373,7 @@ function bool DoJump(bool bUpdating)
 		return true;
 	}
 	// End:0x3E3
-	if(((bJumpCapable && bIsCrouched!) && bWantsToCrouch!) && ((int(Physics) == int(1)) || int(Physics) == int(9)) || int(Physics) == int(8))
+	if(((bJumpCapable && !bIsCrouched) && !bWantsToCrouch) && ((int(Physics) == int(1)) || int(Physics) == int(9)) || int(Physics) == int(8))
 	{
 		// End:0x165
 		if(int(Physics) == int(8))
@@ -3401,7 +3401,7 @@ function bool DoJump(bool bUpdating)
 			}
 		}
 		// End:0x3AB
-		if(((Base != none) && Base.bWorldGeometry!) && Base.Velocity.Z > 0.0000000)
+		if(((Base != none) && !Base.bWorldGeometry) && Base.Velocity.Z > 0.0000000)
 		{
 			// End:0x35C
 			if((WorldInfo.WorldGravityZ != WorldInfo.DefaultGravityZ) && (GetGravityZ()) == WorldInfo.WorldGravityZ)
@@ -3417,7 +3417,7 @@ function bool DoJump(bool bUpdating)
 		bReadyToDoubleJump = true;
 		bDodging = false;
 		// End:0x3E1
-		if(bUpdating!)
+		if(!bUpdating)
 		{
 			PlayJumpingSound();
 		}
@@ -3523,7 +3523,7 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 		out_YPos += out_YL;
 	}
 	// End:0x1D1
-	if(HUD.ShouldDisplayDebug('Component')!)
+	if(!HUD.ShouldDisplayDebug('Component'))
 	{
 		return;
 	}
@@ -3670,7 +3670,7 @@ simulated function SetOverlayMaterial(MaterialInterface NewOverlay)
 				goto J0x65;
 			}
 			// End:0x11D
-			if(OverlayMesh.bAttached!)
+			if(!OverlayMesh.bAttached)
 			{
 				AttachComponent(OverlayMesh);
 			}			
@@ -3872,7 +3872,7 @@ simulated function PlayFeignDeath()
 			HitLocation = TraceEnd;
 		}
 		// End:0x4C6
-		if(SetFeignEndLocation(HitLocation, FeignLocation)!)
+		if(!SetFeignEndLocation(HitLocation, FeignLocation))
 		{
 			CollisionComponent = Mesh;
 			SetLocation(FeignLocation);
@@ -3940,7 +3940,7 @@ simulated function PlayFeignDeath()
 			CollisionComponent = Mesh;
 		}
 		// End:0x9DD
-		if((FeignDeathBlend != none) && bIsCrouched!)
+		if((FeignDeathBlend != none) && !bIsCrouched)
 		{
 			Mesh.PhysicsWeight = 1.0000000;
 			FeignDeathBlend.SetBlendTarget(1.0000000, 0.0000000);
@@ -4054,7 +4054,7 @@ simulated function bool CheckValidLocation(Vector FeignLocation)
 reliable server function ServerFeignDeath()
 {
 	// End:0x9B
-	if(((((int(Role) == int(ROLE_Authority)) && WorldInfo.Game.IsInState('MatchOver')!) && DrivenVehicle == none) && Controller != none) && bFeigningDeath!)
+	if(((((int(Role) == int(ROLE_Authority)) && !WorldInfo.Game.IsInState('MatchOver')) && DrivenVehicle == none) && Controller != none) && !bFeigningDeath)
 	{
 		bFeigningDeath = true;
 		PlayFeignDeath();
@@ -4126,7 +4126,7 @@ simulated event ReplicatedEvent(name VarName)
 			UTWeapon(Weapon).ClientEndFire(0);
 			UTWeapon(Weapon).ClientEndFire(1);
 			// End:0xD7
-			if(Weapon.HasAnyAmmo()!)
+			if(!Weapon.HasAnyAmmo())
 			{
 				Weapon.WeaponEmpty();
 			}
@@ -4356,7 +4356,7 @@ event TakeDamage(int Damage, Controller EventInstigator, Vector HitLocation, Vec
 	local int OldHealth;
 
 	// End:0x85
-	if(((AttachedProj != none) && AttachedProj.bDeleteMe!) && AttachedProj.InstigatorController != none)
+	if(((AttachedProj != none) && !AttachedProj.bDeleteMe) && AttachedProj.InstigatorController != none)
 	{
 		EventInstigator = AttachedProj.InstigatorController;
 	}
@@ -4384,7 +4384,7 @@ simulated function WeaponFired(Weapon InWeapon, bool bViaReplication, optional V
 	if(CurrentWeaponAttachment != none)
 	{
 		// End:0x4A
-		if(IsFirstPerson()!)
+		if(!IsFirstPerson())
 		{
 			CurrentWeaponAttachment.ThirdPersonFireEffects(HitLocation);			
 		}
@@ -4424,7 +4424,7 @@ simulated function WeaponChanged(UTWeapon NewWeapon)
 	// End:0x1BF
 	if(NewWeapon.Mesh != none)
 	{
-		NewWeapon.Mesh.SetHidden(IsFirstPerson()!);
+		NewWeapon.Mesh.SetHidden(!IsFirstPerson());
 		UTSkel = UDKSkeletalMeshComponent(NewWeapon.Mesh);
 		// End:0x1BF
 		if(UTSkel != none)
@@ -4562,15 +4562,15 @@ simulated function PlayTakeHitEffects()
 		if(UTDamage != none)
 		{
 			// End:0x110
-			if((UTDamage.default.bCausesBloodSplatterDecals && IsZero(LastTakeHitInfo.Momentum)!) && Class'UTGame.UTGame'.static.UseLowGore(WorldInfo)!)
+			if((UTDamage.default.bCausesBloodSplatterDecals && !IsZero(LastTakeHitInfo.Momentum)) && !Class'UTGame.UTGame'.static.UseLowGore(WorldInfo))
 			{
 				LeaveABloodSplatterDecal(LastTakeHitInfo.HitLocation, LastTakeHitInfo.Momentum);
 			}
 			// End:0x63D
-			if(IsFirstPerson()! || Class'Engine.Engine'.static.IsSplitScreen())
+			if(!IsFirstPerson() || Class'Engine.Engine'.static.IsSplitScreen())
 			{
 				// End:0x30E
-				if(UTDamage.default.bCausesBlood && Class'UTGame.UTGame'.static.UseLowGore(WorldInfo)!)
+				if(UTDamage.default.bCausesBlood && !Class'UTGame.UTGame'.static.UseLowGore(WorldInfo))
 				{
 					BloodTemplate = Class'UTGame.UTEmitter'.static.GetTemplateForDistance(static.GetFamilyInfo().default.BloodEffects, LastTakeHitInfo.HitLocation, WorldInfo);
 					// End:0x30E
@@ -4583,13 +4583,13 @@ simulated function PlayTakeHitEffects()
 					}
 				}
 				// End:0x63D
-				if(Mesh.bNotUpdatingKinematicDueToDistance!)
+				if(!Mesh.bNotUpdatingKinematicDueToDistance)
 				{
 					// End:0x63D
 					if(UTDamage != none)
 					{
 						// End:0x5AB
-						if((((Class'Engine.Engine'.static.IsSplitScreen()! && Health > 0) && DrivenVehicle == none) && int(Physics) != int(10)) && VSize(LastTakeHitInfo.Momentum) > UTDamage.default.PhysicsTakeHitMomentumThreshold)
+						if((((!Class'Engine.Engine'.static.IsSplitScreen() && Health > 0) && DrivenVehicle == none) && int(Physics) != int(10)) && VSize(LastTakeHitInfo.Momentum) > UTDamage.default.PhysicsTakeHitMomentumThreshold)
 						{
 							// End:0x491
 							if(Mesh.PhysicsAssetInstance != none)
@@ -4650,16 +4650,16 @@ reliable server function ServerHoverboard()
 		bInDeepWater = true;
 	}
 	// End:0x26F
-	if((((((bHasHoverboard && bIsCrouched!) && DrivenVehicle == none) && PhysicsVolume.bWaterVolume!) && (WorldInfo.TimeSeconds - LastHoverboardTime) > MinHoverboardInterval) && int(Physics) != int(3)) && bInDeepWater!)
+	if((((((bHasHoverboard && !bIsCrouched) && DrivenVehicle == none) && !PhysicsVolume.bWaterVolume) && (WorldInfo.TimeSeconds - LastHoverboardTime) > MinHoverboardInterval) && int(Physics) != int(3)) && !bInDeepWater)
 	{
 		LastHoverboardTime = WorldInfo.TimeSeconds;
 		SetCollision(false, false);
 		Board = Spawn(HoverboardClass);
 		// End:0x269
-		if((Board != none) && Board.bDeleteMe!)
+		if((Board != none) && !Board.bDeleteMe)
 		{
 			// End:0x266
-			if(FastTrace(Board.Location, Location)! || Board.TryToDrive(self)!)
+			if(!FastTrace(Board.Location, Location) || !Board.TryToDrive(self))
 			{
 				Board.Destroy();
 				SetCollision(true, true);
@@ -4767,7 +4767,7 @@ simulated function bool IsFirstPerson()
 simulated function AdjustCameraScale(bool bMoveCameraIn)
 {
 	// End:0x51
-	if(IsFirstPerson()!)
+	if(!IsFirstPerson())
 	{
 		CameraScale = FClamp(CameraScale + ((bMoveCameraIn) ? -1.0000000 : 1.0000000), CameraScaleMin, CameraScaleMax);
 	}
@@ -4815,7 +4815,7 @@ simulated event TornOff()
 
 simulated function SetOverlayVisibility(bool bVisible)
 {
-	OverlayMesh.SetOwnerNoSee(bVisible!);
+	OverlayMesh.SetOwnerNoSee(!bVisible);
 	//return;	
 }
 
@@ -5086,7 +5086,7 @@ state FeigningDeath
 	reliable server function ServerFeignDeath()
 	{
 		// End:0x8F
-		if((((int(Role) == int(ROLE_Authority)) && WorldInfo.GRI.bMatchIsOver!) && IsTimerActive('FeignDeathDelayTimer')!) && bFeigningDeath)
+		if((((int(Role) == int(ROLE_Authority)) && !WorldInfo.GRI.bMatchIsOver) && !IsTimerActive('FeignDeathDelayTimer')) && bFeigningDeath)
 		{
 			bFeigningDeath = false;
 			PlayFeignDeath();
@@ -5187,7 +5187,7 @@ state FeigningDeath
 	simulated event OnAnimEnd(AnimNodeSequence SeqNode, float PlayedTime, float ExcessTime)
 	{
 		// End:0x6B
-		if((int(Physics) != int(10)) && bPlayingFeignDeathRecovery!)
+		if((int(Physics) != int(10)) && !bPlayingFeignDeathRecovery)
 		{
 			// End:0x5D
 			if(FeignDeathBlend != none)
@@ -5302,7 +5302,7 @@ simulated state Dying
 			return;
 		}
 		// End:0x7C
-		if(PlayerCanSeeMe()!)
+		if(!PlayerCanSeeMe())
 		{
 			Destroy();
 			return;
@@ -5348,7 +5348,7 @@ simulated state Dying
 
 		UTDamage = Class<UTDamageType>(HitDamageType);
 		// End:0x1C7
-		if((UTDamage == none) || UTDamage.default.bSpecialDeathCamera!)
+		if((UTDamage == none) || !UTDamage.default.bSpecialDeathCamera)
 		{
 			CalcThirdPersonCam(fDeltaTime, out_CamLoc, out_CamRot, out_FOV);
 			bStopDeathCamera = bStopDeathCamera || out_CamLoc.Z < WorldInfo.KillZ;
@@ -5395,7 +5395,7 @@ simulated state Dying
 		if(Class'UTGame.UTGame'.static.UseLowGore(WorldInfo))
 		{
 			// End:0x97
-			if(bGibbed!)
+			if(!bGibbed)
 			{
 				UTDamage = Class<UTDamageType>(DamageType);
 				// End:0x97
@@ -5417,7 +5417,7 @@ simulated state Dying
 			}
 		}
 		// End:0x6EF
-		if(bGibbed! && (InstigatedBy != none) || EffectIsRelevant(Location, true, 0.0000000))
+		if(!bGibbed && (InstigatedBy != none) || EffectIsRelevant(Location, true, 0.0000000))
 		{
 			UTDamage = Class<UTDamageType>(DamageType);
 			// End:0x1A5
@@ -5446,12 +5446,12 @@ simulated state Dying
 				else
 				{
 					// End:0x6EF
-					if(bHideOnListenServer! && int(WorldInfo.NetMode) != int(NM_DedicatedServer))
+					if(!bHideOnListenServer && int(WorldInfo.NetMode) != int(NM_DedicatedServer))
 					{
 						CheckHitInfo(HitInfo, Mesh, Normal(Momentum), HitLocation);
 						UTDamage.static.SpawnHitEffect(self, float(Damage), Momentum, HitInfo.BoneName, HitLocation);
 						// End:0x4A0
-						if((UTDamage.default.bCausesBlood && Class'UTGame.UTGame'.static.UseLowGore(WorldInfo)!) && (PlayerController(Controller) == none) || int(WorldInfo.NetMode) != int(NM_Standalone))
+						if((UTDamage.default.bCausesBlood && !Class'UTGame.UTGame'.static.UseLowGore(WorldInfo)) && (PlayerController(Controller) == none) || int(WorldInfo.NetMode) != int(NM_Standalone))
 						{
 							BloodMomentum = Momentum;
 							// End:0x418
@@ -5495,7 +5495,7 @@ simulated state Dying
 		local MaterialInstanceConstant MyMIC;
 
 		// End:0x2E
-		if(bKilledByBio! || Mesh == none)
+		if(!bKilledByBio || Mesh == none)
 		{
 			Disable('Tick');			
 		}

@@ -39,7 +39,7 @@ simulated function int GetMaxPlayerPawnHeatLevel()
 							maxHeat = Max(int(targetableComponent.CurAIHeat), maxHeat);
 						}
 					}
-					S++;
+					++S;
 					// [Loop Continue]
 					goto J0xB1;
 				}
@@ -51,7 +51,7 @@ simulated function int GetMaxPlayerPawnHeatLevel()
 				maxHeat = Max(int(targetableComponent.CurAIHeat), maxHeat);
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x16;
 	}
@@ -76,7 +76,7 @@ simulated function bool IsAnyNearbyEnemyAlertedToPlayerPresence()
 		{
 			return true;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x1A;
 	}
@@ -99,7 +99,7 @@ simulated function bool IsAnyPlayerCameraInEncounterMode()
 		{
 			return true;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -122,7 +122,7 @@ simulated function bool IsControllerInGroup(Controller C)
 		{
 			return true;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -148,7 +148,7 @@ simulated function bool IsPawnInGroup(Pawn P)
 			{
 				return true;
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x1A;
 		}
@@ -160,7 +160,7 @@ simulated function bool IsPawnInGroup(Pawn P)
 simulated function AddPlayerController(HaloPlayerPawnController HPPC)
 {
 	// End:0x3F
-	if((HPPC != none) && IsControllerInGroup(HPPC)!)
+	if((HPPC != none) && !IsControllerInGroup(HPPC))
 	{
 		PlayerControllers.AddItem(HPPC);
 	}
@@ -188,7 +188,7 @@ simulated function RemovePlayerController(HaloPlayerPawnController HPPC)
 			PlayerControllers.Remove(I, 1);
 			return;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x1C;
 	}

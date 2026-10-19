@@ -347,7 +347,7 @@ function KillAllPawns(Class<Pawn> aClass)
 	foreach Outer.DynamicActors(Class'Engine.Pawn', P)
 	{
 		// End:0xEA
-		if(ClassIsChildOf(P.Class, aClass) && P.IsPlayerPawn()!)
+		if(ClassIsChildOf(P.Class, aClass) && !P.IsPlayerPawn())
 		{
 			// End:0xD2
 			if(P.Controller != none)
@@ -477,14 +477,14 @@ exec function PlayersOnly()
 	}
 	else
 	{
-		Outer.WorldInfo.bPlayersOnlyPending = Outer.WorldInfo.bPlayersOnlyPending!;
+		Outer.WorldInfo.bPlayersOnlyPending = !Outer.WorldInfo.bPlayersOnlyPending;
 	}
 	//return;	
 }
 
 exec function SuspendAI()
 {
-	Outer.WorldInfo.bSuspendAI = Outer.WorldInfo.bSuspendAI!;
+	Outer.WorldInfo.bSuspendAI = !Outer.WorldInfo.bSuspendAI;
 	//return;	
 }
 
@@ -560,7 +560,7 @@ exec function ViewSelf(optional bool bQuiet)
 		Outer.SetViewTarget(Outer);
 	}
 	// End:0xEF
-	if(bQuiet!)
+	if(!bQuiet)
 	{
 		Outer.ClientMessage(OwnCamera, 'Event');
 	}
@@ -944,7 +944,7 @@ exec function VerbosePathDebug()
 		// End:0x1E1
 		if((P != none) && P.Controller != none)
 		{
-			P.Controller.NavigationHandle.bUltraVerbosePathDebugging = P.Controller.NavigationHandle.bUltraVerbosePathDebugging!;
+			P.Controller.NavigationHandle.bUltraVerbosePathDebugging = !P.Controller.NavigationHandle.bUltraVerbosePathDebugging;
 		}		
 	}	
 	//return;	
@@ -1008,7 +1008,7 @@ exec function ToggleAILogging()
 			Outer.Pawn.MessagePlayer("OK! AI logging is now OFF");
 		}
 	}
-	Eng.bDisableAILogging = Eng.bDisableAILogging!;
+	Eng.bDisableAILogging = !Eng.bDisableAILogging;
 	//return;	
 }
 
@@ -1346,7 +1346,7 @@ exec function TestHttp(string Verb, string Payload, string URL, optional bool bS
 	LogInternal("URL =" @ R.GetURL());
 	LogInternal("Verb =" @ R.GetVerb());
 	// End:0x426
-	if(R.ProcessRequest()!)
+	if(!R.ProcessRequest())
 	{
 		LogInternal("ProcessRequest failed. Unsuppress DevHttpRequest to see more details.");		
 	}
@@ -1358,7 +1358,7 @@ exec function TestHttp(string Verb, string Payload, string URL, optional bool bS
 	if(bSendParallelRequest)
 	{
 		// End:0x575
-		if(Class'Engine.HttpFactory'.static.CreateRequest().SetURL("http://www.epicgames.com").SetVerb("GET").SetHeader("Test", "Value").SetProcessRequestCompleteDelegate(OnRequestComplete).ProcessRequest()!)
+		if(!Class'Engine.HttpFactory'.static.CreateRequest().SetURL("http://www.epicgames.com").SetVerb("GET").SetHeader("Test", "Value").SetProcessRequestCompleteDelegate(OnRequestComplete).ProcessRequest())
 		{
 			LogInternal("ProcessRequest for parallel request failed. Unsuppress DevHttpRequest to see more details.");			
 		}

@@ -128,7 +128,7 @@ function bool WantFastSpawnFor(AIController B)
 	{
 		return false;
 	}
-	return UTCTFSquadAI(UTBot(B).Squad).FriendlyFlag.bHome!;
+	return !UTCTFSquadAI(UTBot(B).Squad).FriendlyFlag.bHome;
 	//return ReturnValue;	
 }
 
@@ -151,7 +151,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 		foreach WorldInfo.AllControllers(Class'Engine.Controller', P)
 		{
 			// End:0xD7
-			if((P.PlayerReplicationInfo != none) && P.PlayerReplicationInfo.bOutOfLives!)
+			if((P.PlayerReplicationInfo != none) && !P.PlayerReplicationInfo.bOutOfLives)
 			{
 				bLastMan = false;
 				// End:0xD8
@@ -188,7 +188,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 			else
 			{
 				// End:0x225
-				if(bOverTimeBroadcast!)
+				if(!bOverTimeBroadcast)
 				{
 					StartupStage = 7;
 					PlayStartupMessage();

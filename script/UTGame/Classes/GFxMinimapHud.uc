@@ -636,7 +636,7 @@ function TickHud(float DeltaTime)
 
 function ToggleCrosshair(bool bToggle)
 {
-	bToggle = ((bDrawWeaponCrosshairs! && bToggle) && UTPlayerController(GetPC()).bNoCrosshair!) && UTHUDBase(GetPC().myHUD).bCrosshairShow;
+	bToggle = ((!bDrawWeaponCrosshairs && bToggle) && !UTPlayerController(GetPC()).bNoCrosshair) && UTHUDBase(GetPC().myHUD).bCrosshairShow;
 	ReticuleMC.SetVisible(bToggle);
 	RBotMC.SetVisible(bToggle);
 	RTopMC.SetVisible(bToggle);

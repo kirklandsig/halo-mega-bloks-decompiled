@@ -200,7 +200,7 @@ function KickBan(string Target)
 	if(NetConnection(P.Player) != none)
 	{
 		// End:0x12A
-		if(WorldInfo.IsConsoleBuild()!)
+		if(!WorldInfo.IsConsoleBuild())
 		{
 			IP = P.GetPlayerNetworkAddress();
 			// End:0x12A
@@ -213,7 +213,7 @@ function KickBan(string Target)
 			}
 		}
 		// End:0x223
-		if(P.PlayerReplicationInfo.UniqueId != P.PlayerReplicationInfo.default.UniqueId && IsIDBanned(P.PlayerReplicationInfo.UniqueId)!)
+		if(P.PlayerReplicationInfo.UniqueId != P.PlayerReplicationInfo.default.UniqueId && !IsIDBanned(P.PlayerReplicationInfo.UniqueId))
 		{
 			BannedIDs.AddItem(P.PlayerReplicationInfo.UniqueId);
 			SaveConfig();
@@ -249,7 +249,7 @@ function bool ForceKickPlayer(PlayerController C, string KickReason)
 function bool KickPlayer(PlayerController C, string KickReason)
 {
 	// End:0x75
-	if(((C != none) && IsAdmin(C)!) && NetConnection(C.Player) != none)
+	if(((C != none) && !IsAdmin(C)) && NetConnection(C.Player) != none)
 	{
 		return ForceKickPlayer(C, KickReason);
 	}
@@ -397,7 +397,7 @@ function bool CheckIPPolicy(string Address)
 		goto J0x63;
 	}
 	// End:0x286
-	if(bAcceptAddress!)
+	if(!bAcceptAddress)
 	{
 		LogInternal((("Denied connection for " $ Address) $ " with IP policy ") $ IPPolicies[LastMatchingPolicy]);
 	}
@@ -458,7 +458,7 @@ function InitAuthHooks()
 		bIsLanMatch = true;
 	}
 	// End:0x213
-	if(bIsLanMatch! && bAuthenticateClients)
+	if(!bIsLanMatch && bAuthenticateClients)
 	{
 		RegisterAuthDelegates();
 	}
@@ -471,7 +471,7 @@ function RegisterAuthDelegates()
 	if(NotEqual_InterfaceInterface(CachedAuthInt, OnlineAuthInterface(none)))
 	{
 		// End:0x76
-		if(CachedAuthInt.IsReady()!)
+		if(!CachedAuthInt.IsReady())
 		{
 			CachedAuthInt.AddAuthReadyDelegate(OnAuthReady);
 		}
@@ -512,7 +512,7 @@ function ClearAuthDelegates(bool bExiting)
 		CachedAuthInt.ClearClientConnectionCloseDelegate(OnClientConnectionClose);
 		CachedAuthInt.ClearServerAuthRetryRequestDelegate(ProcessServerAuthRetryRequest);
 		// End:0x19B
-		if(bExiting!)
+		if(!bExiting)
 		{
 			CachedAuthInt.AddClientConnectionCloseDelegate(Class'Engine.AccessControl'.StaticOnClientConnectionClose);
 		}
@@ -551,13 +551,13 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 	else
 	{
 		// End:0x1E2
-		if(((GamePassword != "") && InPassword == GamePassword!) && (AdminPassword == "") || InPassword == AdminPassword!)
+		if(((GamePassword != "") && !InPassword == GamePassword) && (AdminPassword == "") || !InPassword == AdminPassword)
 		{
 			OutError = ((InPassword == "") ? "Engine.AccessControl.NeedPassword" : "Engine.AccessControl.WrongPassword");
 		}
 	}
 	// End:0x223
-	if(CheckIPPolicy(Address)!)
+	if(!CheckIPPolicy(Address))
 	{
 		OutError = "Engine.AccessControl.IPBanned";
 	}
@@ -569,10 +569,10 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 		{
 			GameSettings = OnlineSub.GameInterface.GetGameSettings(WorldInfo.Game.PlayerReplicationInfoClass.default.SessionName);
 			// End:0xBB6
-			if((((int(WorldInfo.NetMode) == int(NM_DedicatedServer)) || int(WorldInfo.NetMode) == int(NM_ListenServer)) && GameSettings != none) && GameSettings.bIsLanMatch!)
+			if((((int(WorldInfo.NetMode) == int(NM_DedicatedServer)) || int(WorldInfo.NetMode) == int(NM_ListenServer)) && GameSettings != none) && !GameSettings.bIsLanMatch)
 			{
 				// End:0x475
-				if(bSupportsAuth!)
+				if(!bSupportsAuth)
 				{
 					// End:0x44B
 					if(OnlineSub.Class.Name == 'OnlineSubsystemSteamworks')
@@ -651,7 +651,7 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 					J0x7D5:
 
 					// End:0x87E
-					if(bFound!)
+					if(!bFound)
 					{
 						// End:0x87D
 						foreach CachedAuthInt.AllClientAuthSessions(CurClientSession)
@@ -671,14 +671,14 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 						bFound = true;
 					}
 					// End:0xB37
-					if(bFound! && UniqueId != NullId)
+					if(!bFound && UniqueId != NullId)
 					{
 						// End:0xA1C
 						if(CachedAuthInt.IsReady())
 						{
 							bSuccess = CachedAuthInt.SendClientAuthRequest(ClientConn, UniqueId);
 							// End:0xA19
-							if(bSuccess && IsTimerActive('PendingAuthTimer')!)
+							if(bSuccess && !IsTimerActive('PendingAuthTimer'))
 							{
 								SetTimer(3.0000000, true, 'PendingAuthTimer');
 							}							
@@ -798,7 +798,7 @@ function PendingAuthTimer()
 				}
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -848,7 +848,7 @@ function OnAuthReady()
 					I--;					
 				}
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x18;
 		}
@@ -897,7 +897,7 @@ function ProcessClientAuthResponse(UniqueNetId ClientUID, int ClientIP, int Auth
 	{
 		bSuccess = CachedAuthInt.VerifyClientAuthSession(ClientUID, ClientIP, 0, AuthTicketUID);
 		// End:0x1AC
-		if(bSuccess!)
+		if(!bSuccess)
 		{
 			OldLength = ClientsPendingAuth.Length;
 			WorldInfo.Game.RejectLogin(ClientsPendingAuth[I].ClientConnection, "Authentication failed");
@@ -1045,13 +1045,13 @@ function ProcessServerAuthRequest(Player ClientConnection, UniqueNetId ClientUID
 			}			
 		}		
 		// End:0x192
-		if(bFound!)
+		if(!bFound)
 		{
 			// End:0x168
 			if(CachedAuthInt.CreateServerAuthSession(ClientUID, ClientIP, ClientPort, AuthTicketUID))
 			{
 				// End:0x165
-				if(CachedAuthInt.SendServerAuthResponse(ClientConnection, AuthTicketUID)!)
+				if(!CachedAuthInt.SendServerAuthResponse(ClientConnection, AuthTicketUID))
 				{
 					LogInternal("WARNING!!! Failed to send auth ticket to client");
 				}				
@@ -1097,7 +1097,7 @@ function ProcessServerAuthRetryRequest(Player ClientConnection)
 					// [Explicit Break]
 					goto J0x194;
 				}
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x11D;
 			}
@@ -1192,7 +1192,7 @@ function BeginListenHostAuth(optional bool bRetry)
 			}			
 		}		
 		// End:0x351
-		if(bFound! || bRetry)
+		if(!bFound || bRetry)
 		{
 			LogInternal("Kicking off listen auth session");
 			// End:0x298
@@ -1215,7 +1215,7 @@ function BeginListenHostAuth(optional bool bRetry)
 		else
 		{
 			// End:0x41A
-			if((int(ListenSession.AuthStatus) != int(2)) && IsTimerActive('ListenHostAuthTimeout')!)
+			if((int(ListenSession.AuthStatus) != int(2)) && !IsTimerActive('ListenHostAuthTimeout'))
 			{
 				LogInternal("BeginListenHostAuth was called when there is already a listen auth session, but the timeout is not active");
 				SetTimer(float(AuthRetryDelay), false, 'ListenHostAuthTimeout');
@@ -1243,7 +1243,7 @@ function ContinueListenHostAuth()
 		bGotHostInfo = OnlineSub.PlayerInterface.GetUniquePlayerId(0, HostUID) && CachedAuthInt.GetServerAddr(ServerIP, ServerPort);
 	}
 	// End:0x1C9
-	if(bGotHostInfo! || CachedAuthInt.VerifyClientAuthSession(HostUID, ServerIP, ServerPort, ListenAuthTicketUID)!)
+	if(!bGotHostInfo || !CachedAuthInt.VerifyClientAuthSession(HostUID, ServerIP, ServerPort, ListenAuthTicketUID))
 	{
 		LogInternal("VerifyClientAuthSession failed for listen host");
 		OnlineSub.PlayerInterface.GetUniquePlayerId(0, HostUID);
@@ -1319,7 +1319,7 @@ function OnClientConnectionClose(Player ClientConnection)
 				// [Explicit Break]
 				goto J0xB0;
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x2D;
 		}
@@ -1373,7 +1373,7 @@ static final function StaticOnClientConnectionClose(Player ClientConnection)
 						// [Explicit Break]
 						goto J0x3C1;
 					}
-					I++;
+					++I;
 					// [Loop Continue]
 					goto J0x278;
 				}
@@ -1418,7 +1418,7 @@ function OnDestroyOnlineGameComplete(name SessionName, bool bWasSuccessful)
 			if(ClientConn != none)
 			{
 				// End:0x1F2
-				if(CachedAuthInt.SendClientAuthEndSessionRequest(ClientConn)!)
+				if(!CachedAuthInt.SendClientAuthEndSessionRequest(ClientConn))
 				{
 					LogInternal("Failed to send client kill auth request");
 				}
@@ -1436,7 +1436,7 @@ function OnDestroyOnlineGameComplete(name SessionName, bool bWasSuccessful)
 function NotifyServerTravel(bool bSeamless)
 {
 	// End:0x1A
-	if(bSeamless!)
+	if(!bSeamless)
 	{
 		Cleanup();
 	}
@@ -1500,7 +1500,7 @@ function bool IsPendingAuth(UniqueNetId PlayerUID)
 		{
 			return true;
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}

@@ -83,7 +83,7 @@ simulated event bool Accept(Actor Incoming, Actor Source)
 			}			
 		}
 		// End:0x254
-		if(Pawn(Incoming).SetLocation(Location)!)
+		if(!Pawn(Incoming).SetLocation(Location))
 		{
 			LogInternal((string(self) $ " Teleport failed for ") $ string(Incoming));
 			return false;
@@ -109,7 +109,7 @@ simulated event bool Accept(Actor Incoming, Actor Source)
 	else
 	{
 		// End:0x487
-		if(Incoming.SetLocation(Location)!)
+		if(!Incoming.SetLocation(Location))
 		{
 			Enable('Touch');
 			return false;
@@ -164,12 +164,12 @@ simulated event bool Accept(Actor Incoming, Actor Source)
 event Touch(Actor Other, PrimitiveComponent OtherComp, Vector HitLocation, Vector HitNormal)
 {
 	// End:0x22
-	if(bEnabled! || Other == none)
+	if(!bEnabled || Other == none)
 	{
 		return;
 	}
 	// End:0xA7
-	if((CanTeleport(Other)) && Other.PreTeleport(self)!)
+	if((CanTeleport(Other)) && !Other.PreTeleport(self))
 	{
 		PendingTouch = Other.PendingTouch;
 		Other.PendingTouch = self;

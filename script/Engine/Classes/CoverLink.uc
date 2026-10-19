@@ -351,7 +351,7 @@ final simulated event bool Claim(Pawn NewClaim, int SlotIdx)
 		bResult = Slots[SlotIdx].SlotOwner == NewClaim;
 		bDoClaim = false;
 		// End:0x176
-		if(bResult!)
+		if(!bResult)
 		{
 			PC = PlayerController(NewClaim.Controller);
 			// End:0x176
@@ -471,7 +471,7 @@ final simulated event bool UnClaim(Pawn OldClaim, int SlotIdx, bool bUnclaimAll)
 		LogInternal(((((((((((((string(self) @ "UnClaim") @ "OldClaim:'") $ string(OldClaim)) $ "'") @ "SlotIdx:'") $ string(SlotIdx)) $ "'") @ "bUnclaimAll:'") $ string(bUnclaimAll)) $ "'") @ "bClaimAllSlots:'") $ string(bClaimAllSlots)) $ "'");
 	}
 	// End:0xCA
-	if(bUnclaimAll! && SlotIdx < 0)
+	if(!bUnclaimAll && SlotIdx < 0)
 	{
 		return false;
 	}
@@ -499,7 +499,7 @@ final simulated event bool UnClaim(Pawn OldClaim, int SlotIdx, bool bUnclaimAll)
 	else
 	{
 		// End:0x202
-		if(bClaimAllSlots! && Slots[SlotIdx].SlotOwner == OldClaim)
+		if(!bClaimAllSlots && Slots[SlotIdx].SlotOwner == OldClaim)
 		{
 			Slots[SlotIdx].SlotOwner = none;
 			NumReleased++;
@@ -592,7 +592,7 @@ native final function bool IsValidClaimBetween(Pawn ChkClaim, int StartSlotIdx, 
 
 final simulated function bool IsStationarySlot(int SlotIdx)
 {
-	return bCircular! && IsEdgeSlot(SlotIdx, false);
+	return !bCircular && IsEdgeSlot(SlotIdx, false);
 	//return ReturnValue;	
 }
 
@@ -689,7 +689,7 @@ simulated event SetSlotEnabled(int SlotIdx, bool bEnable)
 {
 	Slots[SlotIdx].bEnabled = bEnable;
 	// End:0x55
-	if(bEnable!)
+	if(!bEnable)
 	{
 		NotifySlotOwnerCoverDisabled(SlotIdx);
 	}
@@ -701,19 +701,19 @@ simulated function NotifySlotOwnerCoverDisabled(int SlotIdx, optional bool bAIOn
 	local int LeftIdx, RightIdx;
 
 	// End:0x129
-	if(((Slots[SlotIdx].SlotOwner != none) && Slots[SlotIdx].SlotOwner.Controller != none) && bAIOnly! || PlayerController(Slots[SlotIdx].SlotOwner.Controller) == none)
+	if(((Slots[SlotIdx].SlotOwner != none) && Slots[SlotIdx].SlotOwner.Controller != none) && !bAIOnly || PlayerController(Slots[SlotIdx].SlotOwner.Controller) == none)
 	{
 		Slots[SlotIdx].SlotOwner.Controller.NotifyCoverDisabled(self, SlotIdx, false);
 	}
 	LeftIdx = GetSlotIdxToLeft(SlotIdx);
 	// End:0x280
-	if((((LeftIdx >= 0) && Slots[LeftIdx].SlotOwner != none) && Slots[LeftIdx].SlotOwner.Controller != none) && bAIOnly! || PlayerController(Slots[LeftIdx].SlotOwner.Controller) == none)
+	if((((LeftIdx >= 0) && Slots[LeftIdx].SlotOwner != none) && Slots[LeftIdx].SlotOwner.Controller != none) && !bAIOnly || PlayerController(Slots[LeftIdx].SlotOwner.Controller) == none)
 	{
 		Slots[LeftIdx].SlotOwner.Controller.NotifyCoverDisabled(self, SlotIdx, true);
 	}
 	RightIdx = GetSlotIdxToRight(SlotIdx);
 	// End:0x3D7
-	if((((RightIdx >= 0) && Slots[RightIdx].SlotOwner != none) && Slots[RightIdx].SlotOwner.Controller != none) && bAIOnly! || PlayerController(Slots[RightIdx].SlotOwner.Controller) == none)
+	if((((RightIdx >= 0) && Slots[RightIdx].SlotOwner != none) && Slots[RightIdx].SlotOwner.Controller != none) && !bAIOnly || PlayerController(Slots[RightIdx].SlotOwner.Controller) == none)
 	{
 		Slots[RightIdx].SlotOwner.Controller.NotifyCoverDisabled(self, SlotIdx, true);
 	}
@@ -877,7 +877,7 @@ function OnToggle(SeqAct_Toggle inAction)
 		}
 		else
 		{
-			bDisabled = bDisabled!;
+			bDisabled = !bDisabled;
 		}
 	}
 	SlotIdx = 0;
@@ -886,8 +886,8 @@ function OnToggle(SeqAct_Toggle inAction)
 	// End:0x106 [Loop If]
 	if(SlotIdx < Slots.Length)
 	{
-		SetSlotEnabled(SlotIdx, bDisabled!);
-		SlotIdx++;
+		SetSlotEnabled(SlotIdx, !bDisabled);
+		++SlotIdx;
 		// [Loop Continue]
 		goto J0xC1;
 	}
@@ -939,7 +939,7 @@ simulated function BreakFracturedMeshes(Vector Origin, float Radius, float RBStr
 	local byte bWantPhysChunksAndParticles;
 
 	// End:0x11
-	if(bFractureOnTouch!)
+	if(!bFractureOnTouch)
 	{
 		return;
 	}

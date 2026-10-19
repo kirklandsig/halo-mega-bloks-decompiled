@@ -289,7 +289,7 @@ function bool PlaylistSupportsDedicatedServers(int PlaylistId)
 	// End:0x66
 	if(PlaylistIndex != -1)
 	{
-		return Playlists[PlaylistIndex].bDisableDedicatedServerSearches!;
+		return !Playlists[PlaylistIndex].bDisableDedicatedServerSearches;
 	}
 	return false;
 	//return ReturnValue;	

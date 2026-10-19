@@ -111,8 +111,15 @@ static class ScriptExport
         var item = new NativeTableItem(function);
         if (item.Type != FunctionType.Function)
         {
-            var prefix = function.Name.ToString().Split('_')[0];
+            var name = function.Name.ToString();
+            var prefix = name.Split('_')[0];
             item.Name = Operators.GetValueOrDefault(prefix, prefix);
+            // The internal name keeps a prefix operator's side (Not_PreBool is
+            // "!x"), which the cooked flags can lose.
+            if (name.Contains("_Pre"))
+            {
+                item.Type = FunctionType.PreOperator;
+            }
         }
         return item;
     }

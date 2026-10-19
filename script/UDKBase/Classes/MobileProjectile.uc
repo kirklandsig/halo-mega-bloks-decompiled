@@ -89,7 +89,7 @@ simulated function Explode(Vector HitLocation, Vector HitNormal)
 			MakeNoise(1.0000000);
 		}
 		// End:0x6C
-		if(bShuttingDown!)
+		if(!bShuttingDown)
 		{
 			ProjectileHurtRadius(HitLocation, HitNormal);
 		}
@@ -239,7 +239,7 @@ state WaitingForVelocity
 	simulated function Tick(float DeltaTime)
 	{
 		// End:0x61
-		if(IsZero(Velocity)!)
+		if(!IsZero(Velocity))
 		{
 			Acceleration = AccelRate * Normal(Velocity);
 			GotoState(((InitialState != 'None') ? InitialState : 'Auto'));

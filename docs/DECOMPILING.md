@@ -163,8 +163,19 @@ never written by it.
 - **Out-of-line copies under `#pragma inline_depth(0)`.** Taking a member's
   address there (`extern decltype(&C::f) const p = &C::f;`) emits the copy
   retail has, with the usual inlining inside it.
-- **Vector (VMX128) code** hasn't been matched yet. If you match some, add
-  what you learn here.
+- **Overloaded virtuals in adjacent slots are declared in reverse.** MSVC
+  lays a group of same-named virtuals out in reverse declaration order, so
+  gen_header.py emits them that way to land on the PDB's slots.
+- **A pointer parameter's own `const`** (`void *const Result`) is part of the
+  decorated name; pdbtype.py keeps it.
+- **The PDB's public symbols name vtables** (`??_7<Class>@@6B@`), which tells
+  which class a `new` built when the constructor is inlined.
+- **One header, two builds.** Generated headers spell virtuals, access and
+  members with `HG_*` macros (`include/Core/Inc/HostGuest.h`): plain C++ for
+  the XDK, guest-memory structs for the port (`docs/specs/phase3-port-swap.md`).
+- **Vector (VMX128) constants** match: the dynamic initializers of UE3's
+  `static const VectorRegister` globals (`include/Core/Inc/UnMathXe.h`).
+  Other vector code is untested.
 
 ## When it doesn't match
 

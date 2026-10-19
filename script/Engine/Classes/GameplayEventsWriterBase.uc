@@ -85,7 +85,7 @@ function Poll()
 	if(WI.Pauser == none)
 	{
 		// End:0xEC
-		if((WI.Game != none) && WI.Game.bWaitingToStartMatch!)
+		if((WI.Game != none) && !WI.Game.bWaitingToStartMatch)
 		{
 			LogAllPlayerPositionsEvent(105);
 			WI.Game.GameEventsPoll();

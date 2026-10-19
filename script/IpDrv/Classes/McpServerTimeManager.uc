@@ -39,7 +39,7 @@ function QueryServerTime()
 		LogInternal(((("McpServerTimeManager::" $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ ErrorStr);
 	}
 	// End:0x235
-	if(bPending!)
+	if(!bPending)
 	{
 		OnQueryServerTimeComplete(false, "", ErrorStr);
 	}

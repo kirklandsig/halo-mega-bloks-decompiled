@@ -230,7 +230,7 @@ function CheckForGameplayModeChange()
 		// End:0x144
 		case 1:
 			// End:0x132
-			if((TheMainPlayerGroup.GetMaxPlayerPawnHeatLevel() <= 0) && TheMainPlayerGroup.IsAnyNearbyEnemyAlertedToPlayerPresence()!)
+			if((TheMainPlayerGroup.GetMaxPlayerPawnHeatLevel() <= 0) && !TheMainPlayerGroup.IsAnyNearbyEnemyAlertedToPlayerPresence())
 			{
 				SecsWaitingToChangeGameplayMode += GameplayModeCheckIntervalSecs;
 				// End:0x12F
@@ -549,7 +549,7 @@ function PlayerStart ChoosePlayerStart(Controller Player, optional byte InTeam, 
 	LogInternal((((("ChoosePlayerStart: MissionToJumpTo=" $ string(MissionToJumpTo)) $ " SpawnPointToJumpTo=") $ string(SpawnPointToJumpTo)) $ " bHaveChosenInitialRespawnPoint=") $ string(bHaveChosenInitialRespawnPoint));
 	closestDistSq = 25000000094208.0000000;
 	// End:0x440
-	if(bHaveChosenInitialRespawnPoint!)
+	if(!bHaveChosenInitialRespawnPoint)
 	{
 		// End:0x26F
 		foreach WorldInfo.AllNavigationPoints(Class'Engine.PlayerStart', PS)
@@ -585,7 +585,7 @@ function PlayerStart ChoosePlayerStart(Controller Player, optional byte InTeam, 
 			foreach WorldInfo.AllNavigationPoints(Class'Engine.PlayerStart', PS)
 			{
 				// End:0x3D8
-				if(PS.bPrimaryStart && PS.bClaimedAsPrimaryStart!)
+				if(PS.bPrimaryStart && !PS.bClaimedAsPrimaryStart)
 				{
 					PS.bClaimedAsPrimaryStart = true;
 					CurrentRespawnPoint = PS;
@@ -688,7 +688,7 @@ function Pawn SpawnDefaultPawnFor(Controller NewPlayer, NavigationPoint StartSpo
 	if((I < startLocations.Length) && ResultPawn == none)
 	{
 		ResultPawn = Spawn(DefaultPlayerClass,,, startLocations[I], StartRotation);
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x331;
 	}
@@ -754,7 +754,7 @@ event LevelStreamingStatusChanged(LevelStreaming LevelObject, bool bNewShouldBeL
 	local Vector pos;
 
 	// End:0x341
-	if(((LevelObject != none) && bNewShouldBeLoaded!) && bNewShouldBeVisible!)
+	if(((LevelObject != none) && !bNewShouldBeLoaded) && !bNewShouldBeVisible)
 	{
 		mapBounds = LevelObject.GetLevelBounds();
 		// End:0x341

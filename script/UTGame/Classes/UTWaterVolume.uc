@@ -112,7 +112,7 @@ simulated function PlayEntrySplash(Actor Other)
 		}
 	}
 	// End:0x1F9
-	if(((((WorldInfo.bDropDetail! && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && Other.IsA('Projectile')) && Other.Instigator != none) && Other.Instigator.IsPlayerPawn()) && Other.Instigator.IsLocallyControlled())
+	if(((((!WorldInfo.bDropDetail && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && Other.IsA('Projectile')) && Other.Instigator != none) && Other.Instigator.IsPlayerPawn()) && Other.Instigator.IsLocallyControlled())
 	{
 		WorldInfo.MyEmitterPool.SpawnEmitter(ProjectileEntryEffect, Other.Location, Rotator(vect(0.0000000, 0.0000000, 1.0000000)));
 	}

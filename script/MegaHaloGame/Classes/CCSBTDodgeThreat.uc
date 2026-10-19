@@ -143,7 +143,7 @@ function bool ExecutePre(GripBTInterface BTInterface)
 					break;
 				// End:0xFFFF
 				default:
-					testDot = testVector Dot threatDirectionToMe-;
+					testDot = -testVector Dot threatDirectionToMe;
 					// End:0x8AD
 					if(testDot < BestDot)
 					{
@@ -165,7 +165,7 @@ function bool ExecutePre(GripBTInterface BTInterface)
 					break;
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x27C;
 	}
@@ -191,7 +191,7 @@ function GripBTNode.BTExecutionResult Execute(GripBTInterface BTInterface, bool 
 	ExecRes = 2;
 	Controller.Pawn.SetRotation(InitialRotation);
 	// End:0x9B
-	if(DodgeSequences[activeAnimIndex].bPlaying!)
+	if(!DodgeSequences[activeAnimIndex].bPlaying)
 	{
 		// End:0x8C
 		if(PushToFinish)

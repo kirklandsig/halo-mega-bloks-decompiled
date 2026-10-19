@@ -323,12 +323,12 @@ var float FlashDamageUpdateInterval;
 replication
 {
 	// Pos:0x000
-	if(bNetDirty && bNetOwner!)
+	if(bNetDirty && !bNetOwner)
 		CustomAnimationReplicate, DeployTDPreviewMeshPath, 
 		bIsGunRaised;
 
 	// Pos:0x01B
-	if((bIsGunRaised && bNetDirty) && bNetOwner!)
+	if((bIsGunRaised && bNetDirty) && !bNetOwner)
 		AimOffsetReplicate;
 
 	// Pos:0x045
@@ -799,7 +799,7 @@ simulated event Tick(float DeltaTime)
 		JumpComponent.Tick(DeltaTime);
 	}
 	// End:0xB9
-	if((WaitingForDoJumpNow! && int(Physics) != int(2)) && IsGrabbingLedge()!)
+	if((!WaitingForDoJumpNow && int(Physics) != int(2)) && !IsGrabbingLedge())
 	{
 		SetJumpType(0, false);
 		AllowDoubleJump();
@@ -1109,7 +1109,7 @@ event RampFlashDamageDown()
 	if(Mesh != none)
 	{
 		// End:0xE3
-		if(bHasHadFlashMatsReplaced!)
+		if(!bHasHadFlashMatsReplaced)
 		{
 			I = 0;
 			J0x74:
@@ -1118,7 +1118,7 @@ event RampFlashDamageDown()
 			if(I < Mesh.GetNumElements())
 			{
 				Mesh.CreateAndSetMaterialInstanceConstant(I);
-				I++;
+				++I;
 				// [Loop Continue]
 				goto J0x74;
 			}
@@ -1136,7 +1136,7 @@ event RampFlashDamageDown()
 			{
 				alterableMaterial.SetScalarParameterValue(FlashDamageParamName, FlashDamagePct);
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0xEE;
 		}
@@ -1189,7 +1189,7 @@ function bool HandleHitReaction(int Damage, Class<DamageType> DamageType, Vector
 event Landed(Vector HitNormal, Actor FloorActor)
 {
 	// End:0x39
-	if(Velocity.Z < MaxFallSpeed-)
+	if(Velocity.Z < -MaxFallSpeed)
 	{
 		PlayFallingSound();		
 	}
@@ -1202,7 +1202,7 @@ event Landed(Vector HitNormal, Actor FloorActor)
 		}
 	}
 	// End:0xB3
-	if(Velocity.Z < LandFxFallSpeedThreshold-)
+	if(Velocity.Z < -LandFxFallSpeedThreshold)
 	{
 		SpawnLandFx(FloorActor);
 	}
@@ -1379,7 +1379,7 @@ simulated function SetWeaponAmbientSound(SoundCue NewAmbientSound)
 function DeactivateSpawnProtection()
 {
 	// End:0x1B
-	if(bSpawnDone!)
+	if(!bSpawnDone)
 	{
 		bSpawnDone = true;
 	}
@@ -1460,7 +1460,7 @@ function SetControllerCrosshair(bool showCrosshair)
 	// End:0x57
 	if(PC != none)
 	{
-		PC.bNoCrosshair = showCrosshair!;
+		PC.bNoCrosshair = !showCrosshair;
 	}
 	//return;	
 }
@@ -1493,7 +1493,7 @@ simulated event BecomeViewTarget(PlayerController PC)
 		PhysicsVolume.NotifyPawnBecameViewTarget(self, PC);
 	}
 	// End:0x92
-	if(bReplicateHealthToAll! && int(WorldInfo.NetMode) != int(NM_Client))
+	if(!bReplicateHealthToAll && int(WorldInfo.NetMode) != int(NM_Client))
 	{
 		PC.ForceSingleNetUpdateFor(self);
 	}
@@ -1880,7 +1880,7 @@ function StopChargeUpAnim()
 
 exec function ToggleMeleeSwipeBoxes()
 {
-	bDrawMeleeSwipeBoxes = bDrawMeleeSwipeBoxes!;
+	bDrawMeleeSwipeBoxes = !bDrawMeleeSwipeBoxes;
 	//return;	
 }
 
@@ -1953,7 +1953,7 @@ function bool HasGrenades()
 
 function bool CanThrowGrenade()
 {
-	return (((Health > 0) && IsBusy()!) && IsGrabbingLedge()!) && HasGrenades();
+	return (((Health > 0) && !IsBusy()) && !IsGrabbingLedge()) && HasGrenades();
 	//return ReturnValue;	
 }
 
@@ -2139,7 +2139,7 @@ function ThrowGrenadeNow()
 		grenade = HaloProjectile_Grenade(NewProjectile);
 	}
 	// End:0x5DE
-	if((NewProjectile != none) && NewProjectile.bDeleteMe!)
+	if((NewProjectile != none) && !NewProjectile.bDeleteMe)
 	{
 		// End:0x3C3
 		if(CCSController(Controller) != none)
@@ -2309,7 +2309,7 @@ function bool DoJump(bool bUpdating)
 		return super.DoJump(bUpdating);
 	}
 	// End:0x53
-	if((bJumpCapable! || bIsCrouched) || bWantsToCrouch)
+	if((!bJumpCapable || bIsCrouched) || bWantsToCrouch)
 	{
 		return false;
 	}
@@ -2341,7 +2341,7 @@ function bool DoJump(bool bUpdating)
 			break;
 	}
 	// End:0xD6
-	if(bUpdating!)
+	if(!bUpdating)
 	{
 		PlayJumpingSound();
 	}
@@ -2354,7 +2354,7 @@ function DoJumpNow()
 {
 	Velocity.Z = JumpComponent.GetJumpZ(JumpType);
 	// End:0x1F6
-	if(((Base != none) && Base.bWorldGeometry!) && Base.Velocity.Z > 0.0000000)
+	if(((Base != none) && !Base.bWorldGeometry) && Base.Velocity.Z > 0.0000000)
 	{
 		// End:0x1A7
 		if((WorldInfo.WorldGravityZ != WorldInfo.DefaultGravityZ) && (GetGravityZ()) == WorldInfo.WorldGravityZ)
@@ -2370,7 +2370,7 @@ function DoJumpNow()
 	JumpComponent.JumpPressed();
 	bDodging = false;
 	// End:0x255
-	if(Controller.IsA('HaloPlayerPawnController')!)
+	if(!Controller.IsA('HaloPlayerPawnController'))
 	{
 		AdjustVelocityForLedgeGrab();
 	}
@@ -2529,7 +2529,7 @@ function bool Takedown(optional HaloPawn Target)
 		else
 		{
 			// End:0x72
-			if(CanTakedown(Target, I)!)
+			if(!CanTakedown(Target, I))
 			{
 				return false;
 			}
@@ -2557,7 +2557,7 @@ function HaloPawn FindTakedownTarget(optional out int bestDescIdx)
 	local int I;
 
 	// End:0x12
-	if(ReadyForTakedown()!)
+	if(!ReadyForTakedown())
 	{
 		return none;
 	}
@@ -2567,7 +2567,7 @@ function HaloPawn FindTakedownTarget(optional out int bestDescIdx)
 	foreach CollidingActors(Class'MegaHaloGame.HaloPawn', Target, TakedownMaxRange, Location)
 	{
 		// End:0x8B
-		if(CanTakedown(Target, I, angOffset)!)
+		if(!CanTakedown(Target, I, angOffset))
 		{
 			continue;			
 		}
@@ -2605,7 +2605,7 @@ function int GetTakedownDescIndexForClass(Class<HaloPawn> TargetClass)
 				goto J0xBF;
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x1A;
 	}
@@ -2620,7 +2620,7 @@ function bool CanTakedown(HaloPawn Target, optional out int I, optional out floa
 	local Vector ToTarget;
 
 	// End:0x28
-	if(Target.ReadyForTakedown()!)
+	if(!Target.ReadyForTakedown())
 	{
 		return false;
 	}
@@ -2665,7 +2665,7 @@ function NotifyTakedownDown(bool Enable)
 
 function bool ReadyForTakedown()
 {
-	return ((Health > 0) && int(Physics) == int(1)) && IsBusy()!;
+	return ((Health > 0) && int(Physics) == int(1)) && !IsBusy();
 	//return ReturnValue;	
 }
 
@@ -2767,7 +2767,7 @@ function bool CheckForLedgeGrab()
 		}
 		toTestLoc = testLoc - Location;
 		// End:0x2FD
-		if(toTestLoc.Z < LedgeGrabToleranceZ-)
+		if(toTestLoc.Z < -LedgeGrabToleranceZ)
 		{
 			continue;			
 		}
@@ -2860,7 +2860,7 @@ function bool IsStillWithinPrevousLedgeRange()
 		toTestLoc = testLoc - Location;
 		toTestLoc.Z += LedgeGrabOffsetZ;
 		// End:0xEA
-		if((toTestLoc.Z < LedgeGrabToleranceZ-) || toTestLoc.Z > LedgeGrabToleranceZFromJump)
+		if((toTestLoc.Z < -LedgeGrabToleranceZ) || toTestLoc.Z > LedgeGrabToleranceZFromJump)
 		{
 			return false;
 		}
@@ -2972,7 +2972,7 @@ simulated function bool KnockdownFromDamageType(Class<HaloDamageType> dmgType, V
 			{
 				return false;
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0x1A;
 		}
@@ -2992,7 +2992,7 @@ simulated function bool KnockdownFromDamageType(Class<HaloDamageType> dmgType, V
 	}
 	else
 	{
-		HitVec = Normal(HitVec-);
+		HitVec = Normal(-HitVec);
 	}
 	I = FindBestKnockdownBehavor(dmgType, HitVec);
 	// End:0x178
@@ -3044,7 +3044,7 @@ function int FindBestKnockdownBehavor(Class<HaloDamageType> dmgType, Vector HitV
 				return I;
 			}
 		}
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x29;
 	}
@@ -3229,7 +3229,7 @@ simulated event FellOutOfWorld(Class<DamageType> dmgType)
 	local HaloPlayerPawnController HPPC;
 
 	// End:0x7D
-	if(bIgnoreKillZ!)
+	if(!bIgnoreKillZ)
 	{
 		HPPC = HaloPlayerPawnController(Controller);
 		// End:0x6A
@@ -3318,7 +3318,7 @@ simulated event PostBeginPlay()
 		KnockdownBehaviors[I].rDirection.Yaw = Angle;
 		KnockdownBehaviors[I].rDirection.Pitch = 0;
 		KnockdownBehaviors[I].rDirection.Roll = 0;
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x80;
 	}
@@ -3330,7 +3330,7 @@ simulated event PostBeginPlay()
 	if(I < TakedownDescs.Length)
 	{
 		TakedownMaxRange = FMax(TakedownMaxRange, TakedownDescs[I].MaxRange);
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x1B6;
 	}
@@ -3856,7 +3856,7 @@ simulated state Meleeing
 			// End:0x1BA
 			if(fxRight.Z < 0.0000000)
 			{
-				fxRot.Roll = 16384-;				
+				fxRot.Roll = -16384;				
 			}
 			else
 			{
@@ -4015,7 +4015,7 @@ state BakeMeleeSwipeState
 		if(W != none)
 		{
 			// End:0x92
-			if(W.NextComboAttackIndex++ >= W.ComboAttackDescs.Length)
+			if(++W.NextComboAttackIndex >= W.ComboAttackDescs.Length)
 			{
 				W.NextComboAttackIndex = 0;				
 			}
@@ -4057,7 +4057,7 @@ state BakeMeleeSwipeState
 		if(CurrentWeaponAttachment.Mesh.GetSocketWorldLocationAndRotation('Swipe_Socket', WorldLoc))
 		{
 			// End:0x7E
-			if(skipLineDraw!)
+			if(!skipLineDraw)
 			{
 				DrawDebugLine(PrevMeleeSwipeLocation, WorldLoc, 255, 0, 0, true);
 			}
@@ -4251,7 +4251,7 @@ simulated state Ramming_Loop extends Ramming_Base
 			Damage = float(RamDamage);
 			Destructible = HaloDestructibleActor(Other);
 			// End:0xF7
-			if((Destructible != none) && Destructible.bBlocksRam!)
+			if((Destructible != none) && !Destructible.bBlocksRam)
 			{
 				Damage = float(Max(int(Damage), Destructible.Health));
 				shouldExit = false;				
@@ -4309,7 +4309,7 @@ simulated state Ramming_Loop extends Ramming_Base
 
 		Destructible = HaloDestructibleActor(Wall);
 		// End:0x53
-		if((Destructible != none) && Destructible.bBlocksRam!)
+		if((Destructible != none) && !Destructible.bBlocksRam)
 		{
 			return;
 		}
@@ -4317,7 +4317,7 @@ simulated state Ramming_Loop extends Ramming_Base
 		Velocity -= (((1.0000000 + RamHitWallBounce) * (HitNormal Dot Velocity)) * HitNormal);
 		Velocity.Z += RamHitWallImpulseZ;
 		SetPhysics(2);
-		R = Rotator(HitNormal-);
+		R = Rotator(-HitNormal);
 		R.Pitch = 0;
 		R.Roll = 0;
 		SetRotation(R);
@@ -4523,7 +4523,7 @@ simulated state LeapAttack_Loop extends LeapAttack_Base
 			Damage = float(CurLeapDesc.Damage);
 			Destructible = HaloDestructibleActor(Other);
 			// End:0x10A
-			if((Destructible != none) && Destructible.bBlocksRam!)
+			if((Destructible != none) && !Destructible.bBlocksRam)
 			{
 				Damage = float(Max(int(Damage), Destructible.Health));
 				shouldExit = false;				
@@ -4581,7 +4581,7 @@ simulated state LeapAttack_Loop extends LeapAttack_Base
 
 		Destructible = HaloDestructibleActor(Wall);
 		// End:0x53
-		if((Destructible != none) && Destructible.bBlocksRam!)
+		if((Destructible != none) && !Destructible.bBlocksRam)
 		{
 			return;
 		}
@@ -4589,7 +4589,7 @@ simulated state LeapAttack_Loop extends LeapAttack_Base
 		Velocity -= (((1.0000000 + RamHitWallBounce) * (HitNormal Dot Velocity)) * HitNormal);
 		Velocity.Z += RamHitWallImpulseZ;
 		SetPhysics(2);
-		R = Rotator(HitNormal-);
+		R = Rotator(-HitNormal);
 		R.Pitch = 0;
 		R.Roll = 0;
 		SetRotation(R);
@@ -5242,7 +5242,7 @@ state TakedownAsAttacker extends TakedownBase
 		ToTarget = TakedownPartner.Location - Location;
 		ToTarget.Z = 0.0000000;
 		// End:0x13E
-		if(IsZero(ToTarget)!)
+		if(!IsZero(ToTarget))
 		{
 			ToTarget = Normal(ToTarget);
 			Offset = CurTakedownDesc.TargetDistance * ToTarget;
@@ -5617,7 +5617,7 @@ simulated state LedgeGrab_Loop extends LedgeGrab_Base
 	function LetGoOfLedge()
 	{
 		// End:0x2C
-		if(IsTimerActive('LetGoOfLedgeNow')!)
+		if(!IsTimerActive('LetGoOfLedgeNow'))
 		{
 			SetTimer(0.1000000, false, 'LetGoOfLedgeNow');
 		}
@@ -5868,7 +5868,7 @@ simulated state KnockedDown_Start extends KnockedDown_Base
 		if(int(Role) > int(ROLE_Authority))
 		{
 			// End:0x31
-			if(bIsKnockedDown!)
+			if(!bIsKnockedDown)
 			{
 				GotoState('None');
 			}
@@ -5947,7 +5947,7 @@ simulated state KnockedDown_Ragdoll extends KnockedDown_Base
 		if(int(Role) > int(ROLE_Authority))
 		{
 			// End:0x31
-			if(bIsKnockedDown!)
+			if(!bIsKnockedDown)
 			{
 				GotoState('KnockedDown_GetUp');
 			}
@@ -6053,7 +6053,7 @@ simulated state KnockedDown_GetUp extends KnockedDown_Base
 			CollisionComponent = Mesh;
 		}
 		// End:0x606
-		if((KnockdownRecoveryBlend != none) && bIsCrouched!)
+		if((KnockdownRecoveryBlend != none) && !bIsCrouched)
 		{
 			RestorePreRagdollCollisionComponent();
 			Mesh.PhysicsWeight = 1.0000000;
@@ -6065,12 +6065,12 @@ simulated state KnockedDown_GetUp extends KnockedDown_Base
 			newFwd = headLoc - hipsLoc;
 			newFwd.Z = 0.0000000;
 			// End:0x5DB
-			if(IsZero(newFwd)!)
+			if(!IsZero(newFwd))
 			{
 				// End:0x595
 				if(hipFwd.Z < 0.0000000)
 				{
-					newFwd = newFwd-;
+					newFwd = -newFwd;
 				}
 				SetRotation(Rotator(newFwd));
 				Controller.SetRotation(Rotation);
@@ -6190,7 +6190,7 @@ state Dying
 		{
 			// End:0x32
 			case 0:
-				DeathTick++;
+				++DeathTick;
 				// End:0x32
 				if(TryThrowWeaponOnDeath())
 				{
@@ -6199,7 +6199,7 @@ state Dying
 				}
 			// End:0xA6
 			case 1:
-				DeathTick++;
+				++DeathTick;
 				// End:0xA3
 				if((CollectibleBlokSpawner != none) && CollectibleBlokSpawner.GetWaveIndexToThrow(0.0000000) >= 0)
 				{
@@ -6214,7 +6214,7 @@ state Dying
 				// End:0xC3
 				if(DeathTick < 0)
 				{
-					DeathTick++;
+					++DeathTick;
 				}
 				break;
 		}

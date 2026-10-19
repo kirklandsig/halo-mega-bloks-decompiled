@@ -299,7 +299,7 @@ state TakedownAsTarget
 
 		super.Takedown_DieNow();
 		// End:0x57
-		if(Mesh.GetSocketWorldLocationAndRotation(TargetNodes[0], weakPt)!)
+		if(!Mesh.GetSocketWorldLocationAndRotation(TargetNodes[0], weakPt))
 		{
 			weakPt = Location;
 		}

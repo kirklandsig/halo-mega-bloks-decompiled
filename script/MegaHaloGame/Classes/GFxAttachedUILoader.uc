@@ -6,7 +6,7 @@ var string ImagePath;
 function SetImage(string ImgPath)
 {
 	// End:0x58
-	if(bInitialized!)
+	if(!bInitialized)
 	{
 		SetString("_source", "img://" $ ImgPath);
 		ImagePath = ImgPath;

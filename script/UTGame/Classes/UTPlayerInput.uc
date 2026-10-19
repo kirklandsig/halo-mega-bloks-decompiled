@@ -32,7 +32,7 @@ simulated exec function Duck()
 simulated exec function UnDuck()
 {
 	// End:0x30
-	if(bHoldDuck!)
+	if(!bHoldDuck)
 	{
 		Outer.bDuck = 0;
 	}
@@ -44,7 +44,7 @@ exec function Jump()
 	local UTPawn P;
 
 	// End:0x10A
-	if(Outer.IsMoveInputIgnored()!)
+	if(!Outer.IsMoveInputIgnored())
 	{
 		P = UTPawn(Outer.Pawn);
 		// End:0xAA

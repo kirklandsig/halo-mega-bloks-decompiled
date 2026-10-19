@@ -258,7 +258,7 @@ function TickVisuals(float DeltaTime)
 
 	upOwner = UTPawn(Owner);
 	// End:0xC3
-	if((bShouldForceShieldShellOn! && (SysTimeOfLastDamage + SecsToFadeShell) < Owner.WorldInfo.TimeSeconds) && upOwner.GetOverlayMaterial() != none)
+	if((!bShouldForceShieldShellOn && (SysTimeOfLastDamage + SecsToFadeShell) < Owner.WorldInfo.TimeSeconds) && upOwner.GetOverlayMaterial() != none)
 	{
 		upOwner.SetOverlayMaterial(none);		
 	}
@@ -273,7 +273,7 @@ function TickVisuals(float DeltaTime)
 		else
 		{
 			// End:0x25E
-			if((bShouldForceShieldShellOn! && (SysTimeOfLastDamage + SecsToFadeShell) > Owner.WorldInfo.TimeSeconds) && upOwner.GetOverlayMaterial() != none)
+			if((!bShouldForceShieldShellOn && (SysTimeOfLastDamage + SecsToFadeShell) > Owner.WorldInfo.TimeSeconds) && upOwner.GetOverlayMaterial() != none)
 			{
 				pctOpacity = 1.0000000 - ((Owner.WorldInfo.TimeSeconds - SysTimeOfLastDamage) / SecsToFadeShell);
 				ShieldShellMaterialInstance.SetScalarParameterValue('Intensity', pctOpacity);

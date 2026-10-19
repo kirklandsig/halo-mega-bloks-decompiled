@@ -330,7 +330,7 @@ exec function KillAllEnemies()
 
 exec function ToggleFallingSaves()
 {
-	Outer.bTeleportToBreadcrumbOnFall = Outer.bTeleportToBreadcrumbOnFall!;
+	Outer.bTeleportToBreadcrumbOnFall = !Outer.bTeleportToBreadcrumbOnFall;
 	//return;	
 }
 

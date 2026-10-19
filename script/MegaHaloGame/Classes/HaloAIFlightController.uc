@@ -373,7 +373,7 @@ function ReverseFollowDirection()
 		ScriptedRouteIndex = Max(ScriptedRouteIndex - 1, 0);
 	}
 	ScriptedMoveTarget = ScriptedRoute.RouteList[ScriptedRouteIndex].Actor;
-	bReverseScriptedRoute = bReverseScriptedRoute!;
+	bReverseScriptedRoute = !bReverseScriptedRoute;
 	//return;	
 }
 
@@ -875,7 +875,7 @@ Begin:
 	J0x14:
 
 	// End:0x7E [Loop If]
-	if(((Pawn != none) && ScriptedMoveTarget != none) && Pawn.ReachedDestination(ScriptedMoveTarget)!)
+	if(((Pawn != none) && ScriptedMoveTarget != none) && !Pawn.ReachedDestination(ScriptedMoveTarget))
 	{
 		MoveToward(ScriptedMoveTarget, ScriptedFocus);
 		// [Loop Continue]

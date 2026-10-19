@@ -265,7 +265,7 @@ event StartState_Begin()
 	local int I;
 
 	// End:0x7A
-	if(bWaitingForApex! && Owner != none)
+	if(!bWaitingForApex && Owner != none)
 	{
 		StartLocZ = Owner.Location.Z;
 		PrevLocZ = StartLocZ;
@@ -296,7 +296,7 @@ event UpwardState_Begin()
 	local int I;
 
 	// End:0x1C
-	if(bWaitingForApex!)
+	if(!bWaitingForApex)
 	{
 		UpwardState_OnApex();		
 	}
@@ -383,7 +383,7 @@ exec function LogFallTimes(HaloPawn P)
 		H = GetMaxJumpHeight(P, I, grav);
 		T = Sqrt((2.0000000 * H) / grav);
 		LogInternal(((("Fall time for jump " $ string(I)) $ " is ") $ string(T)) $ " secs.");
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x0B;
 	}
@@ -409,7 +409,7 @@ function LogJumpParams()
 		LogInternal(("    ApexDuration=" $ string(Params[I].apexDuration)) $ ",");
 		LogInternal("    ApexGravityScale=" $ string(Params[I].ApexGravityScale));
 		LogInternal(")}");
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x10;
 	}
@@ -446,7 +446,7 @@ function SetupJumpStartByMetrics(HaloPawn P, int I, optional float MinHeight = 3
 		DeltaTime = MaxTime - holdTime;
 		A = (MaxTime * DeltaTime) / (4.0000000 * MinHeight);
 		B = 0.5000000 * holdTime;
-		C = MaxHeight-;
+		C = -MaxHeight;
 		Q = (B * B) - ((4.0000000 * A) * C);
 		// End:0x1CD
 		if(Q < 0.0000000)

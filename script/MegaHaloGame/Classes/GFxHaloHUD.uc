@@ -30,7 +30,7 @@ singular event Destroyed()
 
 function ToggleUIVisible()
 {
-	bVisible = bVisible!;
+	bVisible = !bVisible;
 	SetMenuVisible(HudMovie);
 	SetMenuVisible(VCMovie);
 	SetMenuVisible(BCMovie);
@@ -256,7 +256,7 @@ function SetVisible(bool bNewVisible)
 {
 	HudMovie.ToggleCrosshair(bNewVisible);
 	super(UTHUDBase).SetVisible(bNewVisible);
-	HudMovie.SetPause(bNewVisible!);
+	HudMovie.SetPause(!bNewVisible);
 	SetMenuVisible(HudMovie);
 	//return;	
 }
@@ -428,7 +428,7 @@ exec function ToggleInventory()
 			InventoryMovie.SetTimingMode(1);
 			InventoryMovie.Start();
 			// End:0x1B9
-			if(WorldInfo.bPlayersOnly!)
+			if(!WorldInfo.bPlayersOnly)
 			{				
 				PlayerOwner.ConsoleCommand("playersonly");
 			}

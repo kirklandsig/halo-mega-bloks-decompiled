@@ -49,7 +49,7 @@ function SetItemData(array<HVCCInfo> ItemInfo)
 	{
 		currentItemIndex = ItemOrder[I];
 		// End:0x9F
-		if(ItemInfo[currentItemIndex].Unlocked!)
+		if(!ItemInfo[currentItemIndex].Unlocked)
 		{
 			NodeClips[I].GotoAndStop("locked");			
 		}

@@ -120,7 +120,7 @@ simulated function BeginReplay(Pawn NewInstigator, Vector NewLocation)
 		InstigatorController = none;
 	}
 	// End:0x306
-	if(((bDeleteMe! && InstigatorController != none) && InstigatorController.ShotTarget != none) && InstigatorController.ShotTarget.Controller != none)
+	if(((!bDeleteMe && InstigatorController != none) && InstigatorController.ShotTarget != none) && InstigatorController.ShotTarget.Controller != none)
 	{
 		InstigatorController.ShotTarget.Controller.ReceiveProjectileWarning(self);
 	}
@@ -139,17 +139,17 @@ simulated function BeginReplay(Pawn NewInstigator, Vector NewLocation)
 	if(int(Role) == int(ROLE_Authority))
 	{
 		// End:0x3A9
-		if(bWideCheck!)
+		if(!bWideCheck)
 		{
 			CheckRadius *= GlobalCheckRadiusTweak;
 		}
 		bWideCheck = bWideCheck || (((CheckRadius > float(0)) && Instigator != none) && UTPlayerController(Instigator.Controller) != none) && UTPlayerController(Instigator.Controller).AimingHelp(false);
 	}
 	// End:0x550
-	if(((AmbientSound != none) && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && bSuppressSounds!)
+	if(((AmbientSound != none) && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !bSuppressSounds)
 	{
 		// End:0x550
-		if(bImportantAmbientSound || WorldInfo.bDropDetail! && int(WorldInfo.GetDetailMode()) != int(0))
+		if(bImportantAmbientSound || !WorldInfo.bDropDetail && int(WorldInfo.GetDetailMode()) != int(0))
 		{
 			AmbientComponent = CreateAudioComponent(AmbientSound, true, true);
 			// End:0x550
@@ -469,7 +469,7 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation, Vector HitNorma
 		}
 	}
 	// End:0x435
-	if(processed!)
+	if(!processed)
 	{
 		Other.TakeDamage(int(Damage), InstigatorController, HitLocation, MomentumTransfer * Normal(Velocity), MyDamageType,, self);
 		PlayImpactSound('Concrete');
@@ -483,7 +483,7 @@ simulated function SpawnExplosionEffects(Vector HitLocation, Vector HitNormal)
 	LastRenderTime = WorldInfo.TimeSeconds;
 	super.SpawnExplosionEffects(HitLocation, HitNormal);
 	// End:0x70
-	if(bSuppressSounds!)
+	if(!bSuppressSounds)
 	{
 		PlayExplosionSound();
 		PlayImpactSound('Concrete');
@@ -560,7 +560,7 @@ simulated function ShutDown()
 		ProjEffects.DeactivateSystem();
 	}
 	// End:0x10A
-	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && bSuppressExplosionFX!)
+	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !bSuppressExplosionFX)
 	{
 		SpawnExplosionEffects(Location, HitNormal);
 	}
@@ -620,7 +620,7 @@ simulated state Inactive
 		}
 		ClearTimer('ExplodeNow');
 		// End:0x98
-		if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && bSuppressExplosionFX!)
+		if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !bSuppressExplosionFX)
 		{
 			SpawnExplosionEffects(Location, Vector(Rotation) * float(-1));
 		}

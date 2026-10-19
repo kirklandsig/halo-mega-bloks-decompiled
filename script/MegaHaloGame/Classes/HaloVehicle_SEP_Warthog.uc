@@ -80,7 +80,7 @@ simulated function PostBeginPlay()
 		SetDriving(true);
 	}
 	// End:0xB3
-	if(((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && bDeleteMe!) && DamageMaterialInstance[0] != none)
+	if(((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !bDeleteMe) && DamageMaterialInstance[0] != none)
 	{
 		DamageMaterialInstance[0].SetScalarParameterValue('Green_Glows_Headlights', 0.0000000);
 	}
@@ -103,7 +103,7 @@ event RanInto(Actor Other)
 	local float BoostRemaining;
 
 	// End:0x115
-	if(((bBoostersActivated && bAISelfDestruct!) && Other == Controller.Enemy) && UTBot(Controller) != none)
+	if(((bBoostersActivated && !bAISelfDestruct) && Other == Controller.Enemy) && UTBot(Controller) != none)
 	{
 		DeactivateRocketBoosters();
 		bBoostersActivated = false;
@@ -119,7 +119,7 @@ function PancakeOther(Pawn Other)
 	local float BoostRemaining;
 
 	// End:0x115
-	if(((bBoostersActivated && bAISelfDestruct!) && Other == Controller.Enemy) && UTBot(Controller) != none)
+	if(((bBoostersActivated && !bAISelfDestruct) && Other == Controller.Enemy) && UTBot(Controller) != none)
 	{
 		DeactivateRocketBoosters();
 		bBoostersActivated = false;
@@ -132,7 +132,7 @@ function PancakeOther(Pawn Other)
 
 simulated function bool CanBeBaseForPawn(Pawn aPawn)
 {
-	return bCanBeBaseForPawns && bDriving!;
+	return bCanBeBaseForPawns && !bDriving;
 	//return ReturnValue;	
 }
 
@@ -291,7 +291,7 @@ function bool TryToDrive(Pawn P)
 		return false;
 	}
 	// End:0x100
-	if(((bIsInverted && bMustBeUpright) && bVehicleOnGround!) && VSize(Velocity) <= 5.0000000)
+	if(((bIsInverted && bMustBeUpright) && !bVehicleOnGround) && VSize(Velocity) <= 5.0000000)
 	{
 		// End:0xFE
 		if(bCanFlip)
@@ -304,12 +304,12 @@ function bool TryToDrive(Pawn P)
 		return false;
 	}
 	// End:0x134
-	if(CanEnterVehicle(P)! || Vehicle(P) != none)
+	if(!CanEnterVehicle(P) || Vehicle(P) != none)
 	{
 		return false;
 	}
 	// End:0x34B
-	if(bIsDisabled! && (((int(Team) == 128) || bTeamLocked!) || WorldInfo.Game.bTeamGame!) || WorldInfo.GRI.OnSameTeam(self, P))
+	if(!bIsDisabled && (((int(Team) == 128) || !bTeamLocked) || !WorldInfo.Game.bTeamGame) || WorldInfo.GRI.OnSameTeam(self, P))
 	{
 		// End:0x22D
 		if(bEnteringUnlocks)
@@ -326,7 +326,7 @@ function bool TryToDrive(Pawn P)
 		if(SeatIndex != -1)
 		{
 			// End:0x2DD
-			if(AnySeatAvailable()!)
+			if(!AnySeatAvailable())
 			{
 				// End:0x2CC
 				if(WorldInfo.GRI.OnSameTeam(self, P))
@@ -334,7 +334,7 @@ function bool TryToDrive(Pawn P)
 					bFreedSeat = KickOutBot(SeatIndex);
 				}
 				// End:0x2DD
-				if(bFreedSeat!)
+				if(!bFreedSeat)
 				{
 					return false;
 				}
@@ -413,7 +413,7 @@ simulated function bool OverrideBeginFire(byte FireModeNum)
 	if(int(FireModeNum) == int(1))
 	{
 		// End:0x44
-		if((int(Role) == int(ROLE_Authority)) && bBladesExtended!)
+		if((int(Role) == int(ROLE_Authority)) && !bBladesExtended)
 		{
 			SetBladesExtended(true);
 		}
@@ -512,7 +512,7 @@ simulated function DisplayHud(UTHUD HUD, Canvas Canvas, Vector2D HudPOS, optiona
 	if(PC != none)
 	{
 		// End:0x202
-		if(((Throttle > 0.0000000) && bBoostersActivated!) && (WorldInfo.TimeSeconds - BoostChargeTime) > BoostChargeDuration)
+		if(((Throttle > 0.0000000) && !bBoostersActivated) && (WorldInfo.TimeSeconds - BoostChargeTime) > BoostChargeDuration)
 		{
 			HUD.DrawToolTip(Canvas, PC, "GBA_Jump", Canvas.ClipX * 0.5000000, Canvas.ClipY * 0.9500000, BoostToolTipIconCoords.U, BoostToolTipIconCoords.V, BoostToolTipIconCoords.UL, BoostToolTipIconCoords.VL, Canvas.ClipY / float(720));			
 		}
@@ -600,7 +600,7 @@ simulated event BladeHit(Actor HitActor, Vector HitLocation, bool bLeftBlade)
 				P.TakeDamage(1000, Controller, HitLocation, Velocity * 100.0000000, BladeDamageType);
 			}
 			// End:0x4DA
-			if(((((P.Health <= 0) && P.bDeleteMe!) && int(P.Physics) == int(10)) && P.Mesh != none) && P.Mesh.PhysicsAssetInstance != none)
+			if(((((P.Health <= 0) && !P.bDeleteMe) && int(P.Physics) == int(10)) && P.Mesh != none) && P.Mesh.PhysicsAssetInstance != none)
 			{
 				VelDir = Normal(Velocity);
 				P.CheckHitInfo(HitInfo, P.Mesh, VelDir, HitLocation);
@@ -666,7 +666,7 @@ function byte ChooseFireMode()
 	if(bAISelfDestruct)
 	{
 		// End:0x2B
-		if(bTryToBoost!)
+		if(!bTryToBoost)
 		{
 			bAISelfDestruct = false;			
 		}
@@ -800,7 +800,7 @@ simulated function BreakOffBlade(bool bLeftBlade)
 		WarnInternal((("Failed to find skeletal controller named" @ string(((bLeftBlade) ? 'LeftBlade' : 'RightBlade'))) @ "for mesh") @ string(Mesh));
 	}
 	// End:0x1C8
-	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && IsZero(BoneLoc)!)
+	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && !IsZero(BoneLoc))
 	{
 		SpawnGibVehicle(BoneLoc, Rotation, BrokenBladeMesh, BoneLoc, true, vect(0.0000000, 0.0000000, 0.0000000), none, none);
 	}

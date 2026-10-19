@@ -33,7 +33,7 @@ function CreateGroup(string UniqueUserId, string GroupName)
 			CreateGroupRequest.SetVerb("POST");
 			CreateGroupRequest.__OnProcessRequestComplete__Delegate = OnCreateGroupRequestComplete;
 			// End:0x1F8
-			if(CreateGroupRequest.ProcessRequest()!)
+			if(!CreateGroupRequest.ProcessRequest())
 			{
 				LogInternal(((((((("(" $ string(Name)) $ ") McpGroupsManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 			}
@@ -104,7 +104,7 @@ function DeleteGroup(string UniqueUserId, string GroupID)
 			DeleteGroupRequest.SetURL(URL);
 			DeleteGroupRequest.__OnProcessRequestComplete__Delegate = OnDeleteGroupRequestComplete;
 			// End:0x1DE
-			if(DeleteGroupRequest.ProcessRequest()!)
+			if(!DeleteGroupRequest.ProcessRequest())
 			{
 				LogInternal(((((((("(" $ string(Name)) $ ") McpGroupsManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 			}
@@ -158,7 +158,7 @@ function QueryGroups(string RequesterId)
 			QueryGroupsRequest.SetVerb("GET");
 			QueryGroupsRequest.__OnProcessRequestComplete__Delegate = OnQueryGroupsRequestComplete;
 			// End:0x1B6
-			if(QueryGroupsRequest.ProcessRequest()!)
+			if(!QueryGroupsRequest.ProcessRequest())
 			{
 				LogInternal(((((((("(" $ string(Name)) $ ") McpGroupsManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 			}			
@@ -273,7 +273,7 @@ function QueryGroupMembers(string UniqueUserId, string GroupID)
 			QueryGroupMembersRequest.SetVerb("GET");
 			QueryGroupMembersRequest.__OnProcessRequestComplete__Delegate = OnQueryGroupMembersRequestComplete;
 			// End:0x1BE
-			if(QueryGroupMembersRequest.ProcessRequest()!)
+			if(!QueryGroupMembersRequest.ProcessRequest())
 			{
 				LogInternal(((((((("(" $ string(Name)) $ ") McpGroupsManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 			}			
@@ -406,7 +406,7 @@ function AddGroupMembers(string UniqueUserId, string GroupID, const out array<st
 				AddGroupMembersRequest.SetContentAsString(JsonPayload);
 				AddGroupMembersRequest.SetURL(URL);
 				// End:0x307
-				if(AddGroupMembersRequest.ProcessRequest()!)
+				if(!AddGroupMembersRequest.ProcessRequest())
 				{
 					LogInternal(((((((("(" $ string(Name)) $ ") McpGroupsManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 				}
@@ -488,7 +488,7 @@ function RemoveGroupMembers(string UniqueUserId, string GroupID, const out array
 				RemoveGroupMembersRequest.SetVerb("DELETE");
 				RemoveGroupMembersRequest.__OnProcessRequestComplete__Delegate = OnRemoveGroupMembersRequestComplete;
 				// End:0x2B6
-				if(RemoveGroupMembersRequest.ProcessRequest()!)
+				if(!RemoveGroupMembersRequest.ProcessRequest())
 				{
 					LogInternal(((((((("(" $ string(Name)) $ ") McpGroupsManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 				}				
@@ -546,7 +546,7 @@ function DeleteAllGroups(string UniqueUserId)
 			LogInternal("URL=" @ DeleteGroupRequest.GetURL());
 			DeleteGroupRequest.__OnProcessRequestComplete__Delegate = OnDeleteGroupRequestComplete;
 			// End:0x1DD
-			if(DeleteGroupRequest.ProcessRequest()!)
+			if(!DeleteGroupRequest.ProcessRequest())
 			{
 				LogInternal(((((((("(" $ string(Name)) $ ") McpGroupsManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 			}			
@@ -599,7 +599,7 @@ function AcceptGroupInvite(string UniqueUserId, string GroupID, bool bShouldAcce
 			AcceptGroupInviteRequest.__OnProcessRequestComplete__Delegate = OnAcceptGroupInviteRequestComplete;
 			LogInternal("Calling Process Request");
 			// End:0x229
-			if(AcceptGroupInviteRequest.ProcessRequest()!)
+			if(!AcceptGroupInviteRequest.ProcessRequest())
 			{
 				LogInternal(((((((("(" $ string(Name)) $ ") McpGroupsManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Failed to process web request for URL(") $ URL) $ ")");
 			}			
@@ -650,7 +650,7 @@ function CacheGroup(string RequesterId, McpGroup Group)
 		J0x70:
 
 		// End:0x11C [Loop If]
-		if((GroupIndex < UserGroupList.Groups.Length) && bWasFound!)
+		if((GroupIndex < UserGroupList.Groups.Length) && !bWasFound)
 		{
 			bWasFound = Group.GroupID == UserGroupList.Groups[GroupIndex].GroupID;
 			GroupIndex++;
@@ -658,7 +658,7 @@ function CacheGroup(string RequesterId, McpGroup Group)
 			goto J0x70;
 		}
 		// End:0x1C9
-		if(bWasFound!)
+		if(!bWasFound)
 		{
 			AddAt = UserGroupList.Groups.Length;
 			UserGroupList.Groups.Length = AddAt + 1;

@@ -58,13 +58,13 @@ function CriticalObjectiveWarning(Pawn NewEnemy)
 	local UTBot M;
 
 	// End:0x1A
-	if(ValidEnemy(NewEnemy)!)
+	if(!ValidEnemy(NewEnemy))
 	{
 		return;
 	}
 	AddEnemy(NewEnemy);
 	// End:0x47
-	if(MustKeepEnemy(NewEnemy)!)
+	if(!MustKeepEnemy(NewEnemy))
 	{
 		return;
 	}
@@ -88,7 +88,7 @@ function CriticalObjectiveWarning(Pawn NewEnemy)
 
 function bool ShouldSuppressEnemy(UTBot B)
 {
-	return (((UTWeapon(B.Pawn.Weapon) == none) || UTWeapon(B.Pawn.Weapon).bSniping!) && FRand() < 0.7000000) && (WorldInfo.TimeSeconds - B.LastSeenTime) < 4.0000000;
+	return (((UTWeapon(B.Pawn.Weapon) == none) || !UTWeapon(B.Pawn.Weapon).bSniping) && FRand() < 0.7000000) && (WorldInfo.TimeSeconds - B.LastSeenTime) < 4.0000000;
 	//return ReturnValue;	
 }
 
@@ -225,7 +225,7 @@ function bool LostEnemy(UTBot B)
 	if(M != none)
 	{
 		// End:0x1E8
-		if(((M != B) && M.Enemy == Lost) && M.LostContact(5.0000000)!)
+		if(((M != B) && M.Enemy == Lost) && !M.LostContact(5.0000000))
 		{
 			bFound = true;
 			// [Explicit Break]
@@ -321,7 +321,7 @@ function bool AddEnemy(Pawn NewEnemy)
 		J0x166:
 
 		// End:0x194
-		if(bCurrentEnemy!)
+		if(!bCurrentEnemy)
 		{
 			Enemies[I] = NewEnemy;
 			return true;
@@ -336,7 +336,7 @@ function bool AddEnemy(Pawn NewEnemy)
 
 function bool ValidEnemy(Pawn NewEnemy)
 {
-	return ((((NewEnemy != none) && NewEnemy.bAmbientCreature!) && NewEnemy.Health > 0) && NewEnemy.Controller != none) && FriendlyToward(NewEnemy)!;
+	return ((((NewEnemy != none) && !NewEnemy.bAmbientCreature) && NewEnemy.Health > 0) && NewEnemy.Controller != none) && !FriendlyToward(NewEnemy);
 	//return ReturnValue;	
 }
 
@@ -346,12 +346,12 @@ function bool SetEnemy(UTBot B, Pawn NewEnemy)
 	local bool bResult;
 
 	// End:0x48
-	if((NewEnemy == B.Enemy) || ValidEnemy(NewEnemy)!)
+	if((NewEnemy == B.Enemy) || !ValidEnemy(NewEnemy))
 	{
 		return false;
 	}
 	// End:0x62
-	if(AddEnemy(NewEnemy)!)
+	if(!AddEnemy(NewEnemy))
 	{
 		return false;
 	}
@@ -438,10 +438,10 @@ function RemoveEnemy(Pawn E)
 			B.Enemy = none;
 			FindNewEnemyFor(B, false);
 			// End:0x260
-			if(((B.Pawn != none) && B.Enemy == none) && B.bIgnoreEnemyChange!)
+			if(((B.Pawn != none) && B.Enemy == none) && !B.bIgnoreEnemyChange)
 			{
 				// End:0x241
-				if((B.InLatentExecution(B.503) && NavigationPoint(B.MoveTarget) != none) && B.bPreparingMove!)
+				if((B.InLatentExecution(B.503) && NavigationPoint(B.MoveTarget) != none) && !B.bPreparingMove)
 				{
 					B.GotoState('Roaming');					
 				}
@@ -491,7 +491,7 @@ function NotifyKilled(Controller Killer, Controller Killed, Pawn KilledPawn, Cla
 		J0xA6:
 
 		// End:0xD1
-		if(bPreviousRouteInUse!)
+		if(!bPreviousRouteInUse)
 		{
 			PendingSquadRouteMaker = UTBot(SquadLeader);
 		}
@@ -557,7 +557,7 @@ function bool FindNewEnemyFor(UTBot B, bool bSeeEnemy)
 	if(I < 8)
 	{
 		// End:0x52D
-		if((((Enemies[I] != none) && Enemies[I].Health > 0) && Enemies[I].Controller != none) && B.bBetrayTeam || WorldInfo.GRI.OnSameTeam(Enemies[I], B)!)
+		if((((Enemies[I] != none) && Enemies[I].Health > 0) && Enemies[I].Controller != none) && B.bBetrayTeam || !WorldInfo.GRI.OnSameTeam(Enemies[I], B))
 		{
 			// End:0x397
 			if(BestEnemy == none)
@@ -682,7 +682,7 @@ function float AssessThreat(UTBot B, Pawn NewThreat, bool bThreatVisible)
 		if(B.Enemy != none)
 		{
 			// End:0x2C1
-			if(bThreatVisible!)
+			if(!bThreatVisible)
 			{
 				ThreatValue -= float(5);				
 			}
@@ -727,7 +727,7 @@ function bool WaitAtThisPosition(Pawn P)
 function bool WanderNearLeader(UTBot B)
 {
 	// End:0xC2
-	if(((((Vehicle(B.Pawn) != none) || B.NeedWeapon()) || PlayerController(SquadLeader) == none) || SquadLeader.Pawn == none) || CloseToLeader(B.Pawn)!)
+	if(((((Vehicle(B.Pawn) != none) || B.NeedWeapon()) || PlayerController(SquadLeader) == none) || SquadLeader.Pawn == none) || !CloseToLeader(B.Pawn))
 	{
 		return false;
 	}
@@ -1022,7 +1022,7 @@ function bool MustCompleteOnFoot(Actor O, optional Pawn P)
 function LeaveVehicleAtParkingSpot(UTBot B, Actor O)
 {
 	// End:0x236
-	if((B.Pawn.bStationary! && UTVehicle(B.Pawn) != none) && UTVehicle(B.Pawn).bKeyVehicle)
+	if((!B.Pawn.bStationary && UTVehicle(B.Pawn) != none) && UTVehicle(B.Pawn).bKeyVehicle)
 	{
 		// End:0x1BC
 		if(Team.Size == UTVehicle(B.Pawn).NumPassengers())
@@ -1187,10 +1187,10 @@ function bool FindPathToObjective(UTBot B, Actor O)
 		return B.SetRouteToGoal(O);
 	}
 	// End:0xC43
-	if((B.bUsePreviousSquadRoute! && B.bFinalStretch!) && bShouldUseGatherPoints)
+	if((!B.bUsePreviousSquadRoute && !B.bFinalStretch) && bShouldUseGatherPoints)
 	{
 		// End:0x88A
-		if((B.bReachedGatherPoint! && (B.Enemy == none) || B.LostContact(1.0000000)) && B.Pawn.ValidAnchor())
+		if((!B.bReachedGatherPoint && (B.Enemy == none) || B.LostContact(1.0000000)) && B.Pawn.ValidAnchor())
 		{
 			RouteIndex = ObjectiveRouteCache.Find(B.Pawn.Anchor);
 			// End:0x88A
@@ -1203,7 +1203,7 @@ function bool FindPathToObjective(UTBot B, Actor O)
 		// End:0xC43
 		if(B.bReachedGatherPoint)
 		{
-			GatherWaitTime = (((B.Enemy == none) || B.LineOfSightTo(B.Enemy)!) ? 8.0000000 : 3.0000000);
+			GatherWaitTime = (((B.Enemy == none) || !B.LineOfSightTo(B.Enemy)) ? 8.0000000 : 3.0000000);
 			bDoneGathering = true;
 			// End:0xA84
 			if((WorldInfo.TimeSeconds - B.GatherTime) <= GatherWaitTime)
@@ -1215,7 +1215,7 @@ function bool FindPathToObjective(UTBot B, Actor O)
 				if(M != none)
 				{
 					// End:0xA59
-					if(((M.bReachedGatherPoint! && M.bFinalStretch!) && M.Pawn != none) && M.Pawn.bStationary!)
+					if(((!M.bReachedGatherPoint && !M.bFinalStretch) && M.Pawn != none) && !M.Pawn.bStationary)
 					{
 						bDoneGathering = false;
 						// [Explicit Break]
@@ -1266,7 +1266,7 @@ function bool FindPathToObjective(UTBot B, Actor O)
 			}
 		}
 	}
-	B.MoveTarget = B.FindPathToSquadRoute((B.Pawn.bCanPickupInventory && Vehicle(B.Pawn) == none) && B.bForceNoDetours!);
+	B.MoveTarget = B.FindPathToSquadRoute((B.Pawn.bCanPickupInventory && Vehicle(B.Pawn) == none) && !B.bForceNoDetours);
 	return B.StartMoveToward(O);
 	//return ReturnValue;	
 }
@@ -1400,10 +1400,10 @@ function SetDefenseScriptFor(UTBot B)
 	local UTGameObjective UTObjective;
 
 	// End:0x1D0
-	if(((B.DefensePoint != none) && SquadObjective == B.DefensePoint.DefendedObjective) && B.DefensePoint.bOnlyOnFoot! || Vehicle(B.Pawn) == none)
+	if(((B.DefensePoint != none) && SquadObjective == B.DefensePoint.DefendedObjective) && !B.DefensePoint.bOnlyOnFoot || Vehicle(B.Pawn) == none)
 	{
 		// End:0x1D0
-		if(((B.Enemy != none) || (WorldInfo.TimeSeconds - FMax(B.LastSeenTime, B.AcquireTime)) < 5.0000000) || B.Pawn.ReachedDestination(B.DefensePoint.GetMoveTarget())!)
+		if(((B.Enemy != none) || (WorldInfo.TimeSeconds - FMax(B.LastSeenTime, B.AcquireTime)) < 5.0000000) || !B.Pawn.ReachedDestination(B.DefensePoint.GetMoveTarget()))
 		{
 			return;
 		}
@@ -1510,7 +1510,7 @@ function SetObjective(UTGameObjective O, bool bForceUpdate)
 			O.DefenseSquad = self;
 		}
 		// End:0xC2
-		if(bForceUpdate!)
+		if(!bForceUpdate)
 		{
 			return;
 		}		
@@ -1619,7 +1619,7 @@ function name GetOrders()
 	else
 	{
 		// End:0x73
-		if((bFreelance && bFreelanceAttack!) && bFreelanceDefend!)
+		if((bFreelance && !bFreelanceAttack) && !bFreelanceDefend)
 		{
 			NewOrders = 'Freelance';			
 		}
@@ -1649,7 +1649,7 @@ function name GetOrders()
 simulated function string GetOrderStringFor(UTPlayerReplicationInfo PRI)
 {
 	// End:0x96
-	if((LeaderPRI != none) && LeaderPRI.bBot!)
+	if((LeaderPRI != none) && !LeaderPRI.bBot)
 	{
 		// End:0x61
 		if(PRI.bHolding)
@@ -1684,7 +1684,7 @@ simulated function string GetOrderStringFor(UTPlayerReplicationInfo PRI)
 simulated function string GetShortOrderStringFor(UTPlayerReplicationInfo PRI)
 {
 	// End:0x6B
-	if((LeaderPRI != none) && LeaderPRI.bBot!)
+	if((LeaderPRI != none) && !LeaderPRI.bBot)
 	{
 		// End:0x61
 		if(PRI.bHolding)
@@ -1741,7 +1741,7 @@ function PickNewLeader()
 	if(B != none)
 	{
 		// End:0xFB
-		if(B.PlayerReplicationInfo.bOutOfLives! && ((B.Pawn == none) || B.Pawn.bStationary!) || B.Pawn.GetVehicleBase() == none)
+		if(!B.PlayerReplicationInfo.bOutOfLives && ((B.Pawn == none) || !B.Pawn.bStationary) || B.Pawn.GetVehicleBase() == none)
 		{
 			// [Explicit Break]
 			goto J0x126;
@@ -1762,7 +1762,7 @@ function PickNewLeader()
 		if(B != none)
 		{
 			// End:0x193
-			if(B.PlayerReplicationInfo.bOutOfLives!)
+			if(!B.PlayerReplicationInfo.bOutOfLives)
 			{
 				// [Explicit Break]
 				goto J0x1BE;
@@ -1821,7 +1821,7 @@ function bool TellBotToFollow(UTBot B, Controller C)
 	if(CloseToLeader(B.Pawn))
 	{
 		// End:0x18C
-		if(B.bInitLifeMessage!)
+		if(!B.bInitLifeMessage)
 		{
 			B.bInitLifeMessage = true;
 			B.SendMessage(SquadLeader.PlayerReplicationInfo, 'GOTYOURBACK', 10.0000000);
@@ -1837,7 +1837,7 @@ function bool TellBotToFollow(UTBot B, Controller C)
 			if(O != none)
 			{
 				// End:0x38D
-				if((O.bIsDisabled! && O.Shootable()) && (Best == none) || int(Best.DefensePriority) < int(O.DefensePriority))
+				if((!O.bIsDisabled && O.Shootable()) && (Best == none) || int(Best.DefensePriority) < int(O.DefensePriority))
 				{
 					newdist = VSize(B.Pawn.Location - O.Location);
 					// End:0x38D
@@ -1944,7 +1944,7 @@ function bool AssignSquadResponsibility(UTBot B)
 		SetAlternatePathTo(SquadObjective, B);
 	}
 	// End:0x9C
-	if(((GetOrders()) == 'Defend') && B.Pawn.bStationary!)
+	if(((GetOrders()) == 'Defend') && !B.Pawn.bStationary)
 	{
 		SetDefenseScriptFor(B);		
 	}
@@ -1967,7 +1967,7 @@ function bool AssignSquadResponsibility(UTBot B)
 		return true;
 	}
 	// End:0x252
-	if((B.Enemy == none) && B.Pawn.bStationary!)
+	if((B.Enemy == none) && !B.Pawn.bStationary)
 	{
 		// End:0x1F2
 		if(B.FindInventoryGoal(0.0000000))
@@ -2286,7 +2286,7 @@ function bool CheckVehicle(UTBot B)
 		}
 	}
 	// End:0x239
-	if((B.PendingMover != none) && IsZero(B.PendingMover.Velocity)!)
+	if((B.PendingMover != none) && !IsZero(B.PendingMover.Velocity))
 	{
 		return false;
 	}
@@ -2308,7 +2308,7 @@ function bool CheckVehicle(UTBot B)
 	}
 	V = UTVehicle(B.MoveTarget);
 	// End:0xDBD
-	if((((Vehicle(B.Pawn) == none) && V != none) && V.Health > 0) && V.bDeleteMe!)
+	if((((Vehicle(B.Pawn) == none) && V != none) && V.Health > 0) && !V.bDeleteMe)
 	{
 		// End:0x6D0
 		if(V.PlayerStartTime > WorldInfo.TimeSeconds)
@@ -2326,13 +2326,13 @@ function bool CheckVehicle(UTBot B)
 			}			
 		}
 		// End:0xDBD
-		if(bSkip!)
+		if(!bSkip)
 		{
 			// End:0xB8D
-			if((((V.Health < V.HealthMax) && WorldInfo.Game.bTeamGame) && (B.Enemy == none) || B.LineOfSightTo(B.Enemy)!) && B.CanAttack(V))
+			if((((V.Health < V.HealthMax) && WorldInfo.Game.bTeamGame) && (B.Enemy == none) || !B.LineOfSightTo(B.Enemy)) && B.CanAttack(V))
 			{
 				// End:0x888
-				if(WorldInfo.GRI.OnSameTeam(V, self)!)
+				if(!WorldInfo.GRI.OnSameTeam(V, self))
 				{
 					B.RouteGoal = V;
 					B.PerformCustomAction(EnterAndExitVehicle);
@@ -2390,7 +2390,7 @@ function bool CheckVehicle(UTBot B)
 	if(BotVehicle != none)
 	{
 		// End:0x118E
-		if(NeverBail(BotVehicle)!)
+		if(!NeverBail(BotVehicle))
 		{
 			// End:0xF15
 			if(int(BotVehicle.StuckCount) > int(3))
@@ -2406,7 +2406,7 @@ function bool CheckVehicle(UTBot B)
 			else
 			{
 				// End:0x1070
-				if(((float(BotVehicle.Health) < (float(BotVehicle.HealthMax) * 0.1250000)) && BotVehicle.bStationary!) && (B.Skill + B.Tactics) > (4.0000000 + (7.0000000 * FRand())))
+				if(((float(BotVehicle.Health) < (float(BotVehicle.HealthMax) * 0.1250000)) && !BotVehicle.bStationary) && (B.Skill + B.Tactics) > (4.0000000 + (7.0000000 * FRand())))
 				{
 					// End:0x104B
 					if(BotVehicle.IsA('UTVehicle'))
@@ -2438,7 +2438,7 @@ function bool CheckVehicle(UTBot B)
 		if(V != none)
 		{
 			// End:0x12B1
-			if(((V.Driver == none) && ((SquadLeader == B) || SquadLeader.RouteGoal == none) || SquadLeader.RouteGoal != V) && V.IsDriverSeat(BotVehicle)!)
+			if(((V.Driver == none) && ((SquadLeader == B) || SquadLeader.RouteGoal == none) || SquadLeader.RouteGoal != V) && !V.IsDriverSeat(BotVehicle))
 			{
 				B.LeaveVehicle(true);
 				return true;
@@ -2447,14 +2447,14 @@ function bool CheckVehicle(UTBot B)
 		}
 		V = UTVehicle(BotVehicle);
 		// End:0x1306
-		if((V == none) || V.bShouldLeaveForCombat!)
+		if((V == none) || !V.bShouldLeaveForCombat)
 		{
 			return false;
 		}
 	}
 	V = UTVehicle(SquadLeader.Pawn);
 	// End:0x14BB
-	if(((((V != none) && VSize(V.Location - B.Pawn.Location) < 4000.0000000) && V.OpenPositionFor(B.Pawn)) && (V.NoPassengerObjective == none) || V.NoPassengerObjective != SquadObjective) && V.bCanCarryFlag || UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag!)
+	if(((((V != none) && VSize(V.Location - B.Pawn.Location) < 4000.0000000) && V.OpenPositionFor(B.Pawn)) && (V.NoPassengerObjective == none) || V.NoPassengerObjective != SquadObjective) && V.bCanCarryFlag || !UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag)
 	{
 		SquadVehicle = V;		
 	}
@@ -2478,7 +2478,7 @@ function bool CheckVehicle(UTBot B)
 		{
 			V = UTVehicle(S.Pawn);
 			// End:0x1703
-			if(((((V != none) && VSize(V.Location - B.Pawn.Location) < bestDist) && V.OpenPositionFor(B.Pawn)) && (V.NoPassengerObjective == none) || V.NoPassengerObjective != SquadObjective) && V.bCanCarryFlag || UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag!)
+			if(((((V != none) && VSize(V.Location - B.Pawn.Location) < bestDist) && V.OpenPositionFor(B.Pawn)) && (V.NoPassengerObjective == none) || V.NoPassengerObjective != SquadObjective) && V.bCanCarryFlag || !UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag)
 			{
 				SquadVehicle = V;
 				// [Explicit Break]
@@ -2496,7 +2496,7 @@ function bool CheckVehicle(UTBot B)
 	{
 		V = UTVehicle(SquadLeader.RouteGoal);
 		// End:0x1919
-		if((((((V != none) && V.Occupied()!) && VSize(V.Location - B.Pawn.Location) < bestDist) && V.OpenPositionFor(B.Pawn)) && (V.NoPassengerObjective == none) || V.NoPassengerObjective != SquadObjective) && V.bCanCarryFlag || UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag!)
+		if((((((V != none) && !V.Occupied()) && VSize(V.Location - B.Pawn.Location) < bestDist) && V.OpenPositionFor(B.Pawn)) && (V.NoPassengerObjective == none) || V.NoPassengerObjective != SquadObjective) && V.bCanCarryFlag || !UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag)
 		{
 			SquadVehicle = V;
 		}
@@ -2506,7 +2506,7 @@ function bool CheckVehicle(UTBot B)
 	{
 		V = UTVehicle(B.RouteGoal);
 		// End:0x1A35
-		if((((V != none) && V.Occupied()!) && VSize(V.Location - B.Pawn.Location) < (bestDist * 1.2000000)) && (VehicleDesireability(V, B)) > 0.0000000)
+		if((((V != none) && !V.Occupied()) && VSize(V.Location - B.Pawn.Location) < (bestDist * 1.2000000)) && (VehicleDesireability(V, B)) > 0.0000000)
 		{
 			SquadVehicle = V;
 		}
@@ -2571,7 +2571,7 @@ function bool CheckVehicle(UTBot B)
 			{
 				bVisible = V.FastTrace(V.Location, B.Pawn.Location + (B.Pawn.GetCollisionHeight() * vect(0.0000000, 0.0000000, 1.0000000)));
 				// End:0x1FFD
-				if(bVisible!)
+				if(!bVisible)
 				{
 					newdist *= 1.5000000;
 				}
@@ -2612,7 +2612,7 @@ function bool CheckHoverboard(UTBot B)
 
 	P = UTPawn(B.Pawn);
 	// End:0x597
-	if((((((((((((((P != none) && P.bHasHoverboard) && P.Anchor != none) && UTGameObjective(P.Anchor) == none) && (WorldInfo.TimeSeconds - B.LastTryHoverboardTime) > 4.0000000) && UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag || B.NeedWeapon()!) && ShouldUseHoverboard(B)) && B.Pawn.IsFiring()!) && B.IsShootingObjective()!) && B.IsDefending()! || ((B.DefensePoint == none) || VSize(B.DefensePoint.Location - P.Location) > 1600.0000000) && (B.DefensivePosition == none) || VSize(B.DefensivePosition.Location - P.Location) > 1600.0000000) && (SquadObjective == none) || (VSize(SquadObjective.Location - P.Location) > 1200.0000000) && B.ActorReachable(SquadObjective)!) && P.HoverboardClass.default.CylinderComponent.CollisionRadius <= P.Anchor.MaxPathSize.Radius) && P.HoverboardClass.default.CylinderComponent.CollisionHeight <= P.Anchor.MaxPathSize.Height) && LiftCenter(P.Anchor) == none)
+	if((((((((((((((P != none) && P.bHasHoverboard) && P.Anchor != none) && UTGameObjective(P.Anchor) == none) && (WorldInfo.TimeSeconds - B.LastTryHoverboardTime) > 4.0000000) && UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag || !B.NeedWeapon()) && ShouldUseHoverboard(B)) && !B.Pawn.IsFiring()) && !B.IsShootingObjective()) && !B.IsDefending() || ((B.DefensePoint == none) || VSize(B.DefensePoint.Location - P.Location) > 1600.0000000) && (B.DefensivePosition == none) || VSize(B.DefensivePosition.Location - P.Location) > 1600.0000000) && (SquadObjective == none) || (VSize(SquadObjective.Location - P.Location) > 1200.0000000) && !B.ActorReachable(SquadObjective)) && P.HoverboardClass.default.CylinderComponent.CollisionRadius <= P.Anchor.MaxPathSize.Radius) && P.HoverboardClass.default.CylinderComponent.CollisionHeight <= P.Anchor.MaxPathSize.Height) && LiftCenter(P.Anchor) == none)
 	{
 		B.LastTryHoverboardTime = WorldInfo.TimeSeconds;
 		B.GoalString = "Get on hoverboard";
@@ -2641,7 +2641,7 @@ function bool ShouldUseHoverboard(UTBot B)
 	foreach WorldInfo.AllControllers(Class'UTGame.UTBot', EnemyBot)
 	{
 		// End:0x228
-		if(((EnemyBot.Enemy == B.Pawn) && EnemyBot.Focus == B.Pawn) && UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag! || VSize(EnemyBot.Pawn.Location - B.Pawn.Location) < float(3000))
+		if(((EnemyBot.Enemy == B.Pawn) && EnemyBot.Focus == B.Pawn) && !UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag || VSize(EnemyBot.Pawn.Location - B.Pawn.Location) < float(3000))
 		{			
 			return false;
 		}		
@@ -2655,7 +2655,7 @@ function float VehicleDesireability(UTVehicle V, UTBot B)
 	local float Result;
 
 	// End:0x6C
-	if(UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag && V.bCanCarryFlag!)
+	if(UTPlayerReplicationInfo(B.PlayerReplicationInfo).bHasFlag && !V.bCanCarryFlag)
 	{
 		return 0.0000000;
 	}
@@ -2742,7 +2742,7 @@ function bool ShouldCheckSuperVehicle(UTBot B)
 	local UTVehicle BotVehicle;
 
 	BotVehicle = UTVehicle(B.Pawn);
-	return (BotVehicle == none) || BotVehicle.ImportantVehicle()!;
+	return (BotVehicle == none) || !BotVehicle.ImportantVehicle();
 	//return ReturnValue;	
 }
 
@@ -2758,7 +2758,7 @@ function bool CheckSuperItem(UTBot B, float SuperDist)
 
 	TeamAI = UTTeamInfo(Team).AI;
 	// End:0x74
-	if(TeamAI.bFoundSuperItems!)
+	if(!TeamAI.bFoundSuperItems)
 	{
 		TeamAI.FindSuperItems();
 	}
@@ -2776,7 +2776,7 @@ function bool CheckSuperItem(UTBot B, float SuperDist)
 			VFactory = TeamAI.ImportantVehicleFactories[I];
 			ChildVehicle = UTVehicle(VFactory.ChildVehicle);
 			// End:0x359
-			if(((((ChildVehicle != none) && ChildVehicle.bHasBeenDriven!) && ChildVehicle.SpokenFor(B)!) && (VehicleDesireability(ChildVehicle, B)) > 0.0000000) && bReallyNeedVehicle || ChildVehicle.bKeyVehicle)
+			if(((((ChildVehicle != none) && !ChildVehicle.bHasBeenDriven) && !ChildVehicle.SpokenFor(B)) && (VehicleDesireability(ChildVehicle, B)) > 0.0000000) && bReallyNeedVehicle || ChildVehicle.bKeyVehicle)
 			{
 				VFactory.bTransientEndPoint = true;
 				bFoundSomething = true;
@@ -2801,10 +2801,10 @@ function bool CheckSuperItem(UTBot B, float SuperDist)
 			if(V != none)
 			{
 				// End:0x5B4
-				if(((V.bKeyVehicle && V.bHasBeenDriven!) && V.ParentFactory == none) && (VehicleDesireability(V, B)) > 0.0000000)
+				if(((V.bKeyVehicle && !V.bHasBeenDriven) && V.ParentFactory == none) && (VehicleDesireability(V, B)) > 0.0000000)
 				{
 					// End:0x51D
-					if(V.ValidAnchor()!)
+					if(!V.ValidAnchor())
 					{
 						V.SetAnchor(B.Pawn.GetBestAnchor(V, V.Location, false, true, Dist));
 					}
@@ -2827,7 +2827,7 @@ function bool CheckSuperItem(UTBot B, float SuperDist)
 		}
 	}
 	// End:0x747
-	if(bFoundSomething! && B.Skill > 3.5000000)
+	if(!bFoundSomething && B.Skill > 3.5000000)
 	{
 		I = 0;
 		J0x623:
@@ -2935,7 +2935,7 @@ function bool CheckSquadObjectives(UTBot B)
 		else
 		{
 			// End:0x696
-			if((((V != none) && V.Driver != none) && V.Driver.bCanPickupInventory) && (UTVehicle(V) == none) || UTVehicle(V).bKeyVehicle!)
+			if((((V != none) && V.Driver != none) && V.Driver.bCanPickupInventory) && (UTVehicle(V) == none) || !UTVehicle(V).bKeyVehicle)
 			{
 				bCheckSuperPickups = true;
 				B.bCheckDriverPickups = true;
@@ -2952,7 +2952,7 @@ function bool CheckSquadObjectives(UTBot B)
 			else
 			{
 				// End:0x770
-				if(((((GetOrders()) == 'Freelance') || bFreelanceAttack) || bFreelanceDefend) && B.HasTimedPowerup()!)
+				if(((((GetOrders()) == 'Freelance') || bFreelanceAttack) || bFreelanceDefend) && !B.HasTimedPowerup())
 				{
 					SuperDist = 10000000.0000000;					
 				}
@@ -2984,7 +2984,7 @@ function bool CheckSquadObjectives(UTBot B)
 				B.bCheckDriverPickups = false;
 				B.GoalString = "Get super item" @ string(B.RouteGoal);
 				// End:0xD46
-				if((((V != none) && V.bCanPickupInventory!) && (B.Pawn.Anchor == none) || B.Pawn.Anchor.bFlyingPreferred!) && (B.MoveTarget == B.RouteGoal) || (B.RouteCache.Length > 1) && B.RouteCache[1] == B.RouteGoal)
+				if((((V != none) && !V.bCanPickupInventory) && (B.Pawn.Anchor == none) || !B.Pawn.Anchor.bFlyingPreferred) && (B.MoveTarget == B.RouteGoal) || (B.RouteCache.Length > 1) && B.RouteCache[1] == B.RouteGoal)
 				{
 					// End:0xCE6
 					if((PickupFactory(B.RouteGoal) == none) && UTVehicle(V) != none)
@@ -3041,7 +3041,7 @@ function bool CheckSquadObjectives(UTBot B)
 		else
 		{
 			// End:0x106E
-			if(((GetOrders()) == 'Freelance') && (UTVehicle(B.Pawn) == none) || UTVehicle(B.Pawn).bKeyVehicle!)
+			if(((GetOrders()) == 'Freelance') && (UTVehicle(B.Pawn) == none) || !UTVehicle(B.Pawn).bKeyVehicle)
 			{
 				return false;				
 			}
@@ -3092,7 +3092,7 @@ function bool CheckSquadObjectives(UTBot B)
 		if(B.Enemy != none)
 		{
 			// End:0x1538
-			if(B.LineOfSightTo(B.Enemy) || (((WorldInfo.TimeSeconds - B.LastSeenTime) < float(3)) && (SquadObjective == none) || UTGameObjective(SquadObjective).TeamLink(Team.TeamIndex)!) && (UTVehicle(B.Pawn) == none) || UTVehicle(B.Pawn).bKeyVehicle!)
+			if(B.LineOfSightTo(B.Enemy) || (((WorldInfo.TimeSeconds - B.LastSeenTime) < float(3)) && (SquadObjective == none) || !UTGameObjective(SquadObjective).TeamLink(Team.TeamIndex)) && (UTVehicle(B.Pawn) == none) || !UTVehicle(B.Pawn).bKeyVehicle)
 			{
 				B.FightEnemy(false, 0.0000000);
 				return true;
@@ -3104,7 +3104,7 @@ function bool CheckSquadObjectives(UTBot B)
 	{
 		B.GoalString = "Near defense position" @ string(DesiredPosition);
 		// End:0x15FC
-		if(B.bInitLifeMessage!)
+		if(!B.bInitLifeMessage)
 		{
 			B.bInitLifeMessage = true;
 			B.SendMessage(none, 'InPosition', 25.0000000);
@@ -3202,7 +3202,7 @@ function UTBot PickBotToReassign()
 	if(B != none)
 	{
 		// End:0x191
-		if(B.PlayerReplicationInfo.bOutOfLives!)
+		if(!B.PlayerReplicationInfo.bOutOfLives)
 		{
 			val = VSize(B.Pawn.Location - SquadObjective.Location);
 			// End:0xE1
@@ -3397,13 +3397,13 @@ function float RateDefensivePosition(NavigationPoint N, UTBot CurrentBot, Actor 
 	local UTPawn P;
 
 	// End:0x18D
-	if((((N.bDestinationOnly || N.IsA('Teleporter')) || N.IsA('PortalMarker')) || N.bFlyingPreferred && CurrentBot.Pawn.bCanFly!) || FastTrace(N.Location, Center.GetTargetLocation())! && Center.bHasAlternateTargetLocation! || FastTrace(N.Location, Center.GetTargetLocation(,, true))!)
+	if((((N.bDestinationOnly || N.IsA('Teleporter')) || N.IsA('PortalMarker')) || N.bFlyingPreferred && !CurrentBot.Pawn.bCanFly) || !FastTrace(N.Location, Center.GetTargetLocation()) && !Center.bHasAlternateTargetLocation || !FastTrace(N.Location, Center.GetTargetLocation(,, true)))
 	{
 		return -1.0000000;
 	}
 	P = UTPawn(CurrentBot.Pawn);
 	// End:0x3B0
-	if((P == none) || P.bCanDoubleJump!)
+	if((P == none) || !P.bCanDoubleJump)
 	{
 		bNeedSpecialMove = true;
 		I = 0;
@@ -3417,7 +3417,7 @@ function float RateDefensivePosition(NavigationPoint N, UTBot CurrentBot, Actor 
 			{
 				ReverseSpec = N.PathList[I].GetEnd().GetReachSpecTo(N);
 				// End:0x38F
-				if(((ReverseSpec != none) && ReverseSpec.IsBlockedFor(P)!) && ((ReverseSpec.reachFlags & 16) == 0) || (P != none) && P.bCanDoubleJump)
+				if(((ReverseSpec != none) && !ReverseSpec.IsBlockedFor(P)) && ((ReverseSpec.reachFlags & 16) == 0) || (P != none) && P.bCanDoubleJump)
 				{
 					bNeedSpecialMove = false;
 					// [Explicit Break]
@@ -3618,7 +3618,7 @@ state Retasking
 			goto J0x13;
 		}
 		// End:0x125
-		if(bStillTicking!)
+		if(!bStillTicking)
 		{
 			GotoState('None');
 		}

@@ -69,7 +69,7 @@ event Update()
 			{
 				AddAIGroupActor(AIGroupInst);
 			}
-			GroupID++;
+			++GroupID;
 			// [Loop Continue]
 			goto J0x12B;
 		}

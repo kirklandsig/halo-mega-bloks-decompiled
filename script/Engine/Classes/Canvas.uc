@@ -231,7 +231,7 @@ event Reset(optional bool bKeepOrigin)
 {
 	Font = GetDefaultCanvasFont();
 	// End:0x4A
-	if(bKeepOrigin!)
+	if(!bKeepOrigin)
 	{
 		OrgX = default.OrgX;
 		OrgY = default.OrgY;

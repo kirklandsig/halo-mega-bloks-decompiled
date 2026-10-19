@@ -57,7 +57,7 @@ simulated function PlayImpactEffects(Vector HitLocation)
 	// End:0x127
 	if(Pawn(HitActor) != none)
 	{
-		CheckHitInfo(HitInfo, Pawn(HitActor).Mesh, HitNormal-, NewHitLoc);
+		CheckHitInfo(HitInfo, Pawn(HitActor).Mesh, -HitNormal, NewHitLoc);
 	}
 	ImpactEffect = GetImpactEffect(HitInfo.PhysMaterial);
 	// End:0x1AD
@@ -81,7 +81,7 @@ simulated function PlayImpactEffects(Vector HitLocation)
 simulated function CauseMuzzleFlash()
 {
 	// End:0x19
-	if(MuzzleFlashAttached!)
+	if(!MuzzleFlashAttached)
 	{
 		AttachMuzzleFlash();
 	}

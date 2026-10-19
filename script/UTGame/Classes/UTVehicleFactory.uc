@@ -69,7 +69,7 @@ simulated function RenderMapIcon(UTMapInfo MP, Canvas Canvas, UTPlayerController
 	local LinearColor DrawColor;
 
 	// End:0x11
-	if(bHasLockedVehicle!)
+	if(!bHasLockedVehicle)
 	{
 		return;
 	}
@@ -83,7 +83,7 @@ simulated function RenderMapIcon(UTMapInfo MP, Canvas Canvas, UTPlayerController
 function Activate(byte T)
 {
 	// End:0x32
-	if(bDisabled!)
+	if(!bDisabled)
 	{
 		TeamNum = int(T);
 		GotoState('Active');
@@ -98,7 +98,7 @@ function Deactivate()
 	GotoState('None');
 	TeamNum = 255;
 	// End:0x1F9
-	if(((UTVehicle(ChildVehicle) != none) && ChildVehicle.bDeleteMe!) && UTVehicle(ChildVehicle).bTeamLocked)
+	if(((UTVehicle(ChildVehicle) != none) && !ChildVehicle.bDeleteMe) && UTVehicle(ChildVehicle).bTeamLocked)
 	{
 		// End:0x1E1
 		if(UTGame(WorldInfo.Game).MatchIsInProgress())
@@ -158,7 +158,7 @@ function OnToggle(SeqAct_Toggle Action)
 		}
 		else
 		{
-			bDisabled = bDisabled!;
+			bDisabled = !bDisabled;
 		}
 	}
 	// End:0xBD
@@ -219,7 +219,7 @@ state Active
 		local UTVehicle UTChildVehicle;
 
 		// End:0x37
-		if((ChildVehicle != none) && ChildVehicle.bDeleteMe!)
+		if((ChildVehicle != none) && !ChildVehicle.bDeleteMe)
 		{
 			return;
 		}

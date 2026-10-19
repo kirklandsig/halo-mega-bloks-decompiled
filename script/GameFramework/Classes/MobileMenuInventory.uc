@@ -153,7 +153,7 @@ event bool OnTouch(Interaction.ETouchType EventType, float TouchX, float TouchY,
 		// End:0x30A
 		case 2:
 			// End:0x190
-			if(Drag.bIsDragging!)
+			if(!Drag.bIsDragging)
 			{
 				InitDragAt(int(TouchX), int(TouchY));				
 			}
@@ -175,7 +175,7 @@ event bool OnTouch(Interaction.ETouchType EventType, float TouchX, float TouchY,
 			if(Drag.bIsDragging)
 			{
 				// End:0x3C7
-				if(Drag.bIsOver!)
+				if(!Drag.bIsOver)
 				{
 					Drag.IndexOver = FindSlotIndexAt(TouchX, TouchY);
 					Drag.bIsOver = Drag.IndexOver >= 0;

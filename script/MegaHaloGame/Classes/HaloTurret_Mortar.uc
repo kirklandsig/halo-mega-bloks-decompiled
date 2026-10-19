@@ -52,7 +52,7 @@ function UpdateAI(float DeltaTime)
 	FlatRot.Pitch = 0;
 	FlatForward = Vector(FlatRot);
 	// End:0x50D
-	if(Seats[0].Gun.IsFiring()! && CurBurstCD == float(0))
+	if(!Seats[0].Gun.IsFiring() && CurBurstCD == float(0))
 	{
 		// End:0x4D1
 		foreach WorldInfo.AllPawns(Class'MegaHaloGame.HaloPawn', potentialTarget, fireLoc, Seats[0].Gun.WeaponRange)
@@ -186,7 +186,7 @@ simulated function Rotator GetAdjustedAim()
 	turretProj = Class<HaloProjectile>(Seats[0].Gun.WeaponProjectiles[0]);
 	Mesh.GetSocketWorldLocationAndRotation('Turret_Fire', fireLoc, FireRot);
 	// End:0x201
-	if(bValidToss!)
+	if(!bValidToss)
 	{
 		bValidToss = SuggestTossVelocity(tossDirection, Target.Location, fireLoc, turretProj.default.Speed, turretProj.default.TossZ, TossZHint,, ((PhysicsVolume.bWaterVolume) ? PhysicsVolume.TerminalVelocity : turretProj.default.TerminalVelocity), WorldInfo.GetGravityZ() * turretProj.default.CustomGravityScaling);
 		// End:0x1F2

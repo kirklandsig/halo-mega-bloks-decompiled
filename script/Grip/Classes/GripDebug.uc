@@ -55,7 +55,7 @@ static function GripDebugViewNPCFromBrainID(int BrainID)
 
 	Result = Class'Grip.GripDebug'.static.GetLocationAndRotationFromBrainID(BrainID, ActorLocation, ActorRotation);
 	// End:0x56
-	if(Result!)
+	if(!Result)
 	{
 		return;
 	}

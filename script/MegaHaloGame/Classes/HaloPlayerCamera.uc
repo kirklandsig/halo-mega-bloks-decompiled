@@ -250,7 +250,7 @@ function UpdateViewTarget(out TViewTarget outViewTarget, float DeltaTime)
 simulated event UpdateCamera(float DeltaTime)
 {
 	// End:0x170
-	if((PCOwner.IsLocalPlayerController() || bUseClientSideCameraUpdates!) || bDebugClientSideCamera)
+	if((PCOwner.IsLocalPlayerController() || !bUseClientSideCameraUpdates) || bDebugClientSideCamera)
 	{
 		DoUpdateCamera(DeltaTime);
 		// End:0x170
@@ -1597,7 +1597,7 @@ function Rotator UpdateOrbitManualAimRotation(const TPOV POV, const Actor Target
 		}
 		oRotation.Yaw += int(yawDelta);
 		oRotation.Pitch += int(aimInput.Z * ((Orbit.AimPitchSpeed * 182.0444031) * DeltaTime));
-		oRotation.Pitch = Clamp(oRotation.Pitch, int(cfg.OrbitPitchHighLimit * 182.0444031-), int(cfg.OrbitPitchLowLimit * 182.0444031));
+		oRotation.Pitch = Clamp(oRotation.Pitch, int(-cfg.OrbitPitchHighLimit * 182.0444031), int(cfg.OrbitPitchLowLimit * 182.0444031));
 	}
 	return oRotation;
 	//return ReturnValue;	
@@ -1631,12 +1631,12 @@ function Rotator UpdateAutoCenterPitch(const TPOV POV, const Actor Target, const
 		// End:0xEE
 		if(cfg.AutoCenterPitchEnabled == false)
 		{
-			oRotation.Pitch = int(Orbit.Pitch- * 182.0444031);			
+			oRotation.Pitch = int(-Orbit.Pitch * 182.0444031);			
 		}
 		else
 		{
 			aRot.Pitch = POV.Rotation.Pitch;
-			bRot.Pitch = int(Orbit.Pitch- * 182.0444031);
+			bRot.Pitch = int(-Orbit.Pitch * 182.0444031);
 			oRotation.Pitch = RInterpTo(aRot, bRot, DeltaTime, cfg.AutoCenterPitchSpeed * 182.0444031, true).Pitch;
 		}
 	}
@@ -1669,9 +1669,9 @@ function Rotator UpdateAutoCenterPitchCollision(const TPOV POV, const Actor Targ
 		{
 			HitActor.GetComponentsBoundingBox(hitBox);
 			HitLocation.Z = hitBox.Max.Z;
-			bRot.Pitch = Rotator(HitLocation - TraceStart).Pitch-;
+			bRot.Pitch = -Rotator(HitLocation - TraceStart).Pitch;
 			// End:0x417
-			if((bRot.Pitch < oRotation.Pitch) && float(bRot.Pitch) > cfg.OrbitPitchHighLimit * 182.0444031-)
+			if((bRot.Pitch < oRotation.Pitch) && float(bRot.Pitch) > -cfg.OrbitPitchHighLimit * 182.0444031)
 			{
 				oRotation.Pitch = RInterpTo(oRotation, bRot, DeltaTime, cfg.AutoCenterPitchCollideSpeed * 182.0444031, true).Pitch;
 			}
@@ -1792,7 +1792,7 @@ function Rotator UpdateOrbitLockOnRotation(const TPOV POV, const Actor Target, c
 		else
 		{
 			GetOrbitStruct(Orbit);
-			oPov.Rotation.Pitch = int(Orbit.Pitch * 182.0444031-);
+			oPov.Rotation.Pitch = int(-Orbit.Pitch * 182.0444031);
 		}
 		oBlendRange = LockOn.RotationBlendRange;
 		return oPov.Rotation;
@@ -1811,13 +1811,13 @@ function Vector UpdateOrbitLocation(const TPOV POV, const Actor Target, const Ha
 	GetOrbitStruct(Orbit);
 	orbitDistance = FNamedBlendUpdate(OrbitDistanceBlend, Orbit.Name, Orbit.Distance, DeltaTime);
 	lastDistance = ((OrbitSettingsLastDistance > float(0)) ? OrbitSettingsLastDistance : orbitDistance);
-	oLocation = TargetLocation + (Vector(POV.Rotation) * orbitDistance-);
-	endLocation = TargetLocation + (Vector(POV.Rotation) * orbitDistance + 400.0000000-);
+	oLocation = TargetLocation + (Vector(POV.Rotation) * -orbitDistance);
+	endLocation = TargetLocation + (Vector(POV.Rotation) * -orbitDistance + 400.0000000);
 	Distance = CalculateCollisionDistance(endLocation, TargetLocation, Target, cfg);
 	Distance = FMin(Distance, orbitDistance);
 	Distance = FInterpTo(lastDistance, Distance, DeltaTime, ((Distance < lastDistance) ? cfg.CollideInRate : cfg.CollideOutRate));
 	OrbitSettingsLastDistance = Distance;
-	oLocation = TargetLocation + (Vector(POV.Rotation) * Distance-);
+	oLocation = TargetLocation + (Vector(POV.Rotation) * -Distance);
 	oBlendRange = Orbit.LocationBlendRange;
 	return oLocation;
 	//return ReturnValue;	

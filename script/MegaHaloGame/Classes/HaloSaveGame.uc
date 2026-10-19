@@ -169,7 +169,7 @@ function SaveToLog()
 	if(I < StreamingMapFileNames.Length)
 	{
 		LogInternal(StreamingMapFileNames[I]);
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x82;
 	}
@@ -180,7 +180,7 @@ function SaveToLog()
 	if(I < SerializedWorldData.Length)
 	{
 		LogInternal(SerializedWorldData[I]);
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0xC9;
 	}
@@ -223,7 +223,7 @@ function SaveGameState()
 			{
 				StreamingMapFileNames.AddItem(string(WorldInfo.StreamingLevels[I].PackageName));
 			}
-			I++;
+			++I;
 			// [Loop Continue]
 			goto J0xCD;
 		}
@@ -303,7 +303,7 @@ function LoadGameState(optional out string StartingPawnClass, optional out name 
 							StartingPawnClass = JsonObject.GetStringValue("CharacterRole");
 							SpawnPointToJumpTo = name(JsonObject.GetStringValue("CurrentRespawnPointName"));
 							// End:0x38E
-							if(InitialLoad! && WorldInfo.Game.Class == Archetype.Class)
+							if(!InitialLoad && WorldInfo.Game.Class == Archetype.Class)
 							{
 								LogInternal(((">>> setting world info:" $ ObjectName) $ ", type:") $ string(Archetype.Class));
 								aObject = WorldInfo.Game;								
@@ -349,7 +349,7 @@ function LoadGameState(optional out string StartingPawnClass, optional out name 
 		}
 		J0x5D1:
 
-		I++;
+		++I;
 		// [Loop Continue]
 		goto J0x8F;
 	}

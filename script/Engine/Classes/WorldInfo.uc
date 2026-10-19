@@ -595,14 +595,14 @@ simulated event ServerTravel(string URL, optional bool bAbsolute, optional bool 
 	}
 	NextTravelType = ((bAbsolute) ? 0 : 2);
 	// End:0x1C0
-	if((NextURL == "") && IsInSeamlessTravel()! || bShouldSkipGameNotify)
+	if((NextURL == "") && !IsInSeamlessTravel() || bShouldSkipGameNotify)
 	{
 		NextURL = URL;
 		// End:0x1B1
 		if(Game != none)
 		{
 			// End:0x1AE
-			if(bShouldSkipGameNotify!)
+			if(!bShouldSkipGameNotify)
 			{
 				Game.ProcessServerTravel(URL, bAbsolute);
 			}			
@@ -785,7 +785,7 @@ simulated event bool CanBeginHostMigration()
 		if(PC.IsPrimaryPlayer())
 		{
 			// End:0x8F
-			if(PC.CanAllPlayersPlayOnline()! || PC.BestNextHostPeers.Length == 0)
+			if(!PC.CanAllPlayersPlayOnline() || PC.BestNextHostPeers.Length == 0)
 			{				
 				return false;
 			}
