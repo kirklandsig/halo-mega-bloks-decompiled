@@ -20,6 +20,9 @@ extern void (CCSBlackboard::*const EmitClearMoveCommand)() = &CCSBlackboard::Cle
 extern void (CCSBlackboard::*const EmitFlagMoveCommandAsUsed)() = &CCSBlackboard::FlagMoveCommandAsUsed;
 extern CCSBlackboard::EMoveCmd (CCSBlackboard::*const EmitGetMoveCommand)() const = &CCSBlackboard::GetMoveCommand;
 extern Grip_Vector (CCSBlackboard::*const EmitGetMovePosition)() const = &CCSBlackboard::GetMovePosition;
+extern void (GripBTSystemFlags::*const EmitSetFlag)(int) = &GripBTSystemFlags::SetFlag;
+extern void (GripBBMember::*const EmitAddUsedSensorSystems)(const int) = &GripBBMember::AddUsedSensorSystems;
+extern void (GripBBMember::*const EmitAddUsedAnalysisSystems)(const int) = &GripBBMember::AddUsedAnalysisSystems;
 #pragma inline_depth()
 
 // @retail 0x83329700
@@ -52,6 +55,12 @@ extern Grip_Vector (CCSBlackboard::*const EmitGetMovePosition)() const = &CCSBla
 // CCSBlackboard::GetMoveCommand
 // @retail 0x83329740
 // CCSBlackboard::GetMovePosition
+// @retail 0x8331E938
+// GripBTSystemFlags::SetFlag
+// @retail 0x8331EA10
+// GripBBMember::AddUsedSensorSystems
+// @retail 0x8331EA30
+// GripBBMember::AddUsedAnalysisSystems
 
 // Todo: the members are built as retail's, but registers and schedule
 // differ across the 1.8 KB of stores.
@@ -103,6 +112,81 @@ void CCSBlackboard::Reset()
     m_eventLocation.Set(Grip_Vector(0.0f, 0.0f, 0.0f));
     m_threatLocation.Set(Grip_Vector(0.0f, 0.0f, 0.0f));
     m_threatDirection.Set(Grip_Vector(0.0f, 0.0f, 0.0f));
+}
+
+// The systems are bit numbers: sensor systems 0 (self awareness), 1 (target
+// awareness) and 2 (cover), going by the members; analysis system 0 (target).
+// @retail 0x83323708
+void CCSBlackboard::RegisterMembers()
+{
+    GripBlackboard::RegisterMembers();
+    AddMember(m_team);
+    m_team.AddUsedSensorSystems(1);
+    m_team.AddUsedAnalysisSystems(0);
+    AddMember(m_visibleToPlayerCamera);
+    m_visibleToPlayerCamera.AddUsedSensorSystems(0);
+    AddMember(m_timeSinceDamage);
+    m_timeSinceDamage.AddUsedSensorSystems(0);
+    AddMember(m_health);
+    m_health.AddUsedSensorSystems(0);
+    AddMember(m_targets);
+    m_targets.AddUsedSensorSystems(1);
+    AddMember(m_bHasBecomeAware);
+    m_bHasBecomeAware.AddUsedSensorSystems(1);
+    AddMember(m_closestEnemy);
+    m_closestEnemy.AddUsedSensorSystems(1);
+    m_closestEnemy.AddUsedAnalysisSystems(0);
+    AddMember(m_closestVisibleEnemy);
+    m_closestVisibleEnemy.AddUsedSensorSystems(1);
+    AddMember(m_currentTarget);
+    AddMember(m_lowestLKPAgeEnemy);
+    m_lowestLKPAgeEnemy.AddUsedSensorSystems(1);
+    AddMember(m_closestObjective);
+    m_closestObjective.AddUsedSensorSystems(1);
+    m_closestObjective.AddUsedAnalysisSystems(0);
+    AddMember(m_closestReactiveTarget);
+    m_closestReactiveTarget.AddUsedSensorSystems(1);
+    m_closestReactiveTarget.AddUsedAnalysisSystems(0);
+    AddMember(m_covers);
+    m_covers.AddUsedSensorSystems(2);
+    AddMember(m_initialCover);
+    m_initialCover.AddUsedSensorSystems(2);
+    AddMember(m_moveCommand);
+    AddMember(m_movePosition);
+    AddMember(m_OutRangeThreatTargets);
+    m_OutRangeThreatTargets.AddUsedSensorSystems(1);
+    AddMember(m_friendlies);
+    m_friendlies.AddUsedSensorSystems(1);
+    AddMember(m_invalidcovers);
+    m_invalidcovers.AddUsedSensorSystems(2);
+    AddMember(m_pHighestThreatTarget);
+    m_pHighestThreatTarget.AddUsedSensorSystems(1);
+    AddMember(m_timeSinceThreatTargetChanged);
+    m_timeSinceThreatTargetChanged.AddUsedSensorSystems(1);
+    AddMember(m_timeSinceTargetCamoed);
+    m_timeSinceTargetCamoed.AddUsedSensorSystems(1);
+    AddMember(m_timeSinceBecameAware);
+    m_timeSinceBecameAware.AddUsedSensorSystems(1);
+    AddMember(m_timeSinceLostAware);
+    m_timeSinceLostAware.AddUsedSensorSystems(1);
+    AddMember(m_closestEntryVehicle);
+    m_closestEntryVehicle.AddUsedSensorSystems(1);
+    m_closestEntryVehicle.AddUsedAnalysisSystems(0);
+    AddMember(m_timeSinceAimedAt);
+    m_timeSinceAimedAt.AddUsedSensorSystems(0);
+    AddMember(m_timeSinceThreatened);
+    m_timeSinceThreatened.AddUsedSensorSystems(0);
+    AddMember(m_timeSinceGrenadeStuck);
+    m_timeSinceGrenadeStuck.AddUsedSensorSystems(0);
+    AddMember(m_timeSinceStaggered);
+    m_timeSinceStaggered.AddUsedSensorSystems(0);
+    AddMember(m_timeSinceSuccessfulAttack);
+    m_timeSinceSuccessfulAttack.AddUsedSensorSystems(0);
+    AddMember(m_eventType);
+    m_eventType.AddUsedSensorSystems(0);
+    AddMember(m_timeSinceEvent);
+    m_timeSinceEvent.AddUsedSensorSystems(0);
+    AddMember(m_currentTether);
 }
 
 // @retail 0x83323AE0
@@ -347,6 +431,5 @@ void CCSBlackboard::SetHasBecomeAware(bool bAware)
 // @retail 0x833631B8
 // CCSBlackboard::`scalar deleting destructor'
 
-// Not attempted yet (todo): RegisterMembers (984 bytes; registers every
-// member by name), GetSpecificTarget (944), UpdateTargetListsByRange (1,104)
+// Not attempted yet (todo): GetSpecificTarget (944), UpdateTargetListsByRange (1,104)
 // and UpdateTargetPointers (1,376), the target-list bookkeeping.

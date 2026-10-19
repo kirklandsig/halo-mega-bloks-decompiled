@@ -30,6 +30,11 @@ inline Grip_Vector::Grip_Vector() : X(0.0f), Y(0.0f), Z(0.0f) {}
 inline Grip_Vector::Grip_Vector(const FVector &V) : X(V.X), Y(V.Y), Z(V.Z) {}
 inline Grip_Vector::Grip_Vector(float InX, float InY, float InZ) : X(InX), Y(InY), Z(InZ) {}
 #endif
+
+// grip_color.h
+#ifndef HAGGAR_HOST
+inline Grip_Color::Grip_Color(unsigned char Red, unsigned char Green, unsigned char Blue) : m_red(Red), m_green(Green), m_blue(Blue) {}
+#endif
 inline Grip_Vector::operator FVector() const { return FVector(X, Y, Z); }
 inline Grip_Vector Grip_Vector::operator+(const Grip_Vector &V) const { return Grip_Vector(V.X + X, V.Y + Y, V.Z + Z); }
 inline Grip_Vector Grip_Vector::operator-(const Grip_Vector &V) const { return Grip_Vector(X - V.X, Y - V.Y, Z - V.Z); }
@@ -264,6 +269,9 @@ inline unsigned int FCoverInfo::operator==(const FCoverInfo &Other) const { retu
 
 // gripbbmember.h, gripblackboard.h
 inline void GripBBMember::FlagAsUsed() { m_used = true; }
+inline void GripBTSystemFlags::SetFlag(int Flag) { m_flags |= 1 << Flag; }
+inline void GripBBMember::AddUsedSensorSystems(const int Systems) { m_ssFlags.SetFlag(Systems); }
+inline void GripBBMember::AddUsedAnalysisSystems(const int Systems) { m_asFlags.SetFlag(Systems); }
 inline Grip_Array<Grip::String, Grip::AllocatorGH<Grip::String, 2> > &GripBlackboard::GetStates() { return m_states.GetArray(); }
 
 // ccsblackboard.h
