@@ -259,10 +259,10 @@ class Classes:
 
         def record_of(ti):
             while ti >= self.t.begin:
-                kind_, p = self.t.record(ti)
-                if kind_ in (pdbtype.LF_POINTER, pdbtype.LF_MODIFIER, pdbtype.LF_ARRAY):
+                kind, p = self.t.record(ti)
+                if kind in (pdbtype.LF_POINTER, pdbtype.LF_MODIFIER, pdbtype.LF_ARRAY):
                     ti = int.from_bytes(self.t.data[p:p + 4], 'little')
-                elif kind_ in (pdbtype.LF_CLASS, pdbtype.LF_STRUCTURE, pdbtype.LF_UNION):
+                elif kind in (pdbtype.LF_CLASS, pdbtype.LF_STRUCTURE, pdbtype.LF_UNION):
                     name = self.header._rname(self.t._resolve(ti))
                     return None if '<' in name or 'unnamed' in name else name
                 else:
@@ -346,6 +346,12 @@ class Classes:
     def package_of(self, cls):
         return self.packages.get(cls[1:], self.package)
 
+    def static_class_body(self, c):
+        """DECLARE_CLASS's StaticClass: register the class on first use."""
+        return [f'inline UClass *{c}::StaticClass()', '{', '    if (!PrivateStaticClass)', '    {',
+                f'        PrivateStaticClass = GetPrivateStaticClass{c}(L"{self.package_of(c)}");',
+                f'        InitializePrivateStaticClass{c}();', '    }', '    return PrivateStaticClass;', '}']
+
     def inline_bodies(self):
         """DECLARE_CLASS's members, for the package's classes and their bases."""
         out, done = [], set()
@@ -356,9 +362,7 @@ class Classes:
                 done.add(c)
                 if self._has(c, c) and f'{c}::{c}' not in self.out_of_line():  # NO_DEFAULT_CONSTRUCTOR
                     out.append(f'inline {c}::{c}() {{}}')
-                out += [f'inline UClass *{c}::StaticClass()', '{', '    if (!PrivateStaticClass)', '    {',
-                        f'        PrivateStaticClass = GetPrivateStaticClass{c}(L"{self.package_of(c)}");',
-                        f'        InitializePrivateStaticClass{c}();', '    }', '    return PrivateStaticClass;', '}']
+                out += self.static_class_body(c)
                 _within, config = script_header(self.package_of(c), c)
                 if config and self._has(c, 'StaticConfigName'):
                     out.append(f'inline const wchar_t *{c}::StaticConfigName() {{ return L"{config}"; }}')
@@ -371,9 +375,7 @@ class Classes:
         # StaticClass of every other UObject class the header renders
         for c in sorted(self.header.classes):
             if c not in done and c != 'UObject' and self._has(c, 'StaticClass') and self._has(c, f'GetPrivateStaticClass{c}'):
-                out += [f'inline UClass *{c}::StaticClass()', '{', '    if (!PrivateStaticClass)', '    {',
-                        f'        PrivateStaticClass = GetPrivateStaticClass{c}(L"{self.package_of(c)}");',
-                        f'        InitializePrivateStaticClass{c}();', '    }', '    return PrivateStaticClass;', '}']
+                out += self.static_class_body(c)
         return out
 
     def tiny_definition(self, row, shape):
@@ -480,8 +482,8 @@ class Classes:
         out += self.script_struct_constructors()
         for t, ti in sorted(self.header.classes.items()):
             # an interface (a vtable pointer and nothing else): its constructor only sets that
-            if not self.header.bases(ti) and self.header.has_vfptr(ti) and self.t.sizeof(ti) == 4                     and self._has(t, gen_header.split_scope(t)[-1]):
-                short = gen_header.split_scope(t)[-1]
+            short = gen_header.split_scope(t)[-1]
+            if not self.header.bases(ti) and self.header.has_vfptr(ti) and self.t.sizeof(ti) == 4 and self._has(t, short):
                 out.append(f'inline {t}::{short}() {{}}')
                 if self._has(t, '~' + short):
                     out.append(f'inline {t}::~{short}() {{}}')
@@ -624,9 +626,11 @@ def script_optionals(package, cls, func, count):
         default = p.split('=', 1)[1].strip() if '=' in p else None
         out.append(('optional' in p.split(), default))
     return out if len(out) == count else [(False, None)] * count
+
+
 # Inline constructors of engine classes the packages' constructors expand
-# (written from the disassembly); emitted when the class is a target.
-# (class, body, whether the class must be a target)
+# (written from the disassembly), as (class, body, whether the class must be
+# a target for the body to be emitted).
 KNOWN_BODIES = [
     ('FRenderCommandFence', 'inline FRenderCommandFence::FRenderCommandFence() : NumPendingFences(0) {}', True),
     ('FString', 'inline FString::FString() {}', False),

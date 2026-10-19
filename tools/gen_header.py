@@ -513,6 +513,12 @@ class Header:
                     xdk.extend(['union', '{'] + ['    ' + t for t in union[1]] + ['};'])
                     host.extend(['union', '{'] + ['    ' + t for t in union[2]] + ['};'])
 
+            def pad_outputs(start, end, natural):
+                # the XDK build leaves out what natural alignment pads
+                # (an aggregate's initializer then zero-fills it in words)
+                naturally_padded = natural <= 4 and -(-start // natural) * natural == end
+                return (host,) if naturally_padded else (xdk, host)
+
             for mname, mtype, off, acc in self.members(ti):
                 if off is None:
                     continue
@@ -532,11 +538,10 @@ class Header:
                         wrap = (lambda lines: ['struct', '{'] + ['    ' + t for t in lines] + ['};']) \
                             if len(first_x) > 1 else (lambda lines: lines)
                         union = [off, wrap(first_x), wrap(first_h)]
+                    union[1].append(self.t.decl(mtype, mname) + f';  // 0x{off:X}')
                     if bit:
-                        union[1].append(self.t.decl(mtype, mname) + f';  // 0x{off:X}')
                         union[2].append(f'hg::be<unsigned int> _bits{off:X}u;  // 0x{off:X}, from {mname}')
                     else:
-                        union[1].append(self.t.decl(mtype, mname) + f';  // 0x{off:X}')
                         union[2].append(self.host_decl(mtype, mname) + ';')
                     cur = max(cur, off + self.t.sizeof(mtype))
                     prev_off = off
@@ -544,11 +549,8 @@ class Header:
                 close_union()
                 union = None
                 if off > cur:
-                    # the XDK build leaves out what natural alignment pads
-                    # (an aggregate's initializer then zero-fills it in words)
                     natural = 1 if self.blob_member(mtype) else self.alignment(mtype)
-                    outs = (host,) if natural <= 4 and -(-cur // natural) * natural == off else (xdk, host)
-                    for out in outs:
+                    for out in pad_outputs(cur, off, natural):
                         out.append(f'char _pad{pad}[0x{off - cur:X}];')
                     pad += 1
                 starts.append((off, len(xdk), len(host)))
@@ -566,9 +568,7 @@ class Header:
                 prev_off = off
             close_union()
             if size > cur:
-                natural = self.alignment(ti)
-                outs = (host,) if natural <= 4 and -(-cur // natural) * natural == size else (xdk, host)
-                for out in outs:
+                for out in pad_outputs(cur, size, self.alignment(ti)):
                     out.append(f'char _pad{pad}[0x{size - cur:X}];')
         if xdk:
             emit(3, '#ifndef HAGGAR_HOST')
