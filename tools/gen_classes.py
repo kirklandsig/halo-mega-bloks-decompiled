@@ -72,9 +72,17 @@ OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsSt
                        'HaloRBTKamikaze',
                        ]}
 # Member declarations the PDB lacks (member templates), per package.
-EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();']}}
+EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();'],
+                     'IGripAFInterface': ['template <class T0> T0 *GetSystem();']}}
 # Event thunks of other classes that a package's code calls (inlined there).
 EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
+
+
+def code_rows(package):
+    """A package's rows of n-Space's code: owner nspace, and the rest of
+    its AI library (udkbase\\ccsref*), which the owner heuristic splits."""
+    return [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv') if r['package'] == package.lower()
+            and (r['owner'] == 'nspace' or r['source'].startswith('udkbase\\ccsref'))]
 
 
 def nspace_rows():
@@ -150,12 +158,18 @@ class Classes:
         self.header = gen_header.Header(types)  # a probe, for the member checks below
         # a class whose destructor destroys members needs them rendered
         self.member_targets = sorted({b for c in self.classes for b in self.chain(c) if not self.own_members_trivial(b)})
+        # every class with n-Space code in the package, and its bases: their code reads members
+        self.code_classes = self.with_bases(sorted(
+            c for c in {r['name'].rsplit('::', 1)[0] for r in code_rows(package) if '::' in r['name']}
+            if self._exists(c) and self._is_record(c)))
+        # and the classes their members point at, and their methods take, one level deep
+        self.code_classes = self.with_bases(sorted(set(self.code_classes) | self.referenced(self.code_classes)))
         # structs that exec thunks read or return by value must be complete
         exec_structs = sorted({t for r in self.execs for v in self.native_types(r)
                                for t in [gen_header.template_args(v)[1][0] if v.startswith('TArray<') else v]
                                if re.fullmatch(r'F\w+', t) and self._exists(t)})
         self.header = gen_header.Header(types, self.parms + ['FName', 'UObject', 'UClass'] + TARGETS.get(package, []) + self.member_targets
-                                        + self.classes
+                                        + self.classes + self.code_classes
                                         + (['FFrame'] if self.execs else []),
                                         self.classes + event_classes + ['UClass'] + exec_structs
                                         + OPAQUE.get(package, []))
@@ -230,6 +244,58 @@ class Classes:
             return 'the destructor also destroys members, which the opaque layout leaves out'
         return None
 
+    def _is_record(self, name):
+        return self.t.record(self.t.find(name))[0] in (pdbtype.LF_CLASS, pdbtype.LF_STRUCTURE, pdbtype.LF_UNION)
+
+    def referenced(self, names):
+        """The records that `names`' data members point at or hold, and
+        that their methods take or return (through pointers and references)."""
+        out = set()
+
+        def record_of(ti):
+            while ti >= self.t.begin:
+                kind_, p = self.t.record(ti)
+                if kind_ in (pdbtype.LF_POINTER, pdbtype.LF_MODIFIER, pdbtype.LF_ARRAY):
+                    ti = int.from_bytes(self.t.data[p:p + 4], 'little')
+                elif kind_ in (pdbtype.LF_CLASS, pdbtype.LF_STRUCTURE, pdbtype.LF_UNION):
+                    name = self.header._rname(self.t._resolve(ti))
+                    return None if '<' in name or 'unnamed' in name else name
+                else:
+                    return None
+            return None
+
+        for n in names:
+            ti = self.t.find(n)
+            types = [t for _m, t, off, _a in self.header.members(ti) if off is not None]
+            for m in self.header.methods(ti):
+                ret, params = self.signature_types(m['type'])
+                types += [ret] + params
+            for t in types:
+                name = record_of(t)
+                if name and self._exists(name):
+                    out.add(name)
+        return out
+
+    def signature_types(self, mtype):
+        d = self.t.data
+        _kind, p = self.t.record(mtype)
+        ret = int.from_bytes(d[p:p + 4], 'little')
+        args = int.from_bytes(d[p + 16:p + 20], 'little')
+        _akind, ap = self.t.record(args)
+        count = int.from_bytes(d[ap:ap + 4], 'little')
+        return ret, [int.from_bytes(d[ap + 4 + 4 * i:ap + 8 + 4 * i], 'little') for i in range(count)]
+
+    def with_bases(self, names):
+        """`names` and all their bases, recursively."""
+        out, todo = set(), list(names)
+        while todo:
+            n = todo.pop()
+            if n in out:
+                continue
+            out.add(n)
+            todo += [self.header._rname(b) for b, _o in self.header.bases(self.t.find(n))]
+        return sorted(out)
+
     def native_types(self, row):
         """The value types (no const, no reference) of the native function
         an exec<Name> row calls."""
@@ -260,9 +326,14 @@ class Classes:
             short = gen_header.split_scope(t)[-1]
             ctors = [self.header.method_decl(t, m) for m in self.header.methods(ti) if m['name'] == short]
             if f'{short}();' in ctors and f'{short}(EEventParm);' in ctors and f'{t}::{short}' not in defined \
-                    and t not in EMPTY_CONSTRUCTORS:
+                    and t not in EMPTY_CONSTRUCTORS and t not in {k for k, _b, _t in KNOWN_BODIES}:
                 out.append(f'inline {t}::{short}() {{}}')
         return ['#ifndef HAGGAR_HOST'] + out + ['#endif'] if out else []
+
+    def _has_default_constructor(self, cls):
+        short = gen_header.split_scope(cls)[-1]
+        return any(self.header.method_decl(cls, m) == f'{short}();'
+                   for m in self.header.methods(self.t.find(cls)) if m['name'] == short)
 
     def _has(self, cls, method):
         return any(m['name'] == method for m in self.header.methods(self.t.find(cls)))
@@ -390,11 +461,11 @@ class Classes:
         names = sorted({f'{self.package.upper()}_{r["name"].rsplit("::", 1)[1][5:]}' for r in self.events_all})
         out = [f'extern FName {n};' for n in names] + ['']
         for t in EMPTY_CONSTRUCTORS:
-            if t in self.header.classes and self._has(t, t):
+            if t in self.header.classes and self._has_default_constructor(t):
                 out.append(f'inline {t}::{t}() {{}}')
-        for t, body, target in KNOWN_BODIES:
-            if t in self.header.classes and (t in self.header.targets or not target):
-                out.append(body)
+        known = [body for t, body, target in KNOWN_BODIES
+                 if t in self.header.classes and (t in self.header.targets or not target)]
+        out += ['#ifndef HAGGAR_HOST'] + known + ['#endif'] if known else []
         out += self.script_struct_constructors()
         for t, ti in sorted(self.header.classes.items()):
             # an interface (a vtable pointer and nothing else): its constructor only sets that
@@ -550,6 +621,9 @@ KNOWN_BODIES = [
     ('FString', 'inline FString::FString() {}', False),
     ('FString', 'inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}', False),
     ('FStringNoInit', 'inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}', False),
+    # structcpptext constructors (retail's out-of-line copies in engineclasses.h)
+    ('FCoverInfo', 'inline FCoverInfo::FCoverInfo() : Link(0), SlotIdx(0) {}', True),
+    ('FCoverInfo', 'inline FCoverInfo::FCoverInfo(ACoverLink *InLink, int InSlotIdx) : Link(InLink), SlotIdx(InSlotIdx) {}', True),
 ]
 # UE3 math types whose default constructor leaves them uninitialised
 EMPTY_CONSTRUCTORS = ('FBoneAtom', 'FVector', 'FRotator', 'FVector2D', 'FVector4', 'FPlane', 'FQuat', 'FLinearColor', 'FColor', 'FMatrix')

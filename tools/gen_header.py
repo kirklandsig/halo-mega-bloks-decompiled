@@ -464,18 +464,50 @@ class Header:
             host.append('static ' + self.host_decl(mtype, f'(&{mname})') + ';')
         if target:
             prev_off = None
+            starts = []  # (offset, index in xdk, index in host) of each member that starts a word
+            union = None  # an anonymous union being built: [offset, xdk lines, host lines]
+
+            def close_union():
+                if union:
+                    xdk.extend(['union', '{'] + ['    ' + t for t in union[1]] + ['};'])
+                    host.extend(['union', '{'] + ['    ' + t for t in union[2]] + ['};'])
+
             for mname, mtype, off, acc in self.members(ti):
                 if off is None:
                     continue
                 bit = self._kind(mtype) == pt.LF_BITFIELD
                 if bit and off == prev_off:
-                    xdk.append(self.t.decl(mtype, mname) + ';')
+                    (union[1] if union else xdk).append(self.t.decl(mtype, mname) + ';')
                     continue
+                earlier = [i for i, (o, _x, _h) in enumerate(starts) if o == off]
+                if off < cur and (earlier or (union and off == union[0])):
+                    # an anonymous union, which the PDB flattens: the members
+                    # from the first one at this offset are its first alternative
+                    if union is None:
+                        _o, xi, hi = starts[earlier[0]]
+                        first_x, first_h = xdk[xi:], host[hi:]
+                        del xdk[xi:], host[hi:]
+                        del starts[earlier[0]:]
+                        wrap = (lambda lines: ['struct', '{'] + ['    ' + t for t in lines] + ['};']) \
+                            if len(first_x) > 1 else (lambda lines: lines)
+                        union = [off, wrap(first_x), wrap(first_h)]
+                    if bit:
+                        union[1].append(self.t.decl(mtype, mname) + f';  // 0x{off:X}')
+                        union[2].append(f'hg::be<unsigned int> _bits{off:X}u;  // 0x{off:X}, from {mname}')
+                    else:
+                        union[1].append(self.t.decl(mtype, mname) + f';  // 0x{off:X}')
+                        union[2].append(self.host_decl(mtype, mname) + ';')
+                    cur = max(cur, off + self.t.sizeof(mtype))
+                    prev_off = off
+                    continue
+                close_union()
+                union = None
                 if off > cur:
                     for out in (xdk, host):
                         out.append(f'char _pad{pad}[0x{off - cur:X}];')
                     pad += 1
-                # (an offset below cur overlaps a base's tail: an empty base or a union)
+                starts.append((off, len(xdk), len(host)))
+                # (an offset below cur overlaps a base's tail: an empty base)
                 if self.blob_member(mtype):
                     for out in (xdk, host):
                         out.append(f'char {mname}[0x{self.t.sizeof(mtype):X}];  // 0x{off:X} {self.t.name(mtype)}')
@@ -487,6 +519,7 @@ class Header:
                     host.append(self.host_decl(mtype, mname) + ';')
                 cur = max(cur, off + self.t.sizeof(mtype))
                 prev_off = off
+            close_union()
             if size > cur:
                 for out in (xdk, host):
                     out.append(f'char _pad{pad}[0x{size - cur:X}];')

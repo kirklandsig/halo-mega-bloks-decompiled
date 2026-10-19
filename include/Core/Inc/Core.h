@@ -7,6 +7,8 @@
 // UE3's platform header turns this one off: classes with reference members
 // (FArchiveProxy, FMemoryArchive) can't have an assignment operator.
 #pragma warning(disable : 4512)
+// ...and this one: anonymous structs in unions (FColor)
+#pragma warning(disable : 4201)
 
 // The CRT's, declared here (the XDK's CRT headers aren't needed)
 extern "C" void *memcpy(void *Dest, const void *Src, unsigned int Count);

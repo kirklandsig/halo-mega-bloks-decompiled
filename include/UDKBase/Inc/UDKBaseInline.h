@@ -38,12 +38,29 @@ inline float Grip_Vector::SizeSquared2D() const { return X * X + Y * Y; }
 inline void *GripHeapObject::operator new(unsigned int, void *Mem) { return Mem; }
 #endif
 
-// engineclasses.h
-#ifndef HAGGAR_HOST
-inline FCoverInfo::FCoverInfo(ACoverLink *InLink, int InSlotIdx) : Link(InLink), SlotIdx(InSlotIdx) {}
-#endif
-
 // engineclasses.h (UActorComponent's cpptext)
 inline AActor *UActorComponent::GetOwner() const { return Owner; }
 
 DECLARE_CAST_BY_FLAG(UByteProperty)
+
+// gripvheapobject.h
+inline void GripVHeapObject::operator delete(void *Ptr) { Grip::Memory::pGlobalHeap->Free(Ptr); }
+
+// gripafinterface.h
+template <class T0> inline T0 *IGripAFInterface::GetSystem()
+{
+    return static_cast<T0 *>(GetSystemInternal(T0::SGetFamily(), T0::SGetId()));
+}
+
+// ccscontrolsystem.h, ccscscover.h, ccscsmovement.h
+inline int CCSControlSystem::SGetFamily() { return 2; }
+inline int CCSControlSystem::GetFamily() const { return SGetFamily(); }
+inline int CCSCSCover::SGetId() { return CST_COVER; }
+inline int CCSCSCover::GetId() const { return SGetId(); }
+inline int CCSCSMovement::SGetId() { return CST_MOVEMENT; }
+inline int CCSCSMovement::GetId() const { return SGetId(); }
+
+#ifndef HAGGAR_HOST
+// ccsafaction.h
+inline CCSAFAction::CCSAFAction() : m_pMeatPuppet(0) {}
+#endif
