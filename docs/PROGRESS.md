@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-19 (n-Space's C++: 1,226 of 1,258 functions matched). Matching progress is
+Updated 2026-10-19 (n-Space's C++: 1,237 of 1,258 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -22,36 +22,35 @@ then Phase 5 (UDK rebuild, later).
 
 1,258 functions (136,660 bytes) are in scope: the `nspace` rows of
 `config/functions.csv`. `config/status.csv` records every function that isn't
-`todo`. **1,226 are matched (115,044 bytes, 84%), 6 are near (1,904 bytes)
-and 26 are todo (19,712 bytes)**; 1,278 functions match in all, counting the
+`todo`. **1,237 are matched (121,312 bytes, 89%), 8 are near (3,864 bytes)
+and 13 are todo (11,484 bytes)**; 1,296 functions match in all, counting the
 Grip, CCS and Epic helpers that the same objects keep out of line.
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 962 | 108,304 | 933 | 4 | 25 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 962 | 108,304 | 943 | 6 | 13 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 195 | 18,544 | 195 | 0 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 42 | 5,784 | 42 | 0 | 0 |
-| `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 31 | 2 | 1 |
+| `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
 | `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 25 | 0 | 0 |
 
-Each remaining function has a comment in its source file saying why it
-isn't matched. In short:
+Every function has now been written. Each one that doesn't match has a
+comment in its source file saying why. In short:
 
-- **Not attempted yet** (large): `ACCSController::Tick`, `TakePossession` and
-  `DrawHUD`; `AUSSController::DrawHUD` and `PostPollMove`; `CCSBlackboard`'s
-  `RegisterMembers`, `GetSpecificTarget`, `UpdateTargetListsByRange` and
-  `UpdateTargetPointers`; two `GetNodeTitle` cpptext functions;
-  `AutoInitializeRegistrantsMegaHaloGame` (needs `TMap`/`TSet`).
-- **Written, not matched:** the code is retail's but registers, stack slots or
-  inlining differ: the `CCSAF*` actions' `UpdateGoal`/`UpdateMoveTarget`/`Tick`,
-  `CCSBlackboard`'s constructor and destructor, `UCCSActorFactory::CreateActor`
-  (retail calls two `StaticClass` out of line), `AUSSPawn::CanAim` and
-  `TickSpecial` (a rotator kept in a stack copy), `ACCSController::SetState`
-  and `RemoveState`, `HaloRBTKamikaze::ExecuteInternal`.
-- **Near (6):** `UHaloSaveGame::BasicSerializeObject` and
+- **Todo (13), the code is retail's but registers, stack slots or inlining
+  differ:** `ACCSController::Tick` (retail inlines `FVector::Normalize`,
+  which it calls out of line elsewhere), `SetState` and `RemoveState`
+  (argument order), `AUSSController::PostPollMove`, `AUSSPawn::TickSpecial`
+  (a rotator kept in a stack copy), the `CCSAF*` actions' `UpdateGoal`,
+  `UpdateMoveTarget` and `Tick`, `CCSBlackboard`'s constructor and destructor,
+  `UCCSActorFactory::CreateActor` (retail calls two `StaticClass` out of
+  line) and `HaloRBTKamikaze::ExecuteInternal`.
+- **Near (8):** `UHaloSaveGame::BasicSerializeObject` and
   `BasicDeserializeObject`, `CCSTarget::FindDestinationReachable`,
-  `UCCSBlackboard::GetCovers` and `GetTargets`, `AUSSPawn::MoveToInCover`: a
-  swapped register pair or operand order.
+  `UCCSBlackboard::GetCovers` and `GetTargets`,
+  `ACCSController::CalcAccuracyAngles`, `CCSBlackboard::GetSpecificTarget` and
+  `UpdateTargetListsByRange`: a swapped register pair, operand order or
+  schedule.
 
 The inline layer they rest on is hand-written in `include/`: `Core/Inc/Core.h`
 (memory, `check()`, `Min`/`Max` with `fsel`, `appSqrt`), `Core/Inc/Array.h`
