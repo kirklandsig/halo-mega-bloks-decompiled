@@ -40,3 +40,12 @@ inline UClass *UObject::StaticClass()
     }
     return PrivateStaticClass;
 }
+
+// IMPLEMENT_FUNCTION: a native's entry for the script VM, registered at startup
+typedef void (UObject::*Native)(FFrame &TheStack, void *const Result);
+unsigned char GRegisterNative(int iNative, const Native &Func);
+#define IMPLEMENT_FUNCTION(cls, num, func)                       \
+    extern "C" {                                                 \
+    Native int##cls##func = (Native)&cls::func;                  \
+    }                                                            \
+    static unsigned char cls##func##Temp = GRegisterNative(num, int##cls##func);

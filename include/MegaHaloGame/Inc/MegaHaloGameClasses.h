@@ -16,7 +16,9 @@ class FDefaultAllocator;
 class FDefaultBitArrayAllocator;
 class FDefaultSetAllocator;
 class FEditPropertyChain;
+class FExec;
 class FExportObjectInnerContext;
+struct FExposedTextureLODSettings;
 class FFeedbackContext;
 struct FFrame;
 class FGuid;
@@ -34,6 +36,9 @@ struct FScriptDelegate;
 class FSerializableObject;
 struct FStateFrame;
 class FString;
+class FSystemSetting;
+class FSystemSettings;
+struct FTextureLODSettings;
 class UArrayProperty;
 class UClass;
 class UComponent;
@@ -49,6 +54,7 @@ class UPackageMap;
 class UProperty;
 class UState;
 class UStruct;
+class UTexture;
 enum EClassCastFlag
 {
     CASTCLASS_None = 0,
@@ -749,9 +755,92 @@ enum ENoInit
 {
     E_NoInit = 0,
 };
+enum ESamplerFilter
+{
+    SF_Point = 0,
+    SF_Bilinear = 1,
+    SF_Trilinear = 2,
+    SF_AnisotropicPoint = 3,
+    SF_AnisotropicLinear = 4,
+};
 enum EStaticConstructor
 {
     EC_StaticConstructor = 0,
+};
+enum ESystemSettingIntent
+{
+    SSI_UNKNOWN = 0,
+    SSI_DEBUG = 1,
+    SSI_COMPATIBILITY = 2,
+    SSI_SCALABILITY = 3,
+    SSI_MOBILE_SCALABILITY = 4,
+    SSI_PREFERENCE = 5,
+};
+enum ESystemSettingType
+{
+    SST_UNKNOWN = 0,
+    SST_STRING = 1,
+    SST_INT = 2,
+    SST_ENUM = 3,
+    SST_FLOAT = 4,
+    SST_BOOL = 5,
+    SST_ANY = 6,
+};
+enum TextureGroup
+{
+    TEXTUREGROUP_World = 0,
+    TEXTUREGROUP_WorldNormalMap = 1,
+    TEXTUREGROUP_WorldSpecular = 2,
+    TEXTUREGROUP_Character = 3,
+    TEXTUREGROUP_CharacterNormalMap = 4,
+    TEXTUREGROUP_CharacterSpecular = 5,
+    TEXTUREGROUP_Weapon = 6,
+    TEXTUREGROUP_WeaponNormalMap = 7,
+    TEXTUREGROUP_WeaponSpecular = 8,
+    TEXTUREGROUP_Vehicle = 9,
+    TEXTUREGROUP_VehicleNormalMap = 10,
+    TEXTUREGROUP_VehicleSpecular = 11,
+    TEXTUREGROUP_Cinematic = 12,
+    TEXTUREGROUP_Effects = 13,
+    TEXTUREGROUP_EffectsNotFiltered = 14,
+    TEXTUREGROUP_Skybox = 15,
+    TEXTUREGROUP_UI = 16,
+    TEXTUREGROUP_Lightmap = 17,
+    TEXTUREGROUP_RenderTarget = 18,
+    TEXTUREGROUP_MobileFlattened = 19,
+    TEXTUREGROUP_ProcBuilding_Face = 20,
+    TEXTUREGROUP_ProcBuilding_LightMap = 21,
+    TEXTUREGROUP_Shadowmap = 22,
+    TEXTUREGROUP_ColorLookupTable = 23,
+    TEXTUREGROUP_Terrain_Heightmap = 24,
+    TEXTUREGROUP_Terrain_Weightmap = 25,
+    TEXTUREGROUP_ImageBasedReflection = 26,
+    TEXTUREGROUP_Bokeh = 27,
+    TEXTUREGROUP_MAX = 28,
+};
+enum TextureMipGenSettings
+{
+    TMGS_FromTextureGroup = 0,
+    TMGS_SimpleAverage = 1,
+    TMGS_Sharpen0 = 2,
+    TMGS_Sharpen1 = 3,
+    TMGS_Sharpen2 = 4,
+    TMGS_Sharpen3 = 5,
+    TMGS_Sharpen4 = 6,
+    TMGS_Sharpen5 = 7,
+    TMGS_Sharpen6 = 8,
+    TMGS_Sharpen7 = 9,
+    TMGS_Sharpen8 = 10,
+    TMGS_Sharpen9 = 11,
+    TMGS_Sharpen10 = 12,
+    TMGS_NoMipmaps = 13,
+    TMGS_LeaveExistingMips = 14,
+    TMGS_Blur1 = 15,
+    TMGS_Blur2 = 16,
+    TMGS_Blur3 = 17,
+    TMGS_Blur4 = 18,
+    TMGS_Blur5 = 19,
+    TMGS_MAX = 20,
 };
 
 namespace UE3 {
@@ -869,67 +958,10 @@ class FDefaultSetAllocator : public TSetAllocator<TSparseArrayAllocator<FDefault
 {
 };
 
-class FName  // size 0x8, opaque
+class FExec  // size 0x4, opaque
 {
 public:
-    int GetIndex() const;
-    int GetNumber() const;
-    const FString GetNameString() const;
-    void ToString(FString &) const;
-    FString ToString() const;
-    void AppendString(FString &) const;
-    unsigned int HasAnyFlags(unsigned __int64) const;
-    void SetFlags(unsigned __int64) const;
-    void ClearFlags(unsigned __int64) const;
-    unsigned int operator==(const wchar_t *) const;
-    unsigned int operator==(const FName &) const;
-    unsigned int operator!=(const FName &) const;
-    unsigned int IsValid() const;
-    int Compare(const FName &) const;
-    FName(ELinkerNameTableConstructor, const char *);
-    FName(ELinkerNameTableConstructor, const wchar_t *);
-    FName(const wchar_t *, int, EFindName);
-    FName(int);
-    FName(const char *, EFindName);
-    FName(const wchar_t *, EFindName, unsigned int);
-    FName();
-    FName(EName, int);
-    FName(EName);
-    static void StaticInit();
-    static void DisplayHash(FOutputDevice &);
-    static void Hardcode(FNameEntry *);
-    static FString SafeString(EName, int);
-    static unsigned int SafeSuppressed(EName);
-    static int GetMaxNames();
-    static int GetNameEntryMemorySize();
-    static int GetNameTableMemorySize();
-    static int GetNumAnsiNames();
-    static int GetNumUnicodeNames();
-    static FNameEntry *GetEntry(int);
-    static unsigned int GetInitialized();
-    static void SplitOldName(const wchar_t *, FString &, int &);
-    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
-private:
-    static unsigned int &GetIsInitialized();
-    void Init(const char *, int, EFindName);
-    void Init(const wchar_t *, int, EFindName, unsigned int);
-public:
-    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
-private:
-    static TArrayNoInit<FNameEntry *> Names;
-    static FNameEntry *NameHash[4096];
-    static int NameEntryMemorySize;
-    static int NumAnsiNames;
-    static int NumUnicodeNames;
-    unsigned int FNameData[0x2];
-};
-
-struct FReferencerInformation  // size 0x14, opaque
-{
-public:
-    FReferencerInformation(UObject *, int, const TArray<UProperty *,FDefaultAllocator> &);
-private:
-    unsigned int FReferencerInformationData[0x5];
+    virtual unsigned int Exec(const wchar_t *, FOutputDevice &);
 };
 
 template <> class TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
@@ -1083,6 +1115,247 @@ public:
     FString ConvertTabsToSpaces(const int);
     static FString FormatAsNumber(int);
     void Reserve(const unsigned int);
+};
+
+struct FTextureLODSettings  // size 0x2A0, opaque
+{
+public:
+    struct FTextureLODGroup;
+    void Initialize(const wchar_t *, const wchar_t *);
+    int CalculateLODBias(UTexture *) const;
+    void ComputeInGameMaxResolution(int, UTexture &, unsigned int &, unsigned int &) const;
+    void GetMipGenSettings(UTexture &, float &, unsigned int &, unsigned int &, unsigned int &, unsigned int &) const;
+    int GetTextureLODGroupLODBias(int) const;
+    int GetNumStreamedMips(int) const;
+    ESamplerFilter GetSamplerFilter(const UTexture *) const;
+    static TArray<FString,FDefaultAllocator> GetTextureGroupNames();
+protected:
+    void ReadEntry(int, const wchar_t *, const wchar_t *, const wchar_t *);
+    const FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(TextureGroup) const;
+private:
+    unsigned int FTextureLODSettingsData[0xA8];
+};
+
+struct FExposedTextureLODSettings : public FTextureLODSettings  // size 0x2A0, opaque
+{
+public:
+    const FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(int) const;
+    FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(int);
+};
+
+class FName  // size 0x8, opaque
+{
+public:
+    int GetIndex() const;
+    int GetNumber() const;
+    const FString GetNameString() const;
+    void ToString(FString &) const;
+    FString ToString() const;
+    void AppendString(FString &) const;
+    unsigned int HasAnyFlags(unsigned __int64) const;
+    void SetFlags(unsigned __int64) const;
+    void ClearFlags(unsigned __int64) const;
+    unsigned int operator==(const wchar_t *) const;
+    unsigned int operator==(const FName &) const;
+    unsigned int operator!=(const FName &) const;
+    unsigned int IsValid() const;
+    int Compare(const FName &) const;
+    FName(ELinkerNameTableConstructor, const char *);
+    FName(ELinkerNameTableConstructor, const wchar_t *);
+    FName(const wchar_t *, int, EFindName);
+    FName(int);
+    FName(const char *, EFindName);
+    FName(const wchar_t *, EFindName, unsigned int);
+    FName();
+    FName(EName, int);
+    FName(EName);
+    static void StaticInit();
+    static void DisplayHash(FOutputDevice &);
+    static void Hardcode(FNameEntry *);
+    static FString SafeString(EName, int);
+    static unsigned int SafeSuppressed(EName);
+    static int GetMaxNames();
+    static int GetNameEntryMemorySize();
+    static int GetNameTableMemorySize();
+    static int GetNumAnsiNames();
+    static int GetNumUnicodeNames();
+    static FNameEntry *GetEntry(int);
+    static unsigned int GetInitialized();
+    static void SplitOldName(const wchar_t *, FString &, int &);
+    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
+private:
+    static unsigned int &GetIsInitialized();
+    void Init(const char *, int, EFindName);
+    void Init(const wchar_t *, int, EFindName, unsigned int);
+public:
+    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
+private:
+    static TArrayNoInit<FNameEntry *> Names;
+    static FNameEntry *NameHash[4096];
+    static int NameEntryMemorySize;
+    static int NumAnsiNames;
+    static int NumUnicodeNames;
+    unsigned int FNameData[0x2];
+};
+
+struct FReferencerInformation  // size 0x14, opaque
+{
+public:
+    FReferencerInformation(UObject *, int, const TArray<UProperty *,FDefaultAllocator> &);
+private:
+    unsigned int FReferencerInformationData[0x5];
+};
+
+class FSystemSettings : public FExec  // size 0x488
+{
+public:
+    FSystemSettings();
+    virtual unsigned int Exec(const wchar_t *, FOutputDevice &);
+    void Initialize(unsigned int);
+    unsigned int LoadFromIni(const wchar_t *);
+    void LoadFromIni(const FString, const wchar_t *, unsigned int);
+    void SaveToIni();
+    void SaveToIni(const FString);
+    FString GetLODGroupString(TextureGroup, const wchar_t *);
+    void WriteTextureLODGroupToIni(TextureGroup, const wchar_t *, const wchar_t *);
+    void WriteTextureLODGroupsToIni(const wchar_t *);
+    void SetTextureLODGroup(TextureGroup, int, int, int, TextureMipGenSettings);
+    void Dump(FOutputDevice &, ESystemSettingIntent);
+    void DumpTextures(FOutputDevice &);
+    void DumpTextureLODGroup(FOutputDevice &, TextureGroup, const wchar_t *);
+    FSystemSetting *FindSystemSetting(FString &, ESystemSettingType);
+    unsigned int NeedsUpscale() const;
+    unsigned int UsesMSAA() const;
+    void SetResolution(int, int, unsigned int);
+    void ScaleScreenCoords(int &, int &, unsigned int &, unsigned int &);
+    void UnScaleScreenCoords(int &, int &, unsigned int &, unsigned int &, float, float, float, float);
+    void ApplyOverrides();
+    void ApplySettings(FSystemSettings &);
+    void ApplyNewSettings(const FSystemSettings &, unsigned int);
+    void UpdateSplitScreenSettings();
+    unsigned int UpdateTextureStreaming();
+    static void SceneRenderTargetsUpdateRHI(const FSystemSettings &, const FSystemSettings &);
+    int DetailMode;  // 0x4
+    float MaxDrawDistanceScale;  // 0x8
+    unsigned int bAllowSpeedTreeLeaves;  // 0xC
+    unsigned int bAllowSpeedTreeFronds;  // 0x10
+    unsigned int bAllowStaticDecals;  // 0x14
+    unsigned int bAllowDynamicDecals;  // 0x18
+    unsigned int bAllowUnbatchedDecals;  // 0x1C
+    float DecalCullDistanceScale;  // 0x20
+    unsigned int bAllowDynamicLights;  // 0x24
+    unsigned int bUseCompositeDynamicLights;  // 0x28
+    unsigned int bAllowSHSecondaryLighting;  // 0x2C
+    unsigned int bAllowDirectionalLightMaps;  // 0x30
+    unsigned int bAllowMotionBlur;  // 0x34
+    unsigned int bAllowMotionBlurPause;  // 0x38
+    unsigned int bAllowDepthOfField;  // 0x3C
+    unsigned int bAllowAmbientOcclusion;  // 0x40
+    unsigned int bAllowBloom;  // 0x44
+    unsigned int bAllowLightShafts;  // 0x48
+    unsigned int bAllowDistortion;  // 0x4C
+    unsigned int bAllowFilteredDistortion;  // 0x50
+    unsigned int bAllowParticleDistortionDropping;  // 0x54
+    unsigned int bAllowDownsampledTranslucency;  // 0x58
+    unsigned int bAllowLensFlares;  // 0x5C
+    unsigned int bAllowFogVolumes;  // 0x60
+    unsigned int bAllowFloatingPointRenderTargets;  // 0x64
+    unsigned int bAllowOneFrameThreadLag;  // 0x68
+    int SkeletalMeshLODBias;  // 0x6C
+    int ParticleLODBias;  // 0x70
+    unsigned int bAllowD3D11;  // 0x74
+    unsigned int bAllowOpenGL;  // 0x78
+    unsigned int bAllowRadialBlur;  // 0x7C
+    unsigned int bAllowSubsurfaceScattering;  // 0x80
+    unsigned int bAllowImageReflections;  // 0x84
+    unsigned int bAllowImageReflectionShadowing;  // 0x88
+    int MotionBlurSkinning;  // 0x8C
+    float TessellationAdaptivePixelsPerTriangle;  // 0x90
+    unsigned int bHighPrecisionGBuffers;  // 0x94
+    unsigned int bAllowSeparateTranslucency;  // 0x98
+    unsigned int bAllowPostprocessMLAA;  // 0x9C
+    unsigned int bAllowHighQualityMaterials;  // 0xA0
+    int MaxFilterBlurSampleCount;  // 0xA4
+    unsigned int bAllowFracturedDamage;  // 0xA8
+    float NumFracturedPartsScale;  // 0xAC
+    float FractureDirectSpawnChanceScale;  // 0xB0
+    float FractureRadialSpawnChanceScale;  // 0xB4
+    float FractureCullDistanceScale;  // 0xB8
+    unsigned int bAllowDynamicShadows;  // 0xBC
+    unsigned int bAllowLightEnvironmentShadows;  // 0xC0
+    int ShadowFilterQualityBias;  // 0xC4
+    int MinShadowResolution;  // 0xC8
+    int MinPreShadowResolution;  // 0xCC
+    int MaxShadowResolution;  // 0xD0
+    int MaxWholeSceneDominantShadowResolution;  // 0xD4
+    float ShadowTexelsPerPixel;  // 0xD8
+    float PreShadowResolutionFactor;  // 0xDC
+    unsigned int bEnableBranchingPCFShadows;  // 0xE0
+    unsigned int bAllowHardwareShadowFiltering;  // 0xE4
+    unsigned int bEnableForegroundShadowsOnWorld;  // 0xE8
+    unsigned int bEnableForegroundSelfShadowing;  // 0xEC
+    unsigned int bAllowWholeSceneDominantShadows;  // 0xF0
+    unsigned int bUseConservativeShadowBounds;  // 0xF4
+    float ShadowFilterRadius;  // 0xF8
+    float ShadowDepthBias;  // 0xFC
+    float PerObjectShadowTransition;  // 0x100
+    float PerSceneShadowTransition;  // 0x104
+    float CSMSplitPenumbraScale;  // 0x108
+    float CSMSplitSoftTransitionDistanceScale;  // 0x10C
+    float CSMSplitDepthBiasScale;  // 0x110
+    float CSMMinimumFOV;  // 0x114
+    float CSMFOVRoundFactor;  // 0x118
+    float UnbuiltWholeSceneDynamicShadowRadius;  // 0x11C
+    int UnbuiltNumWholeSceneDynamicShadowCascades;  // 0x120
+    int WholeSceneShadowUnbuiltInteractionThreshold;  // 0x124
+    int ShadowFadeResolution;  // 0x128
+    int PreShadowFadeResolution;  // 0x12C
+    float ShadowFadeExponent;  // 0x130
+    FExposedTextureLODSettings TextureLODSettings;  // 0x134
+    unsigned int bOnlyStreamInTextures;  // 0x3D4
+    int MaxAnisotropy;  // 0x3D8
+    float SceneCaptureStreamingMultiplier;  // 0x3DC
+    unsigned int bUseVSync;  // 0x3E0
+    float ScreenPercentage;  // 0x3E4
+    unsigned int bUpscaleScreenPercentage;  // 0x3E8
+    int ResX;  // 0x3EC
+    int ResY;  // 0x3F0
+    unsigned int bFullscreen;  // 0x3F4
+    int MaxMultiSamples;  // 0x3F8
+    unsigned int bAllowD3D9MSAA;  // 0x3FC
+    unsigned int bAllowTemporalAA;  // 0x400
+    float TemporalAA_MinDepth;  // 0x404
+    float TemporalAA_StartDepthVelocityScale;  // 0x408
+    unsigned int bForceCPUAccessToGPUSkinVerts;  // 0x40C
+    unsigned int bDisableSkeletalInstanceWeights;  // 0x410
+    unsigned int bAllowSecondaryDisplays;  // 0x414
+    int SecondaryDisplayMaximumWidth;  // 0x418
+    int SecondaryDisplayMaximumHeight;  // 0x41C
+    float ApexLODResourceBudget;  // 0x420
+    int ApexDestructionMaxChunkIslandCount;  // 0x424
+    int ApexDestructionMaxShapeCount;  // 0x428
+    float ApexDestructionMaxChunkSeparationLOD;  // 0x42C
+    unsigned int bEnableParallelApexClothingFetch;  // 0x430
+    unsigned int bApexDestructionSortByBenefit;  // 0x434
+    int ApexDestructionMaxActorCreatesPerFrame;  // 0x438
+    int ApexDestructionMaxFracturesProcessedPerFrame;  // 0x43C
+    int ApexClothingAvgSimFrequencyWindow;  // 0x440
+    unsigned int bEnableApexGRB;  // 0x444
+    float ApexGRBMeshCellSize;  // 0x448
+    float ApexGRBSkinWidth;  // 0x44C
+    int ApexGRBNonPenSolverPosIterCount;  // 0x450
+    int ApexGRBFrictionSolverPosIterCount;  // 0x454
+    int ApexGRBFrictionSolverVelIterCount;  // 0x458
+    float ApexGRBMaxLinAcceleration;  // 0x45C
+    int ApexGRBGpuMemSceneSize;  // 0x460
+    int ApexGRBGpuMemTempDataSize;  // 0x464
+    unsigned int bApexClothingAllowAsyncCooking;  // 0x468
+    unsigned int bApexClothingAllowApexWorkBetweenSubsteps;  // 0x46C
+    unsigned int bInit;  // 0x470
+    unsigned int bIsEditor;  // 0x474
+    FString SystemSettingName;  // 0x478
+    int NumberOfSystemSettings;  // 0x484
+    static FSystemSetting SystemSettings[0];
 };
 
 class UObject  // size 0x3C, opaque

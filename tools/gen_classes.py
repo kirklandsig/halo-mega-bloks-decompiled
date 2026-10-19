@@ -22,9 +22,10 @@ import inventory
 import paths
 import pdbtype
 
-# The members DECLARE_CLASS and NO_DEFAULT_CONSTRUCTOR define, by name.
-DECLARED = ('operator new', 'StaticClass', 'InternalConstructor')
-STATIC_CLASS_FLAGS = 0  # see class_flags()
+# Classes the hand-written code of a package needs in its header as well:
+# with their members (TARGETS) or opaque (OPAQUE).
+TARGETS = {'MegaHaloGame': ['FSystemSettings']}
+OPAQUE = {}
 
 
 def nspace_rows():
@@ -89,7 +90,8 @@ class Classes:
         self.rows = [r for r in rows if r['name'].rsplit('::', 1)[0] in self.classes] + self.events
         event_classes = sorted({r['name'].rsplit('::', 1)[0] for r in self.events})
         self.parms = [self.parms_name(r) for r in self.events if self._exists(self.parms_name(r))]
-        self.header = gen_header.Header(types, self.parms, self.classes + event_classes + ['UClass'])
+        self.header = gen_header.Header(types, self.parms + TARGETS.get(package, []),
+                                        self.classes + event_classes + ['UClass'] + OPAQUE.get(package, []))
         self.packages = script_packages()
 
     def _exists(self, name):
