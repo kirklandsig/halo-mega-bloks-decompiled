@@ -164,7 +164,9 @@ class Types:
         if kind == LF_POINTER:
             utype, attr = struct.unpack_from('<II', d, p)
             mode = (attr >> 5) & 7
-            star = '&' if mode in (1, 3) else '*'
+            star = '&' if mode in (1, 4) else '*'
+            if mode in (2, 3):  # pointer to member: the class follows the attributes
+                star = f'{self.name(struct.unpack_from("<I", d, p + 8)[0])}::*'
             inner = star + name
             ukind = self.record(utype)[0] if utype >= self.begin else None
             if ukind in (LF_ARRAY, LF_PROCEDURE, LF_MFUNCTION):
@@ -196,7 +198,7 @@ class Types:
         if kind != LF_ARGLIST:
             return '...'
         count, = struct.unpack_from('<I', self.data, p)
-        return ', '.join(self.name(t) for t in struct.unpack_from(f'<{count}I', self.data, p + 4))
+        return ', '.join(self.name(t) if t else '...' for t in struct.unpack_from(f'<{count}I', self.data, p + 4))
 
     def _fields(self, ti):
         """(leaf, position) of each subrecord of a field list, following LF_INDEX."""

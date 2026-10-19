@@ -134,8 +134,10 @@ class Header:
         for ti_m in self.nested(ti).values():
             if self._kind(ti_m) == pt.LF_ENUM:
                 self._need(ti_m, complete=True)
-        for m in self.members(ti) if name in self.targets else ():
-            if not self.blob_member(m[1]):
+        for m in self.members(ti):
+            if m[2] is None:  # static: declared in every class, never part of the layout
+                self._need(m[1], complete=False)
+            elif name in self.targets and not self.blob_member(m[1]):
                 self._need(m[1], complete=True)
         for m in self.methods(ti):
             self._need(m['type'], complete=False)
@@ -147,7 +149,10 @@ class Header:
         kind, p = self.t.record(ti)
         d = self.t.data
         if kind == pt.LF_POINTER:
-            self._need(struct.unpack_from('<I', d, p)[0], False)
+            utype, attr = struct.unpack_from('<II', d, p)
+            self._need(utype, False)
+            if (attr >> 5) & 7 in (2, 3):  # pointer to member: its class
+                self._need(struct.unpack_from('<I', d, p + 8)[0], False)
         elif kind == pt.LF_MODIFIER:
             self._need(struct.unpack_from('<I', d, p)[0], complete)
         elif kind == pt.LF_ARRAY:
@@ -412,9 +417,47 @@ class Header:
                 prev_off = off
             if size > cur:
                 emit(3, f'char _pad{pad}[0x{size - cur:X}];')
-        elif size > cur:
-            emit(1, f'char {ident(template_args(split_scope(name)[-1])[0])}Data[0x{size - cur:X}];')
+        else:
+            for mname, mtype, off, acc in self.members(ti):
+                if off is None:
+                    emit(acc, 'static ' + self.t.decl(mtype, mname) + ';')
+            if size > cur:
+                # the blob keeps the class's alignment, so copies stay word copies
+                blob = ident(template_args(split_scope(name)[-1])[0]) + 'Data'
+                align = min(self.alignment(ti), 4)
+                unit = {4: 'unsigned int', 2: 'unsigned short'}.get(align, 'char')
+                if align > 1 and cur % align == 0 and (size - cur) % align == 0:
+                    emit(1, f'{unit} {blob}[0x{(size - cur) // align:X}];')
+                else:
+                    emit(1, f'char {blob}[0x{size - cur:X}];')
         return lines
+
+    def alignment(self, ti):
+        """The alignment a record's own members give it (before -Zp4)."""
+        if ti < self.t.begin:
+            return 4 if ti & 0xF00 else max(1, min(self.t.sizeof(ti), 8))
+        kind, p = self.t.record(ti)
+        d = self.t.data
+        if kind in (pt.LF_MODIFIER, pt.LF_ARRAY, pt.LF_BITFIELD):
+            return self.alignment(struct.unpack_from('<I', d, p)[0])
+        if kind == pt.LF_POINTER:
+            return 4
+        if kind == pt.LF_ENUM:
+            return self.alignment(struct.unpack_from('<I', d, p + 4)[0])
+        if kind not in (pt.LF_CLASS, pt.LF_STRUCTURE, pt.LF_UNION):
+            return 1
+        ti = self.t._resolve(ti)
+        name = self._rname(ti)
+        if name == '__vector4':
+            return 16
+        cache = self.__dict__.setdefault('_align', {})
+        if ti not in cache:
+            cache[ti] = 1
+            out = [4] if self.has_vfptr(ti) else []
+            out += [self.alignment(b) for b, _o in self.bases(ti)]
+            out += [self.alignment(t) for _n, t, off, _a in self.members(ti) if off is not None]
+            cache[ti] = max(out or [1])
+        return cache[ti]
 
     def _first_slot(self, ti):
         """The first vtable slot `ti` itself introduces (after its primary base's)."""
@@ -486,6 +529,8 @@ class Header:
         for name in self.order():
             text, ns = self.render_class(name)
             out += self._wrap(ns or [], [text]) + ['']
+        if any('__vector4' in line for line in out):
+            out[1:1] = ['#include <vectorintrinsics.h>']
         return '\n'.join(out)
 
     def _keyword(self, name):

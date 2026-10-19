@@ -131,21 +131,21 @@ idioms are in `docs/DECOMPILING.md`; the worked example is
   - The parameter types and order come from the PDB's `*_Parms` types, with
     `script/` as a cross-check.
 
-- [ ] **Survey the 447 header rows and the 191 rows with no source.** Group
+- [x] **Survey the 447 header rows and the 191 rows with no source.** Group
   them by shape: event thunk, `exec` thunk, constructor, destructor, class
   registration, other.
   - Disassemble one of each.
   - Record the groups and their counts in `docs/DECOMPILING.md`.
-- [ ] **Write the tests.** `test_event_thunk_shapes` renders one thunk of
+- [x] **Write the tests.** `test_event_thunk_shapes` renders one thunk of
   each kind (no parameters, a return value, an out parameter, and a struct,
   string or array parameter) and compares it with expected text written
   from the disassembly. Run them and see them fail.
-- [ ] **Implement it, generate the code, and run `check.py`** over every
+- [x] **Implement it, generate the code, and run `check.py`** over every
   generated file.
   - Fix the generator until every group matches, or until what is left is a
     known `near` cause.
   - Expect most of the 638 to match.
-- [ ] **Write the matched count into `docs/PROGRESS.md`.** Commit, then
+- [x] **Write the matched count into `docs/PROGRESS.md`.** Commit, then
   push.
 
 ### Task 3: n-Space's AI code, object by object

@@ -66,6 +66,33 @@ python tools/gen_header.py HaloRBTKamikaze CCSBlackboard ... --opaque ICCSMeatPu
   doesn't list are added with `--add 'Class=decl'`.
 - The header's first lines record the command that wrote it.
 
+## Generated code
+
+`tools/gen_classes.py <Package>` writes what UE3's macros and its script
+compiler expand to, for n-Space's native classes:
+`include/<Package>/Inc/<Package>Classes.h` (declarations from gen_header.py,
+then the inline bodies) and `src/<Package>/Src/<Object>Classes.cpp` (the
+markers, and `IMPLEMENT_CLASS`'s two functions). Re-run it rather than
+editing its output.
+
+The 683 `nspace` rows whose source is a `*classes.h` header or that have no
+source line, by shape (matched after Phase 3's Task 2):
+
+| Group | Rows | Matched | What it is |
+| --- | ---: | ---: | --- |
+| `StaticClass` | 84 | 84 | `DECLARE_CLASS`: inline, builds the `UClass` on first use |
+| `operator new(size_t, EInternal *)` | 84 | 84 | `DECLARE_CLASS`: returns its argument |
+| `InternalConstructor` | 84 | 81 | `DECLARE_CLASS`: placement new of the class |
+| constructor | 85 | 80 | `NO_DEFAULT_CONSTRUCTOR`, the bases' empty constructors inlined |
+| destructor | 101 | 73 | `DECLARE_CLASS`: `ConditionalDestroy()`, then the base's destructor |
+| scalar deleting destructor, other compiler thunks | 100 | 73 | compiler-generated from the virtual destructor |
+| `event<Name>` thunk | 15 | 15 | script compiler: fill `_Parms`, `ProcessEvent` |
+| `exec<Name>` thunk | 64 | 0 | script compiler: read `FFrame` parameters, call the native |
+| other (cpptext inlines such as `GetType`) | 66 | 0 | hand-written in the class's `cpptext` |
+
+`IMPLEMENT_CLASS`'s `GetPrivateStaticClass<Class>` and
+`InitializePrivateStaticClass<Class>` (in the `.cpp` files) are generated too.
+
 ## The check
 
 ```
@@ -123,6 +150,19 @@ never written by it.
 - **Empty classes stay empty** (`GripHeapObject`, size 1 in the PDB). Giving
   one a byte of data breaks the empty-base layout of everything that
   derives from it.
+- **`check()` records `__LINE__`.** `IMPLEMENT_CLASS` expands on one
+  line, so its `check` carries the macro's line (the PDB's `line` column).
+  The generated code sets it with `#line`.
+- **Base destructors are inlined only when they destroy nothing.** A base
+  whose own members have destructors (`TArray`, `FString`) is called; one
+  without is inlined into the derived destructor.
+- **Opaque blobs keep the class's alignment** (`unsigned int` words for a
+  4-byte-aligned class), so a struct copy stays a word copy.
+- **`UBOOL` event parameters** are stored as `x ? FIRST_BITFIELD : 0`
+  (`0x80000000` on this big-endian target).
+- **Out-of-line copies under `#pragma inline_depth(0)`.** Taking a member's
+  address there (`extern decltype(&C::f) const p = &C::f;`) emits the copy
+  retail has, with the usual inlining inside it.
 - **Vector (VMX128) code** hasn't been matched yet. If you match some, add
   what you learn here.
 

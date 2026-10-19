@@ -31,7 +31,7 @@ def test_render_opaque_base():
     text = gen_header.render_class(make_types(), 'FDerived')
     assert 'struct FBase  // size 0x8, opaque' in text
     assert 'virtual ~FBase();' in text
-    assert 'char FBaseData[0x4];' in text
+    assert 'unsigned int FBaseData[0x1];' in text  # the blob keeps the vtable's 4-byte alignment
     assert 'Count' not in text
     assert 'struct FDerived : public FBase  // size 0x10' in text
     assert 'float Weight;  // 0x8' in text

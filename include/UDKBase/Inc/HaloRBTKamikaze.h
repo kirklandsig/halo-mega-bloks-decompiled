@@ -61,6 +61,7 @@ struct GripEvent;
 class GripGameEventHandler;
 class GripHUDRenderer;
 class GripHeapObject;
+class GripRBTAllocator;
 class GripRBTBehavior;
 class GripRBTNode;
 class GripRBTTree;
@@ -111,10 +112,6 @@ enum EFindName
     FNAME_Find = 0,
     FNAME_Add = 1,
     FNAME_Replace = 2,
-};
-enum EForceInit
-{
-    E_ForceInit = 0,
 };
 enum EGripBTNodeFamily
 {
@@ -700,10 +697,6 @@ enum EName
     NAME_Timer = 1210,
     NAME_PS3 = 1211,
 };
-enum ENoInit
-{
-    E_NoInit = 0,
-};
 enum EThreatType
 {
 };
@@ -978,7 +971,7 @@ public:
     void SetBlackboard(GripBlackboard *);
     const Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > &GetMembers() const;
 private:
-    char GripBBVisualizationData[0x14];
+    unsigned int GripBBVisualizationData[0x5];
 };
 
 class CCSBBVisualization : public GripBBVisualization  // size 0x18, opaque
@@ -1008,6 +1001,7 @@ public:
     Grip_Vector GetShootPosition(const CCS::ECoverShootConfig, const float) const;
     bool operator==(const CCSCover &) const;
     bool operator!=(const CCSCover &) const;
+    static const CCSCover NONE;
 private:
     char CCSCoverData[0x1F];
 };
@@ -1048,7 +1042,7 @@ public:
     void SetBlackboard(GripBlackboard *);
     void DirtyBlackboard();
 private:
-    char GripBBMemberData[0x18];
+    unsigned int GripBBMemberData[0x6];
 };
 
 template <> class Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > : public GripVHeapObject  // size 0x10, opaque
@@ -1079,8 +1073,10 @@ protected:
     void DestructItems(int, int);
     void ResizeTo(int);
     void DeleteContainerContent();
+public:
+    static const int increment;
 private:
-    char Grip_ArrayData[0xC];
+    unsigned int Grip_ArrayData[0x3];
 };
 
 template <> class GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > : public GripBBMember  // size 0x2C, opaque
@@ -1102,7 +1098,7 @@ public:
     const CCSCover &operator[](int) const;
     CCSCover &operator[](int);
 private:
-    char GripBBArrayData[0x10];
+    unsigned int GripBBArrayData[0x4];
 };
 
 struct CCSGameCharacter : public GripHeapObject  // size 0x14
@@ -1222,7 +1218,7 @@ public:
     static void checkInvalidDelete(Kaim::RefCountNTSImplCore *);
     void operator=(const Kaim::RefCountNTSImplCore &);
 private:
-    char RefCountNTSImplCoreData[0x4];
+    unsigned int RefCountNTSImplCoreData[0x1];
 };
 }
 
@@ -1317,7 +1313,7 @@ public:
     unsigned int GetShallowBlobSize() const;
     void SwapEndianess(Kaim::Endianness::Target);
 private:
-    char BaseBlobHandlerData[0x14];
+    unsigned int BaseBlobHandlerData[0x5];
 };
 }
 
@@ -1331,7 +1327,7 @@ public:
     static void checkInvalidDelete(Kaim::RefCountImplCore *);
     void operator=(const Kaim::RefCountImplCore &);
 private:
-    char RefCountImplCoreData[0x4];
+    unsigned int RefCountImplCoreData[0x1];
 };
 }
 
@@ -1430,7 +1426,7 @@ public:
     void BindToDatabase(Kaim::Database *);
     void Initialize();
 private:
-    char IQueryData[0x1C];
+    unsigned int IQueryData[0x7];
 };
 }
 
@@ -1443,7 +1439,7 @@ public:
     virtual ~ITimeSlicedQuery();
     void Initialize();
 private:
-    char ITimeSlicedQueryData[0x8];
+    unsigned int ITimeSlicedQueryData[0x2];
 };
 }
 
@@ -1471,7 +1467,7 @@ public:
     void SetNavigationProfileId(unsigned int);
     unsigned int GetNavigationProfileId() const;
 private:
-    char IPathFinderQueryData[0x2C];
+    unsigned int IPathFinderQueryData[0xB];
 };
 }
 
@@ -1529,7 +1525,7 @@ protected:
     virtual ~BaseAStarQuery();
     void SetResult(Kaim::AStarQueryResult);
 private:
-    char BaseAStarQueryData[0x84];
+    unsigned int BaseAStarQueryData[0x21];
 };
 }
 
@@ -1618,7 +1614,7 @@ protected:
     bool HasExplorationReachedDestNode();
     bool ShouldReturnAfterTryingCanGo(Kaim::WorkingMemory *);
 private:
-    char AStarQueryData[0x48];
+    unsigned int AStarQueryData[0x12];
 };
 }
 
@@ -1657,7 +1653,7 @@ public:
     Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
     Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
 private:
-    char PtrData[0x4];
+    unsigned int PtrData[0x1];
 };
 }
 
@@ -1749,8 +1745,10 @@ protected:
     void DestructItems(int, int);
     void ResizeTo(int);
     void DeleteContainerContent();
+public:
+    static const int increment;
 private:
-    char Grip_ArrayData[0xC];
+    unsigned int Grip_ArrayData[0x3];
 };
 
 template <> class GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > : public GripBBMember  // size 0x2C, opaque
@@ -1772,7 +1770,7 @@ public:
     const CCSTarget &operator[](int) const;
     CCSTarget &operator[](int);
 private:
-    char GripBBArrayData[0x10];
+    unsigned int GripBBArrayData[0x4];
 };
 
 template <> class GripBBProperty<CCSCover> : public GripBBMember  // size 0x3C, opaque
@@ -1783,7 +1781,7 @@ public:
     const CCSCover &Get() const;
     void Set(const CCSCover &);
 private:
-    char GripBBPropertyData[0x20];
+    unsigned int GripBBPropertyData[0x8];
 };
 
 template <> class GripBBProperty<CCSTarget *> : public GripBBMember  // size 0x20
@@ -1867,8 +1865,9 @@ public:
     FString ToString() const;
     unsigned int InitFromString(const FString &);
     void SerializeCompressed(FArchive &);
+    static FVector ZeroVector;
 private:
-    char FVectorData[0xC];
+    unsigned int FVectorData[0x3];
 };
 
 template <> class GripBBProperty<FVector> : public GripBBMember  // size 0x28, opaque
@@ -1879,7 +1878,7 @@ public:
     const FVector &Get() const;
     void Set(const FVector &);
 private:
-    char GripBBPropertyData[0xC];
+    unsigned int GripBBPropertyData[0x3];
 };
 
 template <> class GripBBProperty<Grip_Vector> : public GripBBMember  // size 0x28, opaque
@@ -1890,7 +1889,7 @@ public:
     const Grip_Vector &Get() const;
     void Set(const Grip_Vector &);
 private:
-    char GripBBPropertyData[0xC];
+    unsigned int GripBBPropertyData[0x3];
 };
 
 template <> class GripBBProperty<UClass *> : public GripBBMember  // size 0x20, opaque
@@ -1901,7 +1900,7 @@ public:
     UClass *&Get() const;
     void Set(UClass *&);
 private:
-    char GripBBPropertyData[0x4];
+    unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<bool> : public GripBBMember  // size 0x20, opaque
@@ -1912,7 +1911,7 @@ public:
     const bool &Get() const;
     void Set(const bool &);
 private:
-    char GripBBPropertyData[0x4];
+    unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<enum EEventType> : public GripBBMember  // size 0x20, opaque
@@ -1923,7 +1922,7 @@ public:
     const EEventType &Get() const;
     void Set(const EEventType &);
 private:
-    char GripBBPropertyData[0x4];
+    unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<enum EThreatType> : public GripBBMember  // size 0x20, opaque
@@ -1934,7 +1933,7 @@ public:
     const EThreatType &Get() const;
     void Set(const EThreatType &);
 private:
-    char GripBBPropertyData[0x4];
+    unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<float> : public GripBBMember  // size 0x20, opaque
@@ -1945,7 +1944,7 @@ public:
     const float &Get() const;
     void Set(const float &);
 private:
-    char GripBBPropertyData[0x4];
+    unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<int> : public GripBBMember  // size 0x20, opaque
@@ -1956,7 +1955,7 @@ public:
     const int &Get() const;
     void Set(const int &);
 private:
-    char GripBBPropertyData[0x4];
+    unsigned int GripBBPropertyData[0x1];
 };
 
 namespace Grip {
@@ -2064,8 +2063,9 @@ public:
     bool operator>(const char *) const;
     const char &operator[](unsigned int) const;
     const char &operator[](int) const;
+    static Grip::String::DataDesc NullData;
 private:
-    char StringData[0x4];
+    unsigned int StringData[0x1];
 };
 }
 
@@ -2118,7 +2118,7 @@ public:
     void SetDirty();
     void ClearDirty();
 private:
-    char GripBlackboardData[0x88];
+    unsigned int GripBlackboardData[0x22];
 };
 
 class CCSBlackboard : public GripBlackboard  // size 0x67C
@@ -2243,7 +2243,7 @@ struct GripSystemConfig : public GripVHeapObject  // size 0x4, opaque
 struct CCSSystemsConfig : public GripSystemConfig  // size 0x34, opaque
 {
 private:
-    char CCSSystemsConfigData[0x30];
+    unsigned int CCSSystemsConfigData[0xC];
 };
 
 namespace Grip {
@@ -2279,7 +2279,7 @@ public:
     void Reset();
     GripBTSystemFlags &operator|=(const GripBTSystemFlags &);
 private:
-    char GripBTSystemFlagsData[0x4];
+    unsigned int GripBTSystemFlagsData[0x1];
 };
 
 class IGripBTInterface  // size 0x4, opaque
@@ -2370,8 +2370,10 @@ public:
     void AddDebugRenderer(IGripSRComponent *);
     void RemoveDebugRenderer(IGripSRComponent *);
     GripRBTTree *GetBehaviorTree();
+protected:
+    static int ms_brainCounter;
 private:
-    char GripBrainData[0x90];
+    unsigned int GripBrainData[0x24];
 };
 
 class CCSBrain : public GripBrain  // size 0xFC
@@ -2492,8 +2494,11 @@ public:
     int GetNodeID() const;
     void SetName(Grip::String);
     Grip::String GetJSONRepresentation();
+protected:
+    static int ms_IDCounter;
+    static GripRBTAllocator *ms_pAllocator;
 private:
-    char GripRBTNodeData[0x60];
+    unsigned int GripRBTNodeData[0x18];
 };
 
 class GripRBTBehavior : public GripRBTNode  // size 0x64, opaque
@@ -2541,7 +2546,7 @@ public:
     void SetObjectiveTargetWeight(float);
 private:
     CCSTarget *GetSecondaryTarget(IGripBTInterface *);
-    char CCSRBTMoveToData[0x40];
+    unsigned int CCSRBTMoveToData[0x10];
 };
 
 class FHeapAllocator  // size 0x1, opaque
@@ -2555,84 +2560,6 @@ public:
 
 class FDefaultAllocator : public FHeapAllocator  // size 0x1, opaque
 {
-};
-
-template <> class TArray<FNameEntry *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    TArray(const TArray<FNameEntry *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    FNameEntry **GetTypedData() const;
-    FNameEntry **GetTypedData();
-    FNameEntry **GetData() const;
-    FNameEntry **GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    FNameEntry *&operator()(int) const;
-    FNameEntry *&operator()(int);
-    FNameEntry *Pop();
-    void Push(FNameEntry *&);
-    FNameEntry *&Top() const;
-    FNameEntry *&Top();
-    FNameEntry *&Last(int) const;
-    FNameEntry *&Last(int);
-    void Shrink();
-    unsigned int FindItem(FNameEntry *&, int &) const;
-    int FindItemIndex(FNameEntry *&) const;
-    unsigned int ContainsItem(FNameEntry *&) const;
-    unsigned int operator==(const TArray<FNameEntry *,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<FNameEntry *,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(FNameEntry *&, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<FNameEntry *,FDefaultAllocator> &);
-    TArray<FNameEntry *,FDefaultAllocator> &operator+=(const TArray<FNameEntry *,FDefaultAllocator> &);
-    TArray<FNameEntry *,FDefaultAllocator> &operator=(const TArray<FNameEntry *,FDefaultAllocator> &);
-    int AddItem(FNameEntry *&);
-    int AddZeroed(int);
-    int AddUniqueItem(FNameEntry *&);
-    void Reserve(int);
-    void Init(FNameEntry *&, int);
-    void Init(int);
-    int RemoveSingleItem(FNameEntry *&);
-    int RemoveItem(FNameEntry *&);
-    int RemoveSingleItemSwap(FNameEntry *&);
-    int RemoveItemSwap(FNameEntry *&);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-private:
-    FNameEntry *&DebugGet(int) const;
-protected:
-    void DestructItems(int, int);
-private:
-    char TArrayData[0xC];
-};
-
-template <> class TArrayNoInit<FNameEntry *> : public TArray<FNameEntry *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
-    TArrayNoInit<FNameEntry *> &operator=(const TArray<FNameEntry *,FDefaultAllocator> &);
-    TArrayNoInit<FNameEntry *> &operator=(const TArrayNoInit<FNameEntry *> &);
 };
 
 class FName  // size 0x8

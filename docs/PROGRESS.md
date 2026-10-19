@@ -7,16 +7,17 @@ charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompi
 
 1,258 functions (136,660 bytes) are in scope: the `nspace` rows of
 `config/functions.csv`. `config/status.csv` records every function that isn't
-`todo`. 10 functions are matched so far, 8 of them in scope (the other 2 are
-Grip and CCS helpers of the same object, owned by `epic`).
+`todo`. **665 are matched and 4 are near** (667 matched in all, counting 2
+Grip and CCS helpers owned by `epic`). Most come from `tools/gen_classes.py`:
+the code UE3's class macros and the script compiler's event thunks expand to.
 
-| Object | `nspace` functions | Bytes | Matched |
-| --- | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 962 | 108,304 | 8 |
-| `Unity_UDKWeaponEtAl.cpp.obj` | 195 | 18,544 | 0 |
-| `Unity_UDKCoverEtAl.cpp.obj` | 42 | 5,784 | 0 |
-| `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 0 |
-| `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 0 |
+| Object | `nspace` functions | Bytes | Matched | Near |
+| --- | ---: | ---: | ---: | ---: |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 962 | 108,304 | 537 | 4 |
+| `Unity_UDKWeaponEtAl.cpp.obj` | 195 | 18,544 | 102 | 0 |
+| `Unity_UDKCoverEtAl.cpp.obj` | 42 | 5,784 | 12 | 0 |
+| `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 6 | 0 |
+| `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 8 | 0 |
 
 `owner` is a heuristic (see the design, "Where the code is"). Corrections are
 welcome.
