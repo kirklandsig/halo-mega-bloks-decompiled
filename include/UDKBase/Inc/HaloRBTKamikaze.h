@@ -3,13 +3,10 @@
 #pragma once
 
 namespace Grip {
-template <int T0> class AllocatorBaseGH;
 template <class T0, int T1> struct AllocatorGH;
-template <class T0> class ConstructorMov;
 struct MemAddressStub;
 class MemoryHeap;
 class String;
-class StringBuffer;
 }
 
 template <class T0, class T1> class GripBBArray;
@@ -31,20 +28,12 @@ class CCSGlobalBlackboard;
 class CCSRBTMoveTo;
 struct CCSSystemsConfig;
 struct CCSTarget;
-class FArchive;
 class FDefaultAllocator;
-class FHeapAllocator;
-struct FIntPoint;
-struct FLinearColor;
 class FName;
 struct FNameEntry;
 class FOutputDevice;
-class FPlane;
-class FRotator;
 class FString;
 class FVector;
-struct FVector2D;
-class FVector4;
 class GripAFFactory;
 class GripAFFramework;
 class GripAFScheduler;
@@ -92,10 +81,6 @@ enum EAITargetType
     AITargetType_AggressiveMobile = 3,
     AITargetType_AggressiveStationary = 4,
     AITargetType_MAX = 5,
-};
-enum EEventParm
-{
-    EC_EventParm = 0,
 };
 enum EEventType
 {
@@ -705,40 +690,7 @@ namespace Kaim {
 template <class T0> class AStarQuery;
 template <class T0> class Pickable;
 template <class T0> class Ptr;
-template <class T0, int T1> class RefCountBase;
-template <class T0, int T1> class RefCountBaseNTS;
-template <class T0, int T1> class RefCountBaseStatImpl;
-template <class T0> class SimpleTraverseLogic;
-class BaseAStarQuery;
-class BaseBlobHandler;
-class ChannelArray;
-class ChannelComputerConfig;
-class Database;
 class DefaultTraverseLogic;
-class DoNotUseCanEnterNavTag;
-class Endianness;
-class IBlobTypeDescriptor;
-class IPathFinderQuery;
-class IQuery;
-class ITimeSlicedQuery;
-struct MemAddressStub;
-class MemoryHeap;
-class NavGraphEdgePtr;
-class NavGraphVertexPtr;
-class NavTag;
-class NavTrianglePtr;
-class Path;
-class PathFinderQueryUtils;
-class PositionSpatializationRange;
-class RefCountImpl;
-class RefCountImplCore;
-class RefCountNTSImpl;
-class RefCountNTSImplCore;
-class ScopedDisplayList;
-class String;
-class Vec3f;
-class WorkingMemory;
-class World;
 enum AStarQueryResult
 {
     ASTAR_NOT_INITIALIZED = 0,
@@ -765,55 +717,9 @@ enum AStarQueryResult
     ASTAR_DONE_DEST_IS_START_NO_PATH = 21,
     ASTAR_DONE_PATH_FOUND = 22,
 };
-enum AStarQueryTryCanGoMode
-{
-    ASTAR_DO_NOT_TRY_RAYCANGO = 0,
-    ASTAR_DO_TRY_RAYCANGO = 1,
-};
-enum NavGraphEdgeDirection
-{
-    NAVGRAPHEDGE_MONODIRECTIONAL = 0,
-    NAVGRAPHEDGE_BIDIRECTIONAL = 1,
-};
-enum PathFinderQueryComputeChannelMode
-{
-    PATHFINDER_DO_NOT_COMPUTE_CHANNELS = 0,
-    PATHFINDER_DO_COMPUTE_CHANNELS = 1,
-};
-enum PathFinderQueryHookingMode
-{
-    PATHFINDER_TRY_TO_HOOK_ON_NAVMESH = 0,
-    PATHFINDER_DO_NOT_TRY_TO_HOOK_ON_NAVMESH = 1,
-};
 enum PickType
 {
     PickValue = 0,
-};
-enum QueryType
-{
-    TypeRayCanGo = 0,
-    TypeRayCast = 1,
-    TypeDiskCanGo = 2,
-    TypeDiskCast = 3,
-    TypeDiskCollision = 4,
-    TypeAStar = 5,
-    TypeTriangleFromPos = 6,
-    TypeMoveOnNavMesh = 7,
-    TypeSpatializedPointCollectorInAABB = 8,
-    TypeTriangleFromPosAndTriangleSeed = 9,
-    TypeNearestBorderHalfEdgeFromPos = 10,
-    TypeSegmentCast = 11,
-    TypeSegmentCanGo = 12,
-    TypeDiskExpansion = 13,
-    TypeInsidePosFromOutsidePos = 14,
-    TypeMultipleFloorTrianglesFromPos = 15,
-    TypeRayCanGoOnSegment = 16,
-    TypeRayCastOnSegment = 17,
-    TypeTagVolumeMerger = 18,
-    TypeFindFirstVisiblePositionOnPath = 19,
-    TypeBestGraphVertexPathFinderQuery = 20,
-    TypeCollisionRayCast = 21,
-    QueryType_FirstCustom = 22,
 };
 }
 
@@ -823,20 +729,6 @@ enum EAlertnessState
     AlertnessState_Relax = 0,
     AlertnessState_Alert = 1,
     AlertnessState_MAX = 2,
-};
-enum ECoverShootConfig
-{
-    CoverShootConfig_None = 0,
-    CoverShootConfig_All = 1,
-    CoverShootConfig_Left = 2,
-    CoverShootConfig_Right = 3,
-    CoverShootConfig_LeftOrRight = 4,
-};
-enum ECoverType
-{
-    CoverType_None = 0,
-    CoverType_Stand = 1,
-    CoverType_Crouch = 2,
 };
 enum EMovementSpeed
 {
@@ -852,84 +744,6 @@ enum EMovementType
     MovementType_Strafe = 3,
     MovementType_Encircle = 4,
     MovementType_MAX = 5,
-};
-}
-
-namespace Grip {
-template <> class AllocatorBaseGH<2>  // size 0x1, opaque
-{
-public:
-    enum
-    {
-        StatId = 2,
-    };
-    static void *Alloc(const void *, unsigned int, const char *, unsigned int);
-    static void *Realloc(void *, unsigned int, const char *, unsigned int);
-    static void Free(void *);
-};
-}
-
-class GripHeapObject  // size 0x1, opaque
-{
-public:
-    static void *operator new(unsigned int, void *);
-    static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
-    static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
-    static void *operator new(unsigned int, int, const char *, int);
-    static void *operator new(unsigned int, Grip::MemAddressStub *, const char *, int);
-    static void *operator new(unsigned int, Grip::MemoryHeap *, const char *, int);
-    static void *operator new(unsigned int, const char *, int);
-    static void *operator new(unsigned int, Grip::MemAddressStub *);
-    static void *operator new(unsigned int, Grip::MemoryHeap *, int);
-    static void *operator new(unsigned int, Grip::MemoryHeap *);
-    static void *operator new(unsigned int);
-    static void operator delete(void *, void *);
-    static void operator delete(void *, Grip::MemAddressStub *, int, const char *, int);
-    static void operator delete(void *, Grip::MemAddressStub *, const char *, int);
-    static void operator delete(void *, Grip::MemAddressStub *, int);
-    static void operator delete(void *, Grip::MemAddressStub *);
-    static void operator delete(void *, Grip::MemoryHeap *, int, const char *, int);
-    static void operator delete(void *, Grip::MemoryHeap *, const char *, int);
-    static void operator delete(void *, Grip::MemoryHeap *, int);
-    static void operator delete(void *, Grip::MemoryHeap *);
-    static void operator delete(void *, int, const char *, int);
-    static void operator delete(void *, const char *, int);
-    static void operator delete(void *);
-};
-
-struct GripSerializationMember : public GripHeapObject  // size 0xC, opaque
-{
-public:
-    GripSerializationMember(const char *, const char *, const char *);
-    GripSerializationMember(const char *, const char *);
-    GripSerializationMember(const Grip::String &, const Grip::String &, const Grip::String &);
-    GripSerializationMember(const Grip::String &, const Grip::String &);
-    GripSerializationMember();
-    void Serialize(GripSerializer *);
-private:
-    char GripSerializationMemberData[0xB];
-};
-
-namespace Grip {
-template <> class ConstructorMov<GripSerializationMember>  // size 0x1, opaque
-{
-public:
-    static void Construct(void *, const GripSerializationMember &);
-    static void Construct(void *);
-    static void ConstructArray(void *, unsigned int, const GripSerializationMember *);
-    static void ConstructArray(void *, unsigned int, const GripSerializationMember &);
-    static void ConstructArray(void *, unsigned int);
-    static void Destruct(GripSerializationMember *);
-    static void DestructArray(GripSerializationMember *, unsigned int);
-    static void CopyArrayForward(GripSerializationMember *, const GripSerializationMember *, unsigned int);
-    static void CopyArrayBackward(GripSerializationMember *, const GripSerializationMember *, unsigned int);
-    static bool IsMovable();
-};
-}
-
-namespace Grip {
-template <> struct AllocatorGH<GripSerializationMember,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<GripSerializationMember>  // size 0x1, opaque
-{
 };
 }
 
@@ -980,55 +794,6 @@ public:
     virtual void Refresh();
 };
 
-struct CCSCover : public GripHeapObject  // size 0x20, opaque
-{
-public:
-    CCSCover();
-    bool IsEnabled() const;
-    bool IsOccupied() const;
-    bool IsOccupiedBy(CCSCharacter);
-    bool OccupyCover(CCSCharacter);
-    bool VacateCover(CCSCharacter);
-    bool IsValid() const;
-    bool IsLocked() const;
-    bool IsLockedBy(CCSCharacter) const;
-    bool LockCover(CCSCharacter);
-    bool UnlockCover(CCSCharacter);
-    Grip_Vector GetPosition() const;
-    Grip_Rotation GetOrientation() const;
-    CCS::ECoverShootConfig GetShootConfig() const;
-    CCS::ECoverType GetType() const;
-    Grip_Vector GetShootPosition(const CCS::ECoverShootConfig, const float) const;
-    bool operator==(const CCSCover &) const;
-    bool operator!=(const CCSCover &) const;
-    static const CCSCover NONE;
-private:
-    char CCSCoverData[0x1F];
-};
-
-namespace Grip {
-template <> class ConstructorMov<CCSCover>  // size 0x1, opaque
-{
-public:
-    static void Construct(void *, const CCSCover &);
-    static void Construct(void *);
-    static void ConstructArray(void *, unsigned int, const CCSCover *);
-    static void ConstructArray(void *, unsigned int, const CCSCover &);
-    static void ConstructArray(void *, unsigned int);
-    static void Destruct(CCSCover *);
-    static void DestructArray(CCSCover *, unsigned int);
-    static void CopyArrayForward(CCSCover *, const CCSCover *, unsigned int);
-    static void CopyArrayBackward(CCSCover *, const CCSCover *, unsigned int);
-    static bool IsMovable();
-};
-}
-
-namespace Grip {
-template <> struct AllocatorGH<CCSCover,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<CCSCover>  // size 0x1, opaque
-{
-};
-}
-
 class GripBBMember : public GripVHeapObject  // size 0x1C, opaque
 {
 public:
@@ -1043,40 +808,6 @@ public:
     void DirtyBlackboard();
 private:
     unsigned int GripBBMemberData[0x6];
-};
-
-template <> class Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array(const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &);
-    Grip_Array(const int);
-    virtual ~Grip_Array();
-    Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &operator=(const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &);
-    void Clone(const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(const CCSCover &) const;
-    bool ContainsItem(const CCSCover &) const;
-    int Num() const;
-    const CCSCover &operator[](int) const;
-    CCSCover &operator[](int);
-    void AddItem(const CCSCover &);
-    void AddUniqueItem(const CCSCover &);
-    void InsertItemAt(const CCSCover &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(const CCSCover &);
-    CCSCover *GetData();
-protected:
-    void CloneContainer(CCSCover *, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    static const int increment;
-private:
-    unsigned int Grip_ArrayData[0x3];
 };
 
 template <> class GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > : public GripBBMember  // size 0x2C, opaque
@@ -1099,656 +830,6 @@ public:
     CCSCover &operator[](int);
 private:
     unsigned int GripBBArrayData[0x4];
-};
-
-struct CCSGameCharacter : public GripHeapObject  // size 0x14
-{
-public:
-    CCSGameCharacter();
-    bool operator==(const CCSGameCharacter &) const;
-    void *GetActor() const;
-    UUDKTargetableComponent *GetTargetableComponent();
-    Grip_Vector GetEyesPosition() const;
-    float GetHeight() const;
-    Grip_Rotation GetOrientation() const;
-    Grip_Vector GetPosition() const;
-    float GetSize() const;
-    int GetTeam();
-    bool IsPlayer() const;
-    APawn *m_pawn;  // 0x0
-    AActor *m_actor;  // 0x4
-    UUDKTargetableComponent *m_targetableComponent;  // 0x8
-    bool m_targetableComponentCheck;  // 0xC
-    char _pad0[0x3];
-    int m_cachedTeamNum;  // 0x10
-    static const CCSGameCharacter NONE;
-};
-
-struct CCSCharacter : public GripHeapObject  // size 0x14
-{
-public:
-    CCSCharacter();
-    bool operator==(const CCSCharacter &) const;
-    bool operator!=(const CCSCharacter &) const;
-    void *GetActor() const;
-    CCSBrain *GetBrain() const;
-    UUDKTargetableComponent *GetTargetableComponent();
-    Grip_Vector GetEyesPosition() const;
-    float GetHeight() const;
-    Grip_Rotation GetOrientation() const;
-    Grip_Vector GetPosition() const;
-    float GetSize() const;
-    int GetTeam();
-    bool IsPlayer() const;
-    CCSGameCharacter m_gameCharacter;  // 0x0
-    static const CCSCharacter NONE;
-};
-
-struct Grip_Vector : public GripHeapObject  // size 0xC, opaque
-{
-public:
-    Grip_Vector(float, float, float);
-    Grip_Vector(float);
-    Grip_Vector(const FVector &);
-    Grip_Vector();
-    operator class FVector() const;
-    Grip_Vector operator+(const Grip_Vector &) const;
-    Grip_Vector operator+=(const Grip_Vector &);
-    Grip_Vector operator-() const;
-    Grip_Vector operator-(const Grip_Vector &) const;
-    Grip_Vector operator-=(const Grip_Vector &);
-    Grip_Vector operator*(const Grip_Vector &);
-    Grip_Vector operator*(float) const;
-    Grip_Vector operator*=(float);
-    Grip_Vector operator/(float) const;
-    Grip_Vector operator/=(float);
-    bool operator==(const Grip_Vector &) const;
-    bool operator!=(const Grip_Vector &) const;
-    float operator|(const Grip_Vector &) const;
-    Grip_Vector operator^(const Grip_Vector &) const;
-    bool Equals(const Grip_Vector &, float) const;
-    void Set(float, float, float);
-    float Size() const;
-    float Size2D() const;
-    void Normalize();
-    Grip_Vector SafeNormal();
-    float SizeSquared() const;
-    Grip_Vector GetOrthogonal() const;
-    float SizeSquared2D() const;
-    int IsNearlyZero(float) const;
-    bool ContainsNaN() const;
-    Grip_Rotation Rotation() const;
-private:
-    char Grip_VectorData[0xB];
-};
-
-namespace Kaim {
-class Endianness  // size 0x1, opaque
-{
-public:
-    enum Type
-    {
-        LittleEndian = 0,
-        BigEndian = 1,
-    };
-    enum Target
-    {
-        SYSTEM_ENDIANNESS = 0,
-        INVERSE_SYSTEM_ENDIANNESS = 1,
-    };
-    static Kaim::Endianness::Type GetSystemEndianness();
-    static Kaim::Endianness::Type GetInverseSystemEndianness();
-    static Kaim::Endianness::Type GetInverseEndianness(Kaim::Endianness::Type);
-    static Kaim::Endianness::Type GetEndiannessFromMem32(const unsigned int *);
-    static void SetEndiannessToMem32(Kaim::Endianness::Type, unsigned int *);
-    static void SwapEndiannessInMem32(unsigned int *);
-    static void Swap16(void *);
-    static void Swap32(void *);
-    static void Swap64(void *);
-};
-}
-
-namespace Kaim {
-class RefCountNTSImplCore  // size 0x8, opaque
-{
-public:
-    virtual ~RefCountNTSImplCore();
-    RefCountNTSImplCore();
-    int GetRefCount() const;
-    static void checkInvalidDelete(Kaim::RefCountNTSImplCore *);
-    void operator=(const Kaim::RefCountNTSImplCore &);
-private:
-    unsigned int RefCountNTSImplCoreData[0x1];
-};
-}
-
-namespace Kaim {
-class RefCountNTSImpl : public Kaim::RefCountNTSImplCore  // size 0x8, opaque
-{
-public:
-    void AddRef() const;
-    void Release() const;
-};
-}
-
-namespace Kaim {
-template <> class RefCountBaseStatImpl<Kaim::RefCountNTSImpl,2> : public Kaim::RefCountNTSImpl  // size 0x8, opaque
-{
-public:
-    RefCountBaseStatImpl();
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
-    static void *operator new(unsigned int, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
-    static void *operator new(unsigned int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *);
-    static void *operator new(unsigned int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *);
-    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *);
-    static void operator delete(void *, int, const char *, int);
-    static void operator delete(void *, const char *, int);
-    static void operator delete(void *);
-};
-}
-
-namespace Kaim {
-template <> class RefCountBaseNTS<Kaim::IBlobTypeDescriptor,2> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountNTSImpl,2>  // size 0x8, opaque
-{
-public:
-    enum
-    {
-        StatType = 2,
-    };
-    RefCountBaseNTS();
-};
-}
-
-namespace Kaim {
-class IBlobTypeDescriptor : public Kaim::RefCountBaseNTS<Kaim::IBlobTypeDescriptor,2>  // size 0x8, opaque
-{
-public:
-    virtual unsigned int GetBlobTypeId() const = 0;
-    virtual const char *GetBlobTypeName() const = 0;
-    virtual unsigned int GetBlobTypeVersion() const = 0;
-    virtual void DoSwapEndianness(Kaim::Endianness::Target, void *) const = 0;
-    virtual Kaim::IBlobTypeDescriptor *CreateBlobTypeDescriptor(int) const = 0;
-    virtual Kaim::BaseBlobHandler *CreateBlobHandler(int) const = 0;
-    IBlobTypeDescriptor();
-private:
-    IBlobTypeDescriptor(const Kaim::IBlobTypeDescriptor &);
-    Kaim::IBlobTypeDescriptor &operator=(const Kaim::IBlobTypeDescriptor &);
-public:
-    virtual ~IBlobTypeDescriptor();
-};
-}
-
-namespace Kaim {
-class BaseBlobHandler : public Kaim::IBlobTypeDescriptor  // size 0x1C, opaque
-{
-public:
-    BaseBlobHandler();
-private:
-    BaseBlobHandler(const Kaim::BaseBlobHandler &);
-    Kaim::BaseBlobHandler &operator=(const Kaim::BaseBlobHandler &);
-public:
-    virtual ~BaseBlobHandler();
-    void Clear();
-    void ClearAndRelease();
-    void InitAsWeakReference(void *, unsigned int, unsigned int);
-    void *InitAsStrongReference(unsigned int, unsigned int, Kaim::MemoryHeap *, int);
-    void *VoidBlob();
-    const void *VoidBlob() const;
-    void *GetMutableBlob() const;
-    unsigned int BlobSize() const;
-    unsigned int GetDeepBlobSize() const;
-    unsigned int GetShallowBlobSize() const;
-    void SwapEndianess(Kaim::Endianness::Target);
-private:
-    unsigned int BaseBlobHandlerData[0x5];
-};
-}
-
-namespace Kaim {
-class RefCountImplCore  // size 0x8, opaque
-{
-public:
-    virtual ~RefCountImplCore();
-    RefCountImplCore();
-    int GetRefCount() const;
-    static void checkInvalidDelete(Kaim::RefCountImplCore *);
-    void operator=(const Kaim::RefCountImplCore &);
-private:
-    unsigned int RefCountImplCoreData[0x1];
-};
-}
-
-namespace Kaim {
-class RefCountImpl : public Kaim::RefCountImplCore  // size 0x8, opaque
-{
-public:
-    void AddRef();
-    void Release();
-};
-}
-
-namespace Kaim {
-template <> class RefCountBaseStatImpl<Kaim::RefCountImpl,139> : public Kaim::RefCountImpl  // size 0x8, opaque
-{
-public:
-    RefCountBaseStatImpl();
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
-    static void *operator new(unsigned int, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
-    static void *operator new(unsigned int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *);
-    static void *operator new(unsigned int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *);
-    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *);
-    static void operator delete(void *, int, const char *, int);
-    static void operator delete(void *, const char *, int);
-    static void operator delete(void *);
-};
-}
-
-namespace Kaim {
-template <> class RefCountBase<Kaim::IQuery,139> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,139>  // size 0x8, opaque
-{
-public:
-    enum
-    {
-        StatType = 139,
-    };
-    RefCountBase();
-};
-}
-
-namespace Kaim {
-class IQuery : public Kaim::RefCountBase<Kaim::IQuery,139>  // size 0x24, opaque
-{
-public:
-    virtual Kaim::QueryType GetType() const = 0;
-    virtual void Advance(Kaim::WorkingMemory *) = 0;
-    virtual Kaim::Ptr<Kaim::BaseBlobHandler> CreateQueryBlobHandler();
-    virtual void BuildQueryBlob(Kaim::BaseBlobHandler *);
-    virtual void InitFromQueryBlob(Kaim::World *, void *);
-    static void *operator new(unsigned int, void *);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
-    static void *operator new(unsigned int, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
-    static void *operator new(unsigned int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *);
-    static void *operator new(unsigned int);
-    static void operator delete(void *, void *);
-    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *);
-    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *);
-    static void operator delete(void *, int, const char *, int);
-    static void operator delete(void *, const char *, int);
-    static void operator delete(void *);
-    IQuery();
-    virtual ~IQuery();
-    bool CanBeInitialized() const;
-    bool IsInAQueryQueue() const;
-    bool IsSafeToReadResult() const;
-    void PerformQueryBlocking(Kaim::WorkingMemory *);
-    void OnDone();
-    int SendVisualDebug();
-    void SetTraverseLogicUserData(void *);
-    void *GetTraverseLogicUserData() const;
-    void BindToDatabase(Kaim::Database *);
-    void Initialize();
-private:
-    unsigned int IQueryData[0x7];
-};
-}
-
-namespace Kaim {
-class ITimeSlicedQuery : public Kaim::IQuery  // size 0x2C, opaque
-{
-public:
-    virtual void ReleaseWorkingMemoryOnCancelDuringProcess(Kaim::WorkingMemory *) = 0;
-    ITimeSlicedQuery();
-    virtual ~ITimeSlicedQuery();
-    void Initialize();
-private:
-    unsigned int ITimeSlicedQueryData[0x2];
-};
-}
-
-namespace Kaim {
-class IPathFinderQuery : public Kaim::ITimeSlicedQuery  // size 0x58, opaque
-{
-public:
-    enum PathFinderResult
-    {
-        PathFinderNotInitialized = 0,
-        PathFinderNotComputed = 1,
-        PathFinderUnderProcess = 2,
-        PathFinderSuccess = 3,
-        PathFinderFailure = 4,
-    };
-    virtual const Kaim::Vec3f *GetDestination() const = 0;
-    virtual void GetPathFinderTextResult(Kaim::String &) const;
-    virtual void DisplayPropagationBounds(Kaim::ScopedDisplayList &) const;
-    virtual Kaim::IPathFinderQuery::PathFinderResult GetPathFinderResult() const = 0;
-    IPathFinderQuery();
-    virtual ~IPathFinderQuery();
-    Kaim::Path *GetPath() const;
-    Kaim::ChannelArray *GetChannelArray() const;
-    const Kaim::Vec3f &GetStartPos() const;
-    void SetNavigationProfileId(unsigned int);
-    unsigned int GetNavigationProfileId() const;
-private:
-    unsigned int IPathFinderQueryData[0xB];
-};
-}
-
-namespace Kaim {
-class BaseAStarQuery : public Kaim::IPathFinderQuery  // size 0xDC, opaque
-{
-public:
-    static Kaim::QueryType GetStaticType();
-    virtual Kaim::QueryType GetType() const;
-    virtual void BuildQueryBlob(Kaim::BaseBlobHandler *);
-    virtual void InitFromQueryBlob(Kaim::World *, void *);
-    virtual Kaim::Ptr<Kaim::BaseBlobHandler> CreateQueryBlobHandler();
-    static Kaim::Ptr<Kaim::BaseBlobHandler> CreateStaticQueryBlobHandler();
-    virtual void GetPathFinderTextResult(Kaim::String &) const;
-    virtual void DisplayPropagationBounds(Kaim::ScopedDisplayList &) const;
-    virtual Kaim::IPathFinderQuery::PathFinderResult GetPathFinderResult() const;
-    virtual const Kaim::Vec3f *GetDestination() const;
-    Kaim::AStarQueryResult GetResult() const;
-    Kaim::PathFinderQueryHookingMode GetHookingMode() const;
-    float GetHorizontalHookingMaxDist() const;
-    float GetPropagationBoxExtent() const;
-    const Kaim::Vec3f &GetStartPos() const;
-    const Kaim::Vec3f &GetDestPos() const;
-    const Kaim::NavTrianglePtr &GetStartTrianglePtr() const;
-    const Kaim::NavGraphEdgePtr &GetStartNavGraphEdgePtr() const;
-    const Kaim::NavGraphVertexPtr &GetStartNavGraphVertexPtr() const;
-    const Kaim::NavTrianglePtr &GetDestTrianglePtr() const;
-    const Kaim::NavGraphEdgePtr &GetDestNavGraphEdgePtr() const;
-    const Kaim::NavGraphVertexPtr &GetDestNavGraphVertexPtr() const;
-    Kaim::AStarQueryTryCanGoMode GetTryCanGoMode() const;
-    Kaim::PathFinderQueryComputeChannelMode GetComputeChannelMode() const;
-    const Kaim::ChannelComputerConfig &GetChannelComputerConfig() const;
-    Kaim::Path *GetPath() const;
-    Kaim::ChannelArray *GetChannelArray() const;
-    unsigned int GetNumberOfProcessedNodePerFrame() const;
-    const Kaim::PositionSpatializationRange &GetPositionSpatializationRange() const;
-    void BindToDatabase(Kaim::Database *);
-    void Initialize(const Kaim::Vec3f &, const Kaim::Vec3f &);
-    void SetStartTrianglePtr(const Kaim::NavTrianglePtr &);
-    void SetStartNavGraphEdgePtr(const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
-    void SetStartNavGraphVertexPtr(const Kaim::NavGraphVertexPtr &);
-    void SetDestTrianglePtr(const Kaim::NavTrianglePtr &);
-    void SetDestNavGraphEdgePtr(const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
-    void SetDestNavGraphVertexPtr(const Kaim::NavGraphVertexPtr &);
-    void SetTryCanGoMode(Kaim::AStarQueryTryCanGoMode);
-    void SetComputeChannelMode(Kaim::PathFinderQueryComputeChannelMode);
-    void SetChannelComputerConfig(const Kaim::ChannelComputerConfig &);
-    void SetPropagationBoxExtent(float);
-    void SetPositionSpatializationRange(const Kaim::PositionSpatializationRange &);
-    void SetHookingMode(Kaim::PathFinderQueryHookingMode);
-    void SetHorizontalHookingMaxDist(float);
-    void SetNumberOfProcessedNodePerFrame(unsigned int);
-protected:
-    BaseAStarQuery();
-    virtual ~BaseAStarQuery();
-    void SetResult(Kaim::AStarQueryResult);
-private:
-    unsigned int BaseAStarQueryData[0x21];
-};
-}
-
-namespace Kaim {
-class DoNotUseCanEnterNavTag  // size 0x1, opaque
-{
-public:
-    DoNotUseCanEnterNavTag();
-};
-}
-
-namespace Kaim {
-template <> class SimpleTraverseLogic<Kaim::DoNotUseCanEnterNavTag>  // size 0x1, opaque
-{
-protected:
-    SimpleTraverseLogic();
-private:
-    SimpleTraverseLogic(const Kaim::SimpleTraverseLogic<Kaim::DoNotUseCanEnterNavTag> &);
-    Kaim::SimpleTraverseLogic<Kaim::DoNotUseCanEnterNavTag> &operator=(const Kaim::SimpleTraverseLogic<Kaim::DoNotUseCanEnterNavTag> &);
-public:
-    static bool CanTraverse(void *, const Kaim::NavTag &);
-    static float GetCostMultiplier(void *, const Kaim::NavTag &);
-    static bool CanEnterNavTag(void *, const Kaim::NavTag &, const Kaim::NavTag &, const Kaim::Vec3f &);
-    static bool CanTraverseGraphEdgeAndGetCost(void *, const Kaim::Vec3f &, const Kaim::Vec3f &, const Kaim::NavTag &, float &);
-    static float GetHeuristicFromDistanceToDest(void *, float);
-};
-}
-
-namespace Kaim {
-class DefaultTraverseLogic : public Kaim::SimpleTraverseLogic<Kaim::DoNotUseCanEnterNavTag>  // size 0x1, opaque
-{
-};
-}
-
-namespace Kaim {
-template <> class AStarQuery<Kaim::DefaultTraverseLogic> : public Kaim::BaseAStarQuery  // size 0x124, opaque
-{
-public:
-    AStarQuery();
-    virtual ~AStarQuery();
-    void BindToDatabase(Kaim::Database *);
-    void Initialize(const Kaim::Vec3f &, const Kaim::Vec3f &);
-    void SetStartTrianglePtr(const Kaim::NavTrianglePtr &);
-    void SetStartNavGraphEdgePtr(const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
-    void SetStartNavGraphVertexPtr(const Kaim::NavGraphVertexPtr &);
-    void SetDestTrianglePtr(const Kaim::NavTrianglePtr &);
-    void SetDestNavGraphEdgePtr(const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
-    void SetDestNavGraphVertexPtr(const Kaim::NavGraphVertexPtr &);
-    void SetPropagationBoxExtent(float);
-    void SetTryCanGoMode(Kaim::AStarQueryTryCanGoMode);
-    void SetHookingMode(Kaim::PathFinderQueryHookingMode);
-    void SetHorizontalHookingMaxDist(float);
-    void SetPositionSpatializationRange(const Kaim::PositionSpatializationRange &);
-    void SetNumberOfProcessedNodePerFrame(unsigned int);
-    virtual void Advance(Kaim::WorkingMemory *);
-    virtual void ReleaseWorkingMemoryOnCancelDuringProcess(Kaim::WorkingMemory *);
-    Kaim::AStarQueryResult GetResult() const;
-    Kaim::PathFinderQueryHookingMode GetHookingMode() const;
-    Kaim::AStarQueryTryCanGoMode GetTryCanGoMode() const;
-    float GetHorizontalHookingMaxDist() const;
-    float GetPropagationBoxExtent() const;
-    const Kaim::Vec3f &GetStartPos() const;
-    const Kaim::Vec3f &GetDestPos() const;
-    const Kaim::NavTrianglePtr &GetStartTrianglePtr() const;
-    const Kaim::NavGraphEdgePtr &GetStartNavGraphEdgePtr() const;
-    const Kaim::NavGraphVertexPtr &GetStartNavGraphVertexPtr() const;
-    const Kaim::NavTrianglePtr &GetDestTrianglePtr() const;
-    const Kaim::NavGraphEdgePtr &GetDestNavGraphEdgePtr() const;
-    const Kaim::NavGraphVertexPtr &GetDestNavGraphVertexPtr() const;
-    Kaim::Path *GetPath() const;
-    unsigned int GetNumberOfProcessedNodePerFrame() const;
-    const Kaim::PositionSpatializationRange &GetPositionSpatializationRange() const;
-    bool HasNavDataChanged();
-protected:
-    void SetFinish(Kaim::WorkingMemory *);
-    int ComputeStartGraphEdgeOrGraphVertexOrTriangle(Kaim::PathFinderQueryUtils &);
-    int ComputeStartTriangle(Kaim::PathFinderQueryUtils &);
-    int ComputeDestTriangleIfNeeded(Kaim::PathFinderQueryUtils &);
-    int InitializeContextAndStartNode(Kaim::PathFinderQueryUtils &);
-    int InitDestinationNode();
-    int InitDestinationNodeFromDestNavGraphEdge();
-    int InitDestinationNodeFromDestNavGraphVertex();
-    int InitDestinationNodeFromDestNavTriangle();
-    int InitTraversalFromStartNode(Kaim::PathFinderQueryUtils &);
-    int CheckNavDataChange(Kaim::WorkingMemory *);
-    bool HasExplorationReachedDestNode();
-    bool ShouldReturnAfterTryingCanGo(Kaim::WorkingMemory *);
-private:
-    unsigned int AStarQueryData[0x12];
-};
-}
-
-namespace Kaim {
-template <> class Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >  // size 0x4, opaque
-{
-public:
-    Ptr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Ptr(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &, Kaim::PickType);
-    Ptr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    Ptr();
-    ~Ptr();
-    bool operator==(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
-    bool operator==(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    bool operator!=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
-    bool operator!=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    bool operator<(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    void NullWithoutRelease();
-    void Clear();
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *&GetRawRef();
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *GetPtr() const;
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &operator*() const;
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *operator->() const;
-    operator class Kaim::AStarQuery<class Kaim::DefaultTraverseLogic> *() const;
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-private:
-    unsigned int PtrData[0x1];
-};
-}
-
-struct CCSTarget : public GripHeapObject  // size 0x64
-{
-public:
-    CCSTarget(CCSBrain *);
-    CCSTarget();
-    Grip_Vector GetDefaultShootLocation() const;
-    bool IsValid() const;
-    void ResetAwareness();
-    float CurrentCamo() const;
-    void FindDestinationReachable(Grip_Vector);
-    void UpdateDestinationReachable();
-    bool CanFindPath();
-    CCSCharacter character;  // 0x0
-    int teamNum;  // 0x14
-    Grip_Vector position;  // 0x18
-    Grip_Vector LKP;  // 0x24
-    float LKPAge;  // 0x30
-    float CNTAge;  // 0x34
-    float range2D;  // 0x38
-    float rangeNavMesh;  // 0x3C
-    float currentThreat;  // 0x40
-    bool canShoot;  // 0x44
-    bool ClearOfFriendlies;  // 0x45
-    bool isAware;  // 0x46
-    bool isFiring;  // 0x47
-    bool isVisible;  // 0x48
-    bool isHeard;  // 0x49
-    bool isAvailableVehicle;  // 0x4A
-    bool isBehindCover;  // 0x4B
-    float forwardDot;  // 0x4C
-    float rightDot;  // 0x50
-    EAITargetType m_aiTargetType;  // 0x54
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > m_asyncAStarQuery;  // 0x58
-    UGwNavBotHandle *m_pGwNavBotHandle;  // 0x5C
-    Kaim::AStarQueryResult pathResult;  // 0x60
-};
-
-namespace Grip {
-template <> class ConstructorMov<CCSTarget>  // size 0x1, opaque
-{
-public:
-    static void Construct(void *, const CCSTarget &);
-    static void Construct(void *);
-    static void ConstructArray(void *, unsigned int, const CCSTarget *);
-    static void ConstructArray(void *, unsigned int, const CCSTarget &);
-    static void ConstructArray(void *, unsigned int);
-    static void Destruct(CCSTarget *);
-    static void DestructArray(CCSTarget *, unsigned int);
-    static void CopyArrayForward(CCSTarget *, const CCSTarget *, unsigned int);
-    static void CopyArrayBackward(CCSTarget *, const CCSTarget *, unsigned int);
-    static bool IsMovable();
-};
-}
-
-namespace Grip {
-template <> struct AllocatorGH<CCSTarget,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<CCSTarget>  // size 0x1, opaque
-{
-};
-}
-
-template <> class Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array(const Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > &);
-    Grip_Array(const int);
-    virtual ~Grip_Array();
-    Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > &operator=(const Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > &);
-    void Clone(const Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(const CCSTarget &) const;
-    bool ContainsItem(const CCSTarget &) const;
-    int Num() const;
-    const CCSTarget &operator[](int) const;
-    CCSTarget &operator[](int);
-    void AddItem(const CCSTarget &);
-    void AddUniqueItem(const CCSTarget &);
-    void InsertItemAt(const CCSTarget &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(const CCSTarget &);
-    CCSTarget *GetData();
-protected:
-    void CloneContainer(CCSTarget *, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    static const int increment;
-private:
-    unsigned int Grip_ArrayData[0x3];
 };
 
 template <> class GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > : public GripBBMember  // size 0x2C, opaque
@@ -1792,82 +873,6 @@ public:
     CCSTarget *const &Get() const;
     void Set(CCSTarget *const &);
     CCSTarget *m_value;  // 0x1C
-};
-
-class FVector  // size 0xC, opaque
-{
-public:
-    FVector(EEventParm);
-    FVector(FIntPoint);
-    FVector(const FLinearColor &);
-    FVector(const FVector4 &);
-    FVector(const FVector2D, float);
-    FVector(float, float, float);
-    FVector(float);
-    FVector();
-    FVector operator^(const FVector &) const;
-    float operator|(const FVector &) const;
-    FVector operator+(float) const;
-    FVector operator+(const FVector &) const;
-    FVector operator-() const;
-    FVector operator-(float) const;
-    FVector operator-(const FVector &) const;
-    FVector operator*(const FVector &) const;
-    FVector operator*(float) const;
-    FVector operator/(const FVector &) const;
-    FVector operator/(float) const;
-    unsigned int operator==(const FVector &) const;
-    unsigned int operator!=(const FVector &) const;
-    unsigned int Equals(const FVector &, float) const;
-    unsigned int AllComponentsEqual(float) const;
-    FVector operator+=(const FVector &);
-    FVector operator-=(const FVector &);
-    FVector operator*=(const FVector &);
-    FVector operator*=(float);
-    FVector operator/=(const FVector &);
-    FVector operator/=(float);
-    float operator[](int) const;
-    float &operator[](int);
-    void Set(float, float, float);
-    float GetMax() const;
-    float GetAbsMax() const;
-    float GetMin() const;
-    float Size() const;
-    float SizeSquared() const;
-    float Size2D() const;
-    float SizeSquared2D() const;
-    float Distance(const FVector &) const;
-    float DistanceSquared(const FVector &) const;
-    int IsNearlyZero(float) const;
-    unsigned int IsZero() const;
-    unsigned int Normalize(float);
-    unsigned int IsNormalized() const;
-    void ToDirectionAndLength(FVector &, float &);
-    FVector Projection() const;
-    FVector UnsafeNormal() const;
-    FVector GridSnap(const float &) const;
-    FVector BoundToCube(float) const;
-    void AddBounded(const FVector &, float);
-    float &Component(int);
-    unsigned int IsUniform(float) const;
-    FVector MirrorByVector(const FVector &) const;
-    FVector MirrorByPlane(const FPlane &) const;
-    FVector RotateAngleAxis(const int, const FVector &) const;
-    FVector SafeNormal(float) const;
-    FVector SafeNormal2D(float) const;
-    float Dot2d(FVector);
-    FVector ProjectOnTo(const FVector &) const;
-    FRotator Rotation() const;
-    void FindBestAxisVectors(FVector &, FVector &) const;
-    void UnwindEuler();
-    unsigned int ContainsNaN() const;
-    unsigned int IsUnit(float) const;
-    FString ToString() const;
-    unsigned int InitFromString(const FString &);
-    void SerializeCompressed(FArchive &);
-    static FVector ZeroVector;
-private:
-    unsigned int FVectorData[0x3];
 };
 
 template <> class GripBBProperty<FVector> : public GripBBMember  // size 0x28, opaque
@@ -1957,140 +962,6 @@ public:
 private:
     unsigned int GripBBPropertyData[0x1];
 };
-
-namespace Grip {
-class String  // size 0x4, opaque
-{
-public:
-    enum FlagConstants
-    {
-        Flag_LengthIsSizeShift = 31,
-    };
-    struct DataDesc;
-    enum HeapType
-    {
-        HT_Global = 0,
-        HT_Local = 1,
-        HT_Dynamic = 2,
-        HT_Mask = 3,
-    };
-    struct NoConstructor;
-    struct InitStruct;
-    struct NoCaseKey;
-    static void *operator new(unsigned int, void *);
-    static void operator delete(void *, void *);
-protected:
-    Grip::String::HeapType GetHeapType() const;
-    Grip::String::DataDesc *GetData() const;
-    void SetData(Grip::String::DataDesc *);
-    Grip::String::DataDesc *AllocData(Grip::MemoryHeap *, unsigned int, unsigned int);
-    Grip::String::DataDesc *AllocDataCopy1(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int);
-    Grip::String::DataDesc *AllocDataCopy2(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int, const char *, unsigned int);
-public:
-    String(const wchar_t *);
-    String(const Grip::String::InitStruct &, unsigned int);
-    String(const Grip::StringBuffer &);
-    String(const Grip::String &);
-    String(const char *, unsigned int);
-    String(const char *, const char *, const char *);
-    String(const char *);
-    String();
-protected:
-    String(const Grip::String::NoConstructor &);
-public:
-    ~String();
-    Grip::MemoryHeap *GetHeap() const;
-    void Clear();
-    operator const char *() const;
-    const char *ToCStr() const;
-    unsigned int GetSize() const;
-    bool IsEmpty() const;
-    unsigned int GetLength() const;
-    unsigned long GetCharAt(unsigned int) const;
-    unsigned long GetFirstCharAt(unsigned int, const char **) const;
-    unsigned long GetNextChar(const char **) const;
-    void AppendChar(unsigned long);
-    void AppendString(const char *, int);
-    void AppendString(const wchar_t *, int);
-    void AssignString(const char *, unsigned int);
-    void AssignString(const Grip::String::InitStruct &, unsigned int);
-    void Remove(unsigned int, int);
-    Grip::String Substring(unsigned int, unsigned int) const;
-    Grip::String ToUpper() const;
-    Grip::String ToLower() const;
-    Grip::String &Insert(const char *, unsigned int, int);
-    unsigned int InsertCharAt(unsigned long, unsigned int);
-    unsigned int GetByteIndex(unsigned int) const;
-    int CompareNoCase(const Grip::String &) const;
-    int CompareNoCase(const char *) const;
-    static int CompareNoCase(const char *, const char *, int);
-    static int CompareNoCase(const char *, const char *);
-    static unsigned int BernsteinHashFunctionCIS(const void *, unsigned int, unsigned int);
-    static unsigned int BernsteinHashFunction(const void *, unsigned int, unsigned int);
-    static void EscapeSpecialHTML(const char *, unsigned int, Grip::String *);
-    static void UnescapeSpecialHTML(const char *, unsigned int, Grip::String *);
-    bool HasAbsolutePath() const;
-    static bool HasAbsolutePath(const char *);
-    bool HasExtension() const;
-    static bool HasExtension(const char *);
-    bool HasProtocol() const;
-    static bool HasProtocol(const char *);
-    Grip::String GetProtocol() const;
-    Grip::String GetPath() const;
-    Grip::String GetFilename() const;
-    Grip::String GetExtension() const;
-    void StripProtocol();
-    void StripExtension();
-    void operator=(const Grip::StringBuffer &);
-    void operator=(const Grip::String &);
-    void operator=(const wchar_t *);
-    void operator=(const char *);
-    void operator+=(char);
-    void operator+=(const wchar_t *);
-    void operator+=(const char *);
-    void operator+=(const Grip::String &);
-    Grip::String operator+(const Grip::String &) const;
-    Grip::String operator+(const char *) const;
-    bool operator==(const Grip::String::NoCaseKey &) const;
-    bool operator==(const char *) const;
-    bool operator==(const Grip::String &) const;
-    bool operator!=(const Grip::String::NoCaseKey &) const;
-    bool operator!=(const char *) const;
-    bool operator!=(const Grip::String &) const;
-    bool operator<(const Grip::String &) const;
-    bool operator<(const char *) const;
-    bool operator>(const Grip::String &) const;
-    bool operator>(const char *) const;
-    const char &operator[](unsigned int) const;
-    const char &operator[](int) const;
-    static Grip::String::DataDesc NullData;
-private:
-    unsigned int StringData[0x1];
-};
-}
-
-namespace Grip {
-template <> class ConstructorMov<Grip::String>  // size 0x1, opaque
-{
-public:
-    static void Construct(void *, const Grip::String &);
-    static void Construct(void *);
-    static void ConstructArray(void *, unsigned int, const Grip::String *);
-    static void ConstructArray(void *, unsigned int, const Grip::String &);
-    static void ConstructArray(void *, unsigned int);
-    static void Destruct(Grip::String *);
-    static void DestructArray(Grip::String *, unsigned int);
-    static void CopyArrayForward(Grip::String *, const Grip::String *, unsigned int);
-    static void CopyArrayBackward(Grip::String *, const Grip::String *, unsigned int);
-    static bool IsMovable();
-};
-}
-
-namespace Grip {
-template <> struct AllocatorGH<Grip::String,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<Grip::String>  // size 0x1, opaque
-{
-};
-}
 
 class GripBlackboard : public GripVHeapObject  // size 0x8C, opaque
 {
@@ -2245,29 +1116,6 @@ struct CCSSystemsConfig : public GripSystemConfig  // size 0x34, opaque
 private:
     unsigned int CCSSystemsConfigData[0xC];
 };
-
-namespace Grip {
-template <> class ConstructorMov<GripBrainSystem *>  // size 0x1, opaque
-{
-public:
-    static void Construct(void *, GripBrainSystem *const &);
-    static void Construct(void *);
-    static void ConstructArray(void *, unsigned int, GripBrainSystem *const *);
-    static void ConstructArray(void *, unsigned int, GripBrainSystem *const &);
-    static void ConstructArray(void *, unsigned int);
-    static void Destruct(GripBrainSystem **);
-    static void DestructArray(GripBrainSystem **, unsigned int);
-    static void CopyArrayForward(GripBrainSystem **, GripBrainSystem *const *, unsigned int);
-    static void CopyArrayBackward(GripBrainSystem **, GripBrainSystem *const *, unsigned int);
-    static bool IsMovable();
-};
-}
-
-namespace Grip {
-template <> struct AllocatorGH<GripBrainSystem *,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<GripBrainSystem *>  // size 0x1, opaque
-{
-};
-}
 
 class GripBTSystemFlags : public GripVHeapObject  // size 0x8, opaque
 {
@@ -2426,6 +1274,77 @@ public:
     IGripWorldQuery *m_worldQuery;  // 0xF8
 };
 
+class GripHeapObject  // size 0x1, opaque
+{
+public:
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemAddressStub *);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Grip::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Grip::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Grip::MemAddressStub *, int);
+    static void operator delete(void *, Grip::MemAddressStub *);
+    static void operator delete(void *, Grip::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Grip::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Grip::MemoryHeap *, int);
+    static void operator delete(void *, Grip::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+};
+
+struct CCSGameCharacter : public GripHeapObject  // size 0x14
+{
+public:
+    CCSGameCharacter();
+    bool operator==(const CCSGameCharacter &) const;
+    void *GetActor() const;
+    UUDKTargetableComponent *GetTargetableComponent();
+    Grip_Vector GetEyesPosition() const;
+    float GetHeight() const;
+    Grip_Rotation GetOrientation() const;
+    Grip_Vector GetPosition() const;
+    float GetSize() const;
+    int GetTeam();
+    bool IsPlayer() const;
+    APawn *m_pawn;  // 0x0
+    AActor *m_actor;  // 0x4
+    UUDKTargetableComponent *m_targetableComponent;  // 0x8
+    bool m_targetableComponentCheck;  // 0xC
+    char _pad0[0x3];
+    int m_cachedTeamNum;  // 0x10
+    static const CCSGameCharacter NONE;
+};
+
+struct CCSCharacter : public GripHeapObject  // size 0x14
+{
+public:
+    CCSCharacter();
+    bool operator==(const CCSCharacter &) const;
+    bool operator!=(const CCSCharacter &) const;
+    void *GetActor() const;
+    CCSBrain *GetBrain() const;
+    UUDKTargetableComponent *GetTargetableComponent();
+    Grip_Vector GetEyesPosition() const;
+    float GetHeight() const;
+    Grip_Rotation GetOrientation() const;
+    Grip_Vector GetPosition() const;
+    float GetSize() const;
+    int GetTeam();
+    bool IsPlayer() const;
+    CCSGameCharacter m_gameCharacter;  // 0x0
+    static const CCSCharacter NONE;
+};
+
 class GripRBTNode : public GripVHeapObject  // size 0x64, opaque
 {
 public:
@@ -2549,17 +1468,118 @@ private:
     unsigned int CCSRBTMoveToData[0x10];
 };
 
-class FHeapAllocator  // size 0x1, opaque
+struct Grip_Vector : public GripHeapObject  // size 0xC, opaque
 {
 public:
-    enum
-    {
-        NeedsElementType = 0,
-    };
+    Grip_Vector(float, float, float);
+    Grip_Vector(float);
+    Grip_Vector(const FVector &);
+    Grip_Vector();
+    operator class FVector() const;
+    Grip_Vector operator+(const Grip_Vector &) const;
+    Grip_Vector operator+=(const Grip_Vector &);
+    Grip_Vector operator-() const;
+    Grip_Vector operator-(const Grip_Vector &) const;
+    Grip_Vector operator-=(const Grip_Vector &);
+    Grip_Vector operator*(const Grip_Vector &);
+    Grip_Vector operator*(float) const;
+    Grip_Vector operator*=(float);
+    Grip_Vector operator/(float) const;
+    Grip_Vector operator/=(float);
+    bool operator==(const Grip_Vector &) const;
+    bool operator!=(const Grip_Vector &) const;
+    float operator|(const Grip_Vector &) const;
+    Grip_Vector operator^(const Grip_Vector &) const;
+    bool Equals(const Grip_Vector &, float) const;
+    void Set(float, float, float);
+    float Size() const;
+    float Size2D() const;
+    void Normalize();
+    Grip_Vector SafeNormal();
+    float SizeSquared() const;
+    Grip_Vector GetOrthogonal() const;
+    float SizeSquared2D() const;
+    int IsNearlyZero(float) const;
+    bool ContainsNaN() const;
+    Grip_Rotation Rotation() const;
+private:
+    char Grip_VectorData[0xB];
 };
 
-class FDefaultAllocator : public FHeapAllocator  // size 0x1, opaque
+namespace Kaim {
+template <> class Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >  // size 0x4, opaque
 {
+public:
+    Ptr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    Ptr(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &, Kaim::PickType);
+    Ptr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
+    Ptr();
+    ~Ptr();
+    bool operator==(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
+    bool operator==(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
+    bool operator!=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
+    bool operator!=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
+    bool operator<(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
+    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+    void NullWithoutRelease();
+    void Clear();
+    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *&GetRawRef();
+    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *GetPtr() const;
+    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &operator*() const;
+    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *operator->() const;
+    operator class Kaim::AStarQuery<class Kaim::DefaultTraverseLogic> *() const;
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+private:
+    unsigned int PtrData[0x1];
+};
+}
+
+struct CCSTarget : public GripHeapObject  // size 0x64
+{
+public:
+    CCSTarget(CCSBrain *);
+    CCSTarget();
+    Grip_Vector GetDefaultShootLocation() const;
+    bool IsValid() const;
+    void ResetAwareness();
+    float CurrentCamo() const;
+    void FindDestinationReachable(Grip_Vector);
+    void UpdateDestinationReachable();
+    bool CanFindPath();
+    CCSCharacter character;  // 0x0
+    int teamNum;  // 0x14
+    Grip_Vector position;  // 0x18
+    Grip_Vector LKP;  // 0x24
+    float LKPAge;  // 0x30
+    float CNTAge;  // 0x34
+    float range2D;  // 0x38
+    float rangeNavMesh;  // 0x3C
+    float currentThreat;  // 0x40
+    bool canShoot;  // 0x44
+    bool ClearOfFriendlies;  // 0x45
+    bool isAware;  // 0x46
+    bool isFiring;  // 0x47
+    bool isVisible;  // 0x48
+    bool isHeard;  // 0x49
+    bool isAvailableVehicle;  // 0x4A
+    bool isBehindCover;  // 0x4B
+    float forwardDot;  // 0x4C
+    float rightDot;  // 0x50
+    EAITargetType m_aiTargetType;  // 0x54
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > m_asyncAStarQuery;  // 0x58
+    UGwNavBotHandle *m_pGwNavBotHandle;  // 0x5C
+    Kaim::AStarQueryResult pathResult;  // 0x60
 };
 
 class FName  // size 0x8

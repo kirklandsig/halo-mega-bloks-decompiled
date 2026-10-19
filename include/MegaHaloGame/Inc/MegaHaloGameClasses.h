@@ -2,18 +2,12 @@
 #pragma once
 
 template <class T0, class T1> class TArray;
-template <class T0> class TArrayNoInit;
 template <class T0, class T1> class TIndirectArray;
-template <int T0, class T1> class TInlineAllocator;
 template <class T0, class T1, class T2> class TMap;
-template <class T0, class T1, int T2, int T3, int T4> class TSetAllocator;
-template <class T0, class T1> class TSparseArrayAllocator;
 class AActor;
 class FArchive;
-struct FAsyncCompletionCallbackInfo;
 struct FAsyncPackage;
 class FDefaultAllocator;
-class FDefaultBitArrayAllocator;
 class FDefaultSetAllocator;
 class FEditPropertyChain;
 class FExec;
@@ -22,9 +16,7 @@ struct FExposedTextureLODSettings;
 class FFeedbackContext;
 struct FFrame;
 class FGuid;
-class FHeapAllocator;
 class FName;
-struct FNameEntry;
 struct FObjectDuplicationParameters;
 struct FObjectInstancingGraph;
 struct FOutParmRec;
@@ -34,7 +26,6 @@ struct FPropertyChangedEvent;
 struct FReferencerInformation;
 struct FReferencerInformationList;
 struct FScriptDelegate;
-class FSerializableObject;
 struct FStateFrame;
 class FString;
 class FSystemSetting;
@@ -49,7 +40,6 @@ class UHaloSaveGame;
 class ULinkerLoad;
 class ULinkerSave;
 class UObject;
-class UObjectSerializer;
 class UPackage;
 class UPackageMap;
 class UProperty;
@@ -176,12 +166,6 @@ enum EExprToken
     EX_FirstNative = 112,
     EX_Max = 4096,
 };
-enum EFindName
-{
-    FNAME_Find = 0,
-    FNAME_Add = 1,
-    FNAME_Replace = 2,
-};
 enum EGotoState
 {
     GOTOSTATE_NotFound = 0,
@@ -191,10 +175,6 @@ enum EGotoState
 enum EInternal
 {
     EC_Internal = 0,
-};
-enum ELinkerNameTableConstructor
-{
-    ENAME_LinkerConstructor = 0,
 };
 enum EName
 {
@@ -871,98 +851,84 @@ enum EPlatformType
 };
 }
 
-class FSerializableObject  // size 0x4, opaque
-{
-public:
-    virtual ~FSerializableObject();
-    virtual void Serialize(FArchive &) = 0;
-    static void StaticInit();
-    FSerializableObject();
-    static UObjectSerializer *GObjectSerializer;
-};
-
-struct FAsyncPackage : public FSerializableObject  // size 0x74, opaque
-{
-public:
-    FAsyncPackage(const FString &, const FGuid *, FName);
-    unsigned int Tick(unsigned int, float);
-    float GetLoadPercentage() const;
-    double GetLoadStartTime() const;
-    void ResetLoader();
-    const FString &GetPackageName() const;
-    const FName &GetPackageType() const;
-    void AddCompletionCallback(const FAsyncCompletionCallbackInfo &);
-    virtual void Serialize(FArchive &);
-private:
-    unsigned int GiveUpTimeSlice();
-    unsigned int IsTimeLimitExceeded();
-    void BeginAsyncLoad();
-    void EndAsyncLoad();
-    unsigned int CreateLinker();
-    unsigned int FinishLinker();
-    unsigned int CreateImports();
-    unsigned int FinishTextureAllocations();
-    unsigned int CreateExports();
-    unsigned int PreLoadObjects();
-    unsigned int FinishExportGuids();
-    unsigned int PostLoadObjects();
-    unsigned int FinishObjects();
-    unsigned int FAsyncPackageData[0x1C];
-};
-
-class FHeapAllocator  // size 0x1, opaque
-{
-public:
-    enum
-    {
-        NeedsElementType = 0,
-    };
-};
-
-class FDefaultAllocator : public FHeapAllocator  // size 0x1, opaque
-{
-};
-
-template <> class TInlineAllocator<4,FDefaultAllocator>  // size 0x1, opaque
-{
-public:
-    enum
-    {
-        NeedsElementType = 1,
-    };
-};
-
-class FDefaultBitArrayAllocator : public TInlineAllocator<4,FDefaultAllocator>  // size 0x1, opaque
-{
-};
-
-template <> class TInlineAllocator<1,FDefaultAllocator>  // size 0x1, opaque
-{
-public:
-    enum
-    {
-        NeedsElementType = 1,
-    };
-};
-
-template <> class TSparseArrayAllocator<FDefaultAllocator,FDefaultBitArrayAllocator>  // size 0x1, opaque
-{
-};
-
-template <> class TSetAllocator<TSparseArrayAllocator<FDefaultAllocator,FDefaultBitArrayAllocator>,TInlineAllocator<1,FDefaultAllocator>,2,8,4>  // size 0x1, opaque
-{
-public:
-    static unsigned int GetNumberOfHashBuckets(unsigned int);
-};
-
-class FDefaultSetAllocator : public TSetAllocator<TSparseArrayAllocator<FDefaultAllocator,FDefaultBitArrayAllocator>,TInlineAllocator<1,FDefaultAllocator>,2,8,4>  // size 0x1, opaque
-{
-};
-
 class FExec  // size 0x4, opaque
 {
 public:
     virtual unsigned int Exec(const wchar_t *, FOutputDevice &);
+};
+
+struct FTextureLODSettings  // size 0x2A0, opaque
+{
+public:
+    struct FTextureLODGroup;
+    void Initialize(const wchar_t *, const wchar_t *);
+    int CalculateLODBias(UTexture *) const;
+    void ComputeInGameMaxResolution(int, UTexture &, unsigned int &, unsigned int &) const;
+    void GetMipGenSettings(UTexture &, float &, unsigned int &, unsigned int &, unsigned int &, unsigned int &) const;
+    int GetTextureLODGroupLODBias(int) const;
+    int GetNumStreamedMips(int) const;
+    ESamplerFilter GetSamplerFilter(const UTexture *) const;
+    static TArray<FString,FDefaultAllocator> GetTextureGroupNames();
+protected:
+    void ReadEntry(int, const wchar_t *, const wchar_t *, const wchar_t *);
+    const FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(TextureGroup) const;
+private:
+    unsigned int FTextureLODSettingsData[0xA8];
+};
+
+struct FExposedTextureLODSettings : public FTextureLODSettings  // size 0x2A0, opaque
+{
+public:
+    const FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(int) const;
+    FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(int);
+};
+
+class FOutputDevice  // size 0x10, opaque
+{
+public:
+    virtual ~FOutputDevice();
+    virtual void Serialize(const wchar_t *, EName);
+    virtual void Flush();
+    virtual void TearDown();
+    FOutputDevice(unsigned int);
+    void SetSuppressEventTag(unsigned int);
+    unsigned int GetSuppressEventTag();
+    void SetAutoEmitLineTerminator(unsigned int);
+    unsigned int GetAutoEmitLineTerminator();
+    void Log(EName, const FString &);
+    void Log(const FString &);
+    void Log(EName, const wchar_t *);
+    void Log(const wchar_t *);
+    void Logf__VA(EName, const wchar_t *, ...);
+    void Logf__VA(const wchar_t *, ...);
+    void Logf(EName, const wchar_t *);
+    void Logf(const wchar_t *);
+private:
+    unsigned int FOutputDeviceData[0x3];
+};
+
+struct FFrame : public FOutputDevice  // size 0x28
+{
+public:
+    FFrame(UObject *, UStruct *, int, void *, FFrame *);
+    FFrame(UObject *);
+    virtual ~FFrame();
+    void Step(UObject *, void *const);
+    virtual void Serialize(const wchar_t *, EName);
+    int ReadInt();
+    float ReadFloat();
+    FName ReadName();
+    UObject *ReadObject();
+    int ReadWord();
+    unsigned short ReadCodeSkipCount();
+    unsigned short ReadVariableSize(UField **);
+    FString GetStackTrace() const;
+    UStruct *Node;  // 0x10
+    UObject *Object;  // 0x14
+    unsigned char *Code;  // 0x18
+    unsigned char *Locals;  // 0x1C
+    FFrame *PreviousFrame;  // 0x20
+    FOutParmRec *OutParms;  // 0x24
 };
 
 template <> class TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
@@ -1116,143 +1082,6 @@ public:
     FString ConvertTabsToSpaces(const int);
     static FString FormatAsNumber(int);
     void Reserve(const unsigned int);
-};
-
-struct FTextureLODSettings  // size 0x2A0, opaque
-{
-public:
-    struct FTextureLODGroup;
-    void Initialize(const wchar_t *, const wchar_t *);
-    int CalculateLODBias(UTexture *) const;
-    void ComputeInGameMaxResolution(int, UTexture &, unsigned int &, unsigned int &) const;
-    void GetMipGenSettings(UTexture &, float &, unsigned int &, unsigned int &, unsigned int &, unsigned int &) const;
-    int GetTextureLODGroupLODBias(int) const;
-    int GetNumStreamedMips(int) const;
-    ESamplerFilter GetSamplerFilter(const UTexture *) const;
-    static TArray<FString,FDefaultAllocator> GetTextureGroupNames();
-protected:
-    void ReadEntry(int, const wchar_t *, const wchar_t *, const wchar_t *);
-    const FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(TextureGroup) const;
-private:
-    unsigned int FTextureLODSettingsData[0xA8];
-};
-
-struct FExposedTextureLODSettings : public FTextureLODSettings  // size 0x2A0, opaque
-{
-public:
-    const FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(int) const;
-    FTextureLODSettings::FTextureLODGroup &GetTextureLODGroup(int);
-};
-
-class FOutputDevice  // size 0x10, opaque
-{
-public:
-    virtual ~FOutputDevice();
-    virtual void Serialize(const wchar_t *, EName);
-    virtual void Flush();
-    virtual void TearDown();
-    FOutputDevice(unsigned int);
-    void SetSuppressEventTag(unsigned int);
-    unsigned int GetSuppressEventTag();
-    void SetAutoEmitLineTerminator(unsigned int);
-    unsigned int GetAutoEmitLineTerminator();
-    void Log(EName, const FString &);
-    void Log(const FString &);
-    void Log(EName, const wchar_t *);
-    void Log(const wchar_t *);
-    void Logf__VA(EName, const wchar_t *, ...);
-    void Logf__VA(const wchar_t *, ...);
-    void Logf(EName, const wchar_t *);
-    void Logf(const wchar_t *);
-private:
-    unsigned int FOutputDeviceData[0x3];
-};
-
-struct FFrame : public FOutputDevice  // size 0x28
-{
-public:
-    FFrame(UObject *, UStruct *, int, void *, FFrame *);
-    FFrame(UObject *);
-    virtual ~FFrame();
-    void Step(UObject *, void *const);
-    virtual void Serialize(const wchar_t *, EName);
-    int ReadInt();
-    float ReadFloat();
-    FName ReadName();
-    UObject *ReadObject();
-    int ReadWord();
-    unsigned short ReadCodeSkipCount();
-    unsigned short ReadVariableSize(UField **);
-    FString GetStackTrace() const;
-    UStruct *Node;  // 0x10
-    UObject *Object;  // 0x14
-    unsigned char *Code;  // 0x18
-    unsigned char *Locals;  // 0x1C
-    FFrame *PreviousFrame;  // 0x20
-    FOutParmRec *OutParms;  // 0x24
-};
-
-class FName  // size 0x8, opaque
-{
-public:
-    int GetIndex() const;
-    int GetNumber() const;
-    const FString GetNameString() const;
-    void ToString(FString &) const;
-    FString ToString() const;
-    void AppendString(FString &) const;
-    unsigned int HasAnyFlags(unsigned __int64) const;
-    void SetFlags(unsigned __int64) const;
-    void ClearFlags(unsigned __int64) const;
-    unsigned int operator==(const wchar_t *) const;
-    unsigned int operator==(const FName &) const;
-    unsigned int operator!=(const FName &) const;
-    unsigned int IsValid() const;
-    int Compare(const FName &) const;
-    FName(ELinkerNameTableConstructor, const char *);
-    FName(ELinkerNameTableConstructor, const wchar_t *);
-    FName(const wchar_t *, int, EFindName);
-    FName(int);
-    FName(const char *, EFindName);
-    FName(const wchar_t *, EFindName, unsigned int);
-    FName();
-    FName(EName, int);
-    FName(EName);
-    static void StaticInit();
-    static void DisplayHash(FOutputDevice &);
-    static void Hardcode(FNameEntry *);
-    static FString SafeString(EName, int);
-    static unsigned int SafeSuppressed(EName);
-    static int GetMaxNames();
-    static int GetNameEntryMemorySize();
-    static int GetNameTableMemorySize();
-    static int GetNumAnsiNames();
-    static int GetNumUnicodeNames();
-    static FNameEntry *GetEntry(int);
-    static unsigned int GetInitialized();
-    static void SplitOldName(const wchar_t *, FString &, int &);
-    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
-private:
-    static unsigned int &GetIsInitialized();
-    void Init(const char *, int, EFindName);
-    void Init(const wchar_t *, int, EFindName, unsigned int);
-public:
-    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
-private:
-    static TArrayNoInit<FNameEntry *> Names;
-    static FNameEntry *NameHash[4096];
-    static int NameEntryMemorySize;
-    static int NumAnsiNames;
-    static int NumUnicodeNames;
-    unsigned int FNameData[0x2];
-};
-
-struct FReferencerInformation  // size 0x14, opaque
-{
-public:
-    FReferencerInformation(UObject *, int, const TArray<UProperty *,FDefaultAllocator> &);
-private:
-    unsigned int FReferencerInformationData[0x5];
 };
 
 class FSystemSettings : public FExec  // size 0x488
@@ -1427,8 +1256,8 @@ public:
     virtual void Serialize(FArchive &);
     virtual unsigned int IsPendingKill() const;
     virtual void ShutdownAfterError();
-    virtual void PreEditChange(FEditPropertyChain &);
     virtual void PreEditChange(UProperty *);
+    virtual void PreEditChange(FEditPropertyChain &);
     virtual void PostEditChangeProperty(FPropertyChangedEvent &);
     virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent &);
     virtual unsigned int CanEditChange(const UProperty *) const;

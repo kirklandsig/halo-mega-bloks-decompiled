@@ -25,8 +25,44 @@ import pdbtype
 
 # Classes the hand-written code of a package needs in its header as well:
 # with their members (TARGETS) or opaque (OPAQUE).
-TARGETS = {'MegaHaloGame': ['FSystemSettings'], 'UDKBase': ['AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover']}
-OPAQUE = {}
+TARGETS = {'MegaHaloGame': ['FSystemSettings'], 'UDKBase': ['AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
+                       'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>']}
+OPAQUE = {'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator',
+                       # the behaviour-tree nodes' runtime classes
+                       'CCSRBTEnemyClosestRange',
+                       'CCSRBTEnemyLowestLKPAge',
+                       'CCSRBTMoveToBestCover',
+                       'CCSRBTSelectTarget',
+                       'CCSRBTTargetRange',
+                       'CCSRBTTimeSinceAimedAt',
+                       'CCSRBTTimeSinceBecameAware',
+                       'CCSRBTTimeSinceDamage',
+                       'CCSRBTTimeSinceEvent',
+                       'CCSRBTTimeSinceGrenadeStuck',
+                       'CCSRBTTimeSinceStaggered',
+                       'CCSRBTTimeSinceSuccessfulAttack',
+                       'CCSRBTTimeSinceTargetCamoed',
+                       'CCSRBTTimeSinceThreatChanged',
+                       'CCSRBTTimeSinceThreatened',
+                       'CCSRBTEncircleTarget',
+                       'CCSRBTEnemyAware',
+                       'CCSRBTMoveToClosestCover',
+                       'CCSRBTMoveToInitialCover',
+                       'CCSRBTMoveToTether',
+                       'CCSRBTSearch',
+                       'CCSRBTShoot',
+                       'CCSRBTShootFromCover',
+                       'CCSRBTStrafeTarget',
+                       'CCSRBTTargetAngle',
+                       'CCSRBTTargetClear',
+                       'CCSRBTTargetInCover',
+                       'CCSRBTTargetKnockedDown',
+                       'CCSRBTTargetShootable',
+                       'CCSRBTTargetVisible',
+                       'CCSRBTVisibleToPlayerCamera',
+                       'CCSRBTWaitInCover',
+                       'HaloRBTKamikaze',
+                       ]}
 # Event thunks of other classes that a package's code calls (inlined there).
 EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 

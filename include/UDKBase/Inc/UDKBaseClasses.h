@@ -1,27 +1,29 @@
 // Generated from the PDB by: python tools/gen_classes.py UDKBase
 #pragma once
-#include <vectorintrinsics.h>
 
 namespace Grip {
-template <int T0> class AllocatorBaseGH;
 template <class T0, int T1> struct AllocatorGH;
-template <class T0> class ConstructorMov;
+template <class T0> struct ListNode;
+struct AllocInfo;
 struct MemAddressStub;
+struct MemItem;
+class Memory;
 class MemoryHeap;
+class StatBag;
 class String;
 class StringBuffer;
+class SysAlloc;
+class SysAllocPaged;
 }
 
+template <class T0> class GripRBTNumericCondition;
 template <class T0, class T1> class Grip_Array;
 template <class T0, int T1> class Grip_ArrayPOD;
 template <class T0, class T1> class TArray;
 template <class T0> class TArrayNoInit;
 template <class T0, class T1> class TIndirectArray;
-template <int T0, class T1> class TInlineAllocator;
 template <class T0, class T1, class T2> class TMap;
 template <class T0, int T1> class TMemStackAllocator;
-template <class T0, class T1, int T2, int T3, int T4> class TSetAllocator;
-template <class T0, class T1> class TSparseArrayAllocator;
 class AAIController;
 class AActor;
 class ACCSController;
@@ -57,6 +59,7 @@ class CCSAFAction;
 class CCSAFEncircleTarget;
 class CCSAFEnterCover;
 class CCSAFExitCover;
+class CCSAFFactory;
 class CCSAFFireBurst;
 class CCSAFFlee;
 class CCSAFGetInCover;
@@ -100,6 +103,40 @@ struct CCSGameCover;
 class CCSNorman;
 class CCSPSCover;
 class CCSPSTargetAwareness;
+class CCSRBTEncircleTarget;
+class CCSRBTEnemyAware;
+class CCSRBTEnemyClosestRange;
+class CCSRBTEnemyLowestLKPAge;
+class CCSRBTMoveTo;
+class CCSRBTMoveToBestCover;
+class CCSRBTMoveToClosestCover;
+class CCSRBTMoveToCover;
+class CCSRBTMoveToInitialCover;
+class CCSRBTMoveToTether;
+class CCSRBTSearch;
+class CCSRBTSelectTarget;
+class CCSRBTShoot;
+class CCSRBTShootFromCover;
+class CCSRBTStrafeTarget;
+class CCSRBTTargetAngle;
+class CCSRBTTargetClear;
+class CCSRBTTargetInCover;
+class CCSRBTTargetKnockedDown;
+class CCSRBTTargetRange;
+class CCSRBTTargetShootable;
+class CCSRBTTargetVisible;
+class CCSRBTTimeSinceAimedAt;
+class CCSRBTTimeSinceBecameAware;
+class CCSRBTTimeSinceDamage;
+class CCSRBTTimeSinceEvent;
+class CCSRBTTimeSinceGrenadeStuck;
+class CCSRBTTimeSinceStaggered;
+class CCSRBTTimeSinceSuccessfulAttack;
+class CCSRBTTimeSinceTargetCamoed;
+class CCSRBTTimeSinceThreatChanged;
+class CCSRBTTimeSinceThreatened;
+class CCSRBTVisibleToPlayerCamera;
+class CCSRBTWaitInCover;
 class CCSSensorSystem;
 struct CCSSystemsConfig;
 struct CCSTarget;
@@ -109,7 +146,6 @@ struct FActorReference;
 struct FAnimSlotDesc;
 struct FAnimSlotInfo;
 class FArchive;
-struct FAsyncCompletionCallbackInfo;
 struct FAsyncPackage;
 struct FBasedPosition;
 class FBoneAtom;
@@ -129,17 +165,14 @@ struct FCylinder;
 class FDecalRenderData;
 class FDecalState;
 class FDefaultAllocator;
-class FDefaultBitArrayAllocator;
 class FDefaultSetAllocator;
 struct FDynamicLinkInfo;
 class FEditPropertyChain;
 class FExportObjectInnerContext;
 class FFeedbackContext;
-struct FFireLink;
 class FForceApplicator;
 struct FFrame;
 class FGuid;
-class FHeapAllocator;
 struct FIntPoint;
 class FKCachedConvexData;
 class FLightingBuildOptions;
@@ -175,7 +208,6 @@ class FRotator;
 struct FScalarParameterInterpStruct;
 class FSceneInterface;
 struct FScriptDelegate;
-class FSerializableObject;
 struct FStateFrame;
 struct FStaticLightingPrimitiveInfo;
 struct FStreamingTexturePrimitiveInfo;
@@ -189,33 +221,41 @@ class GMainThreadMemStack;
 class GripAFAction;
 class GripAFFactory;
 class GripAFModifier;
+class GripAFScheduler;
 class GripBBMember;
 class GripBBVisualization;
 struct GripBTScriptNodeCache_eventCacheAllConditions_Parms;
 struct GripBTScriptNodeCache_eventInitializeAllNodes_Parms;
 struct GripBTScriptNodeCache_eventSurveyUsedBBMembers_Parms;
+class GripBTStack;
 class GripBTSystemFlags;
 class GripBlackboard;
 class GripBrainSystem;
 struct GripEvent;
+class GripGameEventHandler;
 class GripHUDRenderer;
-class GripHeapObject;
+class GripRBTAllocator;
+class GripRBTBehavior;
+class GripRBTBooleanCondition;
+class GripRBTCondition;
 class GripRBTNode;
+class GripSerializer;
 struct GripSystemConfig;
 class GripVHeapObject;
 struct Grip_Rotation;
 struct Grip_Vector;
 struct GwNavVehicle_eventExecuteVehicleCommand_Parms;
+class HaloRBTKamikaze;
 class ICCSMeatPuppet;
 class ICCSPawn;
 class IGJKHelper;
+class IGripBTInterface;
 class IGripSceneRenderer;
 class IInterface_NavigationHandle;
 class IInterface_Speaker;
 class NxActor;
 class NxActorDesc;
 class NxGroupsMask;
-class ScalarRegister;
 class UActorChannel;
 class UActorComponent;
 class UActorFactory;
@@ -347,7 +387,6 @@ class UMorphNodeBase;
 class UNavigationHandle;
 class UNavigationMeshBase;
 class UObject;
-class UObjectSerializer;
 class UPackage;
 class UPackageMap;
 class UParticleSystem;
@@ -439,6 +478,16 @@ enum EClassCastFlag
 enum EEventParm
 {
     EC_EventParm = 0,
+};
+enum EEventType
+{
+    HALO_EVENT_NONE = 0,
+    HALO_EVENT_DAMAGED = 1,
+    HALO_EVENT_DEATH = 2,
+    HALO_EVENT_ENTER_SLOW_TRAP = 3,
+    HALO_EVENT_EXIT_SLOW_TRAP = 4,
+    HALO_EVENT_ROOT_MOTION_COLLISION = 5,
+    HALO_EVENT_MAX = 6,
 };
 enum EExprToken
 {
@@ -546,6 +595,13 @@ enum EGotoState
     GOTOSTATE_NotFound = 0,
     GOTOSTATE_Success = 1,
     GOTOSTATE_Preempted = 2,
+};
+enum EGripBTNodeFamily
+{
+    GRIP_NF_BEHAVIOR = 0,
+    GRIP_NF_CONTROL = 1,
+    GRIP_NF_CONDITION = 2,
+    GRIP_NF_NUM_OF = 3,
 };
 enum EGripBTNodeType
 {
@@ -1208,20 +1264,32 @@ enum EThreatType
 {
 };
 
+namespace Grip { namespace Heap {
+class MemVisitor;
+class SegVisitor;
+}}
+
 namespace CCS {
-enum ECoverShootConfig
+enum EAlertnessState
 {
-    CoverShootConfig_None = 0,
-    CoverShootConfig_All = 1,
-    CoverShootConfig_Left = 2,
-    CoverShootConfig_Right = 3,
-    CoverShootConfig_LeftOrRight = 4,
+    AlertnessState_Relax = 0,
+    AlertnessState_Alert = 1,
+    AlertnessState_MAX = 2,
 };
-enum ECoverType
+enum EMovementSpeed
 {
-    CoverType_None = 0,
-    CoverType_Stand = 1,
-    CoverType_Crouch = 2,
+    MovementSpeed_Walk = 0,
+    MovementSpeed_Run = 1,
+    MovementSpeed_MAX = 2,
+};
+enum EMovementType
+{
+    MovementType_Idle = 0,
+    MovementType_Walk = 1,
+    MovementType_Run = 2,
+    MovementType_Strafe = 3,
+    MovementType_Encircle = 4,
+    MovementType_MAX = 5,
 };
 }
 
@@ -1251,37 +1319,6 @@ enum EPlatformType
     PLATFORM_DLCSupported = 78,
 };
 }
-
-struct FAnimSlotDesc  // size 0xC, opaque
-{
-public:
-    FAnimSlotDesc(EEventParm);
-    FAnimSlotDesc();
-private:
-    unsigned int FAnimSlotDescData[0x3];
-};
-
-struct FAnimSlotInfo  // size 0x14, opaque
-{
-public:
-    FAnimSlotInfo(EEventParm);
-    FAnimSlotInfo();
-private:
-    unsigned int FAnimSlotInfoData[0x5];
-};
-
-class FHeapAllocator  // size 0x1, opaque
-{
-public:
-    enum
-    {
-        NeedsElementType = 0,
-    };
-};
-
-class FDefaultAllocator : public FHeapAllocator  // size 0x1, opaque
-{
-};
 
 class FName  // size 0x8, opaque
 {
@@ -1385,14 +1422,6 @@ public:
     static FRotator ZeroRotator;
 private:
     unsigned int FRotatorData[0x3];
-};
-
-struct FStaticLightingPrimitiveInfo  // size 0x1C, opaque
-{
-public:
-    FStaticLightingPrimitiveInfo();
-private:
-    unsigned int FStaticLightingPrimitiveInfoData[0x7];
 };
 
 class FVector  // size 0xC
@@ -1548,14 +1577,6 @@ public:
     TArrayNoInit();
     TArrayNoInit<AActor *> &operator=(const TArray<AActor *,FDefaultAllocator> &);
     TArrayNoInit<AActor *> &operator=(const TArrayNoInit<AActor *> &);
-};
-
-struct FTimerData  // size 0x1C, opaque
-{
-public:
-    FTimerData(EEventParm);
-private:
-    unsigned int FTimerDataData[0x7];
 };
 
 template <> class TArray<FTimerData,FDefaultAllocator>  // size 0xC, opaque
@@ -1948,242 +1969,6 @@ public:
     TArrayNoInit<USequenceEvent *> &operator=(const TArrayNoInit<USequenceEvent *> &);
 };
 
-class FSerializableObject  // size 0x4, opaque
-{
-public:
-    virtual ~FSerializableObject();
-    virtual void Serialize(FArchive &) = 0;
-    static void StaticInit();
-    FSerializableObject();
-    static UObjectSerializer *GObjectSerializer;
-};
-
-struct FAsyncPackage : public FSerializableObject  // size 0x74, opaque
-{
-public:
-    FAsyncPackage(const FString &, const FGuid *, FName);
-    unsigned int Tick(unsigned int, float);
-    float GetLoadPercentage() const;
-    double GetLoadStartTime() const;
-    void ResetLoader();
-    const FString &GetPackageName() const;
-    const FName &GetPackageType() const;
-    void AddCompletionCallback(const FAsyncCompletionCallbackInfo &);
-    virtual void Serialize(FArchive &);
-private:
-    unsigned int GiveUpTimeSlice();
-    unsigned int IsTimeLimitExceeded();
-    void BeginAsyncLoad();
-    void EndAsyncLoad();
-    unsigned int CreateLinker();
-    unsigned int FinishLinker();
-    unsigned int CreateImports();
-    unsigned int FinishTextureAllocations();
-    unsigned int CreateExports();
-    unsigned int PreLoadObjects();
-    unsigned int FinishExportGuids();
-    unsigned int PostLoadObjects();
-    unsigned int FinishObjects();
-    unsigned int FAsyncPackageData[0x1C];
-};
-
-template <> class TInlineAllocator<1,FDefaultAllocator>  // size 0x1, opaque
-{
-public:
-    enum
-    {
-        NeedsElementType = 1,
-    };
-};
-
-template <> class TInlineAllocator<4,FDefaultAllocator>  // size 0x1, opaque
-{
-public:
-    enum
-    {
-        NeedsElementType = 1,
-    };
-};
-
-class FDefaultBitArrayAllocator : public TInlineAllocator<4,FDefaultAllocator>  // size 0x1, opaque
-{
-};
-
-template <> class TSparseArrayAllocator<FDefaultAllocator,FDefaultBitArrayAllocator>  // size 0x1, opaque
-{
-};
-
-template <> class TSetAllocator<TSparseArrayAllocator<FDefaultAllocator,FDefaultBitArrayAllocator>,TInlineAllocator<1,FDefaultAllocator>,2,8,4>  // size 0x1, opaque
-{
-public:
-    static unsigned int GetNumberOfHashBuckets(unsigned int);
-};
-
-class FDefaultSetAllocator : public TSetAllocator<TSparseArrayAllocator<FDefaultAllocator,FDefaultBitArrayAllocator>,TInlineAllocator<1,FDefaultAllocator>,2,8,4>  // size 0x1, opaque
-{
-};
-
-struct FReferencerInformation  // size 0x14, opaque
-{
-public:
-    FReferencerInformation(UObject *, int, const TArray<UProperty *,FDefaultAllocator> &);
-private:
-    unsigned int FReferencerInformationData[0x5];
-};
-
-template <> class TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    TArray(const TArray<wchar_t,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    const wchar_t *GetTypedData() const;
-    wchar_t *GetTypedData();
-    const wchar_t *GetData() const;
-    wchar_t *GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    const wchar_t &operator()(int) const;
-    wchar_t &operator()(int);
-    wchar_t Pop();
-    void Push(const wchar_t &);
-    const wchar_t &Top() const;
-    wchar_t &Top();
-    const wchar_t &Last(int) const;
-    wchar_t &Last(int);
-    void Shrink();
-    unsigned int FindItem(const wchar_t &, int &) const;
-    int FindItemIndex(const wchar_t &) const;
-    unsigned int ContainsItem(const wchar_t &) const;
-    unsigned int operator==(const TArray<wchar_t,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<wchar_t,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(const wchar_t &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<wchar_t,FDefaultAllocator> &);
-    TArray<wchar_t,FDefaultAllocator> &operator+=(const TArray<wchar_t,FDefaultAllocator> &);
-    TArray<wchar_t,FDefaultAllocator> &operator=(const TArray<wchar_t,FDefaultAllocator> &);
-    int AddItem(const wchar_t &);
-    int AddZeroed(int);
-    int AddUniqueItem(const wchar_t &);
-    void Reserve(int);
-    void Init(const wchar_t &, int);
-    void Init(int);
-    int RemoveSingleItem(const wchar_t &);
-    int RemoveItem(const wchar_t &);
-    int RemoveSingleItemSwap(const wchar_t &);
-    int RemoveItemSwap(const wchar_t &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-private:
-    const wchar_t &DebugGet(int) const;
-protected:
-    void DestructItems(int, int);
-private:
-    unsigned int TArrayData[0x3];
-};
-
-class FString : public TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    FString(ENoInit);
-    FString(const char *);
-    FString(int, const wchar_t *);
-    FString(const wchar_t *);
-    FString(const FString &, int);
-    FString(const FString &);
-    FString();
-    FString &operator=(const FString &);
-    FString &operator=(const wchar_t *);
-    const wchar_t &operator[](int) const;
-    wchar_t &operator[](int);
-    void CheckInvariants() const;
-    void Empty(int);
-    unsigned int IsEmpty() const;
-    void Shrink();
-    void TrimToNullTerminator();
-    FString operator*(const FString &) const;
-    FString operator*(const wchar_t *) const;
-    const wchar_t *operator*() const;
-    const TArray<wchar_t,FDefaultAllocator> &GetCharArray() const;
-    TArray<wchar_t,FDefaultAllocator> &GetCharArray();
-    FString &operator+=(const FString &);
-    FString &operator+=(const wchar_t);
-    FString &operator+=(const char *);
-    FString &operator+=(const wchar_t *);
-    FString &AppendChar(const wchar_t);
-    FString operator+(const FString &) const;
-    FString operator+(const wchar_t *) const;
-    FString operator+(const wchar_t) const;
-    FString &operator*=(const FString &);
-    FString &operator*=(const wchar_t *);
-    unsigned int operator<=(const FString &) const;
-    unsigned int operator<=(const wchar_t *) const;
-    unsigned int operator<(const FString &) const;
-    unsigned int operator<(const wchar_t *) const;
-    unsigned int operator>=(const FString &) const;
-    unsigned int operator>=(const wchar_t *) const;
-    unsigned int operator>(const FString &) const;
-    unsigned int operator>(const wchar_t *) const;
-    unsigned int operator==(const FString &) const;
-    unsigned int operator==(const wchar_t *) const;
-    unsigned int operator!=(const FString &) const;
-    unsigned int operator!=(const wchar_t *) const;
-    int Len() const;
-    FString Left(int) const;
-    FString LeftChop(int) const;
-    FString Right(int) const;
-    FString RightChop(int) const;
-    FString Mid(int, int) const;
-    int InStr(const FString &, unsigned int, unsigned int, int) const;
-    int InStr(const wchar_t *, unsigned int, unsigned int, int) const;
-    unsigned int Split(const FString &, FString *, FString *, unsigned int) const;
-    FString ToUpper() const;
-    FString ToLower() const;
-    unsigned int ToUBOOL() const;
-    FString LeftPad(int) const;
-    FString RightPad(int) const;
-    unsigned int IsNumeric() const;
-    static FString Printf__VA(const wchar_t *, ...);
-    static FString Printf(const wchar_t *);
-    static FString Chr(wchar_t);
-    unsigned int StartsWith(const FString &) const;
-    unsigned int EndsWith(const FString &) const;
-    FString Trim();
-    FString TrimTrailing();
-    FString TrimQuotes(unsigned int *) const;
-    int ParseIntoArray(TArray<FString,FDefaultAllocator> *, const wchar_t *, unsigned int) const;
-    int ParseIntoArrayWS(TArray<FString,FDefaultAllocator> *, const wchar_t *) const;
-    static int CullArray(TArray<FString,FDefaultAllocator> *);
-    FString Reverse() const;
-    void ReverseString();
-    FString Replace(const wchar_t *, const wchar_t *, unsigned int) const;
-    int ReplaceInline(const wchar_t *, const wchar_t *);
-    FString ReplaceQuotesWithEscapedQuotes() const;
-    FString ReplaceCharWithEscapedChar(const TArray<wchar_t,FDefaultAllocator> *) const;
-    FString ReplaceEscapedCharWithChar(const TArray<wchar_t,FDefaultAllocator> *) const;
-    FString ConvertTabsToSpaces(const int);
-    static FString FormatAsNumber(int);
-    void Reserve(const unsigned int);
-};
-
 class UObject  // size 0x3C, opaque
 {
 public:
@@ -2204,8 +1989,8 @@ public:
     virtual void Serialize(FArchive &);
     virtual unsigned int IsPendingKill() const;
     virtual void ShutdownAfterError();
-    virtual void PreEditChange(FEditPropertyChain &);
     virtual void PreEditChange(UProperty *);
+    virtual void PreEditChange(FEditPropertyChain &);
     virtual void PostEditChangeProperty(FPropertyChangedEvent &);
     virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent &);
     virtual unsigned int CanEditChange(const UProperty *) const;
@@ -2950,8 +2735,8 @@ public:
     virtual unsigned int IsNetRelevantFor(APlayerController *, AActor *, const FVector &);
     virtual unsigned int IsRelevancyOwnerFor(AActor *, AActor *, AActor *);
     virtual void SetZone(unsigned int, unsigned int);
-    virtual void SetVolumes(const TArray<AVolume *,FDefaultAllocator> &);
     virtual void SetVolumes();
+    virtual void SetVolumes(const TArray<AVolume *,FDefaultAllocator> &);
     virtual void PreBeginPlay();
     virtual void PostBeginPlay();
     virtual void setPhysics(unsigned char, AActor *, FVector);
@@ -3017,13 +2802,13 @@ public:
     virtual unsigned int IsAFluidSurface() const;
     virtual APlayerController *GetAPlayerController();
     virtual AController *GetAController();
-    virtual const APawn *GetAPawn() const;
     virtual APawn *GetAPawn();
+    virtual const APawn *GetAPawn() const;
     virtual AVehicle *GetAVehicle();
     virtual AVolume *GetAVolume();
     virtual AFluidSurfaceActor *GetAFluidSurface();
-    virtual const AProjectile *GetAProjectile() const;
     virtual AProjectile *GetAProjectile();
+    virtual const AProjectile *GetAProjectile() const;
     virtual APortalTeleporter *GetAPortalTeleporter();
     virtual APlayerController *GetTopPlayerController();
     virtual unsigned int VerifyNoUnreachableReferences();
@@ -4145,22 +3930,6 @@ public:
     TArrayNoInit<APawn *> &operator=(const TArrayNoInit<APawn *> &);
 };
 
-struct FCoverSlot  // size 0x78, opaque
-{
-public:
-    void SetExposedCoverRefIdx(int, int);
-    unsigned long GetExposedCoverRefIdx(int);
-    void SetExposedScale(int, int);
-    unsigned char GetExposedScale(int);
-    void SetLeftTurnTargetCoverRefIdx(int);
-    unsigned long GetLeftTurnTargetCoverRefIdx();
-    void SetRightTurnTargetCoverRefIdx(int);
-    unsigned long GetRightTurnTargetCoverRefIdx();
-    FFireLink &GetFireLinkRef(int, unsigned char);
-private:
-    unsigned int FCoverSlotData[0x1E];
-};
-
 template <> class TArray<FCoverSlot,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
@@ -4237,15 +4006,6 @@ public:
     TArrayNoInit();
     TArrayNoInit<FCoverSlot> &operator=(const TArray<FCoverSlot,FDefaultAllocator> &);
     TArrayNoInit<FCoverSlot> &operator=(const TArrayNoInit<FCoverSlot> &);
-};
-
-struct FDynamicLinkInfo  // size 0x18, opaque
-{
-public:
-    FDynamicLinkInfo(EEventParm);
-    FDynamicLinkInfo();
-private:
-    unsigned int FDynamicLinkInfoData[0x6];
 };
 
 template <> class TArray<FDynamicLinkInfo,FDefaultAllocator>  // size 0xC, opaque
@@ -4479,15 +4239,6 @@ public:
     char _pad0[0x3];
 };
 
-struct FRigidBodyContactInfo  // size 0x3C, opaque
-{
-public:
-    FRigidBodyContactInfo(const FVector &, const FVector &, float, const FVector &, const FVector &, UPhysicalMaterial *, UPhysicalMaterial *);
-    void SwapOrder();
-private:
-    unsigned int FRigidBodyContactInfoData[0xF];
-};
-
 class IInterface_Speaker  // size 0x4, opaque
 {
 protected:
@@ -4521,8 +4272,8 @@ public:
     virtual unsigned int IsValidEnemyTargetFor(const APlayerReplicationInfo *, unsigned int);
     virtual void SetAnchor(ANavigationPoint *);
     virtual ANavigationPoint *GetBestAnchor(AActor *, FVector, unsigned int, unsigned int, float &);
-    virtual unsigned int ReachedDestination(const FVector &, const FVector &, AActor *, unsigned int);
     virtual unsigned int ReachedDestination(AActor *);
+    virtual unsigned int ReachedDestination(const FVector &, const FVector &, AActor *, unsigned int);
     virtual unsigned int ReachedPoint(FVector, AActor *);
     virtual void ForceCrouch();
     virtual void SetPushesRigidBodies(unsigned int);
@@ -5404,154 +5155,6 @@ private:
     unsigned int CCSAFStrafeToData[0x6];
 };
 
-namespace Grip {
-template <> class AllocatorBaseGH<2>  // size 0x1, opaque
-{
-public:
-    enum
-    {
-        StatId = 2,
-    };
-    static void *Alloc(const void *, unsigned int, const char *, unsigned int);
-    static void *Realloc(void *, unsigned int, const char *, unsigned int);
-    static void Free(void *);
-};
-}
-
-namespace Grip {
-class String  // size 0x4, opaque
-{
-public:
-    enum FlagConstants
-    {
-        Flag_LengthIsSizeShift = 31,
-    };
-    struct DataDesc;
-    enum HeapType
-    {
-        HT_Global = 0,
-        HT_Local = 1,
-        HT_Dynamic = 2,
-        HT_Mask = 3,
-    };
-    struct NoConstructor;
-    struct InitStruct;
-    struct NoCaseKey;
-    static void *operator new(unsigned int, void *);
-    static void operator delete(void *, void *);
-protected:
-    Grip::String::HeapType GetHeapType() const;
-    Grip::String::DataDesc *GetData() const;
-    void SetData(Grip::String::DataDesc *);
-    Grip::String::DataDesc *AllocData(Grip::MemoryHeap *, unsigned int, unsigned int);
-    Grip::String::DataDesc *AllocDataCopy1(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int);
-    Grip::String::DataDesc *AllocDataCopy2(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int, const char *, unsigned int);
-public:
-    String(const wchar_t *);
-    String(const Grip::String::InitStruct &, unsigned int);
-    String(const Grip::StringBuffer &);
-    String(const Grip::String &);
-    String(const char *, unsigned int);
-    String(const char *, const char *, const char *);
-    String(const char *);
-    String();
-protected:
-    String(const Grip::String::NoConstructor &);
-public:
-    ~String();
-    Grip::MemoryHeap *GetHeap() const;
-    void Clear();
-    operator const char *() const;
-    const char *ToCStr() const;
-    unsigned int GetSize() const;
-    bool IsEmpty() const;
-    unsigned int GetLength() const;
-    unsigned long GetCharAt(unsigned int) const;
-    unsigned long GetFirstCharAt(unsigned int, const char **) const;
-    unsigned long GetNextChar(const char **) const;
-    void AppendChar(unsigned long);
-    void AppendString(const char *, int);
-    void AppendString(const wchar_t *, int);
-    void AssignString(const char *, unsigned int);
-    void AssignString(const Grip::String::InitStruct &, unsigned int);
-    void Remove(unsigned int, int);
-    Grip::String Substring(unsigned int, unsigned int) const;
-    Grip::String ToUpper() const;
-    Grip::String ToLower() const;
-    Grip::String &Insert(const char *, unsigned int, int);
-    unsigned int InsertCharAt(unsigned long, unsigned int);
-    unsigned int GetByteIndex(unsigned int) const;
-    int CompareNoCase(const Grip::String &) const;
-    int CompareNoCase(const char *) const;
-    static int CompareNoCase(const char *, const char *, int);
-    static int CompareNoCase(const char *, const char *);
-    static unsigned int BernsteinHashFunctionCIS(const void *, unsigned int, unsigned int);
-    static unsigned int BernsteinHashFunction(const void *, unsigned int, unsigned int);
-    static void EscapeSpecialHTML(const char *, unsigned int, Grip::String *);
-    static void UnescapeSpecialHTML(const char *, unsigned int, Grip::String *);
-    bool HasAbsolutePath() const;
-    static bool HasAbsolutePath(const char *);
-    bool HasExtension() const;
-    static bool HasExtension(const char *);
-    bool HasProtocol() const;
-    static bool HasProtocol(const char *);
-    Grip::String GetProtocol() const;
-    Grip::String GetPath() const;
-    Grip::String GetFilename() const;
-    Grip::String GetExtension() const;
-    void StripProtocol();
-    void StripExtension();
-    void operator=(const Grip::StringBuffer &);
-    void operator=(const Grip::String &);
-    void operator=(const wchar_t *);
-    void operator=(const char *);
-    void operator+=(char);
-    void operator+=(const wchar_t *);
-    void operator+=(const char *);
-    void operator+=(const Grip::String &);
-    Grip::String operator+(const Grip::String &) const;
-    Grip::String operator+(const char *) const;
-    bool operator==(const Grip::String::NoCaseKey &) const;
-    bool operator==(const char *) const;
-    bool operator==(const Grip::String &) const;
-    bool operator!=(const Grip::String::NoCaseKey &) const;
-    bool operator!=(const char *) const;
-    bool operator!=(const Grip::String &) const;
-    bool operator<(const Grip::String &) const;
-    bool operator<(const char *) const;
-    bool operator>(const Grip::String &) const;
-    bool operator>(const char *) const;
-    const char &operator[](unsigned int) const;
-    const char &operator[](int) const;
-    static Grip::String::DataDesc NullData;
-private:
-    unsigned int StringData[0x1];
-};
-}
-
-namespace Grip {
-template <> class ConstructorMov<Grip::String>  // size 0x1, opaque
-{
-public:
-    static void Construct(void *, const Grip::String &);
-    static void Construct(void *);
-    static void ConstructArray(void *, unsigned int, const Grip::String *);
-    static void ConstructArray(void *, unsigned int, const Grip::String &);
-    static void ConstructArray(void *, unsigned int);
-    static void Destruct(Grip::String *);
-    static void DestructArray(Grip::String *, unsigned int);
-    static void CopyArrayForward(Grip::String *, const Grip::String *, unsigned int);
-    static void CopyArrayBackward(Grip::String *, const Grip::String *, unsigned int);
-    static bool IsMovable();
-};
-}
-
-namespace Grip {
-template <> struct AllocatorGH<Grip::String,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<Grip::String>  // size 0x1, opaque
-{
-};
-}
-
 class GripBlackboard : public GripVHeapObject  // size 0x8C, opaque
 {
 public:
@@ -5655,55 +5258,6 @@ private:
     unsigned int CCSBlackboardData[0x17C];
 };
 
-class GripHeapObject  // size 0x1, opaque
-{
-public:
-    static void *operator new(unsigned int, void *);
-    static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
-    static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
-    static void *operator new(unsigned int, int, const char *, int);
-    static void *operator new(unsigned int, Grip::MemAddressStub *, const char *, int);
-    static void *operator new(unsigned int, Grip::MemoryHeap *, const char *, int);
-    static void *operator new(unsigned int, const char *, int);
-    static void *operator new(unsigned int, Grip::MemAddressStub *);
-    static void *operator new(unsigned int, Grip::MemoryHeap *, int);
-    static void *operator new(unsigned int, Grip::MemoryHeap *);
-    static void *operator new(unsigned int);
-    static void operator delete(void *, void *);
-    static void operator delete(void *, Grip::MemAddressStub *, int, const char *, int);
-    static void operator delete(void *, Grip::MemAddressStub *, const char *, int);
-    static void operator delete(void *, Grip::MemAddressStub *, int);
-    static void operator delete(void *, Grip::MemAddressStub *);
-    static void operator delete(void *, Grip::MemoryHeap *, int, const char *, int);
-    static void operator delete(void *, Grip::MemoryHeap *, const char *, int);
-    static void operator delete(void *, Grip::MemoryHeap *, int);
-    static void operator delete(void *, Grip::MemoryHeap *);
-    static void operator delete(void *, int, const char *, int);
-    static void operator delete(void *, const char *, int);
-    static void operator delete(void *);
-};
-
-struct CCSCharacter : public GripHeapObject  // size 0x14, opaque
-{
-public:
-    CCSCharacter();
-    bool operator==(const CCSCharacter &) const;
-    bool operator!=(const CCSCharacter &) const;
-    void *GetActor() const;
-    CCSBrain *GetBrain() const;
-    UUDKTargetableComponent *GetTargetableComponent();
-    Grip_Vector GetEyesPosition() const;
-    float GetHeight() const;
-    Grip_Rotation GetOrientation() const;
-    Grip_Vector GetPosition() const;
-    float GetSize() const;
-    int GetTeam();
-    bool IsPlayer() const;
-    static const CCSCharacter NONE;
-private:
-    char CCSCharacterData[0x13];
-};
-
 struct CCSController_eventActionStopFiring_Parms  // size 0x1
 {
 public:
@@ -5785,29 +5339,6 @@ struct CCSController_eventStopFireBurst_Parms  // size 0x4
 public:
     CCSController_eventStopFireBurst_Parms(EEventParm);
     unsigned int ReturnValue;  // 0x0
-};
-
-struct CCSGameCover : public GripHeapObject  // size 0x8, opaque
-{
-public:
-    bool IsEnabled() const;
-    bool IsLocked() const;
-    bool IsLockedBy(CCSCharacter) const;
-    bool LockCover(CCSCharacter);
-    bool UnlockCover(CCSCharacter);
-    bool IsOccupied() const;
-    bool IsOccupiedBy(CCSCharacter) const;
-    bool OccupyCover(CCSCharacter);
-    bool VacateCover(CCSCharacter);
-    Grip_Vector GetPosition() const;
-    Grip_Rotation GetOrientation() const;
-    CCS::ECoverShootConfig GetShootConfig() const;
-    CCS::ECoverType GetType() const;
-    Grip_Vector GetShootPosition(const CCS::ECoverShootConfig, const float) const;
-    bool operator==(const CCSGameCover &) const;
-    static const CCSGameCover NONE;
-private:
-    char CCSGameCoverData[0x7];
 };
 
 template <> class TArray<ActorWrapper *,FDefaultAllocator>  // size 0xC, opaque
@@ -6076,29 +5607,6 @@ public:
     CCSCoverRenderingComponent *m_pDebugComponent;  // 0x4C
 };
 
-namespace Grip {
-template <> class ConstructorMov<CCSCharacter>  // size 0x1, opaque
-{
-public:
-    static void Construct(void *, const CCSCharacter &);
-    static void Construct(void *);
-    static void ConstructArray(void *, unsigned int, const CCSCharacter *);
-    static void ConstructArray(void *, unsigned int, const CCSCharacter &);
-    static void ConstructArray(void *, unsigned int);
-    static void Destruct(CCSCharacter *);
-    static void DestructArray(CCSCharacter *, unsigned int);
-    static void CopyArrayForward(CCSCharacter *, const CCSCharacter *, unsigned int);
-    static void CopyArrayBackward(CCSCharacter *, const CCSCharacter *, unsigned int);
-    static bool IsMovable();
-};
-}
-
-namespace Grip {
-template <> struct AllocatorGH<CCSCharacter,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<CCSCharacter>  // size 0x1, opaque
-{
-};
-}
-
 template <> class Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > : public GripVHeapObject  // size 0x10, opaque
 {
 public:
@@ -6181,140 +5689,583 @@ public:
     CCSTargetRenderingComponent *m_pDebugComponent;  // 0x58
 };
 
+class GripRBTNode : public GripVHeapObject  // size 0x64, opaque
+{
+public:
+    enum
+    {
+        MAX_NB_CHILDREN = 16,
+    };
+    enum EBTEvaluationResult
+    {
+        EVR_READY = 0,
+        EVR_NOT_READY = 1,
+        EVR_OVER = 2,
+        EVR_MAX = 3,
+    };
+    enum EBTExecutionResult
+    {
+        ER_SUCCESS = 0,
+        ER_FAILURE = 1,
+        ER_INPROGRESS = 2,
+        ER_INTERRUPTING = 3,
+        ER_SUCCESSFULLY_INTERRUPTED = 4,
+        ER_READY = 5,
+        ER_NOT_READY = 6,
+        ER_MAX = 7,
+    };
+    virtual void GripBTInitialize();
+    virtual void Delete();
+    virtual bool TestPreCondition(IGripBTInterface *);
+protected:
+    virtual GripRBTNode::EBTEvaluationResult EvaluateInternal(IGripBTInterface *, GripBTStack *);
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual void GameEventRegistration(GripGameEventHandler &);
+public:
+    virtual void SurveyUsedBBMembers(GripBlackboard *);
+    virtual void GetUsedControlSystems(GripBTSystemFlags &);
+    virtual GripRBTNode::EBTEvaluationResult Evaluate(IGripBTInterface *, GripBTStack *);
+    virtual GripRBTNode::EBTExecutionResult Execute(IGripBTInterface *, GripBTStack *, bool);
+    virtual EGripBTNodeType GetType();
+    virtual EGripBTNodeFamily GetFamily();
+    virtual float GetWeight(IGripBTInterface *);
+    GripRBTNode();
+    virtual ~GripRBTNode();
+    void InitiateGameEventRegistration(GripGameEventHandler &);
+    int GetChildCount() const;
+    bool AddChild(GripRBTNode *);
+    GripRBTNode *GetChild(const int);
+    GripRBTNode::EBTExecutionResult GetLastExecutionResult() const;
+    GripRBTNode::EBTEvaluationResult GetLastEvaluationResult() const;
+    static bool IsExecuting(GripRBTNode::EBTExecutionResult);
+    bool IsExecuting() const;
+    void SetWeight(float);
+    int GetCardinality() const;
+    void SetAsContextSwitch(bool);
+    bool IsContextSwitch() const;
+    static void *operator new(unsigned int);
+    static void operator delete(void *);
+    void Serialize(GripSerializer *);
+private:
+    Grip::String GetNodeTypeLabel();
+public:
+    GripRBTNode::EBTExecutionResult GetExecutionResultVisualization() const;
+    Grip::String GetName() const;
+    int GetNodeID() const;
+    void SetName(Grip::String);
+    Grip::String GetJSONRepresentation();
+protected:
+    static int ms_IDCounter;
+    static GripRBTAllocator *ms_pAllocator;
+private:
+    unsigned int GripRBTNodeData[0x18];
+};
+
+class GripRBTBehavior : public GripRBTNode  // size 0x64, opaque
+{
+public:
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+    virtual bool TestPreCondition(IGripBTInterface *);
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    virtual EGripBTNodeType GetType();
+    virtual EGripBTNodeFamily GetFamily();
+};
+
+class CCSRBTEncircleTarget : public GripRBTBehavior  // size 0x84, opaque
+{
+public:
+    enum EBTEncircleTargetShootState
+    {
+        EBTEncircleTargetShootState_Init = 0,
+        EBTEncircleTargetShootState_Shooting = 1,
+        EBTEncircleTargetShootState_Delay = 2,
+        EBTEncircleTargetShootState_Done = 3,
+    };
+    CCSRBTEncircleTarget();
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+public:
+    void SetFireChance(float);
+    void SetFireBurstPerShot(int);
+    void SetDelayBetweenBursts(float);
+    void SetDirectionFlags(bool, bool);
+    void SetForceFire(bool);
+private:
+    unsigned int CCSRBTEncircleTargetData[0x8];
+};
+
+class GripRBTCondition : public GripRBTNode  // size 0x64, opaque
+{
+public:
+    enum EOperator
+    {
+        LESS_THAN = 0,
+        LESS_THAN_OR_EQUAL_TO = 1,
+        EQUAL_TO = 2,
+        NOT_EQUAL_TO = 3,
+        GREATER_THAN = 4,
+        GREATER_THAN_OR_EQUAL_TO = 5,
+        BTConditionOperator_MAX = 6,
+    };
+    virtual EGripBTNodeType GetType();
+    virtual EGripBTNodeFamily GetFamily();
+protected:
+    virtual GripRBTNode::EBTEvaluationResult EvaluateInternal(IGripBTInterface *, GripBTStack *);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+};
+
+class GripRBTBooleanCondition : public GripRBTCondition  // size 0x68, opaque
+{
+public:
+    GripRBTBooleanCondition();
+    void SetNegate(bool);
+private:
+    unsigned int GripRBTBooleanConditionData[0x1];
+};
+
+class CCSRBTEnemyAware : public GripRBTBooleanCondition  // size 0x68, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+template <> class GripRBTNumericCondition<int> : public GripRBTCondition  // size 0x70
+{
+public:
+    GripRBTNumericCondition();
+    virtual bool TestPreCondition(IGripBTInterface *);
+    void SetOperator(GripRBTCondition::EOperator);
+    void SetThreshold(int);
+    void SetValue(int);
+    GripRBTCondition::EOperator m_operator;  // 0x64
+    int m_threshold;  // 0x68
+    int m_value;  // 0x6C
+};
+
+class CCSRBTEnemyClosestRange : public GripRBTNumericCondition<int>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+template <> class GripRBTNumericCondition<float> : public GripRBTCondition  // size 0x70
+{
+public:
+    GripRBTNumericCondition();
+    virtual bool TestPreCondition(IGripBTInterface *);
+    void SetOperator(GripRBTCondition::EOperator);
+    void SetThreshold(float);
+    void SetValue(float);
+    GripRBTCondition::EOperator m_operator;  // 0x64
+    float m_threshold;  // 0x68
+    float m_value;  // 0x6C
+};
+
+class CCSRBTEnemyLowestLKPAge : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTMoveTo : public GripRBTBehavior  // size 0xA4, opaque
+{
+public:
+    enum EBTMoveToShootState
+    {
+        EBTMoveToShootState_Init = 0,
+        EBTMoveToShootState_Shooting = 1,
+        EBTMoveToShootState_Delay = 2,
+        EBTMoveToShootState_Done = 3,
+    };
+    CCSRBTMoveTo();
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+public:
+    void SetSpeed(CCS::EMovementSpeed);
+    void SetAlertness(CCS::EAlertnessState);
+    void SetMovementType(CCS::EMovementType);
+    void SetFireChance(float);
+    void SetChargedShotChance(float);
+    void SetFireBurstPerShot(int);
+    void SetDelayBetweenBursts(float);
+    void SetPrimaryAttackRange(float);
+    void SetSecondaryAttackRange(float);
+    void SetPrimaryTargetWeight(float);
+    void SetPlayerTargetWeight(float);
+    void SetReactiveTargetWeight(float);
+    void SetObjectiveTargetWeight(float);
+private:
+    CCSTarget *GetSecondaryTarget(IGripBTInterface *);
+    unsigned int CCSRBTMoveToData[0x10];
+};
+
+class CCSRBTMoveToCover : public CCSRBTMoveTo  // size 0xD4, opaque
+{
+public:
+    enum EMoveToCoverState
+    {
+        MoveToCover_Waiting = 0,
+        MoveToCover_Moving = 1,
+        MoveToCover_TakingCover = 2,
+        MoveToCover_ExitingCover = 3,
+    };
+protected:
+    virtual CCSCover FindBestCover(IGripBTInterface *) const;
+public:
+    CCSRBTMoveToCover();
+protected:
+    GripRBTNode::EBTExecutionResult StartMoveToCover(IGripBTInterface *);
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    bool MovingToCover(CCSBlackboard *);
+    void EnterCover(CCSBlackboard *, CCSAFFactory *, GripAFScheduler *);
+    void ExitCover(CCSAFFactory *, GripAFScheduler *);
+private:
+    unsigned int CCSRBTMoveToCoverData[0xC];
+};
+
+class CCSRBTMoveToBestCover : public CCSRBTMoveToCover  // size 0xDC, opaque
+{
+public:
+    CCSRBTMoveToBestCover();
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+protected:
+    virtual CCSCover FindBestCover(IGripBTInterface *) const;
+public:
+    void SetIdealShootingDistance(float);
+    void SetExcludeCurrentCover(bool);
+private:
+    unsigned int CCSRBTMoveToBestCoverData[0x2];
+};
+
+class CCSRBTMoveToClosestCover : public CCSRBTMoveToCover  // size 0xD4, opaque
+{
+public:
+    CCSRBTMoveToClosestCover();
+protected:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual CCSCover FindBestCover(IGripBTInterface *) const;
+};
+
+class CCSRBTMoveToInitialCover : public CCSRBTMoveToCover  // size 0xD4, opaque
+{
+protected:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual CCSCover FindBestCover(IGripBTInterface *) const;
+};
+
+class CCSRBTMoveToTether : public CCSRBTMoveTo  // size 0xE0, opaque
+{
+public:
+    CCSRBTMoveToTether();
+    virtual bool TestPreCondition(IGripBTInterface *);
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    void StartMoveToSeat(IGripBTInterface *);
+    void UpdateTetherTarget(AActor *);
+    bool TetherIsInVehicle();
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+private:
+    unsigned int CCSRBTMoveToTetherData[0xF];
+};
+
+class CCSRBTSearch : public CCSRBTMoveTo  // size 0xD0, opaque
+{
+public:
+    enum ESearch
+    {
+        Search_MovingToLKP = 0,
+        Search_MovingToRandomLocation = 1,
+    };
+    CCSRBTSearch();
+    virtual bool TestPreCondition(IGripBTInterface *);
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+private:
+    void MoveToLKP(IGripBTInterface *);
+    void MoveToRandomLocation(IGripBTInterface *);
+    void FindNavigationPoints();
+    unsigned int CCSRBTSearchData[0xB];
+};
+
+class CCSRBTSelectTarget : public GripRBTBehavior  // size 0x74, opaque
+{
+public:
+    enum EAlgorithm
+    {
+        Algorithm_Closest = 0,
+        Algorithm_Closest_Objective = 1,
+        Algorithm_Closest_Reactive_Target = 2,
+        Algorithm_Specific_Tag = 3,
+        Algorithm_Highest_Threat = 4,
+        Algorithm_Closest_Entry_Vehicle = 5,
+        Algorithm_None = 6,
+    };
+    CCSRBTSelectTarget();
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+public:
+    void SetSelectionAlgo(CCSRBTSelectTarget::EAlgorithm);
+    void SetTargetName(FString);
+private:
+    unsigned int CCSRBTSelectTargetData[0x4];
+};
+
+class CCSRBTShoot : public GripRBTBehavior  // size 0x80, opaque
+{
+public:
+    enum EBTShootState
+    {
+        BTShootState_Init = 0,
+        BTShootState_Shooting = 1,
+        BTShootState_Delay = 2,
+    };
+    CCSRBTShoot();
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+public:
+    void SetFireBurstPerShot(int);
+    void SetDelayBetweenBursts(float);
+    void SetChargedShotChance(float);
+private:
+    unsigned int CCSRBTShootData[0x7];
+};
+
+class CCSRBTShootFromCover : public GripRBTBehavior  // size 0x84, opaque
+{
+public:
+    enum EBTCoverShootState
+    {
+        BTCoverShootState_Init = 0,
+        BTCoverShootState_Hiding = 1,
+        BTCoverShootState_GettingOutCover = 2,
+        BTCoverShootState_Shooting = 3,
+        BTCoverShootState_ShootingDelay = 4,
+        BTCoverShootState_ReturningToCover = 5,
+        BTCoverShootState_ExitingCover = 6,
+    };
+    CCSRBTShootFromCover();
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+public:
+    void SetFireBurstPerShot(int);
+    void SetDelayBetweenBursts(float);
+private:
+    int GetInCover(CCSTarget *, CCSCover *, CCSAFFactory *, GripAFScheduler *);
+    int GetOutCover(CCSTarget *, CCSCover *, CCSAFFactory *, GripAFScheduler *);
+    int ExitCover(CCSAFFactory *, GripAFScheduler *);
+    int FireBurst(CCSAOFireBurst &, CCSAFFactory *, GripAFScheduler *);
+    unsigned int CCSRBTShootFromCoverData[0x8];
+};
+
+class CCSRBTStrafeTarget : public GripRBTBehavior  // size 0x88, opaque
+{
+public:
+    enum EBTStrafeTargetShootState
+    {
+        EBTStrafeTargetShootState_Init = 0,
+        EBTStrafeTargetShootState_Shooting = 1,
+        EBTStrafeTargetShootState_Delay = 2,
+        EBTStrafeTargetShootState_Done = 3,
+    };
+    CCSRBTStrafeTarget();
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+public:
+    void SetFireChance(float);
+    void SetChargedShotChance(float);
+    void SetFireBurstPerShot(int);
+    void SetDelayBetweenBursts(float);
+    void SetDirectionFlags(bool, bool, bool, bool);
+    CCSTarget *GetSecondaryTarget(IGripBTInterface *);
+private:
+    unsigned int CCSRBTStrafeTargetData[0x9];
+};
+
+class CCSRBTTargetAngle : public GripRBTBooleanCondition  // size 0x6C, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+    void SetActiveZones(bool, bool, bool, bool);
+private:
+    unsigned int CCSRBTTargetAngleData[0x1];
+};
+
+class CCSRBTTargetClear : public GripRBTBooleanCondition  // size 0x68, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTargetInCover : public GripRBTBooleanCondition  // size 0x68, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTargetKnockedDown : public GripRBTBooleanCondition  // size 0x68, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTargetRange : public GripRBTNumericCondition<int>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTargetShootable : public GripRBTBooleanCondition  // size 0x68, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTargetVisible : public GripRBTBooleanCondition  // size 0x68, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceAimedAt : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceBecameAware : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceDamage : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceEvent : public GripRBTNumericCondition<float>  // size 0x7C, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+    void SetEventType(EEventType);
+    void SetActorClass(UClass *);
+    void SetMaxDistance(float);
+private:
+    unsigned int CCSRBTTimeSinceEventData[0x3];
+};
+
+class CCSRBTTimeSinceGrenadeStuck : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceStaggered : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceSuccessfulAttack : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceTargetCamoed : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceThreatChanged : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTTimeSinceThreatened : public GripRBTNumericCondition<float>  // size 0x70, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTVisibleToPlayerCamera : public GripRBTBooleanCondition  // size 0x68, opaque
+{
+public:
+    virtual void FlagUsedBBMembers(GripBlackboard *);
+    virtual bool TestPreCondition(IGripBTInterface *);
+};
+
+class CCSRBTWaitInCover : public GripRBTBehavior  // size 0x64, opaque
+{
+public:
+    CCSRBTWaitInCover();
+    virtual bool TestPreCondition(IGripBTInterface *);
+protected:
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+};
+
 struct CoverLink_eventSetDisabled_Parms  // size 0x4
 {
 public:
     CoverLink_eventSetDisabled_Parms(EEventParm);
     unsigned int bNewDisabled;  // 0x0
-};
-
-class FBoneAtom  // size 0x20, opaque
-{
-public:
-    FBoneAtom(const __vector4 &, const __vector4 &);
-    FBoneAtom(const FMatrix &);
-    FBoneAtom(const FBoneAtom &);
-    FBoneAtom(const FRotator &, const FVector &, float);
-    FBoneAtom(const FRotator &, const FVector &);
-    FBoneAtom(const FQuat &, const FVector &, float);
-    FBoneAtom(const FQuat &, const FVector &);
-    FBoneAtom();
-    void DebugPrint() const;
-    FString ToString() const;
-    FBoneAtom &operator=(const FBoneAtom &);
-    FMatrix ToMatrix() const;
-    void To3x4MatrixTranspose(float *) const;
-    void Blend(const FBoneAtom &, const FBoneAtom &, float);
-    void BlendWith(const FBoneAtom &, float);
-    FBoneAtom operator-(const FBoneAtom &) const;
-    FBoneAtom operator+(const FBoneAtom &) const;
-    FBoneAtom &operator+=(const FBoneAtom &);
-    FBoneAtom operator*(const FQuat &) const;
-    FBoneAtom operator*(const FBoneAtom &) const;
-    FBoneAtom operator*(const ScalarRegister &) const;
-    void operator*=(const FQuat &);
-    void operator*=(const FBoneAtom &);
-    FBoneAtom &operator*=(const ScalarRegister &);
-    void ScaleTranslation(const FVector &);
-    void RemoveScaling(float);
-    float GetMaximumAxisScale() const;
-    FBoneAtom Inverse() const;
-    FBoneAtom InverseSafe() const;
-    FVector4 TransformFVector4(const FVector4 &) const;
-    FVector TransformFVector(const FVector &) const;
-    FVector InverseTransformFVector(const FVector &) const;
-    __vector4 TransformNormal(const __vector4 &) const;
-    FVector TransformNormal(const FVector &) const;
-    FVector InverseTransformNormal(const FVector &) const;
-    FBoneAtom ApplyScale(float) const;
-    FVector GetAxis(int) const;
-    void Mirror(unsigned char, unsigned char);
-    FVector GetOrigin() const;
-    void SetOrigin(const FVector &);
-    unsigned int ContainsNaN() const;
-    static void Multiply(FBoneAtom *, const FBoneAtom *, const FBoneAtom *);
-    static void Multiply(FBoneAtom &, const FBoneAtom &, float);
-    void SetComponents(const FQuat &, const FVector &, float);
-    void SetComponents(const FQuat &, const FVector &);
-    void SetIdentity();
-    void MultiplyScale(float);
-    void SetTranslation(const __vector4);
-    void SetTranslation(const FVector &);
-    void ConcatenateRotation(const __vector4 &);
-    void ConcatenateRotation(const FQuat &);
-    void AddToTranslation(const __vector4 &);
-    void AddToTranslation(const FVector &);
-    void SetRotation(const __vector4);
-    void SetRotation(const FQuat &);
-    void SetScale(const float);
-    void SetScale(const ScalarRegister &);
-    void SetTranslationAndScale(const FVector &, float);
-    void SetTranslationAndScale(const FVector &);
-    void FlipSignOfRotationW();
-    void AccumulateWithShortestRotation(const FBoneAtom &);
-    void AccumulateWithShortestRotation(const FBoneAtom &, const __vector4);
-    void Accumulate(const FBoneAtom &, const ScalarRegister &);
-    void Accumulate(const FBoneAtom &);
-    void LerpTranslationScale(const FBoneAtom &, const FBoneAtom &, const ScalarRegister &);
-    void AccumulateWithAdditiveScale(const FBoneAtom &);
-    void NormalizeRotation();
-    unsigned int IsRotationNormalized() const;
-    static void BlendFromIdentityAndAccumulate(FBoneAtom &, FBoneAtom &, const ScalarRegister &);
-    FQuat GetRotation() const;
-    FVector GetTranslation() const;
-    float GetScale() const;
-    __vector4 GetRotationV() const;
-    __vector4 GetTranslationV() const;
-    ScalarRegister GetScaleV() const;
-    void CopyRotationPart(const FBoneAtom &);
-    void CopyTranslationAndScale(const FBoneAtom &);
-    void SetMatrix(const FMatrix &);
-    void SetMatrixWithScale(const FMatrix &);
-private:
-    void ToMatrixInternal(__vector4 &, __vector4 &, __vector4 &) const;
-public:
-    static const FBoneAtom Identity;
-private:
-    static const __vector4 Ax_Ay_Bx_Bz;
-    static const __vector4 Az_By;
-    static const __vector4 Ax_Bx_Bw_Aw;
-    static const __vector4 Bz_Ay_By_Aw;
-    static const __vector4 Bx_By_Az_Aw;
-    static const __vector4 Ax_Ay_Bx_By;
-    static const __vector4 Az_Az_Bz_Bz;
-    static const __vector4 Ax_Az_Bx_By;
-    static const __vector4 Ay_Ay_Bz_Bz;
-    static const __vector4 Ax_Bz_By_Az;
-    static const __vector4 Bx_Ay_Bw_Aw;
-    static const __vector4 Bz_Bx_Ax_Az;
-    unsigned int FBoneAtomData[0x8];
-};
-
-struct FCCSCoverData  // size 0x1C, opaque
-{
-public:
-    FCCSCoverData(EEventParm);
-    FCCSCoverData();
-private:
-    unsigned int FCCSCoverDataData[0x7];
-};
-
-struct FCCSTargetData  // size 0x30, opaque
-{
-public:
-    FCCSTargetData(EEventParm);
-    FCCSTargetData();
-private:
-    unsigned int FCCSTargetDataData[0xC];
-};
-
-struct FCurveKey  // size 0xC, opaque
-{
-public:
-    FCurveKey(FName, float);
-    FCurveKey();
-private:
-    unsigned int FCurveKeyData[0x3];
 };
 
 class FOutputDevice  // size 0x10, opaque
@@ -6365,19 +6316,156 @@ public:
     FOutParmRec *OutParms;  // 0x24
 };
 
-struct FMeshBone  // size 0x50, opaque
+namespace Grip {
+template <> struct ListNode<Grip::MemoryHeap>  // size 0x8, opaque
 {
 public:
-    unsigned int operator==(const FMeshBone &) const;
+    void RemoveNode();
+    void ReplaceNodeWith(Grip::MemoryHeap *);
+    void InsertNodeAfter(Grip::MemoryHeap *);
+    void InsertNodeBefore(Grip::MemoryHeap *);
+    void Alloc_MoveTo(Grip::ListNode<Grip::MemoryHeap> *);
 private:
-    unsigned int FMeshBoneData[0x14];
+    unsigned int ListNodeData[0x2];
 };
+}
 
-struct FStreamingTexturePrimitiveInfo  // size 0x18, opaque
+namespace Grip {
+class Memory  // size 0x1, opaque
 {
-private:
-    unsigned int FStreamingTexturePrimitiveInfoData[0x6];
+public:
+    static void SetGlobalHeap(Grip::MemoryHeap *);
+    static Grip::MemoryHeap *GetGlobalHeap();
+    static void CreateArena(unsigned int, Grip::SysAllocPaged *);
+    static void DestroyArena(unsigned int);
+    static bool ArenaIsEmpty(unsigned int);
+    static void *Alloc(unsigned int, unsigned int, const Grip::AllocInfo &);
+    static void *Alloc(unsigned int, const Grip::AllocInfo &);
+    static void *Alloc(unsigned int, unsigned int);
+    static void *Alloc(unsigned int);
+    static void *AllocAutoHeap(const void *, unsigned int, unsigned int, const Grip::AllocInfo &);
+    static void *AllocAutoHeap(const void *, unsigned int, const Grip::AllocInfo &);
+    static void *AllocAutoHeap(const void *, unsigned int, unsigned int);
+    static void *AllocAutoHeap(const void *, unsigned int);
+    static void *AllocInHeap(Grip::MemoryHeap *, unsigned int, unsigned int, const Grip::AllocInfo &);
+    static void *AllocInHeap(Grip::MemoryHeap *, unsigned int, const Grip::AllocInfo &);
+    static void *AllocInHeap(Grip::MemoryHeap *, unsigned int, unsigned int);
+    static void *AllocInHeap(Grip::MemoryHeap *, unsigned int);
+    static void *Realloc(void *, unsigned int);
+    static void Free(void *);
+    static Grip::MemoryHeap *GetHeapByAddress(const void *);
+    static bool DetectMemoryLeaks();
+    static Grip::MemoryHeap *pGlobalHeap;
 };
+}
+
+namespace Grip {
+class MemoryHeap : public Grip::ListNode<Grip::MemoryHeap>  // size 0x6C, opaque
+{
+public:
+    enum MemReportType
+    {
+        MemReportBrief = 0,
+        MemReportFull = 1,
+        MemReportFileSummary = 2,
+        MemReportHeapDetailed = 3,
+    };
+    enum HeapFlags
+    {
+        Heap_ThreadUnsafe = 1,
+        Heap_FastTinyBlocks = 2,
+        Heap_FixedGranularity = 4,
+        Heap_Root = 8,
+        Heap_NoDebugInfo = 16,
+        Heap_UserDebug = 4096,
+    };
+    enum RootHeapParameters
+    {
+        RootHeap_MinAlign = 16,
+        RootHeap_Granularity = 16384,
+        RootHeap_Reserve = 16384,
+        RootHeap_Threshold = 262144,
+        RootHeap_Limit = 0,
+    };
+    struct HeapDesc;
+    struct HeapInfo;
+    struct HeapVisitor;
+    struct LimitHandler;
+    struct HeapTracer;
+    struct RootStats;
+protected:
+    virtual ~MemoryHeap();
+public:
+    virtual void CreateArena(unsigned int, Grip::SysAllocPaged *) = 0;
+    virtual void DestroyArena(unsigned int) = 0;
+    virtual bool ArenaIsEmpty(unsigned int) = 0;
+    virtual Grip::MemoryHeap *CreateHeap(const char *, const Grip::MemoryHeap::HeapDesc &) = 0;
+    virtual void SetLimitHandler(Grip::MemoryHeap::LimitHandler *) = 0;
+    virtual void SetLimit(unsigned int) = 0;
+    virtual void AddRef() = 0;
+    virtual void Release() = 0;
+    virtual void *Alloc(unsigned int, const Grip::AllocInfo *) = 0;
+    virtual void *Alloc(unsigned int, unsigned int, const Grip::AllocInfo *) = 0;
+    virtual void *Realloc(void *, unsigned int) = 0;
+    virtual void Free(void *) = 0;
+    virtual void *AllocAutoHeap(const void *, unsigned int, const Grip::AllocInfo *) = 0;
+    virtual void *AllocAutoHeap(const void *, unsigned int, unsigned int, const Grip::AllocInfo *) = 0;
+    virtual Grip::MemoryHeap *GetAllocHeap(const void *) = 0;
+    virtual unsigned int GetUsableSize(const void *) = 0;
+    virtual void *AllocSysDirect(unsigned int) = 0;
+    virtual void FreeSysDirect(void *, unsigned int) = 0;
+    virtual bool GetStats(Grip::StatBag *) = 0;
+    virtual unsigned int GetFootprint() const = 0;
+    virtual unsigned int GetTotalFootprint() const = 0;
+    virtual unsigned int GetUsedSpace() const = 0;
+    virtual unsigned int GetTotalUsedSpace() const = 0;
+    virtual void GetRootStats(Grip::MemoryHeap::RootStats *) = 0;
+    virtual void VisitMem(Grip::Heap::MemVisitor *, unsigned int) = 0;
+    virtual void VisitRootSegments(Grip::Heap::SegVisitor *) = 0;
+    virtual void VisitHeapSegments(Grip::Heap::SegVisitor *) const = 0;
+    virtual void SetTracer(Grip::MemoryHeap::HeapTracer *) = 0;
+protected:
+    virtual void destroyItself() = 0;
+    virtual void ultimateCheck() = 0;
+    virtual void releaseCachedMem() = 0;
+    virtual bool dumpMemoryLeaks() = 0;
+    virtual void checkIntegrity() const = 0;
+    virtual void getUserDebugStats(Grip::MemoryHeap::RootStats *) const = 0;
+    MemoryHeap();
+public:
+    static void InitPT(Grip::SysAllocPaged *);
+    static void InitMH(Grip::SysAlloc *);
+    static void CleanUpPT();
+    static void CleanUpMH();
+    static Grip::MemoryHeap *CreateRootHeapPT(const Grip::MemoryHeap::HeapDesc &);
+    static Grip::MemoryHeap *CreateRootHeapPT();
+    static Grip::MemoryHeap *CreateRootHeapMH(const Grip::MemoryHeap::HeapDesc &);
+    static Grip::MemoryHeap *CreateRootHeapMH();
+    static void ReleaseRootHeapPT();
+    static void ReleaseRootHeapMH();
+    Grip::MemoryHeap *CreateHeap(const char *, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
+    void GetHeapInfo(Grip::MemoryHeap::HeapInfo *) const;
+    const char *GetName() const;
+    unsigned int GetId() const;
+    Grip::MemoryHeap *GetParentHeap() const;
+    unsigned int GetFlags() const;
+    unsigned int GetGranularity() const;
+    unsigned int GetLimit() const;
+    bool IsThreadSafe() const;
+    void ReleaseOnFree(void *);
+    void AssignToCurrentThread();
+    void MemReport(Grip::MemItem *, Grip::MemoryHeap::MemReportType);
+    void MemReport(Grip::StringBuffer &, Grip::MemoryHeap::MemReportType, bool);
+    bool DumpMemoryLeaks();
+    void UltimateCheck();
+    void VisitChildHeaps(Grip::MemoryHeap::HeapVisitor *);
+    void LockAndVisit(Grip::MemoryHeap::HeapVisitor *);
+    void CheckIntegrity();
+    void ReleaseCachedMem();
+private:
+    unsigned int MemoryHeapData[0x18];
+};
+}
 
 struct GripBTScriptNodeCache_eventCacheAllConditions_Parms  // size 0x4
 {
@@ -6399,6 +6487,22 @@ public:
     UGripBlackboard *Blackboard;  // 0x0
 };
 
+class GripRBTAllocator : public GripVHeapObject  // size 0x10, opaque
+{
+public:
+    virtual void *AllocateAlign(unsigned int);
+    GripRBTAllocator();
+    virtual ~GripRBTAllocator();
+    bool Reserve(unsigned int);
+private:
+    void DeleteMemoryBlock();
+public:
+    unsigned int GetAlignedSize(unsigned int);
+    void DeallocateAlign(void *);
+private:
+    unsigned int GripRBTAllocatorData[0x3];
+};
+
 struct GwNavVehicle_eventExecuteVehicleCommand_Parms  // size 0x1
 {
 public:
@@ -6406,82 +6510,27 @@ public:
     unsigned char HVC;  // 0x0
 };
 
-template <> class TMemStackAllocator<GMainThreadMemStack,8>  // size 0x1, opaque
+class HaloRBTKamikaze : public CCSRBTMoveTo  // size 0xD0, opaque
 {
 public:
-    enum
+    enum KamikazeState
     {
-        NeedsElementType = 1,
+        Initialize = 0,
+        Arming = 1,
+        Chasing = 2,
+        Detonating = 3,
     };
-};
-
-template <> class TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> >  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 1,
-    };
-    TArray(const TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    const FCurveKey *GetTypedData() const;
-    FCurveKey *GetTypedData();
-    const FCurveKey *GetData() const;
-    FCurveKey *GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    const FCurveKey &operator()(int) const;
-    FCurveKey &operator()(int);
-    FCurveKey Pop();
-    void Push(const FCurveKey &);
-    const FCurveKey &Top() const;
-    FCurveKey &Top();
-    const FCurveKey &Last(int) const;
-    FCurveKey &Last(int);
-    void Shrink();
-    unsigned int FindItem(const FCurveKey &, int &) const;
-    int FindItemIndex(const FCurveKey &) const;
-    unsigned int ContainsItem(const FCurveKey &) const;
-    unsigned int operator==(const TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &) const;
-    unsigned int operator!=(const TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(const FCurveKey &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-    TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &operator+=(const TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-    TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &operator=(const TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-    int AddItem(const FCurveKey &);
-    int AddZeroed(int);
-    int AddUniqueItem(const FCurveKey &);
-    void Reserve(int);
-    void Init(const FCurveKey &, int);
-    void Init(int);
-    int RemoveSingleItem(const FCurveKey &);
-    int RemoveItem(const FCurveKey &);
-    int RemoveSingleItemSwap(const FCurveKey &);
-    int RemoveItemSwap(const FCurveKey &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-private:
-    const FCurveKey &DebugGet(int) const;
+    HaloRBTKamikaze();
+    virtual bool TestPreCondition(IGripBTInterface *);
+    void SetDetonationDistance(float);
+    void SetArmKamikazeAnimName(FName);
+    void SetDetonateKamikazeAnimName(FName);
+    void SetBlendTimes(float, float);
 protected:
-    void DestructItems(int, int);
+    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
 private:
-    unsigned int TArrayData[0x3];
+    unsigned int HaloRBTKamikazeData[0xB];
 };
 
 class UComponent : public UObject  // size 0x48, opaque

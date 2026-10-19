@@ -207,10 +207,8 @@ class Header:
                         if arg not in self.enums:
                             self._need(self._enum_index(arg), True)
                     elif self._is_record_name(arg):
-                        if a.rstrip().endswith(('*', '&')):
-                            self._need(self.t.find(arg), False)
-                        else:
-                            self._need_class(self.t.find(arg))
+                        # naming a specialization needs its arguments declared, not complete
+                        self._need(self.t.find(arg), False)
                     elif not self._is_enum_name(arg):
                         self.forward.add(arg)
                         self._note_name(arg)
@@ -371,13 +369,20 @@ class Header:
         intro = sorted((m for m in methods if m['slot'] is not None), key=lambda m: m['slot'])
         first = self._first_slot(ti)
         slot = first
+        groups = []  # overloads in adjacent slots: MSVC lays them out in reverse declaration order
         for m in intro:
-            while slot < m['slot']:
+            if groups and groups[-1][-1]['name'] == m['name'] and groups[-1][-1]['slot'] + 1 == m['slot']:
+                groups[-1].append(m)
+            else:
+                groups.append([m])
+        for group in groups:
+            while slot < group[0]['slot']:
                 emit(3, f'virtual void ReservedSlot{slot}();')
                 slot += 1
-            text = self.method_decl(name, m)
-            emit(m['access'], text or f'virtual void ReservedSlot{slot}();')
-            slot = m['slot'] + 1
+            for m in reversed(group):
+                text = self.method_decl(name, m)
+                emit(m['access'], text or f'virtual void ReservedSlot{m["slot"]}();')
+            slot = group[-1]['slot'] + 1
         seen = set()
         for m in methods:
             if m['slot'] is None:
