@@ -3,6 +3,7 @@
 #include "Core/Inc/HostGuest.h"
 #include "Core/Inc/Array.h"
 #include "Core/Inc/ScriptInterface.h"
+#include "GwNav/Inc/RefCount.h"
 
 template <class T0, int T1> struct DefaultKeyFuncs;
 template <class T0> class TDoubleLinkedList;

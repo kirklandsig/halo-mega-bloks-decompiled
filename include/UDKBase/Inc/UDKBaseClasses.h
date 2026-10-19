@@ -4,6 +4,7 @@
 #include "Core/Inc/HostGuest.h"
 #include "Core/Inc/Array.h"
 #include "Core/Inc/ScriptInterface.h"
+#include "GwNav/Inc/RefCount.h"
 
 template <class T0, int T1> struct DefaultKeyFuncs;
 template <class T0> class FInterpCurve;
@@ -66,6 +67,7 @@ class AGameReplicationInfo;
 class AGwNavAIController;
 class AGwNavPawn;
 class AGwNavVehicle;
+class AGwNavWorldActor;
 class AHUD;
 class AInfo;
 class AInterpActor;
@@ -618,6 +620,8 @@ class Grip_Color;
 struct Grip_Rotation;
 struct Grip_Vector;
 class GwNavBot;
+class GwNavEngineServices;
+class GwNavSmartObject;
 struct GwNavVehicle_eventExecuteVehicleCommand_Parms;
 class HHitProxy;
 class HHitProxyType;
@@ -668,6 +672,7 @@ class NxTriangleMesh;
 class NxVec3;
 class NxWheelShape;
 class ScalarRegister;
+class TraverseLogicData;
 class UAICommandBase;
 class UActorChannel;
 class UActorComponent;
@@ -2810,25 +2815,121 @@ class SysAllocPaged;
 
 namespace Kaim {
 template <class T0> class AStarQuery;
+template <int T0, int T1, int T2> struct ArrayConstPolicy;
+template <class T0, int T1, class T2> class KyArray;
 template <class T0> struct ListNode;
-template <class T0> class Pickable;
-template <class T0> class Ptr;
+template <class T0, int T1> class RefCountBase;
+template <class T0, int T1> class RefCountBaseNTS;
+template <class T0, int T1> class RefCountBaseStatImpl;
 class AStarTraversalContext;
 struct AllocInfo;
+class AvoidanceConfig;
+class BaseAStarQuery;
+class BaseBlobHandler;
+class BaseNavigationProfile;
+class BasePathProgressComputer;
+class Bot;
+class BotConfig;
+class BotInitConfig;
+class BotNavigation;
+class BotNavigationCollection;
+class BotNeedFullComputeFlags;
+class BotUpdateConfig;
+class BoxObstacle;
+class Channel;
+class ChannelArray;
 class ChannelArrayComputer;
+class ChannelComputerConfig;
+class ChannelSectionPtr;
+class ChannelTrajectoryConfig;
+class ColliderCollectorConfig;
+class CoordSystem;
+class CylinderObstacle;
+class Database;
 class DefaultTraverseLogic;
+class DisplayListManager;
+class DynamicNavTag;
+class Gate;
+class GraphVertexData;
+class HalfEdgeIntersection;
+class IAsyncQueryDispatcher;
+class IAvoidanceComputer;
+class IMovePositionOnPathPredicate;
+class IOnDone;
+class IPathEventListObserver;
+class IPathFinderQuery;
+class IPositionOnPathValidator;
+class IQuery;
+class ITimeSlicedQuery;
+class ITrajectory;
+class LivePath;
+class LocomotionModelConfig;
 struct MemAddressStub;
 struct MemItem;
+class Memory;
 class MemoryHeap;
 class NavDataChangeIndexInGrid;
+class NavFloor;
+class NavFloorBlob;
+class NavFloorPtr;
+class NavGraph;
+class NavGraphBlob;
+class NavGraphEdgePtr;
+class NavGraphEdgeRawPtr;
+struct NavGraphEdgeSmartIdx;
+class NavGraphPtr;
+class NavGraphVertex;
+class NavGraphVertexPtr;
+class NavGraphVertexRawPtr;
+class NavTag;
+class NavTagSubSegment;
+class NavTrianglePtr;
+class NavTriangleRawPtr;
+class Path;
 class PathClamperContext;
+class PathEventList;
+class PathFinderConfig;
+class PathFinderQueryUtils;
+class PathProgressConfig;
 class PathRefinerContext;
+class PathValidityInterval;
+class PointOfInterest;
+class PositionOnLivePath;
+class PositionOnPath;
+class PositionSpatializationRange;
+class QueryDynamicOutput;
+class QueryQueue;
+class QueryQueueArray;
+class RefCountImpl;
+class RefCountImplCore;
+class RefCountNTSImpl;
+class RefCountNTSImplCore;
+class ScopedDisplayList;
+class ShortcutTrajectoryConfig;
+class SpatializedCylinder;
+class SpatializedCylinderInitConfig;
+class SpatializedPoint;
 class SpatializedPointCollectorContext;
 class StatBag;
+class String;
 class StringBuffer;
 class SysAlloc;
 class SysAllocPaged;
+class TagVolume;
+class TraversalParameters;
+class Triangle3f;
+class Vec2LL;
+class Vec2f;
+class Vec2i;
+class Vec3f;
+class VisualDebugAttributesManager;
+class VisualDebugRegistry;
+class VisualDebugServer;
+class VisualDebugServerConfig;
 class WorkingMemory;
+class World;
+class WorldElement;
+class WorldStatistics;
 enum AStarQueryResult
 {
     ASTAR_NOT_INITIALIZED = 0,
@@ -2855,9 +2956,171 @@ enum AStarQueryResult
     ASTAR_DONE_DEST_IS_START_NO_PATH = 21,
     ASTAR_DONE_PATH_FOUND = 22,
 };
-enum PickType
+enum AStarQueryTryCanGoMode
 {
-    PickValue = 0,
+    ASTAR_DO_NOT_TRY_RAYCANGO = 0,
+    ASTAR_DO_TRY_RAYCANGO = 1,
+};
+enum AsyncQueryDispatchId
+{
+    AsyncQueryDispatchId_Default = 0,
+    AsyncQueryDispatchId_PathFinder = 1,
+    AsyncQueryDispatchId_DynamicNavMesh = 2,
+    AsyncQueryDispatchId_Count = 3,
+};
+enum NavGraphEdgeDirection
+{
+    NAVGRAPHEDGE_MONODIRECTIONAL = 0,
+    NAVGRAPHEDGE_BIDIRECTIONAL = 1,
+};
+enum OnEventListStatus
+{
+    OnEventListStatus_Undefined = 0,
+    OnEventListStatus_OnEvent = 1,
+    OnEventListStatus_OnInterval = 2,
+};
+enum PathEdgeType
+{
+    PathEdgeType_Undefined = 0,
+    PathEdgeType_OnNavMesh = 1,
+    PathEdgeType_OnNavGraph = 2,
+    PathEdgeType_FromOutsideToNavMesh = 3,
+    PathEdgeType_FromNavMeshToOutside = 4,
+    PathEdgeType_FromOutsideToNavGraph = 5,
+    PathEdgeType_FromNavGraphToOutside = 6,
+    PathEdgeType_OutsideAlongGraphEdge = 7,
+    PathEdgeType_MaxCount = 255,
+};
+enum PathFinderQueryComputeChannelMode
+{
+    PATHFINDER_DO_NOT_COMPUTE_CHANNELS = 0,
+    PATHFINDER_DO_COMPUTE_CHANNELS = 1,
+};
+enum PathFinderQueryHookingMode
+{
+    PATHFINDER_TRY_TO_HOOK_ON_NAVMESH = 0,
+    PATHFINDER_DO_NOT_TRY_TO_HOOK_ON_NAVMESH = 1,
+};
+enum PathSource
+{
+    PathSource_NoPath = 0,
+    PathSource_PathFinderQueryResult = 1,
+    PathSource_UserInjected = 2,
+};
+enum PathValidityStatus
+{
+    PathValidityStatus_NoPath = 0,
+    PathIsValid = 1,
+    ValidityIntervalMustBeRecomputed = 2,
+    ValidityIsBeingChecked = 3,
+    Dirty_ProgressInvalid = 4,
+    Dirty_InvalidBeforeProgress_ProcessingAfter = 5,
+    Dirty_InvalidBeforeProgress_ValidAfter = 6,
+    Dirty_ValidBeforeProgress_InvalidAfter = 7,
+    Dirty_InvalidBeforeAndAfterProgress = 8,
+};
+enum PositionOnPathStatus
+{
+    PositionOnPathStatus_Undefined = 0,
+    PositionOnPathStatus_OnPathNode = 1,
+    PositionOnPathStatus_OnPathEdge = 2,
+};
+enum ProgressOnPathStatus
+{
+    ProgressOnPathNotInitialized = 0,
+    ProgressOnPathUnknownReachability = 1,
+    ProgressOnPathInInvalidNavData = 2,
+    ProgressOnPathNotReachable = 3,
+    ProgressOnPathReachable = 4,
+};
+enum QueryProcessStatus
+{
+    QueryNotStarted = 0,
+    QueryInProcess = 1,
+    QueryDone = 2,
+    QueryCanceled = 3,
+    QueryResultMax = 4,
+};
+enum QueryStatusInQueue
+{
+    QueryNotInQueue = 0,
+    QueryPushedAsCommand = 1,
+    QueryInQueryQueue = 2,
+};
+enum QueryType
+{
+    TypeRayCanGo = 0,
+    TypeRayCast = 1,
+    TypeDiskCanGo = 2,
+    TypeDiskCast = 3,
+    TypeDiskCollision = 4,
+    TypeAStar = 5,
+    TypeTriangleFromPos = 6,
+    TypeMoveOnNavMesh = 7,
+    TypeSpatializedPointCollectorInAABB = 8,
+    TypeTriangleFromPosAndTriangleSeed = 9,
+    TypeNearestBorderHalfEdgeFromPos = 10,
+    TypeSegmentCast = 11,
+    TypeSegmentCanGo = 12,
+    TypeDiskExpansion = 13,
+    TypeInsidePosFromOutsidePos = 14,
+    TypeMultipleFloorTrianglesFromPos = 15,
+    TypeRayCanGoOnSegment = 16,
+    TypeRayCastOnSegment = 17,
+    TypeTagVolumeMerger = 18,
+    TypeFindFirstVisiblePositionOnPath = 19,
+    TypeBestGraphVertexPathFinderQuery = 20,
+    TypeCollisionRayCast = 21,
+    QueryType_FirstCustom = 22,
+};
+enum RayCanGoMarginMode
+{
+    NoMargin = 0,
+    DiagonalStripMargin = 1,
+    ChannelMargin = 2,
+    PathMargin = 3,
+    IdealTrajectoryMargin = 4,
+    MinimalTrajectoryMargin = 5,
+    MoveOnNavMeshMargin = 6,
+    RayCanGoMarginModeCount = 7,
+};
+enum TrajectoryMode
+{
+    TrajectoryMode_Shortcut = 0,
+    TrajectoryMode_Channel = 1,
+};
+enum UpperBoundType
+{
+    PathLastNode = 0,
+    ValidityUpperBound = 1,
+    ValidityTemporaryUpperBound = 2,
+};
+enum VisualDebugLOD
+{
+    VisualDebugLOD_None = 0,
+    VisualDebugLOD_Default = 1,
+    VisualDebugLOD_Maximal = 2,
+    VisualDebugLOD_Undefined = -1,
+};
+enum VisualDebugSendChangeEvent
+{
+    VisualDebugSendChangeEvent_NoChange = 0,
+    VisualDebugSendChangeEvent_OnLODChanged = 1,
+    VisualDebugSendChangeEvent_ForceSendAll = 2,
+};
+enum WorldElementType
+{
+    TypeUnknown = 0,
+    TypeBot = 1,
+    TypeCylinderObstacle = 2,
+    TypeBoxObstacle = 3,
+    TypeTagVolume = 4,
+    TypePointOfInterest = 5,
+    TypeQueryQueueArray = 6,
+    TypeDatabase = 7,
+    TypeNavData = 8,
+    TypeColData = 9,
+    WorldElementType_Count = 10,
 };
 }
 
@@ -12279,43 +12542,629 @@ public:
 };
 
 namespace Kaim {
-template <> class Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >  // size 0x4, opaque
+class RefCountImplCore  // size 0x8, opaque
 {
+    HG_VFPTR
 public:
-    bool operator==(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
-    bool operator==(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    bool operator!=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
-    bool operator!=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    bool operator<(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    void NullWithoutRelease();
-    void Clear();
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *&GetRawRef();
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *GetPtr() const;
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &operator*() const;
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *operator->() const;
-    operator class Kaim::AStarQuery<class Kaim::DefaultTraverseLogic> *() const;
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+    HG_XDK(HG_VIRTUAL ~RefCountImplCore();)
+    int GetRefCount() const;
+    static void checkInvalidDelete(Kaim::RefCountImplCore *);
+    void operator=(const Kaim::RefCountImplCore &);
     #ifndef HAGGAR_HOST
-    Ptr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Ptr(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &, Kaim::PickType);
-    Ptr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    Ptr();
-    ~Ptr();
+    RefCountImplCore();
     #endif
 HG_PRIVATE:
-    unsigned int PtrData[0x1];
+    unsigned int RefCountImplCoreData[0x1];
+};
+}
+
+namespace Kaim {
+class RefCountImpl : public Kaim::RefCountImplCore  // size 0x8, opaque
+{
+public:
+    void AddRef();
+    void Release();
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseStatImpl<Kaim::RefCountImpl,139> : public Kaim::RefCountImpl  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    RefCountBaseStatImpl();
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::IOnDone,139> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,139>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 139,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class IOnDone : public Kaim::RefCountBase<Kaim::IOnDone,139>  // size 0x8, opaque
+{
+public:
+    HG_VIRTUAL void OnDone() HG_PURE;
+    #ifndef HAGGAR_HOST
+    HG_VIRTUAL ~IOnDone();
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::IQuery,139> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,139>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 139,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class IQuery : public Kaim::RefCountBase<Kaim::IQuery,139>  // size 0x24
+{
+public:
+    HG_VIRTUAL Kaim::QueryType GetType() const HG_PURE;
+    HG_VIRTUAL void Advance(Kaim::WorkingMemory *) HG_PURE;
+    HG_VIRTUAL Kaim::Ptr<Kaim::BaseBlobHandler> CreateQueryBlobHandler();
+    HG_VIRTUAL void BuildQueryBlob(Kaim::BaseBlobHandler *);
+    HG_VIRTUAL void InitFromQueryBlob(Kaim::World *, void *);
+    bool CanBeInitialized() const;
+    bool IsInAQueryQueue() const;
+    bool IsSafeToReadResult() const;
+    void PerformQueryBlocking(Kaim::WorkingMemory *);
+    void OnDone();
+    int SendVisualDebug();
+    void SetTraverseLogicUserData(void *);
+    void *GetTraverseLogicUserData() const;
+    void BindToDatabase(Kaim::Database *);
+    void Initialize();
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    IQuery();
+    HG_VIRTUAL ~IQuery();
+    #endif
+    #ifndef HAGGAR_HOST
+    Kaim::QueryProcessStatus m_processStatus;  // 0x8
+    Kaim::Ptr<Kaim::IOnDone> m_onDone;  // 0xC
+    Kaim::Database *m_database;  // 0x10
+    void *m_traverseLogicUserData;  // 0x14
+    Kaim::QueryQueue *m_queue;  // 0x18
+    Kaim::QueryStatusInQueue m_inQueueStatus;  // 0x1C
+    unsigned int m_queryInfoId;  // 0x20
+    #else
+    hg::be<Kaim::QueryProcessStatus> m_processStatus;
+    Kaim::Ptr<Kaim::IOnDone> m_onDone;
+    hg::gptr<Kaim::Database> m_database;
+    hg::gptr<void> m_traverseLogicUserData;
+    hg::gptr<Kaim::QueryQueue> m_queue;
+    hg::be<Kaim::QueryStatusInQueue> m_inQueueStatus;
+    hg::be<unsigned int> m_queryInfoId;
+    #endif
+};
+}
+
+namespace Kaim {
+class ITimeSlicedQuery : public Kaim::IQuery  // size 0x2C, opaque
+{
+public:
+    HG_VIRTUAL void ReleaseWorkingMemoryOnCancelDuringProcess(Kaim::WorkingMemory *) HG_PURE;
+    void Initialize();
+    #ifndef HAGGAR_HOST
+    ITimeSlicedQuery();
+    HG_VIRTUAL ~ITimeSlicedQuery();
+    #endif
+HG_PRIVATE:
+    unsigned int ITimeSlicedQueryData[0x2];
+};
+}
+
+namespace Kaim {
+class IPathFinderQuery : public Kaim::ITimeSlicedQuery  // size 0x58, opaque
+{
+public:
+    enum PathFinderResult
+    {
+        PathFinderNotInitialized = 0,
+        PathFinderNotComputed = 1,
+        PathFinderUnderProcess = 2,
+        PathFinderSuccess = 3,
+        PathFinderFailure = 4,
+    };
+    HG_VIRTUAL const Kaim::Vec3f *GetDestination() const HG_PURE;
+    HG_VIRTUAL void GetPathFinderTextResult(Kaim::String &) const;
+    HG_VIRTUAL void DisplayPropagationBounds(Kaim::ScopedDisplayList &) const;
+    HG_VIRTUAL Kaim::IPathFinderQuery::PathFinderResult GetPathFinderResult() const HG_PURE;
+    Kaim::Path *GetPath() const;
+    Kaim::ChannelArray *GetChannelArray() const;
+    const Kaim::Vec3f &GetStartPos() const;
+    void SetNavigationProfileId(unsigned int);
+    unsigned int GetNavigationProfileId() const;
+    #ifndef HAGGAR_HOST
+    IPathFinderQuery();
+    HG_VIRTUAL ~IPathFinderQuery();
+    #endif
+HG_PRIVATE:
+    unsigned int IPathFinderQueryData[0xB];
+};
+}
+
+namespace Kaim {
+class NavGraphEdgePtr  // size 0x8, opaque
+{
+public:
+    bool IsValid() const;
+    void Invalidate();
+    bool operator==(const Kaim::NavGraphEdgePtr &) const;
+    bool operator!=(const Kaim::NavGraphEdgePtr &) const;
+    bool operator<(const Kaim::NavGraphEdgePtr &) const;
+    bool operator<=(const Kaim::NavGraphEdgePtr &) const;
+    Kaim::NavGraph *GetNavGraph() const;
+    const Kaim::NavGraphBlob *GetNavGraphBlob() const;
+    unsigned int GetEdgeNumberAroundStartVertex() const;
+    unsigned int GetStartVertexIdx() const;
+    Kaim::NavGraph *GetNavGraph_UnSafe() const;
+    const Kaim::NavGraphBlob *GetNavGraphBlob_UnSafe() const;
+    unsigned int GetEndNavGraphVertexIdx() const;
+    Kaim::NavGraphVertexPtr GetStartNavGraphVertexPtr() const;
+    Kaim::NavGraphVertexPtr GetEndNavGraphVertexPtr() const;
+    const Kaim::NavGraphVertex &GetStartNavGraphVertex() const;
+    const Kaim::NavGraphVertex &GetEndNavGraphVertex() const;
+    const Kaim::Vec3f &GetStartNavGraphVertexPosition() const;
+    const Kaim::Vec3f &GetEndNavGraphVertexPosition() const;
+    const Kaim::NavTag &GetNavTag() const;
+    Kaim::NavGraphEdgeRawPtr GetRawPtr() const;
+    Kaim::NavGraphEdgePtr GetOppositeNavGraphEdgePtr() const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    NavGraphEdgePtr(const Kaim::NavGraphVertexPtr &, unsigned int);
+    NavGraphEdgePtr(const Kaim::NavGraphPtr &, const Kaim::NavGraphEdgeSmartIdx &);
+    NavGraphEdgePtr();
+    #endif
+HG_PRIVATE:
+    unsigned int NavGraphEdgePtrData[0x2];
+};
+}
+
+namespace Kaim {
+class NavGraphVertexPtr  // size 0x8, opaque
+{
+public:
+    bool IsValid() const;
+    void Invalidate();
+    bool operator==(const Kaim::NavGraphVertexPtr &) const;
+    bool operator!=(const Kaim::NavGraphVertexPtr &) const;
+    bool operator<(const Kaim::NavGraphVertexPtr &) const;
+    bool operator<=(const Kaim::NavGraphVertexPtr &) const;
+    unsigned int GetNavGraphVertexIdx() const;
+    Kaim::NavGraph *GetNavGraph() const;
+    const Kaim::NavGraphBlob *GetNavGraphBlob() const;
+    Kaim::NavGraph *GetNavGraph_UnSafe() const;
+    const Kaim::NavGraphBlob *GetNavGraphBlob_UnSafe() const;
+    unsigned int GetNeihbourVertexCount() const;
+    Kaim::GraphVertexData &GetGraphVertexData() const;
+    const Kaim::NavTag &GetNavTag() const;
+    const Kaim::NavGraphVertex &GetNavGraphVertex() const;
+    const Kaim::Vec3f &GetGraphVertexPosition() const;
+    Kaim::NavGraphVertexRawPtr GetRawPtr() const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    NavGraphVertexPtr(const Kaim::NavGraphVertexRawPtr &);
+    NavGraphVertexPtr(const Kaim::NavGraphPtr &, unsigned int);
+    NavGraphVertexPtr();
+    #endif
+HG_PRIVATE:
+    unsigned int NavGraphVertexPtrData[0x2];
+};
+}
+
+namespace Kaim {
+class NavTrianglePtr  // size 0x8, opaque
+{
+public:
+    void Set(const Kaim::NavFloorPtr &, unsigned int);
+    bool IsValid() const;
+    void Invalidate();
+    bool operator==(const Kaim::NavTrianglePtr &) const;
+    bool operator!=(const Kaim::NavTrianglePtr &) const;
+    unsigned int GetTriangleIdx() const;
+    Kaim::NavFloor *GetNavFloor() const;
+    const Kaim::NavFloorBlob *GetNavFloorBlob() const;
+    Kaim::NavFloor *GetNavFloor_Unsafe() const;
+    const Kaim::NavFloorBlob *GetNavFloorBlob_Unsafe() const;
+    Kaim::NavTriangleRawPtr GetRawPtr() const;
+    const Kaim::NavTag &GetNavTag() const;
+    const Kaim::Vec2i &GetCellPos() const;
+    void GetVerticesPos3f(Kaim::Triangle3f &) const;
+    void GetVerticesPos3f(Kaim::Vec3f &, Kaim::Vec3f &, Kaim::Vec3f &) const;
+    void GetVerticesCoordPos64(Kaim::Vec2LL &, Kaim::Vec2LL &, Kaim::Vec2LL &) const;
+    void GetVerticesCoordPos(Kaim::Vec2i &, Kaim::Vec2i &, Kaim::Vec2i &) const;
+    float GetAltitudeOfPointInTriangle(const Kaim::Vec3f &) const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    NavTrianglePtr(const Kaim::NavTriangleRawPtr &);
+    NavTrianglePtr(const Kaim::NavFloorPtr &, unsigned int);
+    NavTrianglePtr();
+    #endif
+HG_PRIVATE:
+    unsigned int NavTrianglePtrData[0x2];
+};
+}
+
+namespace Kaim {
+class TraversalParameters  // size 0x20, opaque
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~TraversalParameters();)
+    unsigned int GetNumberOfProcessedNodePerFrame() const;
+    Kaim::PathFinderQueryHookingMode GetHookingMode() const;
+    float GetHorizontalHookingMaxDist() const;
+    const Kaim::PositionSpatializationRange &GetPositionSpatializationRange() const;
+    void SetDefaults(Kaim::Database *);
+    void SetNumberOfProcessedNodePerFrame(unsigned int);
+    void SetPositionSpatializationRange(const Kaim::PositionSpatializationRange &);
+    void SetHorizontalHookingMaxDist(float);
+    void SetHookingMode(Kaim::PathFinderQueryHookingMode);
+    #ifndef HAGGAR_HOST
+    TraversalParameters();
+    #endif
+HG_PRIVATE:
+    unsigned int TraversalParametersData[0x7];
+};
+}
+
+namespace Kaim {
+class Vec3f  // size 0xC, opaque
+{
+public:
+    void Set(const Kaim::Vec2f &);
+    void Set(float *);
+    void Set(float, float, float);
+    float operator[](int) const;
+    float &operator[](int);
+    bool operator==(const Kaim::Vec3f &) const;
+    bool operator!=(const Kaim::Vec3f &) const;
+    bool operator<(const Kaim::Vec3f &) const;
+    Kaim::Vec3f &operator*=(float);
+    Kaim::Vec3f &operator/=(float);
+    Kaim::Vec3f &operator+=(const Kaim::Vec2f &);
+    Kaim::Vec3f &operator+=(const Kaim::Vec3f &);
+    Kaim::Vec3f &operator-=(const Kaim::Vec2f &);
+    Kaim::Vec3f &operator-=(const Kaim::Vec3f &);
+    float operator*(const Kaim::Vec3f &) const;
+    Kaim::Vec3f operator*(float) const;
+    Kaim::Vec3f operator/(float) const;
+    Kaim::Vec3f operator+(const Kaim::Vec2f &) const;
+    Kaim::Vec3f operator+(const Kaim::Vec3f &) const;
+    Kaim::Vec3f operator-(const Kaim::Vec2f &) const;
+    Kaim::Vec3f operator-() const;
+    Kaim::Vec3f operator-(const Kaim::Vec3f &) const;
+    Kaim::Vec3f operator^(const Kaim::Vec3f &) const;
+    void Cross(const Kaim::Vec3f &, const Kaim::Vec3f &);
+    float GetSquareLength() const;
+    float GetSquareLength2d() const;
+    float GetLength() const;
+    float GetLength2d() const;
+    float Normalize();
+    float GetNormalized(Kaim::Vec3f &) const;
+    bool IsNormalized() const;
+    Kaim::Vec2f Get2d() const;
+    float GetNormalized2d(Kaim::Vec2f &) const;
+    bool IsZero() const;
+    static Kaim::Vec3f Zero();
+    static Kaim::Vec3f UnitX();
+    static Kaim::Vec3f UnitY();
+    static Kaim::Vec3f UnitZ();
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    Vec3f(const Kaim::Vec2f &);
+    Vec3f(float *);
+    Vec3f(float, float, float);
+    Vec3f();
+    #endif
+HG_PRIVATE:
+    unsigned int Vec3fData[0x3];
+};
+}
+
+namespace Kaim {
+class BaseAStarQuery : public Kaim::IPathFinderQuery  // size 0xDC
+{
+public:
+    static Kaim::QueryType GetStaticType();
+    HG_VIRTUAL Kaim::QueryType GetType() const;
+    HG_VIRTUAL void BuildQueryBlob(Kaim::BaseBlobHandler *);
+    HG_VIRTUAL void InitFromQueryBlob(Kaim::World *, void *);
+    HG_VIRTUAL Kaim::Ptr<Kaim::BaseBlobHandler> CreateQueryBlobHandler();
+    static Kaim::Ptr<Kaim::BaseBlobHandler> CreateStaticQueryBlobHandler();
+    HG_VIRTUAL void GetPathFinderTextResult(Kaim::String &) const;
+    HG_VIRTUAL void DisplayPropagationBounds(Kaim::ScopedDisplayList &) const;
+    HG_VIRTUAL Kaim::IPathFinderQuery::PathFinderResult GetPathFinderResult() const;
+    HG_VIRTUAL const Kaim::Vec3f *GetDestination() const;
+    Kaim::AStarQueryResult GetResult() const;
+    Kaim::PathFinderQueryHookingMode GetHookingMode() const;
+    float GetHorizontalHookingMaxDist() const;
+    float GetPropagationBoxExtent() const;
+    const Kaim::Vec3f &GetStartPos() const;
+    const Kaim::Vec3f &GetDestPos() const;
+    const Kaim::NavTrianglePtr &GetStartTrianglePtr() const;
+    const Kaim::NavGraphEdgePtr &GetStartNavGraphEdgePtr() const;
+    const Kaim::NavGraphVertexPtr &GetStartNavGraphVertexPtr() const;
+    const Kaim::NavTrianglePtr &GetDestTrianglePtr() const;
+    const Kaim::NavGraphEdgePtr &GetDestNavGraphEdgePtr() const;
+    const Kaim::NavGraphVertexPtr &GetDestNavGraphVertexPtr() const;
+    Kaim::AStarQueryTryCanGoMode GetTryCanGoMode() const;
+    Kaim::PathFinderQueryComputeChannelMode GetComputeChannelMode() const;
+    const Kaim::ChannelComputerConfig &GetChannelComputerConfig() const;
+    Kaim::Path *GetPath() const;
+    Kaim::ChannelArray *GetChannelArray() const;
+    unsigned int GetNumberOfProcessedNodePerFrame() const;
+    const Kaim::PositionSpatializationRange &GetPositionSpatializationRange() const;
+    void BindToDatabase(Kaim::Database *);
+    void Initialize(const Kaim::Vec3f &, const Kaim::Vec3f &);
+    void SetStartTrianglePtr(const Kaim::NavTrianglePtr &);
+    void SetStartNavGraphEdgePtr(const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
+    void SetStartNavGraphVertexPtr(const Kaim::NavGraphVertexPtr &);
+    void SetDestTrianglePtr(const Kaim::NavTrianglePtr &);
+    void SetDestNavGraphEdgePtr(const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
+    void SetDestNavGraphVertexPtr(const Kaim::NavGraphVertexPtr &);
+    void SetTryCanGoMode(Kaim::AStarQueryTryCanGoMode);
+    void SetComputeChannelMode(Kaim::PathFinderQueryComputeChannelMode);
+    void SetChannelComputerConfig(const Kaim::ChannelComputerConfig &);
+    void SetPropagationBoxExtent(float);
+    void SetPositionSpatializationRange(const Kaim::PositionSpatializationRange &);
+    void SetHookingMode(Kaim::PathFinderQueryHookingMode);
+    void SetHorizontalHookingMaxDist(float);
+    void SetNumberOfProcessedNodePerFrame(unsigned int);
+HG_PROTECTED:
+    void SetResult(Kaim::AStarQueryResult);
+public:
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    BaseAStarQuery();
+    HG_VIRTUAL ~BaseAStarQuery();
+public:
+    #endif
+    #ifndef HAGGAR_HOST
+    Kaim::NavTrianglePtr m_startTrianglePtr;  // 0x58
+    Kaim::NavTrianglePtr m_destTrianglePtr;  // 0x60
+    Kaim::NavGraphEdgePtr m_startNavGraphEdgePtr;  // 0x68
+    Kaim::NavGraphEdgePtr m_destNavGraphEdgePtr;  // 0x70
+    Kaim::NavGraphEdgeDirection m_navGraphEdgePathfindMode;  // 0x78
+    Kaim::NavGraphVertexPtr m_startNavGraphVertexPtr;  // 0x7C
+    Kaim::NavGraphVertexPtr m_destNavGraphVertexPtr;  // 0x84
+    Kaim::Vec3f m_destPos3f;  // 0x8C
+    Kaim::Vec3f m_startInsidePos3f;  // 0x98
+    Kaim::Vec3f m_destInsidePos3f;  // 0xA4
+    Kaim::AStarQueryTryCanGoMode m_tryCanGoMode;  // 0xB0
+    Kaim::TraversalParameters m_traversalParams;  // 0xB4
+    float m_propagationBoxExtent;  // 0xD4
+    Kaim::AStarQueryResult m_result;  // 0xD8
+    #else
+    Kaim::NavTrianglePtr m_startTrianglePtr;
+    Kaim::NavTrianglePtr m_destTrianglePtr;
+    Kaim::NavGraphEdgePtr m_startNavGraphEdgePtr;
+    Kaim::NavGraphEdgePtr m_destNavGraphEdgePtr;
+    hg::be<Kaim::NavGraphEdgeDirection> m_navGraphEdgePathfindMode;
+    Kaim::NavGraphVertexPtr m_startNavGraphVertexPtr;
+    Kaim::NavGraphVertexPtr m_destNavGraphVertexPtr;
+    Kaim::Vec3f m_destPos3f;
+    Kaim::Vec3f m_startInsidePos3f;
+    Kaim::Vec3f m_destInsidePos3f;
+    hg::be<Kaim::AStarQueryTryCanGoMode> m_tryCanGoMode;
+    Kaim::TraversalParameters m_traversalParams;
+    hg::be<float> m_propagationBoxExtent;
+    hg::be<Kaim::AStarQueryResult> m_result;
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class AStarQuery<Kaim::DefaultTraverseLogic> : public Kaim::BaseAStarQuery  // size 0x124, opaque
+{
+public:
+    void BindToDatabase(Kaim::Database *);
+    void Initialize(const Kaim::Vec3f &, const Kaim::Vec3f &);
+    void SetStartTrianglePtr(const Kaim::NavTrianglePtr &);
+    void SetStartNavGraphEdgePtr(const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
+    void SetStartNavGraphVertexPtr(const Kaim::NavGraphVertexPtr &);
+    void SetDestTrianglePtr(const Kaim::NavTrianglePtr &);
+    void SetDestNavGraphEdgePtr(const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
+    void SetDestNavGraphVertexPtr(const Kaim::NavGraphVertexPtr &);
+    void SetPropagationBoxExtent(float);
+    void SetTryCanGoMode(Kaim::AStarQueryTryCanGoMode);
+    void SetHookingMode(Kaim::PathFinderQueryHookingMode);
+    void SetHorizontalHookingMaxDist(float);
+    void SetPositionSpatializationRange(const Kaim::PositionSpatializationRange &);
+    void SetNumberOfProcessedNodePerFrame(unsigned int);
+    HG_VIRTUAL void Advance(Kaim::WorkingMemory *);
+    HG_VIRTUAL void ReleaseWorkingMemoryOnCancelDuringProcess(Kaim::WorkingMemory *);
+    Kaim::AStarQueryResult GetResult() const;
+    Kaim::PathFinderQueryHookingMode GetHookingMode() const;
+    Kaim::AStarQueryTryCanGoMode GetTryCanGoMode() const;
+    float GetHorizontalHookingMaxDist() const;
+    float GetPropagationBoxExtent() const;
+    const Kaim::Vec3f &GetStartPos() const;
+    const Kaim::Vec3f &GetDestPos() const;
+    const Kaim::NavTrianglePtr &GetStartTrianglePtr() const;
+    const Kaim::NavGraphEdgePtr &GetStartNavGraphEdgePtr() const;
+    const Kaim::NavGraphVertexPtr &GetStartNavGraphVertexPtr() const;
+    const Kaim::NavTrianglePtr &GetDestTrianglePtr() const;
+    const Kaim::NavGraphEdgePtr &GetDestNavGraphEdgePtr() const;
+    const Kaim::NavGraphVertexPtr &GetDestNavGraphVertexPtr() const;
+    Kaim::Path *GetPath() const;
+    unsigned int GetNumberOfProcessedNodePerFrame() const;
+    const Kaim::PositionSpatializationRange &GetPositionSpatializationRange() const;
+    bool HasNavDataChanged();
+HG_PROTECTED:
+    void SetFinish(Kaim::WorkingMemory *);
+    int ComputeStartGraphEdgeOrGraphVertexOrTriangle(Kaim::PathFinderQueryUtils &);
+    int ComputeStartTriangle(Kaim::PathFinderQueryUtils &);
+    int ComputeDestTriangleIfNeeded(Kaim::PathFinderQueryUtils &);
+    int InitializeContextAndStartNode(Kaim::PathFinderQueryUtils &);
+    int InitDestinationNode();
+    int InitDestinationNodeFromDestNavGraphEdge();
+    int InitDestinationNodeFromDestNavGraphVertex();
+    int InitDestinationNodeFromDestNavTriangle();
+    int InitTraversalFromStartNode(Kaim::PathFinderQueryUtils &);
+    int CheckNavDataChange(Kaim::WorkingMemory *);
+    bool HasExplorationReachedDestNode();
+    bool ShouldReturnAfterTryingCanGo(Kaim::WorkingMemory *);
+public:
+    #ifndef HAGGAR_HOST
+    AStarQuery();
+    HG_VIRTUAL ~AStarQuery();
+    #endif
+HG_PRIVATE:
+    unsigned int AStarQueryData[0x12];
 };
 }
 
@@ -20441,6 +21290,1039 @@ public:
     #endif
 };
 
+namespace Kaim {
+template <> class RefCountBaseStatImpl<Kaim::RefCountImpl,135> : public Kaim::RefCountImpl  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    RefCountBaseStatImpl();
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::BasePathProgressComputer,135> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,135>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 135,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class BasePathProgressComputer : public Kaim::RefCountBase<Kaim::BasePathProgressComputer,135>  // size 0x10, opaque
+{
+public:
+    HG_VIRTUAL void Update(Kaim::Bot *, float) HG_PURE;
+HG_PRIVATE:
+    Kaim::BasePathProgressComputer &operator=(const Kaim::BasePathProgressComputer &);
+public:
+    void SetPathEventListObserver(const Kaim::Ptr<Kaim::IPathEventListObserver> &);
+    Kaim::Ptr<Kaim::IPathEventListObserver> GetPathEventListObserver();
+    void SetPositionOnPathCheckPointValidator(const Kaim::Ptr<Kaim::IPositionOnPathValidator> &);
+    Kaim::Ptr<Kaim::IPositionOnPathValidator> GetPositionOnPathCheckPointValidator();
+    void CleanPathEventListOnNewPath(Kaim::Bot *);
+HG_PROTECTED:
+    void ComputeProgressOnPath(Kaim::Bot *);
+    bool CanProgressAfterEvent(Kaim::Bot *);
+    void UpdateProgressOnPathStatus(Kaim::Bot *);
+    void MoveForwardAfterCrossedBisectorPlanes(Kaim::Bot *);
+    void MoveForwardToFirstCloserReachableEdge(Kaim::Bot *);
+public:
+    #ifndef HAGGAR_HOST
+    BasePathProgressComputer();
+HG_PRIVATE:
+    BasePathProgressComputer(const Kaim::BasePathProgressComputer &);
+public:
+    HG_VIRTUAL ~BasePathProgressComputer();
+    #endif
+HG_PRIVATE:
+    unsigned int BasePathProgressComputerData[0x2];
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseStatImpl<Kaim::RefCountImpl,134> : public Kaim::RefCountImpl  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    RefCountBaseStatImpl();
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::BotConfig,134> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,134>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 134,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class BotConfig : public Kaim::RefCountBase<Kaim::BotConfig,134>  // size 0xA4, opaque
+{
+public:
+    void SetDefaults();
+    void SetMaxDesiredLinearSpeed(float);
+    float GetMaxDesiredLinearSpeed() const;
+    void SetTrajectoryMode(Kaim::TrajectoryMode);
+    Kaim::TrajectoryMode GetTrajectoryMode() const;
+    #ifndef HAGGAR_HOST
+    BotConfig();
+    #endif
+HG_PRIVATE:
+    unsigned int BotConfigData[0x27];
+};
+}
+
+namespace Kaim {
+class BotNavigationCollection  // size 0x10, opaque
+{
+public:
+    void Init(Kaim::KyArray<Kaim::Ptr<Kaim::BaseNavigationProfile>,2,Kaim::ArrayConstPolicy<0,4,1> > *);
+    Kaim::Ptr<Kaim::BaseAStarQuery> GetOrCreateAStarQuery(unsigned int);
+    Kaim::Ptr<Kaim::BasePathProgressComputer> GetOrCreatePathProgessComputer(unsigned int);
+    Kaim::Ptr<Kaim::ITrajectory> GetOrCreateTrajectory(unsigned int);
+HG_PRIVATE:
+    bool CanUseNavigationProfileId(unsigned int);
+    Kaim::Ptr<Kaim::BotNavigation> GetOrCreateBotNavigation(unsigned int);
+public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    BotNavigationCollection();
+    #endif
+HG_PRIVATE:
+    unsigned int BotNavigationCollectionData[0x4];
+};
+}
+
+namespace Kaim {
+class BotNeedFullComputeFlags  // size 0x3, opaque
+{
+public:
+    void SetDefaults();
+    bool GetPathEventListNeedFullCompute() const;
+    bool GetColliderCollectionNeedFullCompute() const;
+    bool GetTrajectoryNeedFullCompute() const;
+    void PathHasChanged();
+    void PathEventListHasBeenFullyRecomputed();
+    void TrajectoryHasBeenFullyRecomputed();
+    void ColliderCollectionHasBeenFullyRecomputed();
+    void EnableAvoidanceHasChanged();
+    void PathEventListConfigHasChanged();
+    void ShortcutTrajectoryConfigHasChanged();
+    void ChannelTrajectoryConfigHasChanged();
+    void TrajectoryModeHasChanged();
+    void LocomotionModelHasChanged();
+    void ColliderCollectorConfigHasChanged();
+    void AvoidanceConfigHasChanged();
+    void DoComputeTrajectoryHasBecomeTrue();
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    BotNeedFullComputeFlags();
+    #endif
+HG_PRIVATE:
+    char BotNeedFullComputeFlagsData[0x3];
+};
+}
+
+namespace Kaim {
+class BotUpdateConfig  // size 0x1C, opaque
+{
+public:
+    void SetDefaults();
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    BotUpdateConfig();
+    #endif
+HG_PRIVATE:
+    unsigned int BotUpdateConfigData[0x7];
+};
+}
+
+namespace Kaim {
+class ChannelSectionPtr  // size 0xC, opaque
+{
+public:
+    void Invalidate();
+    void Set(const Kaim::Ptr<Kaim::ChannelArray> &, unsigned int, unsigned int);
+    bool IsValid() const;
+    bool IsTriangularLeftTurn() const;
+    bool IsTriangularRightTurn() const;
+    bool IsOnLastSectionOfCurrentChannel() const;
+    unsigned int GetChannelIdx() const;
+    unsigned int GetPreviousGateIdx() const;
+    unsigned int GetNextGateIdx() const;
+    Kaim::ChannelArray *GetChannelArray() const;
+    const Kaim::Channel *GetChannel() const;
+    const Kaim::Gate &GetPreviousGate() const;
+    const Kaim::Gate &GetNextGate() const;
+    bool operator==(const Kaim::ChannelSectionPtr &) const;
+    bool operator!=(const Kaim::ChannelSectionPtr &) const;
+    #ifndef HAGGAR_HOST
+    ChannelSectionPtr(const Kaim::Ptr<Kaim::ChannelArray> &, unsigned int, unsigned int);
+    ChannelSectionPtr();
+    ~ChannelSectionPtr();
+    #endif
+HG_PRIVATE:
+    unsigned int ChannelSectionPtrData[0x3];
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::IAvoidanceComputer,135> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,135>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 135,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class IAvoidanceComputer : public Kaim::RefCountBase<Kaim::IAvoidanceComputer,135>  // size 0x8, opaque
+{
+public:
+    enum AvoidanceResult
+    {
+        NoAvoidance = 0,
+        SlowDown = 1,
+        Accelerate = 2,
+        Turn = 3,
+        Stop = 4,
+        SolutionNotFound = 5,
+        NoTrajectory = 6,
+    };
+    HG_VIRTUAL Kaim::IAvoidanceComputer::AvoidanceResult Compute(Kaim::Bot &, float, float, const Kaim::Vec3f &, Kaim::Vec3f &) HG_PURE;
+HG_PRIVATE:
+    Kaim::IAvoidanceComputer &operator=(const Kaim::IAvoidanceComputer &);
+public:
+    static const char *GetAvoidanceResultString(Kaim::IAvoidanceComputer::AvoidanceResult);
+    static const char *GetAvoidanceResultDescription(Kaim::IAvoidanceComputer::AvoidanceResult);
+    #ifndef HAGGAR_HOST
+    IAvoidanceComputer();
+HG_PRIVATE:
+    IAvoidanceComputer(const Kaim::IAvoidanceComputer &);
+public:
+    HG_VIRTUAL ~IAvoidanceComputer();
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::ITrajectory,135> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,135>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 135,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class ITrajectory : public Kaim::RefCountBase<Kaim::ITrajectory,135>  // size 0x1C, opaque
+{
+public:
+    HG_VIRTUAL void Compute(Kaim::Bot *, float) HG_PURE;
+    HG_VIRTUAL void SendVisualDebugBlob(Kaim::VisualDebugServer &, Kaim::Bot *, Kaim::VisualDebugSendChangeEvent);
+    HG_VIRTUAL void RemoveAllVisualDebugBeforeTrajectoryChange(Kaim::VisualDebugServer &, Kaim::Bot *);
+HG_PRIVATE:
+    Kaim::ITrajectory &operator=(const Kaim::ITrajectory &);
+public:
+    const Kaim::Vec3f &GetVelocity() const;
+    const Kaim::IAvoidanceComputer::AvoidanceResult &GetAvoidanceResult() const;
+    #ifndef HAGGAR_HOST
+    ITrajectory();
+HG_PRIVATE:
+    ITrajectory(const Kaim::ITrajectory &);
+public:
+    HG_VIRTUAL ~ITrajectory();
+    #endif
+HG_PRIVATE:
+    unsigned int ITrajectoryData[0x5];
+};
+}
+
+namespace Kaim {
+class LivePath  // size 0x78, opaque
+{
+HG_PRIVATE:
+    Kaim::LivePath &operator=(const Kaim::LivePath &);
+public:
+    void Clear();
+    bool IsComputingNewPath() const;
+    bool NeedToReplaceCurrentPathWithNewPath() const;
+    Kaim::Path *GetFollowedPath() const;
+    Kaim::PathSource GetFollowedPathSource() const;
+    Kaim::PathValidityStatus GetPathValidityStatus() const;
+    Kaim::PathEventList &GetPathEventList();
+    const Kaim::PathEventList &GetPathEventList() const;
+    const Kaim::IPathFinderQuery *GetPathFinderQuery() const;
+    Kaim::ChannelArray *GetChannelArray() const;
+    Kaim::UpperBoundType GetUpperBoundType() const;
+    void ReplaceCurrentPathWithNewPath();
+    void ForceValidityIntervalRecompute();
+    void InjectUserPath(Kaim::Path *);
+    void InjectPathFromPathFinderQueryOnDone(Kaim::Path *);
+    void *GetBotTraverseLogicUserData() const;
+    void SetBotTraverseLogicUserData(void *);
+HG_PRIVATE:
+    void SetNewPath(Kaim::Path *, Kaim::PathSource);
+    void ClearFollowedPath();
+    void ComputeNewPathAsync(Kaim::IPathFinderQuery *);
+    void CancelAsynPathComputation();
+public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    LivePath();
+HG_PRIVATE:
+    LivePath(const Kaim::LivePath &);
+public:
+    ~LivePath();
+    #endif
+HG_PRIVATE:
+    unsigned int LivePathData[0x1E];
+};
+}
+
+namespace Kaim {
+class PositionOnLivePath  // size 0x2C, opaque
+{
+public:
+    void BindToBot(Kaim::Bot *);
+    Kaim::Bot *GetBot();
+    void Clear();
+    bool operator==(const Kaim::PositionOnLivePath &) const;
+    bool operator!=(const Kaim::PositionOnLivePath &) const;
+    const Kaim::Path *GetPath() const;
+    Kaim::Path *GetPath();
+    const Kaim::Vec3f &GetPosition() const;
+    const Kaim::PositionOnPath &GetPositionOnPath() const;
+    Kaim::PositionOnPathStatus GetPositionOnPathStatus() const;
+    Kaim::PathEdgeType GetPathEdgeType() const;
+    bool IsAtFirstNodeOfPath() const;
+    bool IsAtLastNodeOfPath() const;
+    bool IsAtFirstEdgeOfPath() const;
+    bool IsAtLastEdgeOfPath() const;
+    unsigned int GetPathEdgeIndex() const;
+    unsigned int GetEdgeIdxToMoveOnForward() const;
+    unsigned int GetEdgeIdxToMoveOnBackward() const;
+    bool DoesPrecede(const Kaim::PositionOnLivePath &) const;
+    bool IsStrictlyBefore(const Kaim::PositionOnLivePath &) const;
+    void InitOnPathFirstNode(Kaim::Path *);
+    void InitOnPathLastNode(Kaim::Path *);
+    void InitOnPathNode(Kaim::Path *, unsigned int);
+    void InitOnPathEdge(Kaim::Path *, const Kaim::Vec3f &, unsigned int);
+    Kaim::OnEventListStatus GetOnEventListStatus() const;
+    unsigned int GetOnEventListIndex() const;
+    unsigned int GetNextPathEventIdx() const;
+    unsigned int GetPrevPathEventIdx() const;
+    bool IsAtLowerBoundOfLivePath() const;
+    bool IsAtUpperBoundOfLivePath() const;
+    bool IsAtACheckPoint() const;
+    const Kaim::NavTag *GetUpcomingEventNavTag() const;
+    void FindLocationOnEventListFromScratch();
+    void MoveForward(float);
+    void MoveBackward(float);
+    void MoveForward_StopAtPathNode(float);
+    void MoveBackward_StopAtPathNode(float);
+    void MoveForward_StopAtEvent(float);
+    void MoveBackward_StopAtEvent(float);
+    void MoveForward_StopAtEventOrAtPathNode(float);
+    void MoveBackward_StopAtEventOrAtPathNode(float);
+    void MoveForwardToNextPathNode();
+    void MoveBackwardToPrevPathNode();
+    void MoveForwardToNextPathEvent();
+    void MoveBackwardToPrevPathEvent();
+    void MoveForwardToNextPathEdge();
+    void MoveBackwardToPrevPathEdge();
+    void MoveForwardToNextCheckPoint();
+    void MoveBackwardToPrevCheckPoint();
+    void SetNewPositionOnPathForward(const Kaim::PositionOnPath &);
+    void SetNewPositionOnPathBackward(const Kaim::PositionOnPath &);
+HG_PRIVATE:
+    void FixLocationOnEventListAfterMovingForward();
+    void FixLocationOnEventListAfterMovingBackward();
+    void StopAtEventAfterMovingForward();
+    void StopAtEventAfterMovingBackwrad();
+    void ClearEventListlocation();
+public:
+    void SetMarginModeUsedForValidation(Kaim::RayCanGoMarginMode);
+    Kaim::RayCanGoMarginMode GetMarginModeUsedForValidation() const;
+    float GetMarginFloatValueUsedForValidation() const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    PositionOnLivePath();
+    #endif
+HG_PRIVATE:
+    unsigned int PositionOnLivePathData[0xB];
+};
+}
+
+namespace Kaim {
+class QueryDynamicOutput  // size 0x30, opaque
+{
+public:
+    class Config;
+    unsigned int GetNavFloorPtrCount() const;
+    unsigned int GetNavTrianglePtrCount() const;
+    unsigned int GetNavTagSubSegmentCount() const;
+    unsigned int GetHalfEdgeIntersectionCount() const;
+    unsigned int GetSpatializedPointCount() const;
+    Kaim::NavTrianglePtr &GetNavTrianglePtr(unsigned int);
+    const Kaim::NavTrianglePtr &GetNavTrianglePtr(unsigned int) const;
+    Kaim::NavFloorPtr &GetNavFloorPtr(unsigned int);
+    const Kaim::NavFloorPtr &GetNavFloorPtr(unsigned int) const;
+    Kaim::NavTagSubSegment &GetNavTagSubSegment(unsigned int);
+    const Kaim::NavTagSubSegment &GetNavTagSubSegment(unsigned int) const;
+    Kaim::HalfEdgeIntersection &GetHalfEdgeIntersection(unsigned int);
+    const Kaim::HalfEdgeIntersection &GetHalfEdgeIntersection(unsigned int) const;
+    Kaim::Ptr<Kaim::SpatializedPoint> &GetSpatializedPoint(unsigned int);
+    const Kaim::Ptr<Kaim::SpatializedPoint> &GetSpatializedPoint(unsigned int) const;
+    void SetNavTrianglePtr(unsigned int, const Kaim::NavTrianglePtr &);
+    void SetNavTagSubSegment(unsigned int, const Kaim::NavTagSubSegment &);
+    void SetHalfEdgeIntersection(unsigned int, const Kaim::HalfEdgeIntersection &);
+    void SetNavFloorPtr(unsigned int, const Kaim::NavFloorPtr &);
+    void SetSpatializedPoint(unsigned int, const Kaim::Ptr<Kaim::SpatializedPoint> &);
+    static unsigned int ComputeByteSize(const Kaim::QueryDynamicOutput::Config &);
+    static Kaim::Ptr<Kaim::QueryDynamicOutput> Create(const Kaim::QueryDynamicOutput::Config &);
+    void ClearBuffers();
+    bool IsEnoughMemoryForStoringDynamicOutput(const Kaim::QueryDynamicOutput::Config &);
+    void InitBuffers(const Kaim::QueryDynamicOutput::Config &);
+    bool IsEmpty() const;
+    void AddRef();
+    void Release();
+    int GetRefCount() const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+HG_PRIVATE:
+    QueryDynamicOutput();
+public:
+    #endif
+HG_PRIVATE:
+    unsigned int QueryDynamicOutputData[0xC];
+};
+}
+
+namespace Kaim {
+class SpatializedCylinder  // size 0x14, opaque
+{
+HG_PRIVATE:
+    Kaim::SpatializedCylinder &operator=(const Kaim::SpatializedCylinder &);
+public:
+    void Init(const Kaim::SpatializedCylinderInitConfig &);
+    void Clear();
+    float GetRadius() const;
+    float GetHeight() const;
+    const Kaim::Vec3f &GetVelocity() const;
+    const Kaim::Vec3f &GetPosition() const;
+    Kaim::SpatializedPoint &GetSpatializedPoint();
+    const Kaim::SpatializedPoint &GetSpatializedPoint() const;
+    Kaim::NavTrianglePtr GetNavTrianglePtr(Kaim::Database *) const;
+    void SetRadius(float);
+    void SetHeight(float);
+    void SetVelocity(const Kaim::Vec3f &);
+    void SetPosition(const Kaim::Vec3f &);
+    void UpdateSpatialization(const Kaim::Vec3f &);
+    void UpdateNavFloorCollections();
+    void InvalidateAllDbSpatializations();
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    SpatializedCylinder();
+HG_PRIVATE:
+    SpatializedCylinder(const Kaim::SpatializedCylinder &);
+public:
+    ~SpatializedCylinder();
+    #endif
+HG_PRIVATE:
+    unsigned int SpatializedCylinderData[0x5];
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseStatImpl<Kaim::RefCountImpl,2> : public Kaim::RefCountImpl  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    RefCountBaseStatImpl();
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::WorldElement,2> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,2>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 2,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class WorldElement : public Kaim::RefCountBase<Kaim::WorldElement,2>  // size 0x24, opaque
+{
+public:
+    HG_VIRTUAL Kaim::WorldElementType GetType() const HG_PURE;
+    HG_VIRTUAL const char *GetTypeName() const HG_PURE;
+    HG_VIRTUAL void DoSendVisualDebug(Kaim::VisualDebugServer &, Kaim::VisualDebugSendChangeEvent);
+    bool IsAddedToWorld() const;
+    Kaim::World *GetWorld() const;
+    unsigned int GetVisualDebugId() const;
+    void *GetUserData() const;
+    void SetUserData(void *);
+    void SetCurrentVisualDebugLOD(Kaim::VisualDebugLOD);
+    Kaim::VisualDebugLOD GetCurrentVisualDebugLOD() const;
+    Kaim::VisualDebugLOD GetPreviousVisualDebugLod() const;
+    void SendVisualDebug(Kaim::VisualDebugServer &);
+    void ForceSendAllVisualDebug();
+    void SendForMaxLevelOfDetail(Kaim::VisualDebugServer &, const Kaim::Vec3f &);
+    void RegisterToVisualDebug();
+    void UnRegisterFromVisualDebug();
+    unsigned int GetIndexInCollection() const;
+    void SetIndexInCollection(unsigned int);
+HG_PROTECTED:
+    void MakeZeroWorldElement();
+public:
+    #ifndef HAGGAR_HOST
+    WorldElement(Kaim::World *);
+    HG_VIRTUAL ~WorldElement();
+    #endif
+HG_PRIVATE:
+    unsigned int WorldElementData[0x7];
+};
+}
+
+namespace Kaim {
+class Bot : public Kaim::WorldElement  // size 0x174
+{
+HG_PRIVATE:
+    Kaim::Bot &operator=(const Kaim::Bot &);
+public:
+    static Kaim::WorldElementType GetStaticType();
+    HG_VIRTUAL Kaim::WorldElementType GetType() const;
+    HG_VIRTUAL const char *GetTypeName() const;
+    void Init(const Kaim::BotInitConfig &, const Kaim::BotConfig &);
+    void Init(const Kaim::BotInitConfig &);
+    void Clear();
+    void AddToDatabase();
+    void RemoveFromDatabase();
+    void SetNextUpdateConfig(const Kaim::BotUpdateConfig &);
+    const Kaim::Vec3f &GetPosition() const;
+    const Kaim::Vec3f &GetVelocity() const;
+    Kaim::NavTrianglePtr GetNavTrianglePtr() const;
+    Kaim::Database *GetDatabase() const;
+    Kaim::IPathFinderQuery *GetPathFinderQuery();
+    Kaim::BasePathProgressComputer *GetPathProgressComputer() const;
+    Kaim::ITrajectory *GetTrajectory() const;
+    const Kaim::PositionOnLivePath &GetProgressOnLivePath() const;
+    Kaim::ProgressOnPathStatus GetProgressOnLivePathStatus() const;
+    static const char *GetProgressOnLivePathStatusDescription(Kaim::ProgressOnPathStatus);
+    const Kaim::SpatializedCylinder &GetSpatializedCylinder() const;
+    const Kaim::Vec3f &GetPreviousPosition() const;
+    void SetNewPathNavigationProfileId(unsigned int);
+    unsigned int GetNewPathNavigationProfileId() const;
+    int ComputeNewPathToDestination(const Kaim::Vec3f &, const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
+    int ComputeNewPathToDestination(const Kaim::Vec3f &);
+    int InitAStarQueryForBot(Kaim::Ptr<Kaim::BaseAStarQuery> &, const Kaim::Vec3f &, const Kaim::NavGraphEdgePtr &, Kaim::NavGraphEdgeDirection);
+    int InitAStarQueryForBot(Kaim::Ptr<Kaim::BaseAStarQuery> &, const Kaim::Vec3f &);
+    Kaim::BaseNavigationProfile *GetFollowedPathNavigationProfile();
+    void *GetBotTraverseLogicUserData() const;
+    void SetBotTraverseLogicUserData(void *);
+    void ComputeNewPathAsync(Kaim::IPathFinderQuery *);
+    void InjectNewPath(Kaim::Path *);
+    void CancelAsyncPathComputation();
+    bool IsComputingNewPath() const;
+    Kaim::LivePath &GetLivePath();
+    const Kaim::LivePath &GetLivePath() const;
+    Kaim::PathEventList &GetPathEventList();
+    const Kaim::PathEventList &GetPathEventList() const;
+    const Kaim::PathValidityInterval &GetPathValidityInterval() const;
+    Kaim::Path *GetFollowedPath() const;
+    Kaim::PathSource GetFollowedPathSource() const;
+    Kaim::ChannelArray *GetChannelArray() const;
+    bool IsPathEventListBuildCompleted() const;
+    void ClearFollowedPath();
+    const Kaim::PositionOnPath *GetUpcomingEventPositionOnPath() const;
+    const Kaim::PositionOnPath *GetUpcomingEventPositionOnPath(const Kaim::PositionOnLivePath &) const;
+    const Kaim::NavTag *GetUpcomingEventNavTagFromPositionOnPath(const Kaim::PositionOnLivePath &) const;
+    const Kaim::NavTag *GetUpcomingEventNavTag() const;
+    const Kaim::NavTag *GetPreviousEventNavTagFromPositionOnPath(const Kaim::PositionOnLivePath &) const;
+    const Kaim::NavTag *GetPreviousEventNavTag() const;
+    void SetRadius(float);
+    void SetHeight(float);
+    void SetTrajectoryMode(Kaim::TrajectoryMode);
+    void SetMaxDesiredLinearSpeed(float);
+    void SetEnableAvoidance(bool);
+    void SetPathFinderConfig(const Kaim::PathFinderConfig &);
+    void SetChannelComputerConfig(const Kaim::ChannelComputerConfig &);
+    void SetPathProgressConfig(const Kaim::PathProgressConfig &);
+    void SetLocomotionModelConfig(const Kaim::LocomotionModelConfig &);
+    void SetShortcutTrajectoryConfig(const Kaim::ShortcutTrajectoryConfig &);
+    void SetChannelTrajectoryConfig(const Kaim::ChannelTrajectoryConfig &);
+    void SetTrajectoryMinimalMoveDistance(float);
+    void SetColliderCollectorConfig(const Kaim::ColliderCollectorConfig &);
+    void SetAvoidanceConfig(const Kaim::AvoidanceConfig &);
+    float GetRadius() const;
+    float GetHeight() const;
+    Kaim::TrajectoryMode GetTrajectoryMode() const;
+    float GetMaxDesiredLinearSpeed() const;
+    bool GetEnableAvoidance() const;
+    float GetTrajectoryMinimalMoveDistance() const;
+    const Kaim::BotConfig &GetConfig() const;
+    const Kaim::PathProgressConfig &GetPathProgressConfig() const;
+    const Kaim::LocomotionModelConfig &GetLocomotionModelConfig() const;
+    const Kaim::ShortcutTrajectoryConfig &GetShortcutTrajectoryConfig() const;
+    const Kaim::ChannelTrajectoryConfig &GetChannelTrajectoryConfig() const;
+    const Kaim::ColliderCollectorConfig &GetColliderCollectorConfig() const;
+    const Kaim::AvoidanceConfig &GetAvoidanceConfig() const;
+    void SetDoValidateCheckPoint(bool);
+    bool GetDoValidateCheckPoint() const;
+    void SetDoComputeTrajectory(bool);
+    bool GetDoComputeTrajectory() const;
+    bool GetNeedToRecomputeChannelPath() const;
+    bool HasReachedPosition(const Kaim::Vec3f &, float);
+    void MoveProgressOnPathForwardToNextEvent(Kaim::IMovePositionOnPathPredicate *);
+    void MoveProgressOnPathBackwardToFirstEvent(Kaim::IMovePositionOnPathPredicate *);
+    void MovePositionOnPathForwardToNextEvent(Kaim::PositionOnLivePath &, Kaim::IMovePositionOnPathPredicate *);
+    void MovePositionOnPathBackwardToFirstEvent(Kaim::PositionOnLivePath &, Kaim::IMovePositionOnPathPredicate *);
+    void ComputeTrajectory(float);
+    void UpdatePathFollowing(float);
+    HG_VIRTUAL void DoSendVisualDebug(Kaim::VisualDebugServer &, Kaim::VisualDebugSendChangeEvent);
+    void ApplyNewPosAndVelocity();
+    void UpdateNavFloorCollections();
+    void FlagPathAsPotentiallyDirty();
+    void ComputeBotRadiusAndHeight();
+    void SetChannelPathNeedToBeRecomputed(bool);
+HG_PRIVATE:
+    void SetDefaults();
+    void SetupBotRadiusCappedToGenerationMetrics();
+    void SetupBotHeightCappedToGenerationMetrics();
+    void SendPathFinderErrorDisplayList();
+    void ReplaceFollowedPathWithNewPath();
+public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    Bot(const Kaim::BotInitConfig &, const Kaim::BotConfig &);
+    Bot(const Kaim::BotInitConfig &);
+    Bot();
+HG_PRIVATE:
+    Bot(const Kaim::Bot &);
+public:
+    HG_VIRTUAL ~Bot();
+    #endif
+    #ifndef HAGGAR_HOST
+    Kaim::Database *m_database;  // 0x24
+    void *m_traverseLogicUserData;  // 0x28
+    Kaim::Ptr<Kaim::IPathFinderQuery> m_pathFinderQuery;  // 0x2C
+    Kaim::LivePath m_livePath;  // 0x30
+    Kaim::SpatializedCylinder m_spatializedCylinder;  // 0xA8
+    Kaim::BotUpdateConfig m_nextUpdateConfig;  // 0xBC
+    Kaim::ProgressOnPathStatus m_progressOnPathStatus;  // 0xD8
+    Kaim::Ptr<Kaim::BasePathProgressComputer> m_pathProgressComputer;  // 0xDC
+    Kaim::Ptr<Kaim::ITrajectory> m_trajectory;  // 0xE0
+    Kaim::Vec3f m_previousPosition;  // 0xE4
+    Kaim::PositionOnLivePath m_progressOnLivePath;  // 0xF0
+    Kaim::ChannelSectionPtr m_channelSectionPtr;  // 0x11C
+    Kaim::Vec3f m_movingDirection;  // 0x128
+    float m_linearSpeed;  // 0x134
+    unsigned int m_newPathToDestNavigationProfileId;  // 0x138
+    Kaim::BotNavigationCollection m_botNavigationCollection;  // 0x13C
+    Kaim::BotNeedFullComputeFlags m_botNeedFullComputeFlags;  // 0x14C
+    char _pad0[0x1];
+    float m_nextShortcutSqDistTrigger;  // 0x150
+    Kaim::Vec3f m_lastCollectorPosition;  // 0x154
+    Kaim::Ptr<Kaim::QueryDynamicOutput> m_collectorOutput;  // 0x160
+    float m_forcePassageTimer;  // 0x164
+    Kaim::Ptr<Kaim::BotConfig> m_botConfig;  // 0x168
+    bool m_doValidateCheckPoint;  // 0x16C
+    bool m_doComputeTrajectory;  // 0x16D
+    bool m_needToRecomputeChannelPath;  // 0x16E
+    char _pad1[0x1];
+    Kaim::Path *m_lastPathSentToVisualDebug;  // 0x170
+    #else
+    hg::gptr<Kaim::Database> m_database;
+    hg::gptr<void> m_traverseLogicUserData;
+    Kaim::Ptr<Kaim::IPathFinderQuery> m_pathFinderQuery;
+    Kaim::LivePath m_livePath;
+    Kaim::SpatializedCylinder m_spatializedCylinder;
+    Kaim::BotUpdateConfig m_nextUpdateConfig;
+    hg::be<Kaim::ProgressOnPathStatus> m_progressOnPathStatus;
+    Kaim::Ptr<Kaim::BasePathProgressComputer> m_pathProgressComputer;
+    Kaim::Ptr<Kaim::ITrajectory> m_trajectory;
+    Kaim::Vec3f m_previousPosition;
+    Kaim::PositionOnLivePath m_progressOnLivePath;
+    Kaim::ChannelSectionPtr m_channelSectionPtr;
+    Kaim::Vec3f m_movingDirection;
+    hg::be<float> m_linearSpeed;
+    hg::be<unsigned int> m_newPathToDestNavigationProfileId;
+    Kaim::BotNavigationCollection m_botNavigationCollection;
+    Kaim::BotNeedFullComputeFlags m_botNeedFullComputeFlags;
+    char _pad0[0x1];
+    hg::be<float> m_nextShortcutSqDistTrigger;
+    Kaim::Vec3f m_lastCollectorPosition;
+    Kaim::Ptr<Kaim::QueryDynamicOutput> m_collectorOutput;
+    hg::be<float> m_forcePassageTimer;
+    Kaim::Ptr<Kaim::BotConfig> m_botConfig;
+    bool m_doValidateCheckPoint;
+    bool m_doComputeTrajectory;
+    bool m_needToRecomputeChannelPath;
+    char _pad1[0x1];
+    hg::gptr<Kaim::Path> m_lastPathSentToVisualDebug;
+    #endif
+};
+}
+
+class TraverseLogicData  // size 0x4, opaque
+{
+public:
+    void Init(const unsigned int);
+    bool CanTraverseMaterial(unsigned int);
+    #ifndef HAGGAR_HOST
+    TraverseLogicData();
+    #endif
+HG_PRIVATE:
+    unsigned int TraverseLogicDataData[0x1];
+};
+
+class GwNavBot  // size 0x24
+{
+public:
+    enum ESmartObjectState
+    {
+        Approaching = 0,
+        Using = 1,
+        Exit = 2,
+    };
+    HG_VFPTR
+public:
+    HG_VIRTUAL void MoveToPosition(FVector);
+    HG_VIRTUAL bool IsArrived();
+    void UpdateBotFromUnrealPawn(float);
+    void InitializeBot(Kaim::World *, unsigned int, unsigned int, int);
+    void ResetBot(UGwNavNavdataFamily *, unsigned int, unsigned int, int);
+    Kaim::Bot *GetGwNavBot();
+    #ifndef HAGGAR_HOST
+    GwNavBot(APawn *);
+    ~GwNavBot();
+    #endif
+    #ifndef HAGGAR_HOST
+    APawn *m_unrealPawn;  // 0x4
+    Kaim::Ptr<Kaim::Bot> m_kaimbot;  // 0x8
+    GwNavBot::ESmartObjectState m_smartObjectState;  // 0xC
+    FVector m_target;  // 0x10
+    TraverseLogicData m_traverseLogicData;  // 0x1C
+    GwNavSmartObject *m_usingSmartObject;  // 0x20
+    #else
+    hg::gptr<APawn> m_unrealPawn;
+    Kaim::Ptr<Kaim::Bot> m_kaimbot;
+    hg::be<GwNavBot::ESmartObjectState> m_smartObjectState;
+    FVector m_target;
+    TraverseLogicData m_traverseLogicData;
+    hg::gptr<GwNavSmartObject> m_usingSmartObject;
+    #endif
+};
+
+class GwNavEngineServices  // size 0x1, opaque
+{
+public:
+    enum NavTagType
+    {
+        TERRAIN_TYPE = 0,
+        SMART_OBJECT = 1,
+    };
+    static Kaim::Bot *GetGwNavBot(AActor *);
+    static FString GetOutputDirectory();
+    static AGwNavWorldActor *GetWorldActor();
+    static Kaim::World *GetWorld();
+    static Kaim::Database *FindDatabase(Kaim::World *, UGwNavNavdataFamily *);
+    static Kaim::Database *FindDatabaseByName(Kaim::World *, const FString &);
+    static Kaim::CoordSystem &GetCoordSystem();
+    static void SetNavTagTerrainType(Kaim::DynamicNavTag &, unsigned int);
+    static bool IsNavTagTerrainType(const Kaim::NavTag &);
+    static unsigned int ReadNavTagTerrainType(const Kaim::NavTag &);
+    static void RegisterSmartObject(GwNavSmartObject *);
+    static void UnregisterSmartObject(GwNavSmartObject *);
+    static void SetNavTagSmartObject(Kaim::DynamicNavTag &, GwNavSmartObject *);
+    static bool IsNavTagSmartObject(const Kaim::NavTag &);
+    static GwNavSmartObject *GetSmartObjectFromNavTag(const Kaim::NavTag &);
+    #ifndef HAGGAR_HOST
+HG_PRIVATE:
+    GwNavEngineServices();
+public:
+    #endif
+    #ifndef HAGGAR_HOST
+    static unsigned int smartObjectsCounter;
+    static TMap<unsigned int,GwNavSmartObject *,FDefaultSetAllocator> smartObjectsMap;
+    #else
+    static hg::be<unsigned int> (&smartObjectsCounter);
+    static TMap<unsigned int,GwNavSmartObject *,FDefaultSetAllocator> (&smartObjectsMap);
+    #endif
+};
+
 struct GwNavVehicle_eventExecuteVehicleCommand_Parms  // size 0x1
 {
 public:
@@ -20551,6 +22433,41 @@ public:
     void Alloc_MoveTo(Kaim::ListNode<Kaim::MemoryHeap> *);
 HG_PRIVATE:
     unsigned int ListNodeData[0x2];
+};
+}
+
+namespace Kaim {
+class Memory  // size 0x1, opaque
+{
+public:
+    static void SetGlobalHeap(Kaim::MemoryHeap *);
+    static Kaim::MemoryHeap *GetGlobalHeap();
+    static void CreateArena(unsigned int, Kaim::SysAllocPaged *);
+    static void DestroyArena(unsigned int);
+    static bool ArenaIsEmpty(unsigned int);
+    static void *Alloc(unsigned int, unsigned int, const Kaim::AllocInfo &);
+    static void *Alloc(unsigned int, const Kaim::AllocInfo &);
+    static void *Alloc(unsigned int, unsigned int);
+    static void *Alloc(unsigned int);
+    static void *AllocAutoHeap(const void *, unsigned int, unsigned int, const Kaim::AllocInfo &);
+    static void *AllocAutoHeap(const void *, unsigned int, const Kaim::AllocInfo &);
+    static void *AllocAutoHeap(const void *, unsigned int, unsigned int);
+    static void *AllocAutoHeap(const void *, unsigned int);
+    static void *AllocInHeap(Kaim::MemoryHeap *, unsigned int, unsigned int, const Kaim::AllocInfo &);
+    static void *AllocInHeap(Kaim::MemoryHeap *, unsigned int, const Kaim::AllocInfo &);
+    static void *AllocInHeap(Kaim::MemoryHeap *, unsigned int, unsigned int);
+    static void *AllocInHeap(Kaim::MemoryHeap *, unsigned int);
+    static void *Realloc(void *, unsigned int);
+    static void *ReallocAutoHeap(void *, unsigned int);
+    static void *ReallocInHeap(Kaim::MemoryHeap *, void *, unsigned int);
+    static void Free(void *);
+    static Kaim::MemoryHeap *GetHeapByAddress(const void *);
+    static bool DetectMemoryLeaks();
+    #ifndef HAGGAR_HOST
+    static Kaim::MemoryHeap *pGlobalHeap;
+    #else
+    static hg::gptr<Kaim::MemoryHeap> (&pGlobalHeap);
+    #endif
 };
 }
 
@@ -20675,6 +22592,77 @@ HG_PRIVATE:
 }
 
 namespace Kaim {
+class RefCountNTSImplCore  // size 0x8, opaque
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~RefCountNTSImplCore();)
+    int GetRefCount() const;
+    static void checkInvalidDelete(Kaim::RefCountNTSImplCore *);
+    void operator=(const Kaim::RefCountNTSImplCore &);
+    #ifndef HAGGAR_HOST
+    RefCountNTSImplCore();
+    #endif
+HG_PRIVATE:
+    unsigned int RefCountNTSImplCoreData[0x1];
+};
+}
+
+namespace Kaim {
+class RefCountNTSImpl : public Kaim::RefCountNTSImplCore  // size 0x8, opaque
+{
+public:
+    void AddRef() const;
+    void Release() const;
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseStatImpl<Kaim::RefCountNTSImpl,129> : public Kaim::RefCountNTSImpl  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    RefCountBaseStatImpl();
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseNTS<Kaim::World,129> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountNTSImpl,129>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 129,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBaseNTS();
+    #endif
+};
+}
+
+namespace Kaim {
 class WorkingMemory  // size 0x9C
 {
 public:
@@ -20770,6 +22758,87 @@ public:
     hg::gptr<Kaim::SpatializedPointCollectorContext> m_collectorContext;
     hg::gptr<Kaim::ChannelArrayComputer> m_channelArrayComputer;
     #endif
+};
+}
+
+namespace Kaim {
+class World : public Kaim::RefCountBaseNTS<Kaim::World,129>  // size 0x178, opaque
+{
+public:
+    enum DatabasesUpdateStatus
+    {
+        Idle = 0,
+        Updating = 1,
+    };
+HG_PRIVATE:
+    Kaim::World &operator=(const Kaim::World &);
+public:
+    void Update(float);
+    unsigned int GetUpdateCount() const;
+    const Kaim::WorldStatistics &GetWorldStatistics() const;
+    int StartVisualDebug(const Kaim::VisualDebugServerConfig &);
+    void StopVisualDebug();
+    Kaim::VisualDebugServer *GetVisualDebugServer();
+    Kaim::VisualDebugRegistry *GetElementRegistry();
+    Kaim::DisplayListManager *GetDisplayListManager();
+    Kaim::VisualDebugAttributesManager *GetAttributesManager();
+    unsigned int GetDatabasesCount() const;
+    Kaim::Database *GetDatabase(unsigned int);
+    unsigned int GetPointsOfInterestCount() const;
+    Kaim::PointOfInterest *GetPointOfInterest(unsigned int);
+    unsigned int GetCylinderObstaclesCount() const;
+    Kaim::CylinderObstacle *GetCylinderObstacle(unsigned int);
+    unsigned int GetBoxObstaclesCount() const;
+    Kaim::BoxObstacle *GetBoxObstacle(unsigned int);
+    unsigned int GetTagVolumesCount() const;
+    unsigned int GetTagVolumesToBeIntegratedCount() const;
+    unsigned int GetTagVolumesIntegratedCount() const;
+    unsigned int GetTagVolumesToBeRemovedCount() const;
+    Kaim::TagVolume *GetTagVolumesToBeIntegrated(unsigned int);
+    Kaim::TagVolume *GetTagVolumesIntegrated(unsigned int);
+    Kaim::TagVolume *GetTagVolumesToBeRemoved(unsigned int);
+    unsigned int GetQueryQueueArraysCount() const;
+    Kaim::QueryQueueArray *GetQueryQueueArray(unsigned int);
+    unsigned int GetQueryPendingOperationCount() const;
+    unsigned int AddNavigationProfile(Kaim::Ptr<Kaim::BaseNavigationProfile>);
+    Kaim::Ptr<Kaim::BaseNavigationProfile> GetNavigationProfile(unsigned int);
+    void SetAsyncQueryDispatcher(Kaim::IAsyncQueryDispatcher *);
+    Kaim::IAsyncQueryDispatcher *GetAsyncQueryDispatcher();
+    void PushAsyncQuery(Kaim::IQuery *, Kaim::AsyncQueryDispatchId, Kaim::Bot *);
+    void CancelAsyncQuery(Kaim::IQuery *);
+    void ProcessQueuesOutsideWorldUpdate();
+    void SetWorldUpdateThreadId(void *);
+    void *GetWorldUpdateThreadId() const;
+    void RemoveAndCancellAll();
+    void RemoveAllBots();
+    void RemoveAllPointsOfInterest();
+    void RemoveAllCylinderObstacles();
+    void RemoveAllBoxObstacles();
+    void RemoveAllTagVolumes();
+    void ClearDatabase(unsigned int);
+HG_PRIVATE:
+    void FlushCommandsInWorldUpdate();
+    void ProcessQueuesInWorldUpdate();
+    void FlushQueries();
+    void UpdateDatabases();
+    void UpdateDynamicNavMesh();
+    void UpdateSpatializations();
+    void UpdateBotsPathFollowing(float);
+    void SendVisualDebugData(float);
+    void UpdateStatistics(float);
+    void FlushCommandsOutOfWorldUpdate();
+    void CancelAllQueriesAndClearCommandsInAllQueryQueueArray();
+    void ClearAllDatabases();
+public:
+    #ifndef HAGGAR_HOST
+    World(unsigned int);
+HG_PRIVATE:
+    World(const Kaim::World &);
+public:
+    HG_VIRTUAL ~World();
+    #endif
+HG_PRIVATE:
+    unsigned int WorldData[0x5C];
 };
 }
 

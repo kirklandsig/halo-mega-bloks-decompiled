@@ -27,12 +27,12 @@ LF_METHODLIST = 0x1206
 COMPGEN = 0x100
 ACCESS = {1: 'HG_PRIVATE', 2: 'HG_PROTECTED', 3: 'public'}  # the host build makes them public
 BUILTIN = {'__vector4'}
-# Types written by hand in include/Core/Inc (Core.h, Array.h, ScriptInterface.h), which every
+# Types written by hand (include/Core/Inc/Array.h, ScriptInterface.h, include/GwNav/Inc/RefCount.h), which every
 # generated header includes: classes, class templates, enums.
 PROVIDED_RECORDS = {'FHeapAllocator', 'FDefaultAllocator', 'FScriptInterface'}
-PROVIDED_TEMPLATES = {'TArray', 'TArrayNoInit', 'TScriptInterface'}
-PROVIDED_ENUMS = {'ENoInit'}
-PROVIDED_INCLUDES = ['Core/Inc/Array.h', 'Core/Inc/ScriptInterface.h']
+PROVIDED_TEMPLATES = {'TArray', 'TArrayNoInit', 'TScriptInterface', 'Kaim::Ptr', 'Kaim::Pickable'}
+PROVIDED_ENUMS = {'ENoInit', 'Kaim::PickType'}
+PROVIDED_INCLUDES = ['Core/Inc/Array.h', 'Core/Inc/ScriptInterface.h', 'GwNav/Inc/RefCount.h']
 # Hand-written templates whose bases the header renders: their header is
 # included once those bases are complete, before the first class that holds
 # one of them by value. {include: (templates, bases)}

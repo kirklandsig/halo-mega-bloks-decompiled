@@ -37,6 +37,7 @@ inline float Grip_Vector::SizeSquared2D() const { return X * X + Y * Y; }
 // gripheapobject.h
 #ifndef HAGGAR_HOST
 inline void *GripHeapObject::operator new(unsigned int, void *Mem) { return Mem; }
+inline void GripHeapObject::operator delete(void *Ptr) { Grip::Memory::pGlobalHeap->Free(Ptr); }
 #endif
 
 // engineclasses.h (UActorComponent's cpptext)
@@ -280,3 +281,30 @@ inline void CCSBlackboard::FlagMoveCommandAsUsed()
 }
 inline CCSBlackboard::EMoveCmd CCSBlackboard::GetMoveCommand() const { return m_moveCommand.Get(); }
 inline Grip_Vector CCSBlackboard::GetMovePosition() const { return m_movePosition.Get(); }
+
+// ccscharacter.h
+inline Grip_Vector CCSCharacter::GetEyesPosition() const { return m_gameCharacter.GetEyesPosition(); }
+
+// sf_refcount.h: reference-counted objects come from Gameware's heap
+#ifndef HAGGAR_HOST
+inline void *Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl, 139>::operator new(unsigned int Size)
+{
+    return Kaim::Memory::pGlobalHeap->Alloc(Size, 0);
+}
+#endif
+
+// gwnavutils.h (UnrealEd's GwNav glue)
+Kaim::Vec3f UnrealToGwNavVector(const FVector &V);
+#ifndef HAGGAR_HOST
+inline void *Kaim::IQuery::operator new(unsigned int Size) { return Kaim::Memory::pGlobalHeap->Alloc(Size, 0); }
+#endif
+
+// astarquery.h: the typed query forwards to its base
+inline void Kaim::AStarQuery<Kaim::DefaultTraverseLogic>::BindToDatabase(Kaim::Database *pDatabase)
+{
+    BaseAStarQuery::BindToDatabase(pDatabase);
+}
+inline void Kaim::AStarQuery<Kaim::DefaultTraverseLogic>::Initialize(const Kaim::Vec3f &StartPos, const Kaim::Vec3f &DestPos)
+{
+    BaseAStarQuery::Initialize(StartPos, DestPos);
+}
