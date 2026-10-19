@@ -39,3 +39,10 @@ inline int FRotator::NormalizeAxis(int Angle)
     return Angle;
 }
 inline float FVector::Size2D() const { return appSqrt(X * X + Y * Y); }
+inline FVector FVector::operator*=(float Scale)
+{
+    X *= Scale;
+    Y *= Scale;
+    Z *= Scale;
+    return *this;
+}

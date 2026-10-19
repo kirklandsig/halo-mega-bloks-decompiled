@@ -22,6 +22,7 @@ extern "C" float __fsqrts(float);
 #pragma intrinsic(__fsqrts)
 #pragma intrinsic(__fsqrt)
 extern "C" int rand();
+extern "C" double atan(double);
 inline void *operator new(unsigned int, void *Mem) throw() { return Mem; }
 inline void operator delete(void *, void *) throw() {}
 #else
@@ -48,9 +49,11 @@ inline void appMemzero(void *Dest, int Count) { memset(Dest, 0, Count); }
 #ifndef HAGGAR_HOST
 inline float appSqrt(float F) { return __fsqrts(F); }
 inline float appInvSqrt(float F) { return (float)(1.0 / __fsqrt(F)); }
+inline float appAtan(float Value) { return (float)atan(Value); }
 #else
 inline float appSqrt(float F) { return (float)std::sqrt(F); }
 inline float appInvSqrt(float F) { return (float)(1.0 / std::sqrt(F)); }
+inline float appAtan(float Value) { return (float)std::atan(Value); }
 #endif
 
 #define SMALL_NUMBER (1.e-8f)

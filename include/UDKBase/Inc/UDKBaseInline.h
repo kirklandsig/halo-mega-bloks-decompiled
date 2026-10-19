@@ -412,3 +412,24 @@ inline void HaloRBTKamikaze::SetBlendTimes(float BlendIn, float BlendOut)
     m_BlendOutTime = BlendOut;
 }
 inline void CCSRBTSelectTarget::SetTargetName(FString Name) { TargetName = Name; }
+
+// UnString.h
+extern "C" int _wcsicmp(const wchar_t *, const wchar_t *);
+inline int appStricmp(const wchar_t *String1, const wchar_t *String2) { return _wcsicmp(String1, String2); }
+inline const wchar_t *FString::operator*() const { return Num() ? GetTypedData() : L""; }
+inline unsigned int FString::operator==(const FString &Other) const { return appStricmp(**this, *Other) == 0; }
+
+// gripsf_string.h: a string's data is reference counted, the count after
+// its size; the low bits of the pointer name the heap
+#ifndef HAGGAR_HOST
+extern "C" long _InterlockedExchangeAdd(long volatile *Addend, long Value);
+#pragma intrinsic(_InterlockedExchangeAdd)
+inline Grip::String::~String()
+{
+    Grip::String::DataDesc *pDesc = (Grip::String::DataDesc *)(HeapTypeBits & ~HT_Mask);
+    if (_InterlockedExchangeAdd((long volatile *)pDesc + 1, -1) - 1 == 0)
+    {
+        Grip::Memory::pGlobalHeap->Free(pDesc);
+    }
+}
+#endif
