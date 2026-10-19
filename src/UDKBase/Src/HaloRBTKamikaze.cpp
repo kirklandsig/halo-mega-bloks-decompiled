@@ -1,5 +1,5 @@
 // @object Unity_HaloRBTKamikazeEtAl.cpp.obj
-#include "UDKBase/Inc/HaloRBTKamikaze.h"
+#include "UDKBase/Inc/UDKBaseClasses.h"
 
 // emitted out of line in retail too
 template CCSBlackboard *IGripBTInterface::GetBlackboard<CCSBlackboard>();
@@ -72,4 +72,57 @@ bool HaloRBTKamikaze::TestPreCondition(IGripBTInterface *pInterface)
         return true;
     }
     return false;
+}
+
+// Todo: retail zeroes the origin and has CCSGameCharacter::GetPosition write
+// straight into it; ours goes through a temporary (and a larger frame).
+// @retail 0x83340B78
+GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
+{
+    EBTExecutionResult Result = ER_INPROGRESS;
+    pInterface->GetBlackboard<CCSBlackboard>();
+    if (kamikazeTarget == 0)
+    {
+        return ER_FAILURE;
+    }
+    GripAFScheduler *pScheduler = pInterface->GetActionScheduler();
+    switch (m_kamikazeState)
+    {
+    case Initialize:
+        m_FullBodyAnimSlot->PlayCustomAnim(m_ArmKamikazeAnimName, 1.0f, m_BlendInTime, m_BlendOutTime, 0, 0, 0.0f, 0.0f);
+        m_kamikazeState = Arming;
+        break;
+    case Arming:
+        if (!m_FullBodyAnimSlot->bIsPlayingCustomAnim)
+        {
+            if (kamikazeTarget->character.GetActor() == 0)
+            {
+                return ER_FAILURE;
+            }
+            pInterface->GetBlackboard<CCSBlackboard>();
+            CCSAFFactory *pFactory = pInterface->GetActionFactory<CCSAFFactory>();
+            CCSBrain *pBrain = static_cast<CCSBrain *>(pInterface);
+            Grip_Vector Origin = pBrain != 0 ? pBrain->m_meatPuppet->GetCharacter().GetPosition() : Grip_Vector();
+            CCSAOMoveToActor Objective = {kamikazeTarget->character.GetActor(), CCS::MovementType_Run, CCS::AlertnessState_Alert, Origin};
+            m_actionHandle = pFactory->CreateActionInternal<CCSAOMoveToActor, CCSAFMoveToActor>(Objective);
+            pBrain->m_meatPuppet->SetIsPanicking(1);
+            pScheduler->Execute(m_actionHandle);
+            m_kamikazeState = Chasing;
+        }
+        break;
+    case Chasing:
+        Result = CCSRBTMoveTo::ExecuteInternal(pInterface, pStack, bInterrupt);
+        if (kamikazeTarget->range2D < m_detonationDistance || pScheduler->GetStatus(m_actionHandle) == GripAFAction::AS_DONE)
+        {
+            pScheduler->Abort(m_actionHandle);
+            m_FullBodyAnimSlot->PlayCustomAnim(m_DetonateKamikazeAnimName, 1.0f, m_BlendInTime, m_BlendOutTime, 0, 0, 0.0f, 0.0f);
+            m_kamikazeState = Detonating;
+        }
+        break;
+    }
+    if (bInterrupt)
+    {
+        Result = ER_SUCCESSFULLY_INTERRUPTED;
+    }
+    return Result;
 }

@@ -12604,6 +12604,7 @@ public:
     friend class UCCSAFEnterCover;
     friend class UCCSAFGetInCover;
     friend class UCCSAFGetOutCover;
+    friend class HaloRBTKamikaze;
     #ifndef HAGGAR_HOST
     ICCSMeatPuppet *m_pMeatPuppet;  // 0x8
     IGripAFInterface *m_pAFInterface;  // 0xC
@@ -14640,6 +14641,7 @@ HG_PROTECTED:
     HG_VIRTUAL IGripWorldQuery *GetWorldQueryInternal() HG_PURE;
 public:
     template <class T0> T0 *GetBlackboard();
+    template <class T0> T0 *GetActionFactory();
 };
 
 class IGripBrainListener  // size 0x4, opaque

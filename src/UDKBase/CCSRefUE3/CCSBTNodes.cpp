@@ -400,3 +400,8 @@ void UHaloBTKamikaze::InitializeRuntime(GripRBTNode *pNode)
     pKamikaze->SetDetonateKamikazeAnimName(DetonateKamikazeAnimName);
     pKamikaze->SetBlendTimes(BlendInTime, BlendOutTime);
 }
+
+// Not attempted yet (todo): UCCSBTTimeSinceEvent::GetNodeTitle and
+// UCCSBTSelectTarget::GetNodeTitle (cpptext in UDKBaseClasses.h). Retail
+// calls FString's destructor out of line in their switch cases and inlines
+// it elsewhere in the same function.

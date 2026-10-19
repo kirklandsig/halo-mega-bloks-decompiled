@@ -72,12 +72,13 @@ OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsSt
                        'HaloRBTKamikaze',
                        ]}
 # Member declarations the PDB lacks (member templates), per package.
-EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();'],
+EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();', 'template <class T0> T0 *GetActionFactory();'],
                      'IGripAFInterface': ['template <class T0> T0 *GetSystem();'],
                      # the action handles' CreateAction call it
                      'CCSAFFactory': ['HG_PRIVATE:', 'template <class AO, class AF> int CreateActionInternal(const AO &);', 'public:']
                      + [f'friend class UCCSAF{a};' for a in ('ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor',
-                                                             'StrafeTarget', 'EncircleTarget', 'FireBurst', 'EnterCover', 'GetInCover', 'GetOutCover')]}}
+                                                             'StrafeTarget', 'EncircleTarget', 'FireBurst', 'EnterCover', 'GetInCover', 'GetOutCover')]
+                     + ['friend class HaloRBTKamikaze;']}}
 # Event thunks of other classes that a package's code calls (inlined there).
 EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 

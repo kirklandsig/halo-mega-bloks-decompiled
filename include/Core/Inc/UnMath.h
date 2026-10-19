@@ -46,3 +46,4 @@ inline FVector FVector::operator*=(float Scale)
     Z *= Scale;
     return *this;
 }
+inline unsigned int FVector::IsZero() const { return X == 0.0f && Y == 0.0f && Z == 0.0f; }

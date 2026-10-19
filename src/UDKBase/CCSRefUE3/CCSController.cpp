@@ -219,3 +219,74 @@ void ACCSController::TriggerEvent(const FString &EventName)
     Event.triggerTime = GWorld->GetTimeSeconds();
     Brain->OnGameEvent(Event);
 }
+
+// @retail 0x8332A1D8
+void ACCSController::UpdatePawnRotation()
+{
+    if (Pawn == 0 || Pawn->Physics != PHYS_Walking)
+    {
+        return;
+    }
+    if (AimingFocus == 0)
+    {
+        UpdateOnlyPawnRotation();
+        AimingRot = Rotation;
+        return;
+    }
+    FVector AimLocation = AimingFocus->GetPawnViewLocation();
+    AUDKPawn *pTarget = Cast<AUDKPawn>(AimingFocus);
+    if (pTarget != 0 && pTarget->Camo == 1.0f)
+    {
+        AimLocation = pTarget->CamoVanishingPoint;
+    }
+    AimingRot = (AimLocation - Pawn->eventGetWeaponStartTraceLocation(0)).Rotation();
+    AimingRot.Roll = 0;
+    const FRotator AimDelta = AimingRot - Pawn->Rotation;
+    if (!CCSPawn->CanAim(AimDelta))
+    {
+        Focus = AimingFocus;
+        UpdateOnlyPawnRotation();
+    }
+}
+
+// @retail 0x8332A3A0
+void ACCSController::UpdateOnlyPawnRotation()
+{
+    if (Focus != 0)
+    {
+        ANavigationPoint *pNav = Cast<ANavigationPoint>(Focus);
+        if (pNav != 0 && CurrentPath != 0 && CurrentPath->Start != 0 && MoveTarget == pNav && !Pawn->Velocity.IsZero())
+        {
+            if (Pawn->IsGlider())
+            {
+                const unsigned int bOffsetFromBase = bAdjusting || Focus->Base == Pawn->Base;
+                SetFocalPoint(bAdjusting ? GetAdjustLocation() : Focus->Location, bOffsetFromBase);
+            }
+            else
+            {
+                SetFocalPoint(Pawn->Location + (Focus->Location - CurrentPath->Start->Location), Focus->Base == Pawn->Base);
+            }
+        }
+        else
+        {
+            AUDKPawn *pTarget = Cast<AUDKPawn>(Focus);
+            if (pTarget != 0 && pTarget->Camo == 1.0f)
+            {
+                SetFocalPoint(pTarget->CamoVanishingPoint, Focus->Base == Pawn->Base);
+            }
+            else
+            {
+                SetFocalPoint(Focus->Location, Focus->Base == Pawn->Base);
+            }
+        }
+    }
+    const FVector FocalPoint = GetFocalPoint();
+    if (!FocalPoint.IsZero())
+    {
+        Pawn->rotateToward(FocalPoint);
+    }
+}
+
+// Not attempted yet (todo): Tick (1,376 bytes), TakePossession (728; builds
+// a USSBrainBuilder on the stack, whose classes aren't rendered yet) and
+// DrawHUD (616; the GripHUDRenderer text calls).

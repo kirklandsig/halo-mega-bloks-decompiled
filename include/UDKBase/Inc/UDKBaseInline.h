@@ -10,6 +10,10 @@ template <class T0> inline T0 *IGripBTInterface::GetBlackboard()
 {
     return static_cast<T0 *>(GetBlackboardInternal());
 }
+template <class T0> inline T0 *IGripBTInterface::GetActionFactory()
+{
+    return static_cast<T0 *>(GetActionFactoryInternal());
+}
 
 #ifndef HAGGAR_HOST  // constructors stay recompiled in the port
 // ccsgamecharacter.h, ccscharacter.h

@@ -346,3 +346,7 @@ void CCSBlackboard::SetHasBecomeAware(bool bAware)
 // CCSBlackboard::~CCSBlackboard
 // @retail 0x833631B8
 // CCSBlackboard::`scalar deleting destructor'
+
+// Not attempted yet (todo): RegisterMembers (984 bytes; registers every
+// member by name), GetSpecificTarget (944), UpdateTargetListsByRange (1,104)
+// and UpdateTargetPointers (1,376), the target-list bookkeeping.
