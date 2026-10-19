@@ -537,5 +537,87 @@ void CCSBlackboard::UpdateTargetListsByRange(const Grip_Vector &Origin, const fl
     }
 }
 
-// Not attempted yet (todo): UpdateTargetPointers (1,376), the target-list
-// bookkeeping.
+// Re-points the target properties after the target lists changed, by
+// character.
+// @retail 0x8333AEE8
+void CCSBlackboard::UpdateTargetPointers()
+{
+    const CCSCharacter CurrentTarget = m_currentTarget.Get() != 0 ? m_currentTarget.Get()->character : CCSCharacter::NONE;
+    const CCSCharacter ClosestEnemy = m_closestEnemy.Get() != 0 ? m_closestEnemy.Get()->character : CCSCharacter::NONE;
+    const CCSCharacter ClosestVisibleEnemy = m_closestVisibleEnemy.Get() != 0 ? m_closestVisibleEnemy.Get()->character : CCSCharacter::NONE;
+    const CCSCharacter LowestLKPAgeEnemy = m_lowestLKPAgeEnemy.Get() != 0 ? m_lowestLKPAgeEnemy.Get()->character : CCSCharacter::NONE;
+    const CCSCharacter ClosestObjective = m_closestObjective.Get() != 0 ? m_closestObjective.Get()->character : CCSCharacter::NONE;
+    const CCSCharacter ClosestReactiveTarget = m_closestReactiveTarget.Get() != 0 ? m_closestReactiveTarget.Get()->character : CCSCharacter::NONE;
+    const CCSCharacter ClosestEntryVehicle = m_closestEntryVehicle.Get() != 0 ? m_closestEntryVehicle.Get()->character : CCSCharacter::NONE;
+    const CCSCharacter HighestThreatTarget = m_pHighestThreatTarget.Get() != 0 ? m_pHighestThreatTarget.Get()->character : CCSCharacter::NONE;
+    m_currentTarget.Set(0);
+    m_closestEnemy.Set(0);
+    m_closestVisibleEnemy.Set(0);
+    m_lowestLKPAgeEnemy.Set(0);
+    m_closestObjective.Set(0);
+    m_closestReactiveTarget.Set(0);
+    m_pHighestThreatTarget.Set(0);
+    m_closestEntryVehicle.Set(0);
+    for (int i = 0; i < m_targets.Num(); i++)
+    {
+        CCSTarget &Target = m_targets[i];
+        if (Target.character == ClosestEnemy)
+        {
+            m_closestEnemy.Set(&Target);
+        }
+        if (Target.character == ClosestVisibleEnemy)
+        {
+            m_closestVisibleEnemy.Set(&Target);
+        }
+        if (Target.character == CurrentTarget)
+        {
+            m_currentTarget.Set(&Target);
+        }
+        if (Target.character == LowestLKPAgeEnemy)
+        {
+            m_lowestLKPAgeEnemy.Set(&Target);
+        }
+        if (Target.character == ClosestObjective)
+        {
+            m_closestObjective.Set(&Target);
+        }
+        if (Target.character == ClosestReactiveTarget)
+        {
+            m_closestReactiveTarget.Set(&Target);
+        }
+    }
+    for (int i = 0; i < m_Vehicles.Num(); i++)
+    {
+        CCSTarget &Target = m_Vehicles[i];
+        if (Target.character == ClosestEntryVehicle)
+        {
+            m_closestEntryVehicle.Set(&Target);
+        }
+    }
+    if (m_pHighestThreatTarget.Get() == 0)
+    {
+        for (int i = 0; i < m_targets.Num(); i++)
+        {
+            CCSTarget &Target = m_targets[i];
+            if (Target.character == HighestThreatTarget)
+            {
+                m_pHighestThreatTarget.Set(&Target);
+            }
+        }
+    }
+    if (m_pHighestThreatTarget.Get() == 0)
+    {
+        for (int i = 0; i < m_OutRangeThreatTargets.Num(); i++)
+        {
+            CCSTarget &Target = m_OutRangeThreatTargets.GetArray().GetData()[i];
+            if (Target.character == HighestThreatTarget)
+            {
+                m_pHighestThreatTarget.Set(&Target);
+            }
+        }
+    }
+    if (m_pHighestThreatTarget.Get() != 0 && m_pHighestThreatTarget.Get()->character == CurrentTarget)
+    {
+        m_currentTarget.Set(m_pHighestThreatTarget.Get());
+    }
+}
