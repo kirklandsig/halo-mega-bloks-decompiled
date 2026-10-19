@@ -62,6 +62,12 @@ td:first-child { color: var(--muted); white-space: nowrap; }
 <p><a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled">Source code on GitHub</a> &middot; <a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/START_HERE.md">Start here</a> &middot; <a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PROGRESS.md">Progress</a> &middot; <a href="https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled">ByteMatch</a> &middot; <a href="https://github.com/kirklandsig/halo-mega-bloks-decompiled/issues/1">Active claims</a></p>
 
 <section>
+<h2>Goal</h2>
+<p>A proper decomp of the game's own code and scripts: n-Space's native C++ (1,258 functions, 136,660 bytes) matched byte for byte, the UnrealScript compiling cleanly with UDK's compiler, and documented data formats and extraction tools. It is the foundation for reading and modding the game, playing it natively (PC, later an Anbernic handheld), and eventually finishing it: a rebuild as a UDK July 2012 BETA 2 project, and possibly a remake in a modern Unreal Engine by others. The engine, middleware and Epic's UDKBase and GameFramework code are recompiled by the port rather than decompiled. No assets are shipped; everyone uses their own copy.</p>
+<p>Order: the remaining n-Space functions, a clean script compile, data formats and extraction tools, two scope checks (is Grip n-Space's code; did n-Space change Epic's), the handheld, then the UDK rebuild.</p>
+</section>
+
+<section>
 <h2>Three tracks</h2>
 <ul>
 <li><strong>Native port.</strong> A static recompilation of the whole Xbox 360 executable (the ReXGlue SDK) plus its runtime, which is Xenia's kernel, GPU and audio without the JIT. Later, a native renderer for handhelds.</li>
@@ -74,7 +80,7 @@ td:first-child { color: var(--muted); white-space: nowrap; }
 <h2>Status</h2>
 <table>
 <tr><td>Inventory</td><td>237,168 functions and 759,808 types from the build's PDB</td></tr>
-<tr><td>n-Space's C++</td><td>1,258 functions in scope, 875 matched (877 in total)</td></tr>
+<tr><td>n-Space's C++</td><td>1,258 functions in scope, 1,222 matched (113,460 of 136,660 bytes)</td></tr>
 <tr><td>Recompilation</td><td>237,162 functions and 345 jump tables, with no unimplemented instruction; the whole output compiles</td></tr>
 <tr><td>UnrealScript</td><td>2,571 of 2,597 classes export cleanly; the 758 n-Space and modified classes are in the repo</td></tr>
 <tr><td>Playable natively</td><td>Windows x86-64: yes, to the first level (11 to 16 fps on an integrated GPU). Linux: builds; real GPUs untested</td></tr>

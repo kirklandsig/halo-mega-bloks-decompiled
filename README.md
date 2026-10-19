@@ -10,6 +10,40 @@ can run natively on PC and, eventually, on an Anbernic handheld. It is an
 independent, non-commercial preservation project, not affiliated with or
 endorsed by Microsoft, 343 Industries, n-Space, Mega Brands or Epic Games.
 
+## Goal
+
+A proper decomp of the game's own code and scripts, as the foundation for
+people to read and mod the game, play it natively (a PC port, later an
+Anbernic handheld), and eventually finish it or keep building it: a rebuild
+as a UDK July 2012 BETA 2 project with an editor (Phase 5), and possibly a
+remake in a modern Unreal Engine by others. The repository ships no assets;
+everyone uses their own copy of the build.
+
+"Proper" covers three things:
+
+1. **n-Space's native C++:** the `nspace` rows, 1,258 functions and 136,660
+   bytes, matched byte for byte. Progress is measured in bytes.
+2. **The UnrealScript classes,** compiling cleanly with UDK's compiler (open:
+   the 14 classes with decompiler errors, and Grip's lost `dependson()`).
+3. **Documented data formats and extraction tools,** including a level-layout
+   (actor placement) exporter that runs on your own copy; its output is never
+   committed.
+
+It doesn't cover the engine (UDK supplies it; a remake would use UE5's),
+middleware and Xbox libraries (third-party, not game-specific), or Epic's
+UDKBase and GameFramework code (UDK ships the same). The PC port statically
+recompiles all of that, so it runs without being decompiled.
+
+Two scope checks are open, and either can grow the scope: whether Grip (1,711
+functions, 133 KB: `external/grip/sdk`, the `gripbtruntime.cpp` integration
+and its script package; the behaviour-tree system n-Space's AI uses) is
+n-Space's or third-party, and whether n-Space modified any Epic-owned
+functions (found by comparing against UDK's build).
+
+Order: the remaining n-Space functions (now), then a clean script compile,
+then formats and extraction tools, then the scope checks, then Phase 4 (the
+handheld), then Phase 5 (the UDK rebuild).
+
 ## What this is
 
 Three tracks, one goal: the game running natively.
@@ -39,7 +73,7 @@ The results are in `docs/specs/phase2-baseline.md`,
 | | |
 | --- | --- |
 | Inventory | 237,168 functions (215,944 from the PDB's procedures, 21,224 library functions with only a public symbol), 2,295 objects |
-| n-Space's C++ | 1,258 functions in scope, **875 matched**, 4 near (877 matched in total) |
+| n-Space's C++ | 1,258 functions (136,660 bytes) in scope: **1,222 matched** (113,460 bytes, 83%), 6 near, 30 todo |
 | Native port | Windows: boots to the first level, playable with the build's own known issues. Linux: builds, and starts UE3 on a software Vulkan device |
 | Recompilation | 237,162 functions, 345 jump tables, no unimplemented instruction; 506 files compile in about 6 minutes |
 | UnrealScript | 2,571 of 2,597 classes export cleanly; the 758 that are n-Space's own or modified from UDK are committed |

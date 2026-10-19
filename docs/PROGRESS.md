@@ -3,6 +3,21 @@
 Updated 2026-10-18 (Phase 3 done: n-Space's C++). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
+## Scope and roadmap
+
+The goal is a proper decomp of the game's own code and scripts (see the
+README's Goal section): n-Space's native C++ matched byte for byte (measured
+in bytes), the UnrealScript compiling cleanly with UDK's compiler, and
+documented data formats and extraction tools (with a level-layout exporter
+whose output is never committed). The engine, middleware, Xbox libraries and
+Epic's UDKBase and GameFramework code are recompiled by the port, not
+decompiled. Open scope checks: whether Grip (1,711 functions, 133 KB) is
+n-Space's, and whether n-Space modified Epic-owned functions.
+
+Order: remaining n-Space functions (now), then a clean script compile, then
+formats and extraction tools, then the scope checks, then Phase 4 (handheld),
+then Phase 5 (UDK rebuild, later).
+
 ## n-Space's C++ (matching)
 
 1,258 functions (136,660 bytes) are in scope: the `nspace` rows of
