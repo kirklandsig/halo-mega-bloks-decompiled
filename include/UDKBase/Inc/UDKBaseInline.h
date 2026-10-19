@@ -347,3 +347,68 @@ inline GripBBMember::~GripBBMember() {}
 inline GripBBVisualization::GripBBVisualization() : m_pBB(0) {}
 #endif
 inline void GripBBVisualization::SetBlackboard(GripBlackboard *pBB) { m_pBB = pBB; }
+
+// ccsrbt*.h: the runtime nodes' setters, which the script nodes'
+// InitializeRuntime functions call
+inline void CCSRBTIdle::SetAlertness(CCS::EAlertnessState Alertness) { m_alertness = Alertness; }
+inline void CCSRBTMoveTo::SetSpeed(CCS::EMovementSpeed Speed) { m_speed = Speed; }
+inline void CCSRBTMoveTo::SetAlertness(CCS::EAlertnessState Alertness) { m_alertness = Alertness; }
+inline void CCSRBTMoveTo::SetMovementType(CCS::EMovementType MovementType) { m_movementType = MovementType; }
+inline void CCSRBTMoveTo::SetFireChance(float Chance) { m_fireChance = Chance; }
+inline void CCSRBTMoveTo::SetChargedShotChance(float Chance) { m_chargeChance = Chance; }
+inline void CCSRBTMoveTo::SetFireBurstPerShot(int Bursts) { m_fireBurstPerShot = Bursts; }
+inline void CCSRBTMoveTo::SetDelayBetweenBursts(float Delay) { m_delayBetweenBursts = Delay; }
+inline void CCSRBTMoveTo::SetPrimaryAttackRange(float Range) { m_SquaredPrimaryAttackRange = Range * Range; }
+inline void CCSRBTMoveTo::SetSecondaryAttackRange(float Range) { m_SquaredSecondaryAttackRange = Range * Range; }
+inline void CCSRBTMoveTo::SetPrimaryTargetWeight(float Weight) { m_PrimaryTargetWeight = Weight; }
+inline void CCSRBTMoveTo::SetPlayerTargetWeight(float Weight) { m_PlayerSecondaryWeight = Weight; }
+inline void CCSRBTMoveTo::SetReactiveTargetWeight(float Weight) { m_ReactiveSecondaryWeight = Weight; }
+inline void CCSRBTMoveTo::SetObjectiveTargetWeight(float Weight) { m_ObjectiveSecondaryWeight = Weight; }
+inline void CCSRBTMoveToBestCover::SetIdealShootingDistance(float Distance) { m_idealShootingDistance = Distance; }
+inline void CCSRBTMoveToBestCover::SetExcludeCurrentCover(bool bExclude) { m_excludeCurrentCover = bExclude; }
+inline void CCSRBTOrientTowardTarget::SetAlertness(CCS::EAlertnessState Alertness) { m_alertness = Alertness; }
+inline void CCSRBTSelectTarget::SetSelectionAlgo(CCSRBTSelectTarget::EAlgorithm Algo) { m_selectionAlgo = Algo; }
+inline void CCSRBTShoot::SetFireBurstPerShot(int Bursts) { m_fireBurstPerShot = Bursts; }
+inline void CCSRBTShoot::SetDelayBetweenBursts(float Delay) { m_delayBetweenBursts = Delay; }
+inline void CCSRBTShoot::SetChargedShotChance(float Chance) { m_chargeChance = Chance; }
+inline void CCSRBTShootFromCover::SetFireBurstPerShot(int Bursts) { m_fireBurstPerShot = Bursts; }
+inline void CCSRBTShootFromCover::SetDelayBetweenBursts(float Delay) { m_delayBetweenBursts = Delay; }
+inline void CCSRBTTimeSinceEvent::SetEventType(EEventType Type) { EventType = Type; }
+inline void CCSRBTTimeSinceEvent::SetActorClass(UClass *Class) { ActorClass = Class; }
+inline void CCSRBTTimeSinceEvent::SetMaxDistance(float Distance) { MaxDistance = Distance; }
+inline void CCSRBTStrafeTarget::SetFireChance(float Chance) { m_fireChance = Chance; }
+inline void CCSRBTStrafeTarget::SetChargedShotChance(float Chance) { m_chargeChance = Chance; }
+inline void CCSRBTStrafeTarget::SetFireBurstPerShot(int Bursts) { m_fireBurstPerShot = Bursts; }
+inline void CCSRBTStrafeTarget::SetDelayBetweenBursts(float Delay) { m_delayBetweenBursts = Delay; }
+inline void CCSRBTStrafeTarget::SetDirectionFlags(bool bLeft, bool bRight, bool bBack, bool bForward)
+{
+    m_canStrafeLeft = bLeft;
+    m_canStrafeRight = bRight;
+    m_canStrafeBack = bBack;
+    m_canStrafeForward = bForward;
+}
+inline void CCSRBTEncircleTarget::SetFireChance(float Chance) { m_fireChance = Chance; }
+inline void CCSRBTEncircleTarget::SetFireBurstPerShot(int Bursts) { m_fireBurstPerShot = Bursts; }
+inline void CCSRBTEncircleTarget::SetDelayBetweenBursts(float Delay) { m_delayBetweenBursts = Delay; }
+inline void CCSRBTEncircleTarget::SetDirectionFlags(bool bLeft, bool bRight)
+{
+    m_canEncircleLeft = bLeft;
+    m_canEncircleRight = bRight;
+}
+inline void CCSRBTEncircleTarget::SetForceFire(bool bForceFire) { m_forceFire = bForceFire; }
+inline void CCSRBTTargetAngle::SetActiveZones(bool bFront, bool bRight, bool bBehind, bool bLeft)
+{
+    checkFront = bFront;
+    checkRight = bRight;
+    checkBehind = bBehind;
+    checkLeft = bLeft;
+}
+inline void HaloRBTKamikaze::SetDetonationDistance(float Distance) { m_detonationDistance = Distance; }
+inline void HaloRBTKamikaze::SetArmKamikazeAnimName(FName Name) { m_ArmKamikazeAnimName = Name; }
+inline void HaloRBTKamikaze::SetDetonateKamikazeAnimName(FName Name) { m_DetonateKamikazeAnimName = Name; }
+inline void HaloRBTKamikaze::SetBlendTimes(float BlendIn, float BlendOut)
+{
+    m_BlendInTime = BlendIn;
+    m_BlendOutTime = BlendOut;
+}
+inline void CCSRBTSelectTarget::SetTargetName(FString Name) { TargetName = Name; }
