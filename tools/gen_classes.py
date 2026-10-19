@@ -26,7 +26,7 @@ from pdbfile import IMAGE_BASE
 
 # Classes the hand-written code of a package needs in its header as well:
 # with their members (TARGETS) or opaque (OPAQUE).
-TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FArchiveProxy'], 'UDKBase': ['FRenderCommandFence', 'AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
+TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FArchiveProxy'], 'UDKBase': ['FRenderCommandFence', 'AUDKWeaponPawn', 'AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
                        'ActorWrapper', 'CCSGameCover', 'FCoverInfo', 'CCSCharacter', 'CCSGameCharacter', 'FCoverSlot',
                        'APawn', 'UActorComponent', 'ACCSController', 'CCSBrain', 'Grip_Vector', 'AController',
                        'UAnimNode', 'UAnimNodeBlendBase', 'UAnimNodeBlendList', 'FAnimBlendChild', 'UUDKAnimBlendBase',
@@ -35,7 +35,7 @@ TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FA
                        'UAnimObject', 'AUDKPawn', 'Grip_Rotation', 'FRotator', 'Kaim::IQuery', 'Kaim::BaseAStarQuery', 'CCSTarget', 'CCSMeatPuppet', 'GwNavBot', 'UGwNavBotHandle', 'Kaim::Bot',
                        'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>']}
 OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
-          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
+          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'GripEngineServices', 'IGripEngineServices', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
                        # the behaviour-tree nodes' runtime classes
                        'CCSRBTEnemyClosestRange',
                        'CCSRBTEnemyLowestLKPAge',

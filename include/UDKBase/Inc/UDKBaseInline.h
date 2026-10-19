@@ -308,3 +308,20 @@ inline void Kaim::AStarQuery<Kaim::DefaultTraverseLogic>::Initialize(const Kaim:
 {
     BaseAStarQuery::Initialize(StartPos, DestPos);
 }
+
+// grip_vector.h: comparisons
+inline bool Grip_Vector::operator==(const Grip_Vector &V) const { return X == V.X && Y == V.Y && Z == V.Z; }
+inline bool Grip_Vector::operator!=(const Grip_Vector &V) const { return X != V.X || Y != V.Y || Z != V.Z; }
+
+// gripengineservices.h
+inline Grip_Vector GripEngineServices::GetActorPosition(void *pActor) { return ms_pImpl->GetActorPosition(pActor); }
+inline Grip_Vector CCSCharacter::GetPosition() const { return m_gameCharacter.GetPosition(); }
+
+// line-check results (the iterator's Next is left as it is)
+inline FIteratorList::FIteratorList() {}
+inline FIteratorActorList::FIteratorActorList() : Actor(0) {}
+inline FCheckResult::FCheckResult()
+    : Location(0, 0, 0), Normal(0, 0, 0), Time(0), Item(INDEX_NONE), Material(0), PhysMaterial(0), Component(0),
+      SourceComponent(0), BoneName(NAME_None), Level(0), LevelIndex(INDEX_NONE), bStartPenetrating(0)
+{
+}

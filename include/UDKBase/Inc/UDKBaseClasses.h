@@ -108,6 +108,10 @@ class AUDKCarriedObject;
 class AUDKCover;
 class AUDKPawn;
 class AUDKPlayerController;
+class AUDKVehicle;
+class AUDKVehicleBase;
+class AUDKWeapon;
+class AUDKWeaponPawn;
 class AUSSController;
 class AUSSPawn;
 class AUSSWeaponAttachment;
@@ -594,11 +598,14 @@ class GripBrainSnapshotSerializer;
 class GripBrainSystem;
 class GripBrainSystemContainer;
 class GripDebugOptions;
+class GripEngine;
+class GripEngineServices;
 struct GripEvent;
 class GripGameEventHandler;
 class GripGameEventVisualizer;
 class GripHUDRenderer;
 class GripHeapObject;
+struct GripLineCheckResult;
 class GripMessengerWorker;
 class GripRBTAllocator;
 class GripRBTBehavior;
@@ -639,6 +646,7 @@ class IGripBTInterface;
 class IGripBTScriptNodeMediator;
 class IGripBrainFinder;
 class IGripBrainListener;
+class IGripEngineServices;
 class IGripGameEventListener;
 class IGripHUDRenderingComponent;
 class IGripMeatPuppetQuery;
@@ -10186,6 +10194,144 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int AUDKPlayerControllerData[0xB8];
+};
+
+class AUDKVehicleBase : public AGwNavVehicle  // size 0x640, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    int eventGetFirstAvailableSeat();
+    void eventHoldGameObject(AUDKCarriedObject *);
+HG_PRIVATE:
+    AUDKVehicleBase &operator=(const AUDKVehicleBase &);
+public:
+    static UClass *GetPrivateStaticClassAUDKVehicleBase(const wchar_t *);
+    static void InitializePrivateStaticClassAUDKVehicleBase();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL unsigned int ReachedDesiredRotation();
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AUDKVehicleBase();
+public:
+    #endif
+    typedef AGwNavVehicle Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
+    unsigned int AUDKVehicleBaseData[0x4];
+};
+
+class AUDKWeaponPawn : public AUDKVehicleBase, public ICCSPawn  // size 0x670
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL FVector GetTargetLocation(AActor *, unsigned int) const;
+    HG_VIRTUAL unsigned char GetMovementType();
+    HG_VIRTUAL void SetMovementType(unsigned char);
+    HG_VIRTUAL void SetMovementTypeDefault();
+    HG_VIRTUAL unsigned char GetAlertness();
+    HG_VIRTUAL void SetAlertness(unsigned char);
+    HG_VIRTUAL void SetAlertnessDefault();
+    HG_VIRTUAL unsigned char GetSpeed();
+    HG_VIRTUAL void SetSpeed(unsigned char);
+    HG_VIRTUAL void SetMovementSpeedDefault();
+    HG_VIRTUAL unsigned int IsCrouched();
+    HG_VIRTUAL void SetCrouched(unsigned int);
+    HG_VIRTUAL void SetPostureDefault();
+    HG_VIRTUAL unsigned int PostureTransitionOver();
+    HG_VIRTUAL unsigned int CanAim(FRotator);
+    HG_VIRTUAL void SetCoverPose(unsigned char, float);
+    HG_VIRTUAL void SetNoCoverPose();
+    HG_VIRTUAL unsigned int CoverPoseTransitionOver();
+    HG_VIRTUAL void MoveToInCover(FVector);
+    HG_VIRTUAL unsigned int IsInCover();
+    HG_VIRTUAL void SetIsPanicking(unsigned int);
+    HG_VIRTUAL unsigned int GetIsPanicking();
+    HG_VIRTUAL float GetYellingDistance();
+    HG_VIRTUAL UCCSBTTree *GetDefaultBehaviorTree();
+    HG_VIRTUAL void SetDefaultBehaviorTree(UCCSBTTree *);
+    void execGetMovementType(FFrame &, void *const);
+    void execSetMovementType(FFrame &, void *const);
+    void execSetMovementTypeDefault(FFrame &, void *const);
+    void execGetAlertness(FFrame &, void *const);
+    void execSetAlertness(FFrame &, void *const);
+    void execSetAlertnessDefault(FFrame &, void *const);
+    void execGetSpeed(FFrame &, void *const);
+    void execSetSpeed(FFrame &, void *const);
+    void execSetMovementSpeedDefault(FFrame &, void *const);
+    void execIsCrouched(FFrame &, void *const);
+    void execSetCrouched(FFrame &, void *const);
+    void execSetPostureDefault(FFrame &, void *const);
+    void execPostureTransitionOver(FFrame &, void *const);
+    void execCanAim(FFrame &, void *const);
+    void execSetCoverPose(FFrame &, void *const);
+    void execSetNoCoverPose(FFrame &, void *const);
+    void execCoverPoseTransitionOver(FFrame &, void *const);
+    void execMoveToInCover(FFrame &, void *const);
+    void execIsInCover(FFrame &, void *const);
+    void execSetIsPanicking(FFrame &, void *const);
+    void execGetIsPanicking(FFrame &, void *const);
+    void execGetYellingDistance(FFrame &, void *const);
+    void execGetDefaultBehaviorTree(FFrame &, void *const);
+    void execSetDefaultBehaviorTree(FFrame &, void *const);
+HG_PRIVATE:
+    AUDKWeaponPawn &operator=(const AUDKWeaponPawn &);
+public:
+    static UClass *GetPrivateStaticClassAUDKWeaponPawn(const wchar_t *);
+    static void InitializePrivateStaticClassAUDKWeaponPawn();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL UObject *GetUObjectInterfaceCCSPawn();
+    HG_VIRTUAL void TickSpecial(float);
+    HG_VIRTUAL AVehicle *GetVehicleBase();
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AUDKWeaponPawn();
+public:
+    #endif
+    typedef AUDKVehicleBase Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    unsigned char MovementType;  // 0x644
+    unsigned char AlertnessState;  // 0x645
+    char _pad0[0x2];
+    FVector2D AimYawRange;  // 0x648
+    FVector2D AimPitchRange;  // 0x650
+    UCCSBTTree *DefaultBehaviorTree;  // 0x658
+    float YellingDistance;  // 0x65C
+    AUDKVehicle *MyVehicle;  // 0x660
+    AUDKWeapon *MyVehicleWeapon;  // 0x664
+    int MySeatIndex;  // 0x668
+    char _pad1[0x4];
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    unsigned char MovementType;
+    unsigned char AlertnessState;
+    char _pad0[0x2];
+    FVector2D AimYawRange;
+    FVector2D AimPitchRange;
+    hg::gptr<UCCSBTTree> DefaultBehaviorTree;
+    hg::be<float> YellingDistance;
+    hg::gptr<AUDKVehicle> MyVehicle;
+    hg::gptr<AUDKWeapon> MyVehicleWeapon;
+    hg::be<int> MySeatIndex;
+    char _pad1[0x4];
+    #endif
 };
 
 class AUSSController : public ACCSController  // size 0x4B0
@@ -21050,6 +21196,27 @@ public:
     #endif
 };
 
+class GripEngineServices  // size 0x1, opaque
+{
+public:
+    static void SetImplementation(IGripEngineServices *);
+    static float GetTimeSeconds();
+    static float GetTimeDilation();
+    static void SetPlayersOnly(bool);
+    static bool GetPlayersOnly();
+    static Grip_Vector GetActorPosition(void *);
+    static void FindAllBrains(Grip_ArrayPOD<GripBrain *,2> &);
+    static bool FindLocationAndRotationFromBrainID(int, Grip_Vector &, Grip_Vector &);
+    static GripEngine *GetEngine();
+    static GripAIManager *GetAIManager();
+    static bool SingleLineCheck(GripLineCheckResult &, void *, const Grip_Vector &, const Grip_Vector &, const int, const Grip_Vector);
+    #ifndef HAGGAR_HOST
+    static IGripEngineServices *ms_pImpl;
+    #else
+    static hg::gptr<IGripEngineServices> (&ms_pImpl);
+    #endif
+};
+
 class GripHUDRenderer : public GripVHeapObject  // size 0x8
 {
 public:
@@ -22420,6 +22587,21 @@ HG_PROTECTED:
     ~IGJKHelper();
 public:
     #endif
+};
+
+class IGripEngineServices  // size 0x4, opaque
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~IGripEngineServices();)
+    HG_VIRTUAL float GetTimeSeconds() HG_PURE;
+    HG_VIRTUAL float GetTimeDilation() HG_PURE;
+    HG_VIRTUAL void SetPlayersOnly(bool) HG_PURE;
+    HG_VIRTUAL bool GetPlayersOnly() HG_PURE;
+    HG_VIRTUAL Grip_Vector GetActorPosition(void *) HG_PURE;
+    HG_VIRTUAL GripEngine *GetEngine() HG_PURE;
+    HG_VIRTUAL GripAIManager *GetAIManager() HG_PURE;
+    HG_VIRTUAL bool SingleLineCheck(GripLineCheckResult &, void *, const Grip_Vector &, const Grip_Vector &, const int, const Grip_Vector) HG_PURE;
 };
 
 namespace Kaim {
@@ -38291,6 +38473,24 @@ inline UClass *AUDKPlayerController::StaticClass()
     {
         PrivateStaticClass = GetPrivateStaticClassAUDKPlayerController(L"UDKBase");
         InitializePrivateStaticClassAUDKPlayerController();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AUDKVehicleBase::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAUDKVehicleBase(L"UDKBase");
+        InitializePrivateStaticClassAUDKVehicleBase();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AUDKWeaponPawn::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAUDKWeaponPawn(L"UDKBase");
+        InitializePrivateStaticClassAUDKWeaponPawn();
     }
     return PrivateStaticClass;
 }

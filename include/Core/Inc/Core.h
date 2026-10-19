@@ -14,11 +14,16 @@
 extern "C" void *memcpy(void *Dest, const void *Src, unsigned int Count);
 extern "C" void *memmove(void *Dest, const void *Src, unsigned int Count);
 extern "C" void *memset(void *Dest, int Value, unsigned int Count);
+extern "C" double __fsqrt(double);
+#pragma intrinsic(__fsqrt)
+extern "C" int rand();
 inline void *operator new(unsigned int, void *Mem) throw() { return Mem; }
 inline void operator delete(void *, void *) throw() {}
 #else
 #include <cstring>
 #include <new>
+#include <cmath>
+#include <cstdlib>
 #endif
 
 enum ENoInit
@@ -35,6 +40,15 @@ void appFree(void *Original);
 inline void *appMemcpy(void *Dest, const void *Src, int Count) { return memcpy(Dest, Src, Count); }
 inline void *appMemmove(void *Dest, const void *Src, int Count) { return memmove(Dest, Src, Count); }
 inline void appMemzero(void *Dest, int Count) { memset(Dest, 0, Count); }
+#ifndef HAGGAR_HOST
+inline float appSqrt(float F) { return (float)__fsqrt(F); }
+inline float appInvSqrt(float F) { return (float)(1.0 / __fsqrt(F)); }
+#else
+inline float appSqrt(float F) { return (float)std::sqrt(F); }
+inline float appInvSqrt(float F) { return (float)(1.0 / std::sqrt(F)); }
+#endif
+
+#define SMALL_NUMBER (1.e-8f)
 
 #ifndef HAGGAR_HOST
 inline void *operator new(unsigned int Size) { return appMalloc(Size); }
