@@ -3,6 +3,7 @@
 // gripblackboard.h's) inline functions that retail keeps.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "../CCSRefUE3/CCSGameCharacter.cpp"
 
 #pragma inline_depth(0)
 extern Grip_Array<Grip::String, Grip::AllocatorGH<Grip::String, 2> > &(GripBlackboard::*const EmitGetStates)() = &GripBlackboard::GetStates;
@@ -431,5 +432,110 @@ void CCSBlackboard::SetHasBecomeAware(bool bAware)
 // @retail 0x833631B8
 // CCSBlackboard::`scalar deleting destructor'
 
-// Not attempted yet (todo): GetSpecificTarget (944), UpdateTargetListsByRange (1,104)
-// and UpdateTargetPointers (1,376), the target-list bookkeeping.
+// Near: in the actor branch ours knows the pawn is null and compares
+// CCSCharacter::NONE's pawn with 0; retail compares it with the loaded pawn.
+// @retail 0x8333B448
+CCSTarget *CCSBlackboard::GetSpecificTarget(FString TargetName)
+{
+    for (int i = 0; i < m_targets.Num(); i++)
+    {
+        CCSTarget &Target = m_targets[i];
+        if (Target.character.m_gameCharacter.m_pawn != 0)
+        {
+            const FString Name = Target.character.m_gameCharacter.m_pawn->Tag.ToString();
+            if (Name == TargetName)
+            {
+                return &Target;
+            }
+        }
+        else
+        {
+            AActor *pActor = (AActor *)Target.character.GetActor();
+            if (pActor != 0)
+            {
+                const FString Name = pActor->Tag.ToString();
+                if (Name == TargetName)
+                {
+                    return &Target;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < m_OutRangeThreatTargets.Num(); i++)
+    {
+        CCSTarget &Target = m_OutRangeThreatTargets[i];
+        if (Target.character.m_gameCharacter.m_pawn != 0)
+        {
+            const FString Name = Target.character.m_gameCharacter.m_pawn->Tag.ToString();
+            if (Name == TargetName)
+            {
+                return &Target;
+            }
+        }
+        else
+        {
+            AActor *pActor = (AActor *)Target.character.GetActor();
+            if (pActor != 0)
+            {
+                const FString Name = pActor->Tag.ToString();
+                if (Name == TargetName)
+                {
+                    return &Target;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+// Near: the instruction schedule of the inlined position copies differs.
+// Moves targets beyond OutRange to the out-of-range list, and those back
+// within InRange to the target list.
+// @retail 0x83356838
+void CCSBlackboard::UpdateTargetListsByRange(const Grip_Vector &Origin, const float InRange, const float OutRange)
+{
+    const float InRangeSq = InRange * InRange;
+    const float OutRangeSq = OutRange * OutRange;
+    int NumOutRange = m_OutRangeThreatTargets.Num();
+    for (int i = 0; i < m_targets.Num();)
+    {
+        CCSTarget &Target = m_targets[i];
+        const Grip_Vector Position = Target.character.GetPosition();
+        const float DeltaX = Position.X - Origin.X;
+        const float DeltaY = Position.Y - Origin.Y;
+        if (DeltaX * DeltaX + DeltaY * DeltaY > OutRangeSq)
+        {
+            m_OutRangeThreatTargets.AddItem(Target);
+            m_targets.RemoveItemSwap(i);
+        }
+        else
+        {
+            i++;
+        }
+    }
+    for (int i = 0; i < NumOutRange;)
+    {
+        CCSTarget &Target = m_OutRangeThreatTargets[i];
+        const Grip_Vector Position = Target.character.GetPosition();
+        const float DeltaX = Position.X - Origin.X;
+        const float DeltaY = Position.Y - Origin.Y;
+        if (DeltaX * DeltaX + DeltaY * DeltaY < InRangeSq)
+        {
+            m_targets.AddItem(Target);
+            m_OutRangeThreatTargets.RemoveItemSwap(i);
+            if (NumOutRange > m_OutRangeThreatTargets.Num())
+            {
+                NumOutRange--;
+            }
+            else
+            {
+                i++;
+            }
+            continue;
+        }
+        i++;
+    }
+}
+
+// Not attempted yet (todo): UpdateTargetPointers (1,376), the target-list
+// bookkeeping.
