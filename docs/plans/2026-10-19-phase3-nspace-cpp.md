@@ -220,10 +220,10 @@ copies of the code?
 
 ### Task 6: wrap-up
 
-- [ ] **Update the docs:**
+- [x] **Update the docs:**
   - `docs/PROGRESS.md`, the README's status line, `llms.txt`, the Pages
     site's status, and the design's "Phases".
   - Phase 3 is done, with the matched, near and todo counts and the Task 4
     recommendation.
-- [ ] **Run the global simplify pass** over the new tools.
-- [ ] **Commit, then push.**
+- [x] **Run the global simplify pass** over the new tools.
+- [x] **Commit, then push.**

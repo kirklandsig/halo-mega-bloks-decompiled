@@ -24,6 +24,7 @@
 #include <cstring>
 #include <type_traits>
 
+#include <rex/types.h>
 #include <rex/ppc/context.h>
 #include <rex/ppc/func.h>
 
@@ -48,26 +49,8 @@ template <class T> inline T *host(uint32_t guest) {
   return guest ? reinterpret_cast<T *>(kGuestBase + guest) : nullptr;
 }
 
-// A big-endian value in guest memory.
-template <class T> struct be {
-  using U = std::conditional_t<sizeof(T) == 8, uint64_t,
-            std::conditional_t<sizeof(T) == 4, uint32_t, uint16_t>>;
-  U raw;
-  be() = default;
-  be(T v) { *this = v; }
-  operator T() const {
-    U u = std::byteswap(raw);
-    T v;
-    std::memcpy(&v, &u, sizeof(T));
-    return v;
-  }
-  be &operator=(T v) {
-    U u;
-    std::memcpy(&u, &v, sizeof(T));
-    raw = std::byteswap(u);
-    return *this;
-  }
-};
+// A big-endian value in guest memory: ReXGlue's own.
+template <class T> using be = rex::be<T>;
 
 // A 32-bit guest pointer to T.
 template <class T> struct gptr {
@@ -107,8 +90,7 @@ struct Args {
   void put(uint64_t v) { (&c.r3)[gpr++ - 3].u64 = v; }
   template <class T> void add(T v) {
     if constexpr (std::is_floating_point_v<T>) {
-      (&c.f1)[fpr++ - 1].f64 = v;
-      gpr++;  // a float takes a GPR slot too (unverified for this ABI)
+      (&c.f1)[fpr++ - 1].f64 = v;  // floats count separately, as rex's own marshalling does
     } else if constexpr (std::is_pointer_v<T>) {
       put(guest_address(v));
     } else if constexpr (std::is_reference_v<T>) {
@@ -136,17 +118,6 @@ template <class R> R result(PPCContext &c) {
 }
 }  // namespace detail
 
-// Call the recompiled function at `guest` with `self` as r3.
-template <class R, class... A> R call(uint32_t guest, const void *self, A... args) {
-  PPCContext c = *Scope::ctx;  // the caller's stack (r1), r13 and fpscr
-  detail::Args a{c};
-  a.put(guest_address(self));
-  (a.add(args), ...);
-  rex::runtime::ResolveIndirectFunction(guest)(c, Scope::base);
-  Scope::ctx->fpscr = c.fpscr;
-  return detail::result<R>(c);
-}
-
 // Call the recompiled static or free function at `guest`.
 template <class R, class... A> R scall(uint32_t guest, A... args) {
   PPCContext c = *Scope::ctx;
@@ -155,6 +126,11 @@ template <class R, class... A> R scall(uint32_t guest, A... args) {
   rex::runtime::ResolveIndirectFunction(guest)(c, Scope::base);
   Scope::ctx->fpscr = c.fpscr;
   return detail::result<R>(c);
+}
+
+// Call the recompiled function at `guest` with `self` as r3.
+template <class R, class... A> R call(uint32_t guest, const void *self, A... args) {
+  return scall<R>(guest, self, args...);
 }
 
 // Call slot `slot` of `self`'s guest vtable.

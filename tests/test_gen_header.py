@@ -28,7 +28,7 @@ def make_types():
 
 
 def test_render_opaque_base():
-    text = gen_header.render_class(make_types(), 'FDerived')
+    text = gen_header.Header(make_types(), ['FDerived']).render()
     assert 'struct FBase  // size 0x8, opaque' in text
     assert 'HG_XDK(HG_VIRTUAL ~FBase();)' in text
     assert 'unsigned int FBaseData[0x1];' in text  # the blob keeps the vtable's 4-byte alignment

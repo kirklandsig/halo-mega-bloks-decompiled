@@ -6,7 +6,7 @@
 
 - Game: Project Haggar, the Halo Mega Bloks game by n-Space for the Xbox 360, cancelled in 2013. Engine: Unreal Engine 3, exactly UDK July 2012 BETA 2 (engine version 10246, changelist 1340247).
 - Inputs: a development build with a full private PDB (237,168 functions, 759,808 type records). The executable is a devkit-signed XEX2.
-- Matching compiler: XDK 21076, cl 16.00.11886 for PowerPC, with each object's command line from the PDB. 1,258 n-Space functions in scope, 8 of them matched (10 matched in total).
+- Matching compiler: XDK 21076, cl 16.00.11886 for PowerPC, with each object's command line from the PDB. 1,258 n-Space functions in scope, 875 of them matched and 4 near (877 matched in total).
 - Port: the recompiled build runs natively on Windows x86-64 from boot to the first level (ReXGlue SDK codegen and its Xenia-derived runtime; 237,162 functions, no unimplemented instruction), and builds on Linux. Next: Linux on real GPUs, then a native renderer for handhelds.
 - Scripts: 758 UnrealScript classes (n-Space's own and those modified from UDK) are in script/.
 - Not playable natively yet.

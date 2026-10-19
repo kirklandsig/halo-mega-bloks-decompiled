@@ -22,6 +22,7 @@ import gen_header
 import inventory
 import paths
 import pdbtype
+from pdbfile import IMAGE_BASE
 
 # Classes the hand-written code of a package needs in its header as well:
 # with their members (TARGETS) or opaque (OPAQUE).
@@ -291,7 +292,7 @@ class Classes:
         lines = [f'inline void {cls}::{member}(FFrame &Stack, void *const{"" if ret == "void" else " Result"})', '{']
         for i, p in enumerate(params):
             init = '' if p in STRUCT_PARAMETERS else ' = 0'
-            lines += [f'    {p} {"" if p.endswith("*") else ""}A{i}{init};'.replace('* A', '*A'),
+            lines += [f'    {p}{"" if p.endswith("*") else " "}A{i}{init};',
                       f'    Stack.Step(Stack.Object, &A{i});']
             if p == UBOOL:  # P_GET_UBOOL: script's bitfield bit becomes 1
                 lines.append(f'    A{i} = A{i} ? 1 : 0;')
@@ -489,9 +490,7 @@ def argument_registers(va, size, regs, callee='UClass::UClass'):
     function's call to `callee`, from the basefile."""
     import capstone
     md = capstone.Cs(capstone.CS_ARCH_PPC, capstone.CS_MODE_32 | capstone.CS_MODE_BIG_ENDIAN)
-    md.detail = False
-    image = paths.basefile().read_bytes()
-    code = image[va - IMAGE_BASE:va - IMAGE_BASE + size]
+    code = basefile()[va - IMAGE_BASE:va - IMAGE_BASE + size]
     values, calls = {r: 0 for r in regs}, []
     for ins in md.disasm(code, va):
         ops = [o.strip() for o in ins.op_str.split(',')]
@@ -516,7 +515,6 @@ def names():
     return names.cache
 
 
-IMAGE_BASE = 0x82000000
 
 
 def main(argv=None):
@@ -575,7 +573,7 @@ def write_source(c, package, obj, rows):
         if 'internal' in k:
             emit.append(f'extern void (*const Emit{cls}InternalConstructor)(void *) = &{cls}::InternalConstructor;')
         for name, r in sorted(k.items()):
-            if name.startswith(('event', 'exec')) and (name.startswith('event') or name in c.exec_done):
+            if name.startswith('event') or name in c.exec_done:
                 emit.append(f'extern decltype(&{cls}::{name}) const Emit{cls}_{name} = &{cls}::{name};')
     lines += ['// Out-of-line copies, as in retail.', '#pragma inline_depth(0)'] + emit + ['#pragma inline_depth()', '']
     for cls in sorted(kinds):
@@ -601,7 +599,6 @@ def write_source(c, package, obj, rows):
     path = paths.ROOT / 'src' / package / 'Src' / f'{stem}Classes.cpp'
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text('\n'.join(lines), encoding='utf-8', newline='\n')
-    return path
 
 
 if __name__ == '__main__':

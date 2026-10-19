@@ -27,14 +27,14 @@ void Report(const char *what, unsigned n) {
 // the two results are compared.
 REX_HOOK_RAW(sub_8332E718) {
   hg::Scope scope(ctx, base);
-  CCSTarget *ours = hg::host<CCSBlackboard>(ctx.r3.u32)->GetCurrentTarget();
-  PPCContext theirs = ctx;
-  __imp__sub_8332E718(theirs, base);
+  const uint32_t self = ctx.r3.u32;
+  CCSTarget *ours = hg::host<CCSBlackboard>(self)->GetCurrentTarget();
+  __imp__sub_8332E718(ctx, base);  // only reads; r3 is ours again below
   unsigned n = ++g_leaf_calls;
-  if (theirs.r3.u32 != hg::guest_address(ours)) {
+  if (ctx.r3.u32 != hg::guest_address(ours)) {
     ++g_leaf_mismatches;
-    REXLOG_WARN("decomp: GetCurrentTarget(0x{:08X}) = 0x{:08X}, recompiled 0x{:08X}", ctx.r3.u32,
-                hg::guest_address(ours), theirs.r3.u32);
+    REXLOG_WARN("decomp: GetCurrentTarget(0x{:08X}) = 0x{:08X}, recompiled 0x{:08X}", self,
+                hg::guest_address(ours), ctx.r3.u32);
   }
   Report("CCSBlackboard::GetCurrentTarget", n);
   ctx.r3.u64 = hg::guest_address(ours);

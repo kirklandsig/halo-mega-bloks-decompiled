@@ -95,9 +95,9 @@ The limits found:
    by value (`FVector`, `FString`), varargs and struct returns aren't
    marshalled yet; such methods get no thunk, and a call to one fails at
    link time.
-4. **The ABI's float slots are unverified.** The thunks assume a float takes
-   a GPR slot as well as an FPR, as in the 64-bit PowerPC ABI; no function
-   tried here mixes them.
+4. **The float convention follows rex's.** Floats take FPRs and count
+   separately from the GPRs, as ReXGlue's own marshalling does; no function
+   tried here mixes them, so that is untested too.
 5. **Static members are defined once per header.** Two headers declaring the
    same static would need one shared definition.
 6. **Every call into recompiled code copies the `PPCContext`.** That's fine
