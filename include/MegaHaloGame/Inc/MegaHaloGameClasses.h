@@ -2081,7 +2081,6 @@ public:
     unsigned long ProbeMask;  // 0x2C
     unsigned short LatentAction;  // 0x30
     unsigned char bContinuedState;  // 0x32
-    char _pad0[0x1];
     TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;  // 0x34
     UClass *LocalVarsOwner;  // 0x40
     #else
@@ -3975,7 +3974,6 @@ public:
     unsigned long ProbeMask;  // 0x74
     unsigned long StateFlags;  // 0x78
     unsigned short LabelTableOffset;  // 0x7C
-    char _pad0[0x2];
     TMap<FName,UFunction *,FDefaultSetAllocator> FuncMap;  // 0x80
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -4182,7 +4180,6 @@ public:
     unsigned char NumParms;  // 0x7D
     unsigned short ParmsSize;  // 0x7E
     unsigned short ReturnValueOffset;  // 0x80
-    char _pad0[0x2];
     UStructProperty *FirstStructWithDefaults;  // 0x84
     void (UObject::*Func)(FFrame &, void *const);  // 0x88
     #else

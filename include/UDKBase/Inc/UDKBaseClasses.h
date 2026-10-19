@@ -4819,7 +4819,6 @@ public:
     unsigned char CollisionType;  // 0xA3
     unsigned char ReplicatedCollisionType;  // 0xA4
     unsigned char TickGroup;  // 0xA5
-    char _pad0[0x2];
     AActor *Owner;  // 0xA8
     AActor *Base;  // 0xAC
     TArrayNoInit<FTimerData> Timers;  // 0xB0
@@ -5306,7 +5305,6 @@ public:
     unsigned long bUsingPathLanes : 1;
     unsigned char bFire;  // 0x1EC
     unsigned char bAltFire;  // 0x1ED
-    char _pad0[0x2];
     float MinHitWall;  // 0x1F0
     UClass *NavigationHandleClass;  // 0x1F4
     UNavigationHandle *NavigationHandle;  // 0x1F8
@@ -5536,7 +5534,6 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     unsigned char CsgOper;  // 0x1D4
-    char _pad0[0x3];
     FColor BrushColor;  // 0x1D8
     int PolyFlags;  // 0x1DC
     unsigned long bColored : 1;  // 0x1E0
@@ -5796,7 +5793,6 @@ public:
     float CoverQueryRadius;  // 0x24
     unsigned char TargetSelection;  // 0x28
     unsigned char Movement;  // 0x29
-    char _pad0[0x2];
     #else
     hg::be<float> MaxAwareRadius;
     hg::be<float> MaxSightRadius;
@@ -5945,7 +5941,6 @@ public:
     unsigned char CCSTeam;  // 0x418
     unsigned char ThreatType;  // 0x419
     unsigned char EventType;  // 0x41A
-    char _pad0[0x1];
     UCCSVisualizationComponent *DebugVizComponent;  // 0x41C
     TArrayNoInit<AActor *> NoiseMakers;  // 0x420
     unsigned long HasHeardNoise : 1;  // 0x42C
@@ -6347,7 +6342,6 @@ public:
     unsigned char ForceCoverType;  // 0xC
     unsigned char CoverType;  // 0xD
     unsigned char LocationDescription;  // 0xE
-    char _pad0[0x1];
     FVector LocationOffset;  // 0x10
     FRotator RotationOffset;  // 0x1C
     TArrayNoInit<unsigned char> Actions;  // 0x28
@@ -6713,7 +6707,6 @@ public:
     FArchive *ArchivePtr;  // 0x1D4
     FStringNoInit Filename;  // 0x1D8
     unsigned char FileType;  // 0x1E4
-    char _pad0[0x3];
     unsigned long bFlushEachWrite : 1;  // 0x1E8
     unsigned long bWantsAsyncWrites : 1;
     #else
@@ -7258,7 +7251,6 @@ public:
     unsigned char RemoteViewPitch;  // 0x216
     unsigned char FlashCount;  // 0x217
     unsigned char FiringMode;  // 0x218
-    char _pad0[0x3];
     float UncrouchTime;  // 0x21C
     float CrouchHeight;  // 0x220
     float CrouchRadius;  // 0x224
@@ -7943,7 +7935,6 @@ public:
     unsigned char bRun;  // 0x37B
     unsigned char bDuck;  // 0x37C
     unsigned char NetPlayerIndex;  // 0x37D
-    char _pad0[0x2];
     AActor *ViewTarget;  // 0x380
     APlayerReplicationInfo *RealViewTarget;  // 0x384
     UInterpTrackInstDirector *ControllingDirTrackInst;  // 0x388
@@ -8226,7 +8217,6 @@ public:
     float MinCrushSpeed;  // 0x4C4
     float ForceCrushPenetration;  // 0x4C8
     unsigned char StuckCount;  // 0x4CC
-    char _pad0[0x3];
     float ThrottleTime;  // 0x4D0
     float StuckTime;  // 0x4D4
     float OldSteering;  // 0x4D8
@@ -9044,7 +9034,6 @@ public:
     int Deaths;  // 0x1D8
     unsigned char Ping;  // 0x1DC
     unsigned char TTSSpeaker;  // 0x1DD
-    char _pad0[0x2];
     int NumLives;  // 0x1E0
     FStringNoInit PlayerName;  // 0x1E4
     FStringNoInit OldName;  // 0x1F0
@@ -9617,7 +9606,6 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     unsigned char RouteType;  // 0x1D8
-    char _pad0[0x3];
     TArrayNoInit<FActorReference> RouteList;  // 0x1DC
     float FudgeFactor;  // 0x1E8
     int RouteIndexOffset;  // 0x1EC
@@ -9966,7 +9954,6 @@ public:
     unsigned char AlertnessState;  // 0x4A7
     unsigned char BigTeleportCount;  // 0x4A8
     unsigned char WeaponOverlayFlags;  // 0x4A9
-    char _pad0[0x2];
     FVector2D AimYawRange;  // 0x4AC
     FVector2D AimPitchRange;  // 0x4B4
     float Camo;  // 0x4BC
@@ -10309,7 +10296,6 @@ public:
     static UClass *PrivateStaticClass;
     unsigned char MovementType;  // 0x644
     unsigned char AlertnessState;  // 0x645
-    char _pad0[0x2];
     FVector2D AimYawRange;  // 0x648
     FVector2D AimPitchRange;  // 0x650
     UCCSBTTree *DefaultBehaviorTree;  // 0x658
@@ -10517,7 +10503,6 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     unsigned char CurrentFireMode;  // 0x220
-    char _pad0[0x3];
     TArrayNoInit<FName> FiringStatesArray;  // 0x224
     TArrayNoInit<unsigned char> WeaponFireTypes;  // 0x230
     TArrayNoInit<UClass *> WeaponProjectiles;  // 0x23C
@@ -11145,7 +11130,6 @@ public:
     unsigned char VisibilityAggressiveness;  // 0x416
     unsigned char PreferredLightmapType;  // 0x417
     unsigned char LevelLightingQuality;  // 0x418
-    char _pad0[0x3];
     FStringNoInit ComputerName;  // 0x41C
     FStringNoInit EngineVersion;  // 0x428
     FStringNoInit MinNetVersion;  // 0x434
@@ -11437,7 +11421,6 @@ public:
     GripBTSystemFlags m_ssFlags;  // 0x8
     GripBTSystemFlags m_asFlags;  // 0x10
     bool m_used;  // 0x18
-    char _pad0[0x3];
     #else
     hg::gptr<GripBlackboard> m_blackboard;
     GripBTSystemFlags m_ssFlags;
@@ -11611,13 +11594,11 @@ public:
     void *pTarget;  // 0x0
     bool moveLeft;  // 0x4
     bool moveRight;  // 0x5
-    char _pad0[0x2];
     Grip_Vector orientTarget;  // 0x8
     Grip_Vector moveTarget;  // 0x14
     CCS::EMovementType movementType;  // 0x20
     CCS::EAlertnessState alertness;  // 0x24
     bool alwaysFire;  // 0x28
-    char _pad1[0x3];
     #else
     hg::gptr<void> pTarget;
     bool moveLeft;
@@ -11685,7 +11666,6 @@ public:
     AActor *m_actor;  // 0x4
     UUDKTargetableComponent *m_targetableComponent;  // 0x8
     bool m_targetableComponentCheck;  // 0xC
-    char _pad0[0x3];
     int m_cachedTeamNum;  // 0x10
     #else
     static const CCSGameCharacter (&NONE);
@@ -11779,12 +11759,10 @@ public:
     static const CCSCover NONE;
     CCS::ECoverState m_state;  // 0x0
     bool m_inUseByMe;  // 0x4
-    char _pad0[0x3];
     float m_targetDist;  // 0x8
     float m_directDistance;  // 0xC
     bool m_validPath;  // 0x10
     bool m_validDefense;  // 0x11
-    char _pad1[0x2];
     float m_pathDistance;  // 0x14
     CCSGameCover m_gameCover;  // 0x18
     #else
@@ -11882,6 +11860,22 @@ public:
     CCSAFFactory();
     HG_VIRTUAL ~CCSAFFactory();
     #endif
+    HG_PRIVATE:
+    template <class AO, class AF> int CreateActionInternal(const AO &);
+    public:
+    friend class UCCSAFExitCover;
+    friend class UCCSAFIdle;
+    friend class UCCSAFMoveTo;
+    friend class UCCSAFStrafeTo;
+    friend class UCCSAFFlee;
+    friend class UCCSAFOrientToward;
+    friend class UCCSAFMoveToActor;
+    friend class UCCSAFStrafeTarget;
+    friend class UCCSAFEncircleTarget;
+    friend class UCCSAFFireBurst;
+    friend class UCCSAFEnterCover;
+    friend class UCCSAFGetInCover;
+    friend class UCCSAFGetOutCover;
     #ifndef HAGGAR_HOST
     ICCSMeatPuppet *m_pMeatPuppet;  // 0x8
     IGripAFInterface *m_pAFInterface;  // 0xC
@@ -11899,7 +11893,6 @@ public:
     float chargeChance;  // 0x14
     bool isLastShot;  // 0x18
     bool alwaysFire;  // 0x19
-    char _pad0[0x2];
     #else
     CCSCharacter target;
     hg::be<float> chargeChance;
@@ -12164,7 +12157,6 @@ public:
     CCS::EAlertnessState alertness;  // 0x8
     Grip_Vector pointOfOrigin;  // 0xC
     bool alwaysFire;  // 0x18
-    char _pad0[0x3];
     #else
     hg::gptr<void> pTarget;
     hg::be<CCS::EMovementType> movementType;
@@ -12229,7 +12221,6 @@ public:
     Grip_Vector target;  // 0x0
     CCS::EAlertnessState alertness;  // 0xC
     bool alwaysFire;  // 0x10
-    char _pad0[0x3];
     #else
     Grip_Vector target;
     hg::be<CCS::EAlertnessState> alertness;
@@ -12273,7 +12264,6 @@ public:
     #ifndef HAGGAR_HOST
     ICCSMeatPuppet *m_pMeatPuppet;  // 0x8
     bool m_crouched;  // 0xC
-    char _pad0[0x3];
     #else
     hg::gptr<ICCSMeatPuppet> m_pMeatPuppet;
     bool m_crouched;
@@ -12296,7 +12286,6 @@ public:
     CCS::EMovementType movementType;  // 0x24
     CCS::EAlertnessState alertness;  // 0x28
     bool alwaysFire;  // 0x2C
-    char _pad0[0x3];
     #else
     hg::gptr<void> pTarget;
     hg::be<float> chargeChance;
@@ -12448,7 +12437,6 @@ public:
         CCSGlobalDataSystem *pGDS;  // 0x0
         int sensorCount;  // 0x4
         bool isActive;  // 0x8
-        char _pad0[0x3];
         #else
         hg::gptr<CCSGlobalDataSystem> pGDS;
         hg::be<int> sensorCount;
@@ -12573,7 +12561,6 @@ public:
     GripBrainSystem::EActivationState m_activationState;  // 0x4
     bool m_inStasis;  // 0x8
     bool m_used;  // 0x9
-    char _pad0[0x2];
     #else
     hg::be<GripBrainSystem::EActivationState> m_activationState;
     bool m_inStasis;
@@ -13525,7 +13512,6 @@ public:
     float radius;  // 0x20
     int age;  // 0x24
     bool consumed;  // 0x28
-    char _pad0[0x3];
     #else
     static hg::gptr<const char> (&DES_EXTRA_KILLED_TYPE);
     static hg::gptr<const char> (&GLOBAL_EVENT_TYPE);
@@ -13574,7 +13560,6 @@ public:
     Grip_ArrayPOD<GripBBMember *,2> m_members;  // 0x30
     GripBBProperty<GripEvent> m_lastValidEvent;  // 0x40
     bool m_dirty;  // 0x88
-    char _pad0[0x3];
     #else
     GripBBArray<Grip::String,Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > > m_states;
     Grip_ArrayPOD<GripBBMember *,2> m_members;
@@ -14370,7 +14355,6 @@ public:
     APawn *m_pBasePawn;  // 0x4C
     UGwNavBotHandle *m_pGwNavBotHandle;  // 0x50
     bool m_firstMoveTick;  // 0x54
-    char _pad0[0x3];
     #else
     hg::gptr<Kaim::WorkingMemory> m_workingMemory;
     hg::gptr<ACCSController> m_pCCSCtrl;
@@ -14654,7 +14638,6 @@ public:
     #endif
     #ifndef HAGGAR_HOST
     bool m_options[14];  // 0x10
-    char _pad0[0x2];
     #else
     bool m_options[14];
     char _pad0[0x2];
@@ -15152,7 +15135,6 @@ public:
     int m_targetIdx;  // 0x14
     int m_vehicleIdx;  // 0x18
     bool m_curTargetIsCamoed;  // 0x1C
-    char _pad0[0x3];
     CCSPSTargetAwareness::Config m_config;  // 0x20
     Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > m_vehicles;  // 0x48
     CCSTargetRenderingComponent *m_pDebugComponent;  // 0x58
@@ -15250,7 +15232,6 @@ public:
     GripRBTNode::EBTExecutionResult m_execResultVisualization;  // 0x58
     Grip::String m_name;  // 0x5C
     bool m_isContextSwitch;  // 0x60
-    char _pad0[0x3];
     #else
     static hg::be<int> (&ms_IDCounter);
     static hg::gptr<GripRBTAllocator> (&ms_pAllocator);
@@ -15315,7 +15296,6 @@ public:
     bool m_canEncircleLeft;  // 0x7C
     bool m_canEncircleRight;  // 0x7D
     bool m_forceFire;  // 0x7E
-    char _pad0[0x1];
     int m_actionHandle;  // 0x80
     #else
     hg::be<float> m_fireChance;
@@ -15361,7 +15341,6 @@ public:
     #endif
     #ifndef HAGGAR_HOST
     bool m_negate;  // 0x64
-    char _pad0[0x3];
     #else
     bool m_negate;
     char _pad0[0x3];
@@ -15590,7 +15569,6 @@ public:
     CCSRBTMoveToCover::EMoveToCoverState m_state;  // 0xA8
     float m_coverCacheTime;  // 0xAC
     bool m_coverCacheValid;  // 0xB0
-    char _pad0[0x3];
     CCSCover m_lockedCover;  // 0xB4
     #else
     hg::be<int> m_actionHandle;
@@ -15617,7 +15595,6 @@ public:
     #ifndef HAGGAR_HOST
     float m_idealShootingDistance;  // 0xD4
     bool m_excludeCurrentCover;  // 0xD8
-    char _pad0[0x3];
     #else
     hg::be<float> m_idealShootingDistance;
     bool m_excludeCurrentCover;
@@ -15681,7 +15658,6 @@ public:
     #ifndef HAGGAR_HOST
     int m_actionHandle;  // 0xA4
     bool tetherStartedInVehicle;  // 0xA8
-    char _pad0[0x3];
     CCSCSMovement *m_pMovementCS;  // 0xAC
     CCSAOStrafeTarget m_objective;  // 0xB0
     #else
@@ -15749,7 +15725,6 @@ public:
     #endif
     #ifndef HAGGAR_HOST
     bool m_bSetNewTarget;  // 0xA4
-    char _pad0[0x3];
     float m_targetSetTimer;  // 0xA8
     int m_actionHandle;  // 0xAC
     Grip_ArrayPOD<ANavigationPoint *,2> m_navigationPoints;  // 0xB0
@@ -16151,7 +16126,6 @@ public:
     Grip_Vector m_targetPos;  // 0x8
     float m_targetHeight;  // 0x14
     bool m_targetValid;  // 0x18
-    char _pad0[0x3];
     #else
     Grip_Vector m_targetPos;
     hg::be<float> m_targetHeight;
@@ -16686,7 +16660,6 @@ public:
     FVector Min;  // 0x0
     FVector Max;  // 0xC
     unsigned char IsValid;  // 0x18
-    char _pad0[0x3];
     #else
     FVector Min;
     FVector Max;
@@ -16757,7 +16730,6 @@ public:
     #endif
     #ifndef HAGGAR_HOST
     unsigned char MoveCmd;  // 0x0
-    char _pad0[0x3];
     FVector Position;  // 0x4
     #else
     unsigned char MoveCmd;
@@ -16777,7 +16749,6 @@ public:
     APawn *Pawn;  // 0x0
     AActor *Actor;  // 0x4
     unsigned char AITargetType;  // 0x8
-    char _pad0[0x3];
     FVector Position;  // 0xC
     FVector LKP;  // 0x18
     float LKPAge;  // 0x24
@@ -17554,7 +17525,6 @@ public:
     int FracturedStaticMeshComponentIndex;  // 0x15C
     FMatrix AttachmentLocalToWorld;  // 0x160
     unsigned char DepthPriorityGroup;  // 0x1A0
-    char _pad1[0x3];
     unsigned long bNoClip : 1;  // 0x1A4
     unsigned long bUseSoftwareClip : 1;
     unsigned long bProjectOnBackfaces : 1;
@@ -18867,10 +18837,8 @@ public:
     FVector EdgeCenter;  // 0x20
     FVector EdgePerp;  // 0x2C
     unsigned char EdgeType;  // 0x38
-    char _pad0[0x3];
     unsigned long ExtraEdgeCost;  // 0x3C
     unsigned char EdgeGroupID;  // 0x40
-    char _pad1[0x3];
     int VisitedPathWeight;  // 0x44
     int EstimatedOverallPathWeight;  // 0x48
     FNavMeshEdgeBase *NextOpenOrdered;  // 0x4C
@@ -18879,10 +18847,8 @@ public:
     FVector PreviousPosition;  // 0x58
     unsigned long SavedSessionID;  // 0x64
     unsigned char DestinationPolyID;  // 0x68
-    char _pad2[0x1];
     unsigned short Poly0;  // 0x6A
     unsigned short Poly1;  // 0x6C
-    char _pad3[0x2];
     #else
     static FName (&ClassName);
     hg::be<unsigned int> _bits8;  // 0x8, from bAlreadyVisited
@@ -18974,7 +18940,6 @@ public:
     FPolyReference Poly0Ref;  // 0x74
     FPolyReference Poly1Ref;  // 0x90
     unsigned short ObstaclePolyID;  // 0xAC
-    char _pad0[0x2];
     #else
     static FName (&ClassName);
     hg::be<unsigned short> OtherPylonVert0;
@@ -19477,7 +19442,6 @@ public:
     unsigned long bStaticMeshUseAsOccluder : 1;
     unsigned long bHasPerInstanceHitProxies : 1;
     unsigned char PreviewEnvironmentShadowing;  // 0x38
-    char _pad0[0x3];
     FBoxSphereBounds Bounds;  // 0x3C
     float MaxDrawDistance;  // 0x58
     float MinDrawDistance;  // 0x5C
@@ -19648,7 +19612,6 @@ public:
     int InPacketId;  // 0x0
     int OutPacketId;  // 0x4
     unsigned char Reliable;  // 0x8
-    char _pad0[0x3];
     #else
     hg::be<int> InPacketId;
     hg::be<int> OutPacketId;
@@ -20400,7 +20363,6 @@ public:
     unsigned long ProbeMask;  // 0x2C
     unsigned short LatentAction;  // 0x30
     unsigned char bContinuedState;  // 0x32
-    char _pad0[0x1];
     TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;  // 0x34
     UClass *LocalVarsOwner;  // 0x40
     #else
@@ -20855,7 +20817,6 @@ public:
     Grip::Lock RtlLockHeap;  // 0x4C
     bool UseLocks;  // 0x68
     bool TrackDebugInfo;  // 0x69
-    char _pad0[0x2];
     #else
     hg::be<unsigned int> SelfSize;
     hg::be<unsigned int> RefCount;
@@ -21186,7 +21147,6 @@ public:
     #ifndef HAGGAR_HOST
     GripBrain *m_gripBrain;  // 0x4
     bool m_writeBT;  // 0x8
-    char _pad0[0x3];
     int m_brainID;  // 0xC
     #else
     hg::gptr<GripBrain> m_gripBrain;
@@ -21339,7 +21299,6 @@ public:
     int m_lastBreakpointNodeID;  // 0xCC
     bool m_stepDebug;  // 0xD0
     bool m_pushingForFinish;  // 0xD1
-    char _pad0[0x2];
     #else
     hg::gptr<GripRBTNode> m_execNode;
     hg::gptr<GripRBTNode> m_prevailingNode;
@@ -21391,7 +21350,6 @@ public:
     Grip::StringBuffer m_stringRepresentation;  // 0x4
     Grip_Array<GripSerializerStackObj,Grip::AllocatorGH<GripSerializerStackObj,2> > m_stack;  // 0x1C
     bool m_wroteLastBrace;  // 0x2C
-    char _pad0[0x3];
     #else
     Grip::StringBuffer m_stringRepresentation;
     Grip_Array<GripSerializerStackObj,Grip::AllocatorGH<GripSerializerStackObj,2> > m_stack;
@@ -22359,7 +22317,6 @@ public:
     unsigned int m_newPathToDestNavigationProfileId;  // 0x138
     Kaim::BotNavigationCollection m_botNavigationCollection;  // 0x13C
     Kaim::BotNeedFullComputeFlags m_botNeedFullComputeFlags;  // 0x14C
-    char _pad0[0x1];
     float m_nextShortcutSqDistTrigger;  // 0x150
     Kaim::Vec3f m_lastCollectorPosition;  // 0x154
     Kaim::Ptr<Kaim::QueryDynamicOutput> m_collectorOutput;  // 0x160
@@ -22368,7 +22325,6 @@ public:
     bool m_doValidateCheckPoint;  // 0x16C
     bool m_doComputeTrajectory;  // 0x16D
     bool m_needToRecomputeChannelPath;  // 0x16E
-    char _pad1[0x1];
     Kaim::Path *m_lastPathSentToVisualDebug;  // 0x170
     #else
     hg::gptr<Kaim::Database> m_database;
@@ -23200,7 +23156,6 @@ public:
     unsigned short dominanceGroup;  // 0x3E
     unsigned int contactReportFlags;  // 0x40
     unsigned short forceFieldMaterial;  // 0x44
-    char _pad0[0x2];
     void *userData;  // 0x48
     const char *name;  // 0x4C
     NxCompartment *compartment;  // 0x50
@@ -25351,7 +25306,6 @@ public:
     unsigned long bSynchronizeNodesInEditor : 1;
     int PassThroughAtOrAboveLOD;  // 0xF4
     unsigned char ForcedAimDir;  // 0xF8
-    char _pad0[0x3];
     TArrayNoInit<unsigned char> RequiredBones;  // 0xFC
     TArrayNoInit<unsigned char> AimCpntIndexLUT;  // 0x108
     UAnimNodeAimOffset *TemplateNode;  // 0x114
@@ -25553,7 +25507,6 @@ public:
     float CameraAnimBlendOutTime;  // 0x108
     unsigned char RootBoneOption[3];  // 0x10C
     unsigned char RootRotationOption[3];  // 0x10F
-    char _pad0[0x2];
     TArrayNoInit<USkelControlBase *> MetaDataSkelControlList;  // 0x114
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -26914,7 +26867,6 @@ public:
     FVector Target;  // 0x40
     unsigned char MovementType;  // 0x4C
     unsigned char Alertness;  // 0x4D
-    char _pad0[0x2];
     AActor *OrientTarget;  // 0x50
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -27148,7 +27100,6 @@ public:
     FName DefaultTitle;  // 0x78
     unsigned char LastExecutionResult;  // 0x80
     unsigned char LastEvaluationResult;  // 0x81
-    char _pad0[0x2];
     int DummyVarJustSoBaseClassDontEndWithAByteToAvoidCompilerWarning;  // 0x84
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -27305,7 +27256,6 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     unsigned char Operator;  // 0x88
-    char _pad0[0x3];
     int Threshold;  // 0x8C
     int Value;  // 0x90
     #else
@@ -27378,7 +27328,6 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     unsigned char Operator;  // 0x88
-    char _pad0[0x3];
     float Threshold;  // 0x8C
     float Value;  // 0x90
     #else
@@ -27521,7 +27470,6 @@ public:
     unsigned char Speed;  // 0x8C
     unsigned char Alertness;  // 0x8D
     unsigned char MovementType;  // 0x8E
-    char _pad0[0x1];
     float ShootChance;  // 0x90
     float ChargedShotChance;  // 0x94
     int FireBurstPerShot;  // 0x98
@@ -28121,7 +28069,6 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     unsigned char TargetSelectionAlgorithm;  // 0x88
-    char _pad0[0x3];
     FStringNoInit SpecificTargetName;  // 0x8C
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -28598,7 +28545,6 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     unsigned char RelevantEvent;  // 0x94
-    char _pad0[0x3];
     UClass *RelevantActorClass;  // 0x98
     float MaxDistance;  // 0x9C
     #else
@@ -29430,7 +29376,6 @@ public:
     unsigned char RBChannel;  // 0x123
     unsigned char RBDominanceGroup;  // 0x124
     unsigned char PreviewEnvironmentShadowing;  // 0x125
-    char _pad1[0x2];
     unsigned long bUseViewOwnerDepthPriorityGroup : 1;  // 0x128
     unsigned long bAllowCullDistanceVolume : 1;
     unsigned long HiddenGame : 1;
@@ -29829,7 +29774,6 @@ public:
     unsigned long ProbeMask;  // 0x74
     unsigned long StateFlags;  // 0x78
     unsigned short LabelTableOffset;  // 0x7C
-    char _pad0[0x2];
     TMap<FName,UFunction *,FDefaultSetAllocator> FuncMap;  // 0x80
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -30113,7 +30057,6 @@ public:
     float StreamingDistanceMultiplier;  // 0x2BC
     unsigned char DecalTransform;  // 0x2C0
     unsigned char FilterMode;  // 0x2C1
-    char _pad0[0x2];
     TArrayNoInit<AActor *> Filter;  // 0x2C4
     TArrayNoInit<UPrimitiveComponent *> ReceiverImages;  // 0x2D0
     FVector ParentRelativeLocation;  // 0x2DC
@@ -30376,7 +30319,6 @@ public:
     unsigned char NumParms;  // 0x7D
     unsigned short ParmsSize;  // 0x7E
     unsigned short ReturnValueOffset;  // 0x80
-    char _pad0[0x2];
     UStructProperty *FirstStructWithDefaults;  // 0x84
     void (UObject::*Func)(FFrame &, void *const);  // 0x88
     #else
@@ -30644,7 +30586,6 @@ public:
     float NavTagRasterMergeTolerance;  // 0x70
     int NavTagMinPixelArea;  // 0x74
     unsigned char NavRasterDistanceMapMetric;  // 0x78
-    char _pad0[0x3];
     FColor DisplayColor;  // 0x7C
     UMaterial *DisplayMaterial;  // 0x80
     UMaterial *WireFrameDisplayMaterial;  // 0x84
@@ -31308,7 +31249,6 @@ public:
     TArrayNoInit<UInterpTrack *> SubTracks;  // 0x44
     UClass *TrackInstClass;  // 0x50
     unsigned char ActiveCondition;  // 0x54
-    char _pad0[0x3];
     FStringNoInit TrackTitle;  // 0x58
     unsigned long bOnePerGroup : 1;  // 0x64
     unsigned long bDirGroupOnly : 1;
@@ -31905,14 +31845,12 @@ public:
     FLightingChannelContainer LightingChannels;  // 0x114
     unsigned char LightAffectsClassification;  // 0x118
     unsigned char LightShadowMode;  // 0x119
-    char _pad1[0x2];
     FLinearColor ModShadowColor;  // 0x11C
     float ModShadowFadeoutTime;  // 0x12C
     float ModShadowFadeoutExponent;  // 0x130
     int LightListIndex;  // 0x134
     unsigned char ShadowProjectionTechnique;  // 0x138
     unsigned char ShadowFilterQuality;  // 0x139
-    char _pad2[0x2];
     int MinShadowResolution;  // 0x13C
     int MaxShadowResolution;  // 0x140
     int ShadowFadeResolution;  // 0x144
@@ -32535,7 +32473,6 @@ public:
     unsigned char MobileDetailTextureTexCoordsSource;  // 0x76
     unsigned char MobileTextureBlendFactorSource;  // 0x77
     unsigned char MobileColorMultiplySource;  // 0x78
-    char _pad0[0x3];
     UTexture *MobileNormalTexture;  // 0x7C
     float SubUVFrameRate;  // 0x80
     int SubUVFrameCountAlongAxes;  // 0x84
@@ -33137,7 +33074,6 @@ public:
     UNavMeshPathGoalEvaluator *PathGoalList;  // 0x98
     FNavMeshPathParams CachedPathParams;  // 0x9C
     unsigned char LastPathError;  // 0xCC
-    char _pad0[0x3];
     float LastPathFailTime;  // 0xD0
     FVector Breadcrumbs[10];  // 0xD4
     int BreadCrumbMostRecentIdx;  // 0x14C
@@ -33382,7 +33318,6 @@ public:
     unsigned char SystemUpdateMode;  // 0x3C
     unsigned char LODMethod;  // 0x3D
     unsigned char OcclusionBoundsMethod;  // 0x3E
-    char _pad0[0x1];
     float UpdateTime_FPS;  // 0x40
     float UpdateTime_Delta;  // 0x44
     float WarmupTime;  // 0x48
@@ -33827,7 +33762,6 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     unsigned char SleepFamily;  // 0x80
-    char _pad0[0x3];
     FName BoneName;  // 0x84
     unsigned long bFixed : 1;  // 0x8C
     unsigned long bNoCollision : 1;
@@ -34162,7 +34096,6 @@ public:
     int MaxLandingVelocity;  // 0x74
     unsigned char bPruned;  // 0x78
     unsigned char PathColorIndex;  // 0x79
-    char _pad0[0x2];
     unsigned long bAddToNavigationOctree : 1;  // 0x7C
     unsigned long bCanCutCorners : 1;
     unsigned long bCheckForObstructions : 1;
@@ -34321,7 +34254,6 @@ public:
     float SuspensionSpeed;  // 0x88
     UParticleSystem *WheelParticleSystem;  // 0x8C
     unsigned char Side;  // 0x90
-    char _pad0[0x3];
     float LongSlipFactor;  // 0x94
     float LatSlipFactor;  // 0x98
     float HandbrakeLongSlipFactor;  // 0x9C
@@ -34635,7 +34567,6 @@ public:
     TArrayNoInit<FSeqEventLink> EventLinks;  // 0x90
     int PlayerIndex;  // 0x9C
     unsigned char GamepadID;  // 0xA0
-    char _pad0[0x3];
     int ActivateCount;  // 0xA4
     int SearchTag;  // 0xA8
     #else
@@ -34770,7 +34701,6 @@ public:
     UActorFactory *Factory;  // 0xDC
     unsigned char PointSelection;  // 0xE0
     unsigned char StartingPhysics;  // 0xE1
-    char _pad0[0x2];
     TArrayNoInit<AActor *> SpawnPoints;  // 0xE4
     TArrayNoInit<FVector> SpawnLocations;  // 0xF0
     TArrayNoInit<FVector> SpawnOrientations;  // 0xFC
@@ -34905,7 +34835,6 @@ public:
     float TerminationTime;  // 0x194
     FRenderingPerformanceOverrides RenderingOverrides;  // 0x198
     unsigned char ConstantCameraAnim;  // 0x19C
-    char _pad0[0x3];
     float ConstantCameraAnimRate;  // 0x1A0
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -34976,7 +34905,6 @@ public:
     unsigned long bRegistered : 1;
     unsigned long bClientSideOnly : 1;
     unsigned char Priority;  // 0xD4
-    char _pad0[0x3];
     int MaxWidth;  // 0xD8
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -35052,7 +34980,6 @@ public:
     float BlendInTime;  // 0x4C
     float BlendOutTime;  // 0x50
     unsigned char BlendType;  // 0x54
-    char _pad0[0x3];
     unsigned long bPostPhysicsController : 1;  // 0x58
     unsigned long bSetStrengthFromAnimNode : 1;
     unsigned long bInitializedCachedNodeList : 1;
@@ -35299,7 +35226,6 @@ public:
     TArray<FBoneMirrorInfo,FDefaultAllocator> SkelMirrorTable;  // 0xFC
     unsigned char SkelMirrorAxis;  // 0x108
     unsigned char SkelMirrorFlipAxis;  // 0x109
-    char _pad0[0x2];
     TArray<USkeletalMeshSocket *,FDefaultAllocator> Sockets;  // 0x10C
     TArray<FString,FDefaultAllocator> BoneBreakNames;  // 0x118
     TArray<unsigned char,FDefaultAllocator> BoneBreakOptions;  // 0x124
@@ -35323,7 +35249,6 @@ public:
     TArray<int,FDefaultAllocator> ClothToGraphicsVertMap;  // 0x198
     TArray<float,FDefaultAllocator> ClothMovementScale;  // 0x1A4
     unsigned char ClothMovementScaleGenMode;  // 0x1B0
-    char _pad1[0x3];
     float ClothToAnimMeshMaxDist;  // 0x1B4
     unsigned long bLimitClothToAnimMesh : 1;  // 0x1B8
     TArray<int,FDefaultAllocator> ClothWeldingMap;  // 0x1BC
@@ -36025,7 +35950,6 @@ public:
     TArray<int,FDefaultAllocator> ClothMeshWeldedIndexData;  // 0x4C0
     int ClothDirtyBufferFlag;  // 0x4CC
     unsigned char ClothRBChannel;  // 0x4D0
-    char _pad0[0x3];
     FRBCollisionChannelContainer ClothRBCollideWithChannels;  // 0x4D4
     float ClothForceScale;  // 0x4D8
     float ClothImpulseScale;  // 0x4DC
@@ -36034,10 +35958,8 @@ public:
     float MinDistanceForClothReset;  // 0x4E8
     FVector LastClothLocation;  // 0x4EC
     unsigned char ApexClothingRBChannel;  // 0x4F8
-    char _pad1[0x3];
     FRBCollisionChannelContainer ApexClothingRBCollideWithChannels;  // 0x4FC
     unsigned char ApexClothingCollisionRBChannel;  // 0x500
-    char _pad2[0x3];
     unsigned long bAutoFreezeApexClothingWhenNotRendered : 1;  // 0x504
     unsigned long bLocalSpaceWind : 1;
     FVector WindVelocity;  // 0x508
@@ -36071,7 +35993,6 @@ public:
     unsigned char RootMotionRotationMode;  // 0x5AC
     unsigned char AnimRotationOnly;  // 0x5AD
     unsigned char FaceFXBlendMode;  // 0x5AE
-    char _pad3[0x1];
     OC3Ent::Face::FxActorInstance *FaceFXActorInstance;  // 0x5B0
     UAudioComponent *CachedFaceFXAudioComp;  // 0x5B4
     TArrayNoInit<unsigned char> BoneVisibilityStates;  // 0x5B8
@@ -36080,7 +36001,6 @@ public:
     FBoneAtom LocalToWorldBoneAtom;  // 0x5D0
     float ProgressiveDrawingFraction;  // 0x5F0
     unsigned char CustomSortAlternateIndexMode;  // 0x5F4
-    char _pad5[0x3];
     TArrayNoInit<FName> MorphTargetsQueried;  // 0x5F8
     char _pad6[0xC];
     #else
@@ -36281,7 +36201,6 @@ public:
     static UClass *PrivateStaticClass;
     FName SoundClass;  // 0x3C
     unsigned char SoundClassName;  // 0x44
-    char _pad0[0x3];
     unsigned long bDebug : 1;  // 0x48
     USoundNode *FirstNode;  // 0x4C
     TMap<USoundNode *,FSoundNodeEditorData,FDefaultSetAllocator> EditorData;  // 0x50
@@ -36408,7 +36327,6 @@ public:
     float ModifiableThreatPct;  // 0x70
     float fAITargetHeight;  // 0x74
     unsigned char AITargetType;  // 0x78
-    char _pad0[0x3];
     unsigned long bAITargetable : 1;  // 0x7C
     unsigned long bIsVehicle : 1;
     AActor *myOwner;  // 0x80

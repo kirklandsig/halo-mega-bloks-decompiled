@@ -15,6 +15,8 @@ extern "C" void *memcpy(void *Dest, const void *Src, unsigned int Count);
 extern "C" void *memmove(void *Dest, const void *Src, unsigned int Count);
 extern "C" void *memset(void *Dest, int Value, unsigned int Count);
 extern "C" double __fsqrt(double);
+extern "C" float __fsqrts(float);
+#pragma intrinsic(__fsqrts)
 #pragma intrinsic(__fsqrt)
 extern "C" int rand();
 inline void *operator new(unsigned int, void *Mem) throw() { return Mem; }
@@ -41,7 +43,7 @@ inline void *appMemcpy(void *Dest, const void *Src, int Count) { return memcpy(D
 inline void *appMemmove(void *Dest, const void *Src, int Count) { return memmove(Dest, Src, Count); }
 inline void appMemzero(void *Dest, int Count) { memset(Dest, 0, Count); }
 #ifndef HAGGAR_HOST
-inline float appSqrt(float F) { return (float)__fsqrt(F); }
+inline float appSqrt(float F) { return __fsqrts(F); }
 inline float appInvSqrt(float F) { return (float)(1.0 / __fsqrt(F)); }
 #else
 inline float appSqrt(float F) { return (float)std::sqrt(F); }
@@ -74,3 +76,10 @@ void appFailAssertFuncDebug(const char *Expr, const char *File, int Line, const 
 template <class T> inline T Min(const T A, const T B) { return (A <= B) ? A : B; }
 template <class T> inline T Max(const T A, const T B) { return (A >= B) ? A : B; }
 template <class T> inline T Clamp(const T X, const T Lo, const T Hi) { return X < Lo ? Lo : X < Hi ? X : Hi; }
+#ifndef HAGGAR_HOST
+// floats select without a branch on this target
+extern "C" double __fsel(double Comparand, double ValGE, double ValLT);
+#pragma intrinsic(__fsel)
+template <> inline float Min(const float A, const float B) { return (float)__fsel(A - B, B, A); }
+template <> inline float Max(const float A, const float B) { return (float)__fsel(A - B, A, B); }
+#endif

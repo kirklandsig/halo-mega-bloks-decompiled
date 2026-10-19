@@ -544,7 +544,11 @@ class Header:
                 close_union()
                 union = None
                 if off > cur:
-                    for out in (xdk, host):
+                    # the XDK build leaves out what natural alignment pads
+                    # (an aggregate's initializer then zero-fills it in words)
+                    natural = 1 if self.blob_member(mtype) else self.alignment(mtype)
+                    outs = (host,) if natural <= 4 and -(-cur // natural) * natural == off else (xdk, host)
+                    for out in outs:
                         out.append(f'char _pad{pad}[0x{off - cur:X}];')
                     pad += 1
                 starts.append((off, len(xdk), len(host)))
@@ -562,7 +566,9 @@ class Header:
                 prev_off = off
             close_union()
             if size > cur:
-                for out in (xdk, host):
+                natural = self.alignment(ti)
+                outs = (host,) if natural <= 4 and -(-cur // natural) * natural == size else (xdk, host)
+                for out in outs:
                     out.append(f'char _pad{pad}[0x{size - cur:X}];')
         if xdk:
             emit(3, '#ifndef HAGGAR_HOST')

@@ -22,3 +22,20 @@ inline unsigned int FVector::Normalize(float Tolerance)
     }
     return 0;
 }
+inline float FVector::Size() const { return appSqrt(X * X + Y * Y + Z * Z); }
+inline FVector FVector::operator/(float Scale) const
+{
+    const float RScale = 1.0f / Scale;
+    return FVector(X * RScale, Y * RScale, Z * RScale);
+}
+inline FRotator FRotator::operator-(const FRotator &R) const { return FRotator(Pitch - R.Pitch, Yaw - R.Yaw, Roll - R.Roll); }
+inline int FRotator::NormalizeAxis(int Angle)
+{
+    Angle &= 0xFFFF;
+    if (Angle > 32767)
+    {
+        Angle -= 0x10000;
+    }
+    return Angle;
+}
+inline float FVector::Size2D() const { return appSqrt(X * X + Y * Y); }
