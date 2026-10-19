@@ -310,7 +310,8 @@ template <class T> class GripBBProperty : public GripBBMember
 {
 public:
     GripBBProperty() {}
-    T &Get() { return m_value; }
+    T &GetReference() { return m_value; }
+    const T &Get() const { return m_value; }
     void Set(const T &Value)
     {
         m_value = Value;

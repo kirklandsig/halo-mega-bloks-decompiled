@@ -32,10 +32,10 @@ TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FA
                        'UAnimNode', 'UAnimNodeBlendBase', 'UAnimNodeBlendList', 'FAnimBlendChild', 'UUDKAnimBlendBase',
                        'UUDKAnimBlendByPhysics', 'UUDKAnimBlendByTurnInPlace', 'UUDKAnimNodeCopyBoneTranslation',
                        'FAimOffsetProfile', 'USkeletalMeshComponent', 'UProperty', 'UClass', 'UObject', 'UStruct', 'UField',
-                       'UAnimObject', 'AUDKPawn',
+                       'UAnimObject', 'AUDKPawn', 'Grip_Rotation', 'FRotator',
                        'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>']}
 OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
-          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'EPhysics', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
+          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
                        # the behaviour-tree nodes' runtime classes
                        'CCSRBTEnemyClosestRange',
                        'CCSRBTEnemyLowestLKPAge',

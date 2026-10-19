@@ -1187,8 +1187,40 @@ public:
         Allow_Flush = 4,
         Allow_DeleteOnRender = 8,
     };
-    struct FMaskRegion;
-    class FCanvasSortElement;
+    class FTransformEntry  // size 0x50, opaque
+    {
+    public:
+        void SetMatrix(const FMatrix &);
+        const FMatrix &GetMatrix() const;
+        unsigned long GetMatrixCRC() const;
+        #ifndef HAGGAR_HOST
+        FTransformEntry(const FMatrix &);
+        #endif
+    HG_PRIVATE:
+        unsigned int FTransformEntryData[0x14];
+    };
+    struct FMaskRegion  // size 0x50, opaque
+    {
+    public:
+        unsigned int IsEqual(const FCanvas::FMaskRegion &) const;
+        unsigned int IsValid() const;
+        unsigned int IsZero(float) const;
+        #ifndef HAGGAR_HOST
+        FMaskRegion(float, float, float, float, const FMatrix &);
+        #endif
+    HG_PRIVATE:
+        unsigned int FMaskRegionData[0x14];
+    };
+    class FCanvasSortElement  // size 0x10, opaque
+    {
+    public:
+        unsigned int operator==(const FCanvas::FCanvasSortElement &) const;
+        #ifndef HAGGAR_HOST
+        FCanvasSortElement(int);
+        #endif
+    HG_PRIVATE:
+        unsigned int FCanvasSortElementData[0x4];
+    };
     FBatchedElements *GetBatchedElements(FCanvas::EElementType, FBatchedElementParameters *, const FTexture *, ESimpleElementBlendMode, const FDepthFieldGlowInfo &);
     void AddTileRenderItem(float, float, float, float, float, float, float, float, const FMaterialRenderProxy *, FHitProxyId, unsigned int);
     void Flush(unsigned int);
@@ -1241,10 +1273,10 @@ public:
     FHitProxyConsumer *HitProxyConsumer;  // 0x14
     TRefCountPtr<HHitProxy> CurrentHitProxy;  // 0x18
     TArray<int,FDefaultAllocator> DepthSortKeyStack;  // 0x1C
-    char TransformStack[0xC];  // 0x28 TArray<FCanvas::FTransformEntry,FDefaultAllocator>
+    TArray<FCanvas::FTransformEntry,FDefaultAllocator> TransformStack;  // 0x28
     unsigned long AllowedModes;  // 0x34
-    char MaskRegionStack[0xC];  // 0x38 TArray<FCanvas::FMaskRegion,FDefaultAllocator>
-    char SortedElements[0xC];  // 0x44 TArray<FCanvas::FCanvasSortElement,FDefaultAllocator>
+    TArray<FCanvas::FMaskRegion,FDefaultAllocator> MaskRegionStack;  // 0x38
+    TArray<FCanvas::FCanvasSortElement,FDefaultAllocator> SortedElements;  // 0x44
     TMap<int,int,FDefaultSetAllocator> SortedElementLookupMap;  // 0x50
     int LastElementIndex;  // 0x8C
     #else
@@ -1256,10 +1288,10 @@ public:
     hg::gptr<FHitProxyConsumer> HitProxyConsumer;
     TRefCountPtr<HHitProxy> CurrentHitProxy;
     TArray<int,FDefaultAllocator> DepthSortKeyStack;
-    char TransformStack[0xC];  // 0x28 TArray<FCanvas::FTransformEntry,FDefaultAllocator>
+    TArray<FCanvas::FTransformEntry,FDefaultAllocator> TransformStack;
     hg::be<unsigned long> AllowedModes;
-    char MaskRegionStack[0xC];  // 0x38 TArray<FCanvas::FMaskRegion,FDefaultAllocator>
-    char SortedElements[0xC];  // 0x44 TArray<FCanvas::FCanvasSortElement,FDefaultAllocator>
+    TArray<FCanvas::FMaskRegion,FDefaultAllocator> MaskRegionStack;
+    TArray<FCanvas::FCanvasSortElement,FDefaultAllocator> SortedElements;
     TMap<int,int,FDefaultSetAllocator> SortedElementLookupMap;
     hg::be<int> LastElementIndex;
     #endif
@@ -2104,6 +2136,15 @@ public:
 struct FStateFrame : public FFrame  // size 0x44
 {
 public:
+    struct FPushedState  // size 0xC, opaque
+    {
+    public:
+        #ifndef HAGGAR_HOST
+        FPushedState();
+        #endif
+    HG_PRIVATE:
+        unsigned int FPushedStateData[0x3];
+    };
     FStateFrame &operator=(const FStateFrame &);
     FString Describe();
     void InitLocalVars(UClass *);
@@ -2119,7 +2160,7 @@ public:
     unsigned short LatentAction;  // 0x30
     unsigned char bContinuedState;  // 0x32
     char _pad0[0x1];
-    char StateStack[0xC];  // 0x34 TArray<FStateFrame::FPushedState,FDefaultAllocator>
+    TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;  // 0x34
     UClass *LocalVarsOwner;  // 0x40
     #else
     hg::gptr<UState> StateNode;
@@ -2127,7 +2168,7 @@ public:
     hg::be<unsigned short> LatentAction;
     unsigned char bContinuedState;
     char _pad0[0x1];
-    char StateStack[0xC];  // 0x34 TArray<FStateFrame::FPushedState,FDefaultAllocator>
+    TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;
     hg::gptr<UClass> LocalVarsOwner;
     #endif
 };

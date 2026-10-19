@@ -299,7 +299,7 @@ class Header:
         if mtype < self.t.begin or self._kind(mtype) not in (pt.LF_CLASS, pt.LF_STRUCTURE, pt.LF_UNION):
             return False
         name = self._rname(self.t._resolve(mtype))
-        if name in self.targets:
+        if name in self.targets or provided(name):  # a hand-written template takes any declared type
             return False
         args = template_args(split_scope(name)[-1])[1] or []
         return any(self._scope_of(n) for a in args for n in re.findall(r'\w+(?:::\w+)+', a))

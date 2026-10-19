@@ -1094,6 +1094,13 @@ enum ECompressionFlags
     COMPRESS_BiasSpeed = 32,
     COMPRESS_ForcePPUDecompressZLib = 128,
 };
+enum ECoverType
+{
+    CT_None = 0,
+    CT_Standing = 1,
+    CT_MidLevel = 2,
+    CT_MAX = 3,
+};
 enum ECppProperty
 {
     EC_CppProperty = 0,
@@ -12054,10 +12061,10 @@ public:
     CCSGlobalDataScheduler();
     #endif
     #ifndef HAGGAR_HOST
-    char m_tickGroupInfos[0x10];  // 0x14 Grip_Array<CCSGlobalDataScheduler::TickGroupInfo,Grip::AllocatorGH<CCSGlobalDataScheduler::TickGroupInfo,2> >
+    Grip_Array<CCSGlobalDataScheduler::TickGroupInfo,Grip::AllocatorGH<CCSGlobalDataScheduler::TickGroupInfo,2> > m_tickGroupInfos;  // 0x14
     CCSGlobalBlackboard *m_pGlobalBB;  // 0x24
     #else
-    char m_tickGroupInfos[0x10];  // 0x14 Grip_Array<CCSGlobalDataScheduler::TickGroupInfo,Grip::AllocatorGH<CCSGlobalDataScheduler::TickGroupInfo,2> >
+    Grip_Array<CCSGlobalDataScheduler::TickGroupInfo,Grip::AllocatorGH<CCSGlobalDataScheduler::TickGroupInfo,2> > m_tickGroupInfos;
     hg::gptr<CCSGlobalBlackboard> m_pGlobalBB;
     #endif
 };
@@ -12590,6 +12597,11 @@ public:
         MOVE_CMD_NONE = 0,
         MOVE_CMD_POS = 1,
     };
+    struct TargetThreatData  // size 0x8, opaque
+    {
+    HG_PRIVATE:
+        unsigned int TargetThreatDataData[0x2];
+    };
     HG_VIRTUAL void Reset();
     HG_VIRTUAL void RegisterMembers();
     HG_VIRTUAL GripBBVisualization *GetVisualizer();
@@ -12688,14 +12700,14 @@ public:
     GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_targets;  // 0x464
     GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_OutRangeThreatTargets;  // 0x490
     GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_friendlies;  // 0x4BC
-    char m_TargetThreatData[0x2C];  // 0x4E8 GripBBProperty<Grip_Array<CCSBlackboard::TargetThreatData,Grip::AllocatorGH<CCSBlackboard::TargetThreatData,2> > >
+    GripBBProperty<Grip_Array<CCSBlackboard::TargetThreatData,Grip::AllocatorGH<CCSBlackboard::TargetThreatData,2> > > m_TargetThreatData;  // 0x4E8
     GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_Vehicles;  // 0x514
     GripBBProperty<CCSTarget *> m_closestEntryVehicle;  // 0x540
     GripBBProperty<FVector> m_currentTether;  // 0x560
     GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > m_covers;  // 0x588
     GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > m_invalidcovers;  // 0x5B4
     GripBBProperty<CCSCover> m_initialCover;  // 0x5E0
-    char m_moveCommand[0x20];  // 0x61C GripBBProperty<enum CCSBlackboard::EMoveCmd>
+    GripBBProperty<enum CCSBlackboard::EMoveCmd> m_moveCommand;  // 0x61C
     GripBBProperty<Grip_Vector> m_movePosition;  // 0x63C
     CCSBBVisualization m_vis;  // 0x664
     #else
@@ -12732,14 +12744,14 @@ public:
     GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_targets;
     GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_OutRangeThreatTargets;
     GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_friendlies;
-    char m_TargetThreatData[0x2C];  // 0x4E8 GripBBProperty<Grip_Array<CCSBlackboard::TargetThreatData,Grip::AllocatorGH<CCSBlackboard::TargetThreatData,2> > >
+    GripBBProperty<Grip_Array<CCSBlackboard::TargetThreatData,Grip::AllocatorGH<CCSBlackboard::TargetThreatData,2> > > m_TargetThreatData;
     GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_Vehicles;
     GripBBProperty<CCSTarget *> m_closestEntryVehicle;
     GripBBProperty<FVector> m_currentTether;
     GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > m_covers;
     GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > m_invalidcovers;
     GripBBProperty<CCSCover> m_initialCover;
-    char m_moveCommand[0x20];  // 0x61C GripBBProperty<enum CCSBlackboard::EMoveCmd>
+    GripBBProperty<enum CCSBlackboard::EMoveCmd> m_moveCommand;
     GripBBProperty<Grip_Vector> m_movePosition;
     CCSBBVisualization m_vis;
     #endif
@@ -16173,8 +16185,40 @@ public:
         Allow_Flush = 4,
         Allow_DeleteOnRender = 8,
     };
-    struct FMaskRegion;
-    class FCanvasSortElement;
+    class FTransformEntry  // size 0x50, opaque
+    {
+    public:
+        void SetMatrix(const FMatrix &);
+        const FMatrix &GetMatrix() const;
+        unsigned long GetMatrixCRC() const;
+        #ifndef HAGGAR_HOST
+        FTransformEntry(const FMatrix &);
+        #endif
+    HG_PRIVATE:
+        unsigned int FTransformEntryData[0x14];
+    };
+    struct FMaskRegion  // size 0x50, opaque
+    {
+    public:
+        unsigned int IsEqual(const FCanvas::FMaskRegion &) const;
+        unsigned int IsValid() const;
+        unsigned int IsZero(float) const;
+        #ifndef HAGGAR_HOST
+        FMaskRegion(float, float, float, float, const FMatrix &);
+        #endif
+    HG_PRIVATE:
+        unsigned int FMaskRegionData[0x14];
+    };
+    class FCanvasSortElement  // size 0x10, opaque
+    {
+    public:
+        unsigned int operator==(const FCanvas::FCanvasSortElement &) const;
+        #ifndef HAGGAR_HOST
+        FCanvasSortElement(int);
+        #endif
+    HG_PRIVATE:
+        unsigned int FCanvasSortElementData[0x4];
+    };
     FBatchedElements *GetBatchedElements(FCanvas::EElementType, FBatchedElementParameters *, const FTexture *, ESimpleElementBlendMode, const FDepthFieldGlowInfo &);
     void AddTileRenderItem(float, float, float, float, float, float, float, float, const FMaterialRenderProxy *, FHitProxyId, unsigned int);
     void Flush(unsigned int);
@@ -16227,10 +16271,10 @@ public:
     FHitProxyConsumer *HitProxyConsumer;  // 0x14
     TRefCountPtr<HHitProxy> CurrentHitProxy;  // 0x18
     TArray<int,FDefaultAllocator> DepthSortKeyStack;  // 0x1C
-    char TransformStack[0xC];  // 0x28 TArray<FCanvas::FTransformEntry,FDefaultAllocator>
+    TArray<FCanvas::FTransformEntry,FDefaultAllocator> TransformStack;  // 0x28
     unsigned long AllowedModes;  // 0x34
-    char MaskRegionStack[0xC];  // 0x38 TArray<FCanvas::FMaskRegion,FDefaultAllocator>
-    char SortedElements[0xC];  // 0x44 TArray<FCanvas::FCanvasSortElement,FDefaultAllocator>
+    TArray<FCanvas::FMaskRegion,FDefaultAllocator> MaskRegionStack;  // 0x38
+    TArray<FCanvas::FCanvasSortElement,FDefaultAllocator> SortedElements;  // 0x44
     TMap<int,int,FDefaultSetAllocator> SortedElementLookupMap;  // 0x50
     int LastElementIndex;  // 0x8C
     #else
@@ -16242,10 +16286,10 @@ public:
     hg::gptr<FHitProxyConsumer> HitProxyConsumer;
     TRefCountPtr<HHitProxy> CurrentHitProxy;
     TArray<int,FDefaultAllocator> DepthSortKeyStack;
-    char TransformStack[0xC];  // 0x28 TArray<FCanvas::FTransformEntry,FDefaultAllocator>
+    TArray<FCanvas::FTransformEntry,FDefaultAllocator> TransformStack;
     hg::be<unsigned long> AllowedModes;
-    char MaskRegionStack[0xC];  // 0x38 TArray<FCanvas::FMaskRegion,FDefaultAllocator>
-    char SortedElements[0xC];  // 0x44 TArray<FCanvas::FCanvasSortElement,FDefaultAllocator>
+    TArray<FCanvas::FMaskRegion,FDefaultAllocator> MaskRegionStack;
+    TArray<FCanvas::FCanvasSortElement,FDefaultAllocator> SortedElements;
     TMap<int,int,FDefaultSetAllocator> SortedElementLookupMap;
     hg::be<int> LastElementIndex;
     #endif
@@ -19338,6 +19382,15 @@ HG_PRIVATE:
 struct FStateFrame : public FFrame  // size 0x44
 {
 public:
+    struct FPushedState  // size 0xC, opaque
+    {
+    public:
+        #ifndef HAGGAR_HOST
+        FPushedState();
+        #endif
+    HG_PRIVATE:
+        unsigned int FPushedStateData[0x3];
+    };
     FStateFrame &operator=(const FStateFrame &);
     FString Describe();
     void InitLocalVars(UClass *);
@@ -19353,7 +19406,7 @@ public:
     unsigned short LatentAction;  // 0x30
     unsigned char bContinuedState;  // 0x32
     char _pad0[0x1];
-    char StateStack[0xC];  // 0x34 TArray<FStateFrame::FPushedState,FDefaultAllocator>
+    TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;  // 0x34
     UClass *LocalVarsOwner;  // 0x40
     #else
     hg::gptr<UState> StateNode;
@@ -19361,7 +19414,7 @@ public:
     hg::be<unsigned short> LatentAction;
     unsigned char bContinuedState;
     char _pad0[0x1];
-    char StateStack[0xC];  // 0x34 TArray<FStateFrame::FPushedState,FDefaultAllocator>
+    TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;
     hg::gptr<UClass> LocalVarsOwner;
     #endif
 };

@@ -106,3 +106,177 @@ inline void *CCSCharacter::GetActor() const
 // gripafaction.h
 inline GripAFAction::EGripAFActionStatus GripAFAction::GetStatus() { return m_status; }
 inline Grip_ArrayPOD<GripAFModifier *, 2> &GripAFAction::GetModifiers() { return m_modifiers; }
+
+// grip_rotation.h
+#ifndef HAGGAR_HOST
+inline Grip_Rotation::Grip_Rotation() : Pitch(0), Yaw(0), Roll(0) {}
+inline Grip_Rotation::Grip_Rotation(int InPitch, int InYaw, int InRoll) : Pitch(InPitch), Yaw(InYaw), Roll(InRoll) {}
+inline Grip_Rotation::Grip_Rotation(const FRotator &R) : Pitch(R.Pitch), Yaw(R.Yaw), Roll(R.Roll) {}
+#endif
+inline Grip_Rotation::operator FRotator() const { return FRotator(Pitch, Yaw, Roll); }
+
+// ccsgamecover.h
+inline bool CCSGameCover::operator==(const CCSGameCover &Other) const { return (m_coverInfo == Other.m_coverInfo) == 1; }
+inline Grip_Vector CCSGameCover::GetPosition() const
+{
+    return Grip_Vector(m_coverInfo.Link->GetSlotLocation(m_coverInfo.SlotIdx, 0));
+}
+inline Grip_Rotation CCSGameCover::GetOrientation() const
+{
+    return Grip_Rotation(m_coverInfo.Link->GetSlotRotation(m_coverInfo.SlotIdx, 0));
+}
+inline bool CCSGameCover::IsLocked() const
+{
+    if (m_coverInfo.Link == 0)
+    {
+        return true;
+    }
+    APawn *pOwner = m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOwner;
+    return pOwner != 0 && !pOwner->IsPendingKill();
+}
+inline bool CCSGameCover::IsLockedBy(CCSCharacter Character) const
+{
+    if (m_coverInfo.Link == 0)
+    {
+        return true;
+    }
+    return IsLocked() && m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOwner == Character.m_gameCharacter.m_pawn;
+}
+inline bool CCSGameCover::LockCover(CCSCharacter Character)
+{
+    if (m_coverInfo.Link == 0)
+    {
+        return false;
+    }
+    if (IsLocked())
+    {
+        return false;
+    }
+    if (!IsOccupiedBy(Character))
+    {
+        m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOccupier = 0;
+    }
+    m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOwner = Character.m_gameCharacter.m_pawn;
+    return true;
+}
+inline bool CCSGameCover::UnlockCover(CCSCharacter Character)
+{
+    if (m_coverInfo.Link == 0)
+    {
+        return false;
+    }
+    FCoverSlot &Slot = m_coverInfo.Link->Slots(m_coverInfo.SlotIdx);
+    if (Slot.SlotOwner != Character.m_gameCharacter.m_pawn)
+    {
+        return false;
+    }
+    Slot.SlotOwner = 0;
+    return true;
+}
+inline bool CCSGameCover::IsOccupied() const
+{
+    if (m_coverInfo.Link == 0)
+    {
+        return true;
+    }
+    APawn *pOccupier = m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOccupier;
+    return pOccupier != 0 && !pOccupier->IsPendingKill();
+}
+inline bool CCSGameCover::IsOccupiedBy(CCSCharacter Character) const
+{
+    if (m_coverInfo.Link == 0)
+    {
+        return true;
+    }
+    return IsOccupied() && m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOccupier == Character.m_gameCharacter.m_pawn;
+}
+inline bool CCSGameCover::OccupyCover(CCSCharacter Character)
+{
+    if (m_coverInfo.Link == 0)
+    {
+        return false;
+    }
+    APawn *pPawn = Character.m_gameCharacter.m_pawn;
+    if (IsLocked() && m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOwner != pPawn)
+    {
+        return false;
+    }
+    if (IsOccupied())
+    {
+        return m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOccupier == pPawn;
+    }
+    m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOccupier = pPawn;
+    AUDKPawn *pUDKPawn = Cast<AUDKPawn>(pPawn);
+    if (pUDKPawn != 0)
+    {
+        pUDKPawn->OccupiedCoverCount++;
+    }
+    return true;
+}
+inline bool CCSGameCover::VacateCover(CCSCharacter Character)
+{
+    if (m_coverInfo.Link == 0)
+    {
+        return false;
+    }
+    if (m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOccupier != Character.m_gameCharacter.m_pawn)
+    {
+        return false;
+    }
+    AUDKPawn *pUDKPawn = Cast<AUDKPawn>(Character.m_gameCharacter.m_pawn);
+    if (pUDKPawn != 0)
+    {
+        pUDKPawn->OccupiedCoverCount--;
+    }
+    m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).SlotOccupier = 0;
+    return true;
+}
+
+// ccscover.h
+inline bool CCSCover::operator==(const CCSCover &Other) const { return m_gameCover == Other.m_gameCover; }
+inline bool CCSCover::operator!=(const CCSCover &Other) const { return !(m_gameCover == Other.m_gameCover); }
+inline bool CCSCover::IsEnabled() const { return m_gameCover.IsEnabled(); }
+inline bool CCSCover::IsOccupied() const { return m_gameCover.IsOccupied(); }
+inline bool CCSCover::IsOccupiedBy(CCSCharacter Character) { return m_gameCover.IsOccupiedBy(Character); }
+inline bool CCSCover::OccupyCover(CCSCharacter Character) { return m_gameCover.OccupyCover(Character); }
+inline bool CCSCover::VacateCover(CCSCharacter Character) { return m_gameCover.VacateCover(Character); }
+inline bool CCSCover::IsValid() const { return m_state == CCS::CoverState_Valid || m_state == CCS::CoverState_BadAttackAngle; }
+inline Grip_Vector CCSCover::GetPosition() const { return m_gameCover.GetPosition(); }
+inline Grip_Rotation CCSCover::GetOrientation() const { return m_gameCover.GetOrientation(); }
+inline bool CCSCover::IsLocked() const { return m_gameCover.IsLocked(); }
+inline bool CCSCover::IsLockedBy(CCSCharacter Character) const { return m_gameCover.IsLockedBy(Character); }
+inline bool CCSCover::LockCover(CCSCharacter Character) { return m_gameCover.LockCover(Character); }
+inline bool CCSCover::UnlockCover(CCSCharacter Character) { return m_gameCover.UnlockCover(Character); }
+inline CCS::ECoverShootConfig CCSCover::GetShootConfig() const { return m_gameCover.GetShootConfig(); }
+inline CCS::ECoverType CCSCover::GetType() const { return m_gameCover.GetType(); }
+inline Grip_Vector CCSCover::GetShootPosition(const CCS::ECoverShootConfig Config, const float Offset) const
+{
+    return m_gameCover.GetShootPosition(Config, Offset);
+}
+
+// engineclasses.h (FCoverInfo's cpptext)
+inline unsigned int FCoverInfo::operator==(const FCoverInfo &Other) const { return Link == Other.Link && SlotIdx == Other.SlotIdx; }
+
+// gripbbmember.h, gripblackboard.h
+inline void GripBBMember::FlagAsUsed() { m_used = true; }
+inline Grip_Array<Grip::String, Grip::AllocatorGH<Grip::String, 2> > &GripBlackboard::GetStates() { return m_states.GetArray(); }
+
+// ccsblackboard.h
+inline void CCSBlackboard::FlagHighestThreatTarget() { m_pHighestThreatTarget.FlagAsUsed(); }
+inline void CCSBlackboard::FlagClosestEnemy() { m_closestEnemy.FlagAsUsed(); }
+inline void CCSBlackboard::FlagClosestVisibleEnemy() { m_closestVisibleEnemy.FlagAsUsed(); }
+inline void CCSBlackboard::FlagCurrentTarget() { m_currentTarget.FlagAsUsed(); }
+inline void CCSBlackboard::FlagLowestLKPAgeEnemy() { m_lowestLKPAgeEnemy.FlagAsUsed(); }
+inline void CCSBlackboard::FlagClosestObjective() { m_closestObjective.FlagAsUsed(); }
+inline void CCSBlackboard::FlagReactiveTarget() { m_closestReactiveTarget.FlagAsUsed(); }
+inline void CCSBlackboard::FlagHasBecomeAware() { m_bHasBecomeAware.FlagAsUsed(); }
+inline void CCSBlackboard::SetHeatGenerated(float Heat) { m_heatGenerated.Set(Heat); }
+inline float CCSBlackboard::GetHeatGenerated() const { return m_heatGenerated.Get(); }
+inline void CCSBlackboard::ClearMoveCommand() { m_moveCommand.Set(MOVE_CMD_NONE); }
+inline void CCSBlackboard::FlagMoveCommandAsUsed()
+{
+    m_moveCommand.FlagAsUsed();
+    m_movePosition.FlagAsUsed();
+}
+inline CCSBlackboard::EMoveCmd CCSBlackboard::GetMoveCommand() const { return m_moveCommand.Get(); }
+inline Grip_Vector CCSBlackboard::GetMovePosition() const { return m_movePosition.Get(); }

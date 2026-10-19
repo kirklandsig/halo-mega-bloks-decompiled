@@ -2057,6 +2057,15 @@ public:
 struct FStateFrame : public FFrame  // size 0x44
 {
 public:
+    struct FPushedState  // size 0xC, opaque
+    {
+    public:
+        #ifndef HAGGAR_HOST
+        FPushedState();
+        #endif
+    HG_PRIVATE:
+        unsigned int FPushedStateData[0x3];
+    };
     FStateFrame &operator=(const FStateFrame &);
     FString Describe();
     void InitLocalVars(UClass *);
@@ -2072,7 +2081,7 @@ public:
     unsigned short LatentAction;  // 0x30
     unsigned char bContinuedState;  // 0x32
     char _pad0[0x1];
-    char StateStack[0xC];  // 0x34 TArray<FStateFrame::FPushedState,FDefaultAllocator>
+    TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;  // 0x34
     UClass *LocalVarsOwner;  // 0x40
     #else
     hg::gptr<UState> StateNode;
@@ -2080,7 +2089,7 @@ public:
     hg::be<unsigned short> LatentAction;
     unsigned char bContinuedState;
     char _pad0[0x1];
-    char StateStack[0xC];  // 0x34 TArray<FStateFrame::FPushedState,FDefaultAllocator>
+    TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;
     hg::gptr<UClass> LocalVarsOwner;
     #endif
 };
