@@ -39,6 +39,11 @@ unsigned char GRegisterNative(int iNative, const Native &Func);
 // Cast<T>: retail calls its out-of-line copy
 template <class T> T *Cast(UObject *Src);
 
+// UnClass.h: ConstructObject<T> (out of line in retail)
+template <class T>
+T *ConstructObject(UClass *Class, UObject *Outer, FName Name = NAME_None, unsigned __int64 SetFlags = 0, UObject *Template = 0,
+                   UObject *SubobjectRoot = 0, FObjectInstancingGraph *InstanceGraph = 0);
+
 #ifndef HAGGAR_HOST  // constructors stay recompiled in the port
 inline FName::FName() {}
 #endif

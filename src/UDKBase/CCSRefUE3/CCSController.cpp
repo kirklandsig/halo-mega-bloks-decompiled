@@ -1,8 +1,15 @@
 // @object Unity_HaloRBTKamikazeEtAl.cpp.obj
 // ccscontroller.cpp: the controller that runs a brain for its pawn.
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "../Src/HaloRBTKamikaze.cpp"
 #include "../CCSRef/CCSCover.cpp"
 #include "../CCSRef/CCSBlackboard.cpp"
+
+// @retail 0x84289210
+// `dynamic initializer for 's_brainFinderCCS''
+// @retail 0x842C6548
+// `dynamic atexit destructor for 's_brainFinderCCS''
+static CCSBrainFinder s_brainFinderCCS;
 
 // Todo (and RemoveState): retail constructs the string argument before it
 // fetches the blackboard; ours fetches it first.
@@ -288,6 +295,171 @@ void ACCSController::UpdateOnlyPawnRotation()
     }
 }
 
-// Not attempted yet (todo): Tick (1,376 bytes), TakePossession (728; builds
-// a USSBrainBuilder on the stack, whose classes aren't rendered yet) and
-// DrawHUD (616; the GripHUDRenderer text calls).
+// @retail 0x8332A628
+void ACCSController::DrawHUD(GripHUDRenderer *pRenderer, int &Y)
+{
+    const Grip_Color TitleColor(255, 102, 0);
+    const Grip_Color Color(0, 255, 0);
+    pRenderer->DrawString(10, Y, "Animation Flags", TitleColor);
+    Y += pRenderer->endl;
+    const char *MovementTypeNames[] = {"Idle", "Walk", "Run"};
+    pRenderer->DrawString(18, Y, "Movement Type:", Color);
+    pRenderer->DrawString(255, Y, MovementTypeNames[CCSPawn->GetMovementType()], Color);
+    Y += pRenderer->endl;
+    const char *AlertnessNames[] = {"Relax", "Alert"};
+    pRenderer->DrawString(18, Y, "Alertness:", Color);
+    pRenderer->DrawString(255, Y, AlertnessNames[CCSPawn->GetAlertness()], Color);
+    Y += pRenderer->endl;
+    const char *PostureNames[] = {"Stand", "Crouch"};
+    pRenderer->DrawString(18, Y, "Posture:", Color);
+    pRenderer->DrawString(255, Y, PostureNames[CCSPawn->IsCrouched()], Color);
+    Y += pRenderer->endl;
+}
+
+// @retail 0x83354AB8
+void ACCSController::TakePossession()
+{
+    FVector Tether = Pawn->Location;
+    if (Brain != 0)
+    {
+        Tether = Brain->GetBlackboard<CCSBlackboard>()->m_currentTether.Get();
+    }
+    DestroyBrain();
+    if (CCSPawn->GetDefaultBehaviorTree() != 0)
+    {
+        BehaviorTreeTemplate = CCSPawn->GetDefaultBehaviorTree();
+    }
+    if (BehaviorTreeTemplate == 0)
+    {
+        return;
+    }
+    if (SystemConfig.MaxHearingRadius >= 0.0f)
+    {
+        Pawn->HearingThreshold = SystemConfig.MaxHearingRadius;
+    }
+    else
+    {
+        SystemConfig.MaxHearingRadius = Pawn->HearingThreshold;
+    }
+    if (SystemConfig.MaxSightRadius >= 0.0f)
+    {
+        Pawn->SightRadius = SystemConfig.MaxSightRadius;
+    }
+    else
+    {
+        SystemConfig.MaxSightRadius = Pawn->SightRadius;
+    }
+    if (SystemConfig.MaxAwareRadius >= 0.0f)
+    {
+        Pawn->AwareRadius = SystemConfig.MaxAwareRadius;
+    }
+    else
+    {
+        SystemConfig.MaxAwareRadius = Pawn->AwareRadius;
+    }
+    MeatPuppet = new CCSMeatPuppet;
+    MeatPuppet->m_pUnPawn = Pawn;
+    MeatPuppet->m_pCCSPawn = (ICCSPawn *)CCSPawn.GetInterface();
+    MeatPuppet->m_pCCSCtrl = this;
+    BTInterface->Blackboard = ConstructObject<UCCSBlackboard>(UCCSBlackboard::StaticClass(), BTInterface);
+    USSBrainBuilder Builder;
+    Builder.ConstructBrain(this, BehaviorTreeTemplate, MeatPuppet, &SystemConfig, BTInterface, ScriptNodeCache);
+    Brain = Builder.CookBrain();
+    if (Brain != 0)
+    {
+        Brain->GetBlackboard<CCSBlackboard>()->m_currentTether.Set(Tether);
+    }
+    GripEngineServices::GetAIManager()->AddBrainFinder(&s_brainFinderCCS);
+}
+
+// Todo: the code is retail's, but the target's eye position lands in another
+// stack slot (retail reuses it for the facing copy, which it takes from
+// FRotator::Vector's result where ours writes straight into it), so the
+// schedule differs from there on (1,360 bytes vs 1,376).
+// @retail 0x83337BB0
+unsigned int ACCSController::Tick(float DeltaTime, ELevelTick TickType)
+{
+    Super::Tick(DeltaTime, TickType);
+    static float ThreatDecayTimer = 0.0f;
+    ThreatDecayTimer += DeltaTime;
+    if (ThreatDecayTimer > ThreatDecayTime)
+    {
+        ThreatDecayTimer -= ThreatDecayTime;
+        for (int i = 0; i < TotalEnemyThreat.Num(); i++)
+        {
+            if (TotalEnemyThreat(i).TotalDamageAmount > 0)
+            {
+                TotalEnemyThreat(i).TotalDamageAmount -= ThreatDecayAmount;
+                if (TotalEnemyThreat(i).TotalDamageAmount < 0)
+                {
+                    TotalEnemyThreat(i).TotalDamageAmount = 0;
+                }
+            }
+        }
+    }
+    if (HasHeardNoiseTimer > 0.0f)
+    {
+        HasHeardNoiseTimer -= DeltaTime;
+        if (HasHeardNoiseTimer <= 0.0f)
+        {
+            HasHeardNoiseTimer = 0.0f;
+            HasHeardNoise = 0;
+        }
+    }
+    if (Brain == 0)
+    {
+        return 1;
+    }
+    if (Pawn != 0)
+    {
+        if (Brain->GetBlackboard<CCSBlackboard>()->GetCurrentTarget() != 0)
+        {
+            const FVector LKP = Brain->GetBlackboard<CCSBlackboard>()->GetCurrentTarget()->LKP;
+            const Grip_Vector Position = Brain->GetBlackboard<CCSBlackboard>()->GetCurrentTarget()->character.GetPosition();
+            const Grip_Vector Eyes = Brain->GetBlackboard<CCSBlackboard>()->GetCurrentTarget()->character.GetEyesPosition();
+            const FVector AimPoint = FVector(Eyes - Position) + LKP;
+            const FVector AimDir = AimPoint - Pawn->GetPawnViewLocation();
+            if (Pawn->IsA(AGwNavPawn::StaticClass()))
+            {
+                FVector Dir = AimDir;
+                FVector Facing = Pawn->Rotation.Vector();
+                FVector Facing2D(Facing.X, Facing.Y, 0.0f);
+                Facing2D.Normalize(1.e-8f);
+                FVector Dir2D(Dir.X, Dir.Y, 0.0f);
+                Dir2D.Normalize(1.e-8f);
+                if ((Dir2D | Facing2D) >= 0.5f)
+                {
+                    DesiredRot = AimDir.Rotation();
+                }
+                else
+                {
+                    DesiredRot = Pawn->Rotation;
+                }
+            }
+        }
+        else
+        {
+            DesiredRot = Pawn->Rotation;
+        }
+        DesiredRot.Roll = 0;
+        SetRotation(RInterpTo(Rotation, DesiredRot, DeltaTime, (float)RotationRate.Yaw, 1));
+        if (TickType == LEVELTICK_All && !Brain->IsDisabled())
+        {
+            Brain->Tick(DeltaTime);
+        }
+    }
+    if (Brain->IsDebug())
+    {
+        if (DebugVizComponent == 0)
+        {
+            eventCreateDebugVizComponent();
+        }
+        DebugVizComponent->bNeedsReattach = 1;
+    }
+    else if (DebugVizComponent != 0)
+    {
+        DetachComponent(DebugVizComponent);
+        DebugVizComponent = 0;
+    }
+    return 1;
+}

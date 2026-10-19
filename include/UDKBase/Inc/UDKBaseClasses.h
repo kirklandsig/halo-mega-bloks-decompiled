@@ -5828,15 +5828,22 @@ public:
     #endif
 };
 
-struct FEnemyThreatInfo  // size 0xC, opaque
+struct FEnemyThreatInfo  // size 0xC
 {
 public:
     #ifndef HAGGAR_HOST
     FEnemyThreatInfo(EEventParm);
     FEnemyThreatInfo();
     #endif
-HG_PRIVATE:
-    unsigned int FEnemyThreatInfoData[0x3];
+    #ifndef HAGGAR_HOST
+    AController *DamageInstigator;  // 0x0
+    AActor *DamagingActor;  // 0x4
+    int TotalDamageAmount;  // 0x8
+    #else
+    hg::gptr<AController> DamageInstigator;
+    hg::gptr<AActor> DamagingActor;
+    hg::be<int> TotalDamageAmount;
+    #endif
 };
 
 class ICCSPawn  // size 0x4

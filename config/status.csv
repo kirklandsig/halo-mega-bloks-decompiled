@@ -412,6 +412,7 @@ address,status
 0x8332A0A8,matched
 0x8332A1D8,matched
 0x8332A3A0,matched
+0x8332A628,matched
 0x8332B430,matched
 0x8332B538,matched
 0x8332B630,matched
@@ -847,6 +848,7 @@ address,status
 0x83354880,matched
 0x833548C0,matched
 0x83354928,matched
+0x83354AB8,matched
 0x83354D90,matched
 0x83354DC8,matched
 0x83356340,matched
@@ -1276,6 +1278,7 @@ address,status
 0x84229BA8,matched
 0x84229BF0,matched
 0x84229C10,matched
+0x84289210,matched
 0x8428CAF8,matched
 0x8428CB18,matched
 0x8428CB38,matched
@@ -1293,4 +1296,5 @@ address,status
 0x8428CD18,matched
 0x8428CD38,matched
 0x8428CD70,matched
+0x842C6548,matched
 0x842C65C8,matched

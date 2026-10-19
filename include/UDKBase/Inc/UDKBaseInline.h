@@ -31,6 +31,19 @@ inline Grip_Vector::Grip_Vector(const FVector &V) : X(V.X), Y(V.Y), Z(V.Z) {}
 inline Grip_Vector::Grip_Vector(float InX, float InY, float InZ) : X(InX), Y(InY), Z(InZ) {}
 #endif
 
+// igripbrainfinder.h, ccsbrainbuilder.h, ussbrainbuilder.h
+#ifndef HAGGAR_HOST
+inline IGripBrainFinder::~IGripBrainFinder() {}
+#endif
+
+// gripbrain.h
+inline bool GripBrain::IsDebug() { return m_debug; }
+inline bool GripBrain::IsDisabled() { return m_disabled; }
+#ifndef HAGGAR_HOST
+inline CCSBrainBuilder::CCSBrainBuilder() : m_pBrain(0), m_pMeatPuppet(0), m_pAFFramework(0) {}
+inline USSBrainBuilder::USSBrainBuilder() : m_pBTInterface(0), m_pUnSystemConfigData(0) {}
+#endif
+
 // grip_color.h
 #ifndef HAGGAR_HOST
 inline Grip_Color::Grip_Color(unsigned char Red, unsigned char Green, unsigned char Blue) : m_red(Red), m_green(Green), m_blue(Blue) {}
@@ -327,6 +340,7 @@ inline bool Grip_Vector::operator!=(const Grip_Vector &V) const { return X != V.
 
 // gripengineservices.h
 inline Grip_Vector GripEngineServices::GetActorPosition(void *pActor) { return ms_pImpl->GetActorPosition(pActor); }
+inline GripAIManager *GripEngineServices::GetAIManager() { return ms_pImpl->GetAIManager(); }
 inline Grip_Vector CCSCharacter::GetPosition() const { return m_gameCharacter.GetPosition(); }
 
 // line-check results (the iterator's Next is left as it is)

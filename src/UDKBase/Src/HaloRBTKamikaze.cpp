@@ -1,4 +1,5 @@
 // @object Unity_HaloRBTKamikazeEtAl.cpp.obj
+#pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
 
 // emitted out of line in retail too

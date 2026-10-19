@@ -9,7 +9,7 @@ inline FVector FVector::operator-(const FVector &V) const { return FVector(X - V
 inline float FVector::SizeSquared() const { return X * X + Y * Y + Z * Z; }
 inline float FVector::operator|(const FVector &V) const { return X * V.X + Y * V.Y + Z * V.Z; }
 inline FRotator::FRotator(int InPitch, int InYaw, int InRoll) : Pitch(InPitch), Yaw(InYaw), Roll(InRoll) {}
-inline unsigned int FVector::Normalize(float Tolerance)
+__forceinline unsigned int FVector::Normalize(float Tolerance)
 {
     const float SquareSum = X * X + Y * Y + Z * Z;
     if (SquareSum > Tolerance)
@@ -47,6 +47,9 @@ inline FVector FVector::operator*=(float Scale)
     return *this;
 }
 inline unsigned int FVector::IsZero() const { return X == 0.0f && Y == 0.0f && Z == 0.0f; }
+// UnMath.cpp (out of line in retail)
+FRotator RInterpTo(const FRotator &Current, const FRotator &Target, const float &DeltaTime, float InterpSpeed, unsigned int bConstantInterpSpeed = 0);
+
 inline FRotator FRotator::GetNormalized() const
 {
     FRotator Rot = *this;
