@@ -697,8 +697,10 @@ address,status
 0x83374838,matched
 0x83374888,matched
 0x833748D0,matched
+0x83374960,matched
 0x833749C0,matched
 0x83374A50,matched
+0x83374AB8,matched
 0x83374B28,matched
 0x83374B48,matched
 0x83374B68,matched
@@ -708,6 +710,7 @@ address,status
 0x83374CA0,matched
 0x83374D38,matched
 0x83374D80,matched
+0x83374DA0,matched
 0x83374E00,matched
 0x83374E20,matched
 0x83374E40,matched
@@ -779,6 +782,7 @@ address,status
 0x8337B158,matched
 0x8337B180,matched
 0x8337B1D0,matched
+0x8337B250,matched
 0x8337B318,matched
 0x8337B340,matched
 0x8337B390,matched
@@ -795,6 +799,11 @@ address,status
 0x8337B828,matched
 0x8337B8B8,matched
 0x8337B9B8,matched
+0x8338DE30,matched
+0x8338DEC8,matched
+0x8338DF60,matched
+0x8339C738,matched
+0x8339C810,matched
 0x833A2260,matched
 0x833A22A0,matched
 0x833A2320,matched
@@ -887,7 +896,12 @@ address,status
 0x833C9DA0,matched
 0x833C9DA8,matched
 0x833C9E18,matched
+0x833C9E98,near
+0x833C9F50,near
+0x833CA068,matched
+0x833CA138,matched
 0x833CA238,matched
+0x833CA278,matched
 0x833CA2F0,matched
 0x833CA348,matched
 0x833CA388,matched
@@ -924,3 +938,4 @@ address,status
 0x8428CD18,matched
 0x8428CD38,matched
 0x8428CD70,matched
+0x842C65C8,matched

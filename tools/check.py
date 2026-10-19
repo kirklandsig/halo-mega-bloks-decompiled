@@ -102,7 +102,11 @@ def find_symbol(c, row):
     PDB has none (statics, inlines), the one symbol whose plain name is the row's."""
     if row['symbol']:
         return row['symbol']
-    hits = {s.name for s in c.symbols.values() if s.section > 0 and plain_name(s.name) == row['name']}
+    atexit = re.search(r"`dynamic atexit destructor for '(\w+)''$", row['name'])
+    if atexit:  # '??__F<Var>@<scope>@@YAXXZ': the scope of a function's static is hard to spell
+        hits = {s.name for s in c.symbols.values() if s.section > 0 and s.name.startswith(f'??__F{atexit.group(1)}@')}
+    else:
+        hits = {s.name for s in c.symbols.values() if s.section > 0 and plain_name(s.name) == row['name']}
     if len(hits) != 1:
         raise KeyError(row['name'])
     return hits.pop()

@@ -8,7 +8,9 @@ template <class T0, class T1> class TIndirectArray;
 template <class T0, class T1, class T2> class TMap;
 class AActor;
 class FArchive;
+class FArchiveProxy;
 struct FAsyncPackage;
+struct FCompressedChunk;
 class FDefaultSetAllocator;
 class FEditPropertyChain;
 class FExec;
@@ -17,8 +19,13 @@ struct FExposedTextureLODSettings;
 class FFeedbackContext;
 struct FFrame;
 class FGuid;
+class FMemoryArchive;
+class FMemoryReader;
+class FMemoryWriter;
 class FName;
+struct FNameAsStringProxyArchive;
 struct FNameEntry;
+struct FObjectAndNameAsStringProxyArchive;
 struct FObjectDuplicationParameters;
 struct FObjectInstancingGraph;
 struct FOutParmRec;
@@ -34,12 +41,14 @@ struct FStringNoInit;
 class FSystemSetting;
 class FSystemSettings;
 struct FTextureLODSettings;
+struct FUntypedBulkData;
 class UArrayProperty;
 class UClass;
 class UComponent;
 class UField;
 class UFunction;
 class UHaloSaveGame;
+class ULinker;
 class ULinkerLoad;
 class ULinkerSave;
 class UObject;
@@ -77,6 +86,16 @@ enum EClassCastFlag
     CASTCLASS_UDelegateProperty = 8388608,
     CASTCLASS_UComponent = 16777216,
     CASTCLASS_AllFlags = -1,
+};
+enum ECompressionFlags
+{
+    COMPRESS_None = 0,
+    COMPRESS_ZLIB = 1,
+    COMPRESS_LZO = 2,
+    COMPRESS_LZX = 4,
+    COMPRESS_BiasMemory = 16,
+    COMPRESS_BiasSpeed = 32,
+    COMPRESS_ForcePPUDecompressZLib = 128,
 };
 enum EExprToken
 {
@@ -864,6 +883,198 @@ enum EPlatformType
 };
 }
 
+class FArchive  // size 0x84
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~FArchive();)
+    HG_VIRTUAL void Serialize(void *, int);
+    HG_VIRTUAL void SerializeBits(void *, int);
+    HG_VIRTUAL void SerializeInt(unsigned long &, unsigned long);
+    HG_VIRTUAL void Preload(UObject *);
+    HG_VIRTUAL void CountBytes(unsigned long, unsigned long);
+    HG_VIRTUAL FArchive &operator<<(FName &);
+    HG_VIRTUAL FArchive &operator<<(UObject *&);
+    HG_VIRTUAL FString GetArchiveName() const;
+    HG_VIRTUAL ULinker *GetLinker();
+    HG_VIRTUAL int Tell();
+    HG_VIRTUAL int TotalSize();
+    HG_VIRTUAL unsigned int AtEnd();
+    HG_VIRTUAL void Seek(int);
+    HG_VIRTUAL void AttachBulkData(UObject *, FUntypedBulkData *);
+    HG_VIRTUAL void DetachBulkData(FUntypedBulkData *, unsigned int);
+    HG_VIRTUAL unsigned int Precache(int, int);
+    HG_VIRTUAL void FlushCache();
+    HG_VIRTUAL unsigned int SetCompressionMap(TArray<FCompressedChunk,FDefaultAllocator> *, ECompressionFlags);
+    HG_VIRTUAL void Flush();
+    HG_VIRTUAL unsigned int Close();
+    HG_VIRTUAL unsigned int GetError();
+    HG_VIRTUAL void MarkScriptSerializationStart(const UObject *);
+    HG_VIRTUAL void MarkScriptSerializationEnd(const UObject *);
+    HG_VIRTUAL void WillSerializePotentialCrossLevelPointer(UObject *, const UProperty *);
+    HG_VIRTUAL unsigned int IsCloseComplete(unsigned int &);
+    HG_VIRTUAL unsigned int IsFilterEditorOnly();
+    HG_VIRTUAL void SetFilterEditorOnly(unsigned int);
+    void SerializeCompressed(void *, int, ECompressionFlags, unsigned int);
+    void ThisContainsCode();
+    void ThisContainsMap();
+    void ThisContainsCookedData();
+    void StartSerializingDefaults();
+    void StopSerializingDefaults();
+    unsigned int AllowEliminatingReferences(unsigned int);
+    void Logf__VA(const wchar_t *, ...);
+    void Logf(const wchar_t *);
+    int Ver() const;
+    int NetVer() const;
+    int LicenseeVer() const;
+    unsigned int IsLoading() const;
+    unsigned int IsSaving() const;
+    unsigned int IsSaveGame() const;
+    unsigned int IsTransacting() const;
+    unsigned int WantBinaryPropertySerialization() const;
+    unsigned int IsForcingUnicode() const;
+    unsigned int IsNet() const;
+    unsigned int IsPersistent() const;
+    unsigned int IsError() const;
+    unsigned int IsCriticalError() const;
+    unsigned int ContainsCookedData() const;
+    unsigned int ForEdit() const;
+    unsigned int ForClient() const;
+    unsigned int ForServer() const;
+    unsigned int ContainsCode() const;
+    unsigned int ContainsMap() const;
+    unsigned int ForceByteSwapping() const;
+    unsigned int IsSerializingDefaults() const;
+    unsigned int IsIgnoringArchetypeRef() const;
+    unsigned int IsIgnoringOuterRef() const;
+    unsigned int IsIgnoringClassRef() const;
+    unsigned int IsAllowingReferenceElimination() const;
+    unsigned int IsAllowingLazyLoading() const;
+    unsigned int IsObjectReferenceCollector() const;
+    unsigned int IsCountingMemory() const;
+    unsigned long GetPortFlags() const;
+    unsigned int HasAnyPortFlags(unsigned long) const;
+    unsigned int HasAllPortFlags(unsigned long) const;
+    unsigned int ShouldSkipBulkData() const;
+    unsigned int IsFinalPackageSave() const;
+    int GetMaxSerializeSize() const;
+    void SetVer(int);
+    void SetLicenseeVer(int);
+    void SetForceUnicode(unsigned int);
+    void SetByteSwapping(unsigned int);
+    void SetPortFlags(unsigned long);
+    void SetIsSaveGame(unsigned int);
+HG_PROTECTED:
+    void Reset();
+public:
+    #ifndef HAGGAR_HOST
+    FArchive();
+    #endif
+    #ifndef HAGGAR_HOST
+    int ArVer;  // 0x4
+    int ArNetVer;  // 0x8
+    int ArLicenseeVer;  // 0xC
+    unsigned int ArIsLoading;  // 0x10
+    unsigned int ArIsSaving;  // 0x14
+    unsigned int ArIsTransacting;  // 0x18
+    unsigned int ArWantBinaryPropertySerialization;  // 0x1C
+    unsigned int ArForceUnicode;  // 0x20
+    unsigned int ArIsPersistent;  // 0x24
+    unsigned int ArForEdit;  // 0x28
+    unsigned int ArForClient;  // 0x2C
+    unsigned int ArForServer;  // 0x30
+    unsigned int ArIsError;  // 0x34
+    unsigned int ArIsCriticalError;  // 0x38
+    unsigned int ArContainsCookedData;  // 0x3C
+    unsigned int ArContainsCode;  // 0x40
+    unsigned int ArContainsMap;  // 0x44
+    unsigned int ArForceByteSwapping;  // 0x48
+    int ArSerializingDefaults;  // 0x4C
+    unsigned int ArIgnoreArchetypeRef;  // 0x50
+    unsigned int ArIgnoreOuterRef;  // 0x54
+    unsigned int ArIgnoreClassRef;  // 0x58
+    int ArAllowEliminatingReferences;  // 0x5C
+    unsigned int ArAllowLazyLoading;  // 0x60
+    unsigned int ArIsObjectReferenceCollector;  // 0x64
+    unsigned int ArIsCountingMemory;  // 0x68
+    unsigned long ArPortFlags;  // 0x6C
+    unsigned int ArShouldSkipBulkData;  // 0x70
+    unsigned int ArIsSaveGame;  // 0x74
+    unsigned int ArIsFinalPackageSave;  // 0x78
+    int ArMaxSerializeSize;  // 0x7C
+    unsigned int ArIsFilterEditorOnly;  // 0x80
+    #else
+    hg::be<int> ArVer;
+    hg::be<int> ArNetVer;
+    hg::be<int> ArLicenseeVer;
+    hg::be<unsigned int> ArIsLoading;
+    hg::be<unsigned int> ArIsSaving;
+    hg::be<unsigned int> ArIsTransacting;
+    hg::be<unsigned int> ArWantBinaryPropertySerialization;
+    hg::be<unsigned int> ArForceUnicode;
+    hg::be<unsigned int> ArIsPersistent;
+    hg::be<unsigned int> ArForEdit;
+    hg::be<unsigned int> ArForClient;
+    hg::be<unsigned int> ArForServer;
+    hg::be<unsigned int> ArIsError;
+    hg::be<unsigned int> ArIsCriticalError;
+    hg::be<unsigned int> ArContainsCookedData;
+    hg::be<unsigned int> ArContainsCode;
+    hg::be<unsigned int> ArContainsMap;
+    hg::be<unsigned int> ArForceByteSwapping;
+    hg::be<int> ArSerializingDefaults;
+    hg::be<unsigned int> ArIgnoreArchetypeRef;
+    hg::be<unsigned int> ArIgnoreOuterRef;
+    hg::be<unsigned int> ArIgnoreClassRef;
+    hg::be<int> ArAllowEliminatingReferences;
+    hg::be<unsigned int> ArAllowLazyLoading;
+    hg::be<unsigned int> ArIsObjectReferenceCollector;
+    hg::be<unsigned int> ArIsCountingMemory;
+    hg::be<unsigned long> ArPortFlags;
+    hg::be<unsigned int> ArShouldSkipBulkData;
+    hg::be<unsigned int> ArIsSaveGame;
+    hg::be<unsigned int> ArIsFinalPackageSave;
+    hg::be<int> ArMaxSerializeSize;
+    hg::be<unsigned int> ArIsFilterEditorOnly;
+    #endif
+};
+
+class FArchiveProxy : public FArchive  // size 0x88
+{
+public:
+    HG_VIRTUAL void Serialize(void *, int);
+    HG_VIRTUAL void SerializeBits(void *, int);
+    HG_VIRTUAL void SerializeInt(unsigned long &, unsigned long);
+    HG_VIRTUAL void Preload(UObject *);
+    HG_VIRTUAL void CountBytes(unsigned long, unsigned long);
+    HG_VIRTUAL FArchive &operator<<(UObject *&);
+    HG_VIRTUAL FArchive &operator<<(FName &);
+    HG_VIRTUAL FString GetArchiveName() const;
+    HG_VIRTUAL ULinker *GetLinker();
+    HG_VIRTUAL int Tell();
+    HG_VIRTUAL int TotalSize();
+    HG_VIRTUAL unsigned int AtEnd();
+    HG_VIRTUAL void Seek(int);
+    HG_VIRTUAL void AttachBulkData(UObject *, FUntypedBulkData *);
+    HG_VIRTUAL void DetachBulkData(FUntypedBulkData *, unsigned int);
+    HG_VIRTUAL unsigned int Precache(int, int);
+    HG_VIRTUAL unsigned int SetCompressionMap(TArray<FCompressedChunk,FDefaultAllocator> *, ECompressionFlags);
+    HG_VIRTUAL void Flush();
+    HG_VIRTUAL unsigned int Close();
+    HG_VIRTUAL unsigned int GetError();
+    HG_VIRTUAL void MarkScriptSerializationStart(const UObject *);
+    HG_VIRTUAL void MarkScriptSerializationEnd(const UObject *);
+    HG_VIRTUAL unsigned int IsCloseComplete(unsigned int &);
+    #ifndef HAGGAR_HOST
+    FArchiveProxy(FArchive &);
+    #endif
+    #ifndef HAGGAR_HOST
+    FArchive &InnerArchive;  // 0x84
+    #else
+    hg::gptr<FArchive> InnerArchive;
+    #endif
+};
+
 class FExec  // size 0x4, opaque
 {
     HG_VFPTR
@@ -959,6 +1170,48 @@ public:
     #endif
 };
 
+class FMemoryArchive : public FArchive  // size 0x8C
+{
+public:
+    HG_VIRTUAL FString GetArchiveName() const;
+    HG_VIRTUAL void Seek(int);
+    HG_VIRTUAL int Tell();
+    HG_VIRTUAL int TotalSize();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    FMemoryArchive(TArray<unsigned char,FDefaultAllocator> &);
+public:
+    #endif
+    #ifndef HAGGAR_HOST
+    int Offset;  // 0x84
+    TArray<unsigned char,FDefaultAllocator> &Bytes;  // 0x88
+    #else
+    hg::be<int> Offset;
+    hg::gptr<TArray<unsigned char,FDefaultAllocator>> Bytes;
+    #endif
+};
+
+class FMemoryReader : public FMemoryArchive  // size 0x8C, opaque
+{
+public:
+    HG_VIRTUAL FString GetArchiveName() const;
+    HG_VIRTUAL void Seek(int);
+    HG_VIRTUAL void Serialize(void *, int);
+    #ifndef HAGGAR_HOST
+    FMemoryReader(TArray<unsigned char,FDefaultAllocator> &, unsigned int);
+    #endif
+};
+
+class FMemoryWriter : public FMemoryArchive  // size 0x8C, opaque
+{
+public:
+    HG_VIRTUAL void Serialize(void *, int);
+    HG_VIRTUAL FString GetArchiveName() const;
+    #ifndef HAGGAR_HOST
+    FMemoryWriter(TArray<unsigned char,FDefaultAllocator> &, unsigned int);
+    #endif
+};
+
 class FName  // size 0x8, opaque
 {
 public:
@@ -1022,6 +1275,24 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int FNameData[0x2];
+};
+
+struct FNameAsStringProxyArchive : public FArchiveProxy  // size 0x88, opaque
+{
+public:
+    HG_VIRTUAL FArchive &operator<<(FName &);
+    #ifndef HAGGAR_HOST
+    FNameAsStringProxyArchive(FArchive &);
+    #endif
+};
+
+struct FObjectAndNameAsStringProxyArchive : public FNameAsStringProxyArchive  // size 0x88, opaque
+{
+public:
+    HG_VIRTUAL FArchive &operator<<(UObject *&);
+    #ifndef HAGGAR_HOST
+    FObjectAndNameAsStringProxyArchive(FArchive &);
+    #endif
 };
 
 class FString : public TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
@@ -2431,6 +2702,30 @@ inline void *UHaloSaveGame::operator new(const unsigned int, EInternal *InMem) {
 inline void UHaloSaveGame::InternalConstructor(void *X) { new ((EInternal *)X) UHaloSaveGame; }
 
 
+inline FString::FString() {}
 inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}
 inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}
+inline void UHaloSaveGame::execBasicSerializeObject(FFrame &Stack, void *const Result)
+{
+    UObject *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    int A1 = 0;
+    Stack.Step(Stack.Object, &A1);
+    Stack.Code++;
+    *(TArray<unsigned char,FDefaultAllocator> *)Result = BasicSerializeObject(A0, A1);
+}
+
+inline void UHaloSaveGame::execBasicDeserializeObject(FFrame &Stack, void *const Result)
+{
+    UObject *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    int A1 = 0;
+    Stack.Step(Stack.Object, &A1);
+    TArray<unsigned char,FDefaultAllocator> A2;
+    Stack.Step(Stack.Object, &A2);
+    Stack.Code++;
+    *(unsigned int *)Result = BasicDeserializeObject(A0, A1, A2);
+}
+
 // ---- written by hand below this line (gen_header.py keeps it) ----
+#include "MegaHaloGame/Inc/MegaHaloGameInline.h"

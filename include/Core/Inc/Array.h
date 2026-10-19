@@ -285,11 +285,15 @@ public:
     void SwapItems(int, int);
 
 protected:
-    void DestructItems(int Index, int Count)
+    // forced inline: retail inlines it into ~TArray even where that makes
+    // ~TArray too big to inline (TArray<FString>)
+    __forceinline void DestructItems(int Index, int Count)
     {
-        for (int i = Index; i < Index + Count; i++)
+        T *Element = GetTypedData() + Index;
+        for (int i = Count; i > 0; i--)
         {
-            (&(*this)(i))->~T();
+            Element->~T();
+            Element++;
         }
     }
 

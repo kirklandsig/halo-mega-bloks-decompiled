@@ -7,6 +7,8 @@
 extern void *(*const EmitUHaloSaveGameNew)(const unsigned int, EInternal *) = &UHaloSaveGame::operator new;
 extern UClass *(*const EmitUHaloSaveGameStaticClass)() = &UHaloSaveGame::StaticClass;
 extern void (*const EmitUHaloSaveGameInternalConstructor)(void *) = &UHaloSaveGame::InternalConstructor;
+extern decltype(&UHaloSaveGame::execBasicDeserializeObject) const EmitUHaloSaveGame_execBasicDeserializeObject = &UHaloSaveGame::execBasicDeserializeObject;
+extern decltype(&UHaloSaveGame::execBasicSerializeObject) const EmitUHaloSaveGame_execBasicSerializeObject = &UHaloSaveGame::execBasicSerializeObject;
 #pragma inline_depth()
 
 // @retail 0x833C9D90
@@ -23,10 +25,8 @@ extern void (*const EmitUHaloSaveGameInternalConstructor)(void *) = &UHaloSaveGa
 // UHaloSaveGame::StaticClass (in the header)
 // @retail 0x833CA138
 // UHaloSaveGame::execBasicDeserializeObject (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x833CA068
 // UHaloSaveGame::execBasicSerializeObject (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 
 UClass *UHaloSaveGame::PrivateStaticClass = 0;
 

@@ -7,9 +7,12 @@
 extern decltype(&ACCSController::execActuallySetDesiredPosition) const EmitACCSController_execActuallySetDesiredPosition = &ACCSController::execActuallySetDesiredPosition;
 extern decltype(&ACCSController::execCalcAccuracyAngles) const EmitACCSController_execCalcAccuracyAngles = &ACCSController::execCalcAccuracyAngles;
 extern decltype(&ACCSController::execDisableBrain) const EmitACCSController_execDisableBrain = &ACCSController::execDisableBrain;
+extern decltype(&ACCSController::execRemoveState) const EmitACCSController_execRemoveState = &ACCSController::execRemoveState;
 extern decltype(&ACCSController::execSetDesiredPosition) const EmitACCSController_execSetDesiredPosition = &ACCSController::execSetDesiredPosition;
 extern decltype(&ACCSController::execSetInitialCover) const EmitACCSController_execSetInitialCover = &ACCSController::execSetInitialCover;
+extern decltype(&ACCSController::execSetState) const EmitACCSController_execSetState = &ACCSController::execSetState;
 extern decltype(&ACCSController::execTakePossession) const EmitACCSController_execTakePossession = &ACCSController::execTakePossession;
+extern decltype(&ACCSController::execTriggerEvent) const EmitACCSController_execTriggerEvent = &ACCSController::execTriggerEvent;
 extern UClass *(*const EmitAUDKCoverStaticClass)() = &AUDKCover::StaticClass;
 extern decltype(&AUDKCover::execAddCoverLink) const EmitAUDKCover_execAddCoverLink = &AUDKCover::execAddCoverLink;
 extern decltype(&AUDKCover::execKillCoverLinks) const EmitAUDKCover_execKillCoverLinks = &AUDKCover::execKillCoverLinks;
@@ -102,9 +105,14 @@ extern decltype(&UCCSBlackboard::execFlagTargetsAsUsed) const EmitUCCSBlackboard
 extern decltype(&UCCSBlackboard::execFlagTetherAsUsed) const EmitUCCSBlackboard_execFlagTetherAsUsed = &UCCSBlackboard::execFlagTetherAsUsed;
 extern decltype(&UCCSBlackboard::execFlagThreatDirectionAsUsed) const EmitUCCSBlackboard_execFlagThreatDirectionAsUsed = &UCCSBlackboard::execFlagThreatDirectionAsUsed;
 extern decltype(&UCCSBlackboard::execFlagThreatLocationAsUsed) const EmitUCCSBlackboard_execFlagThreatLocationAsUsed = &UCCSBlackboard::execFlagThreatLocationAsUsed;
+extern decltype(&UCCSBlackboard::execGetClosestVisibleEnemy) const EmitUCCSBlackboard_execGetClosestVisibleEnemy = &UCCSBlackboard::execGetClosestVisibleEnemy;
+extern decltype(&UCCSBlackboard::execGetCovers) const EmitUCCSBlackboard_execGetCovers = &UCCSBlackboard::execGetCovers;
+extern decltype(&UCCSBlackboard::execGetCurrentTarget) const EmitUCCSBlackboard_execGetCurrentTarget = &UCCSBlackboard::execGetCurrentTarget;
 extern decltype(&UCCSBlackboard::execGetCurrentTether) const EmitUCCSBlackboard_execGetCurrentTether = &UCCSBlackboard::execGetCurrentTether;
 extern decltype(&UCCSBlackboard::execGetHealth) const EmitUCCSBlackboard_execGetHealth = &UCCSBlackboard::execGetHealth;
 extern decltype(&UCCSBlackboard::execGetHeatGenerated) const EmitUCCSBlackboard_execGetHeatGenerated = &UCCSBlackboard::execGetHeatGenerated;
+extern decltype(&UCCSBlackboard::execGetMoveCommand) const EmitUCCSBlackboard_execGetMoveCommand = &UCCSBlackboard::execGetMoveCommand;
+extern decltype(&UCCSBlackboard::execGetTargets) const EmitUCCSBlackboard_execGetTargets = &UCCSBlackboard::execGetTargets;
 extern decltype(&UCCSBlackboard::execGetThreatDirection) const EmitUCCSBlackboard_execGetThreatDirection = &UCCSBlackboard::execGetThreatDirection;
 extern decltype(&UCCSBlackboard::execGetThreatLocation) const EmitUCCSBlackboard_execGetThreatLocation = &UCCSBlackboard::execGetThreatLocation;
 extern decltype(&UCCSBlackboard::execGetThreatType) const EmitUCCSBlackboard_execGetThreatType = &UCCSBlackboard::execGetThreatType;
@@ -152,19 +160,16 @@ extern UClass *(*const EmitUUSSATBlendByPostureStaticClass)() = &UUSSATBlendByPo
 // ACCSController::execDisableBrain (in the header)
 // @retail 0x8338DEC8
 // ACCSController::execRemoveState (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x83375350
 // ACCSController::execSetDesiredPosition (in the header)
 // @retail 0x83375520
 // ACCSController::execSetInitialCover (in the header)
 // @retail 0x8338DE30
 // ACCSController::execSetState (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x83375500
 // ACCSController::execTakePossession (in the header)
 // @retail 0x8338DF60
 // ACCSController::execTriggerEvent (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 
 // @retail 0x83376790
 // AUDKCover::StaticClass (in the header)
@@ -408,13 +413,10 @@ extern UClass *(*const EmitUUSSATBlendByPostureStaticClass)() = &UUSSATBlendByPo
 // UCCSBlackboard::execFlagThreatLocationAsUsed (in the header)
 // @retail 0x83374DA0
 // UCCSBlackboard::execGetClosestVisibleEnemy (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x8339C738
 // UCCSBlackboard::execGetCovers (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x83374960
 // UCCSBlackboard::execGetCurrentTarget (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x83374A50
 // UCCSBlackboard::execGetCurrentTether (in the header)
 // @retail 0x83374888
@@ -423,10 +425,8 @@ extern UClass *(*const EmitUUSSATBlendByPostureStaticClass)() = &UUSSATBlendByPo
 // UCCSBlackboard::execGetHeatGenerated (in the header)
 // @retail 0x83374AB8
 // UCCSBlackboard::execGetMoveCommand (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x8339C810
 // UCCSBlackboard::execGetTargets (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x83374BF0
 // UCCSBlackboard::execGetThreatDirection (in the header)
 // @retail 0x83374B88

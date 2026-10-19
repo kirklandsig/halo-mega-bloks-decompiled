@@ -2211,6 +2211,7 @@ inline void *UCCSBTTree::operator new(const unsigned int, EInternal *InMem) { re
 inline void UCCSBTTree::InternalConstructor(void *X) { new ((EInternal *)X) UCCSBTTree; }
 
 
+inline FString::FString() {}
 inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}
 inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}
 #ifndef HAGGAR_HOST

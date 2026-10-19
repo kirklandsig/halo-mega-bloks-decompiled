@@ -7992,6 +7992,39 @@ HG_PRIVATE:
     unsigned int FBoxSphereBoundsData[0x7];
 };
 
+struct FCCSCoverData  // size 0x1C, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FCCSCoverData(EEventParm);
+    FCCSCoverData();
+    #endif
+HG_PRIVATE:
+    unsigned int FCCSCoverDataData[0x7];
+};
+
+struct FCCSMoveCmdData  // size 0x10, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FCCSMoveCmdData(EEventParm);
+    FCCSMoveCmdData();
+    #endif
+HG_PRIVATE:
+    unsigned int FCCSMoveCmdDataData[0x4];
+};
+
+struct FCCSTargetData  // size 0x30, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FCCSTargetData(EEventParm);
+    FCCSTargetData();
+    #endif
+HG_PRIVATE:
+    unsigned int FCCSTargetDataData[0xC];
+};
+
 struct FCurveKey  // size 0xC, opaque
 {
 public:
@@ -14513,13 +14546,17 @@ inline FRotator::FRotator() {}
 inline FVector2D::FVector2D() {}
 inline FMatrix::FMatrix() {}
 inline FRenderCommandFence::FRenderCommandFence() : NumPendingFences(0) {}
+inline FString::FString() {}
 inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}
 inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}
 #ifndef HAGGAR_HOST
 inline FAICmdHistoryItem::FAICmdHistoryItem() {}
 inline FAnimBlendChild::FAnimBlendChild() {}
 inline FBoneCopyInfo::FBoneCopyInfo() {}
+inline FCCSCoverData::FCCSCoverData() {}
+inline FCCSMoveCmdData::FCCSMoveCmdData() {}
 inline FCCSSystemConfigData::FCCSSystemConfigData() {}
+inline FCCSTargetData::FCCSTargetData() {}
 inline FCoverInfo::FCoverInfo() {}
 inline FDynamicLinkInfo::FDynamicLinkInfo() {}
 inline FEnemyThreatInfo::FEnemyThreatInfo() {}
@@ -14693,6 +14730,12 @@ inline void UCCSBlackboard::execSetHealth(FFrame &Stack, void *const)
     SetHealth(A0);
 }
 
+inline void UCCSBlackboard::execGetCurrentTarget(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(FCCSTargetData *)Result = GetCurrentTarget();
+}
+
 inline void UCCSBlackboard::execSetCurrentTether(FFrame &Stack, void *const)
 {
     AActor *A0 = 0;
@@ -14705,6 +14748,12 @@ inline void UCCSBlackboard::execGetCurrentTether(FFrame &Stack, void *const Resu
 {
     Stack.Code++;
     *(FVector *)Result = GetCurrentTether();
+}
+
+inline void UCCSBlackboard::execGetMoveCommand(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(FCCSMoveCmdData *)Result = GetMoveCommand();
 }
 
 inline void UCCSBlackboard::execClearMoveCommand(FFrame &Stack, void *const)
@@ -14761,6 +14810,12 @@ inline void UCCSBlackboard::execFlagHeatGeneratedAsUsed(FFrame &Stack, void *con
 {
     Stack.Code++;
     FlagHeatGeneratedAsUsed();
+}
+
+inline void UCCSBlackboard::execGetClosestVisibleEnemy(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(FCCSTargetData *)Result = GetClosestVisibleEnemy();
 }
 
 inline void UCCSBlackboard::execFlagHealthAsUsed(FFrame &Stack, void *const)
@@ -14967,7 +15022,8 @@ inline void AUSSPawn::execSetCoverPose(FFrame &Stack, void *const)
 {
     unsigned char A0 = 0;
     Stack.Step(Stack.Object, &A0);
-    float A1 = 0;
+    float A1 = -1.0f;
+    GRuntimeUCFlags &= ~RUC_SkippedOptionalParm;
     Stack.Step(Stack.Object, &A1);
     Stack.Code++;
     SetCoverPose(A0, A1);
@@ -15043,6 +15099,58 @@ inline void UHaloAnimBlendByJumpType::execOnChangeJumpType(FFrame &Stack, void *
     A1 = A1 ? 1 : 0;
     Stack.Code++;
     OnChangeJumpType(A0, A1);
+}
+
+inline void ACCSController::execSetState(FFrame &Stack, void *const)
+{
+    FString A0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetState(A0);
+}
+
+inline void ACCSController::execRemoveState(FFrame &Stack, void *const)
+{
+    FString A0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    RemoveState(A0);
+}
+
+inline void ACCSController::execTriggerEvent(FFrame &Stack, void *const)
+{
+    FString A0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    TriggerEvent(A0);
+}
+
+inline void UCCSBlackboard::execGetCovers(FFrame &Stack, void *const)
+{
+    TArray<FCCSCoverData,FDefaultAllocator> A0T;
+    GPropAddr = 0;
+    Stack.Step(Stack.Object, &A0T);
+    if (GPropObject)
+    {
+        GPropObject->NetDirty(GProperty);
+    }
+    TArray<FCCSCoverData,FDefaultAllocator> &A0 = GPropAddr ? *(TArray<FCCSCoverData,FDefaultAllocator> *)GPropAddr : A0T;
+    Stack.Code++;
+    GetCovers(A0);
+}
+
+inline void UCCSBlackboard::execGetTargets(FFrame &Stack, void *const)
+{
+    TArray<FCCSTargetData,FDefaultAllocator> A0T;
+    GPropAddr = 0;
+    Stack.Step(Stack.Object, &A0T);
+    if (GPropObject)
+    {
+        GPropObject->NetDirty(GProperty);
+    }
+    TArray<FCCSTargetData,FDefaultAllocator> &A0 = GPropAddr ? *(TArray<FCCSTargetData,FDefaultAllocator> *)GPropAddr : A0T;
+    Stack.Code++;
+    GetTargets(A0);
 }
 
 // ---- written by hand below this line (gen_header.py keeps it) ----

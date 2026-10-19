@@ -58,11 +58,44 @@ FSystemSettings &GetSystemSettings()
     static FSystemSettings SystemSettingsSingleton;
     return SystemSettingsSingleton;
 }
+// @retail 0x842C65C8
+// `GetSystemSettings'::`2'::`dynamic atexit destructor for 'SystemSettingsSingleton''
+
+// BasicSerializeObject and BasicDeserializeObject are near: the same
+// instructions as retail but for one swapped pair (the TArray's zero and
+// FArchive's vtable) and two registers swapped around the proxy archive's
+// vtable. Tried: the order of the archive flags, an initializer list, a
+// temporary proxy.
+// @retail 0x833C9E98
+TArray<unsigned char, FDefaultAllocator> UHaloSaveGame::BasicSerializeObject(UObject *Obj, int Version)
+{
+    TArray<unsigned char, FDefaultAllocator> SaveData;
+    FMemoryWriter MemoryWriter(SaveData, 1);
+    MemoryWriter.SetIsSaveGame(1);
+    MemoryWriter << Version;
+    FObjectAndNameAsStringProxyArchive Ar(MemoryWriter);
+    Obj->Serialize(Ar);
+    return SaveData;
+}
+
+// @retail 0x833C9F50
+unsigned int UHaloSaveGame::BasicDeserializeObject(UObject *Obj, int Version, const TArray<unsigned char, FDefaultAllocator> &InSaveGameData)
+{
+    TArray<unsigned char, FDefaultAllocator> SaveData = InSaveGameData;
+    FMemoryReader MemoryReader(SaveData, 1);
+    MemoryReader.SetIsSaveGame(1);
+    int SavedVersion;
+    MemoryReader << SavedVersion;
+    if (SavedVersion != Version)
+    {
+        return 0;
+    }
+    FObjectAndNameAsStringProxyArchive Ar(MemoryReader);
+    Obj->Serialize(Ar);
+    return 1;
+}
 
 // Not attempted yet (todo), and why:
 // - AutoInitializeRegistrantsMegaHaloGame (0x833CA4D0): adds the natives to
-//   GNativeLookupFuncs through TMap::Set, whose inline templates aren't written yet.
-// - UHaloSaveGame::BasicSerializeObject, BasicDeserializeObject and their
-//   exec thunks, the save game's destructor, and SystemSettingsSingleton's
-//   atexit destructor: they inline UE3's TArray, FMemoryWriter/FMemoryReader
-//   and FFrame templates, which aren't written yet.
+//   GNativeLookupFuncs through TMap::Set, whose inline templates (TMap,
+//   TSet's pair initializer) aren't written yet.

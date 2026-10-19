@@ -26,11 +26,12 @@ from pdbfile import IMAGE_BASE
 
 # Classes the hand-written code of a package needs in its header as well:
 # with their members (TARGETS) or opaque (OPAQUE).
-TARGETS = {'MegaHaloGame': ['FSystemSettings'], 'UDKBase': ['FRenderCommandFence', 'AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
+TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FArchiveProxy'], 'UDKBase': ['FRenderCommandFence', 'AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
                        'ActorWrapper', 'CCSGameCover', 'FCoverInfo', 'CCSCharacter', 'CCSGameCharacter', 'FCoverSlot',
                        'APawn', 'UActorComponent', 'ACCSController', 'CCSBrain', 'Grip_Vector', 'AController',
                        'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>']}
-OPAQUE = {'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'AUDKPawn',
+OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
+          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'AUDKPawn',
                        # the behaviour-tree nodes' runtime classes
                        'CCSRBTEnemyClosestRange',
                        'CCSRBTEnemyLowestLKPAge',
@@ -145,9 +146,14 @@ class Classes:
         self.header = gen_header.Header(types)  # a probe, for the member checks below
         # a class whose destructor destroys members needs them rendered
         self.member_targets = sorted({b for c in self.classes for b in self.chain(c) if not self.own_members_trivial(b)})
+        # structs that exec thunks read or return by value must be complete
+        exec_structs = sorted({t for r in self.execs for v in self.native_types(r)
+                               for t in [gen_header.template_args(v)[1][0] if v.startswith('TArray<') else v]
+                               if re.fullmatch(r'F\w+', t) and self._exists(t)})
         self.header = gen_header.Header(types, self.parms + TARGETS.get(package, []) + self.member_targets
                                         + (['FFrame'] if self.execs else []),
-                                        self.classes + event_classes + ['UClass', 'FName'] + OPAQUE.get(package, []))
+                                        self.classes + event_classes + ['UClass', 'FName'] + exec_structs
+                                        + OPAQUE.get(package, []))
         self.packages = script_packages()
         for name, decls in EXTRA.get(package, {}).items():
             self.header.extra.setdefault(name, []).extend(decls)
@@ -218,6 +224,17 @@ class Classes:
         if name in ('dtor', 'sdd') and not self.own_members_trivial(cls) and cls not in self.header.targets:
             return 'the destructor also destroys members, which the opaque layout leaves out'
         return None
+
+    def native_types(self, row):
+        """The value types (no const, no reference) of the native function
+        an exec<Name> row calls."""
+        cls, member = row['name'].rsplit('::', 1)
+        out = []
+        for m in self.header.methods(self.t.find(cls)):
+            if m['name'] == member[4:]:
+                ret, params = self.signature(m['type'])
+                out += [re.sub(r'^const |\s*&$', '', t) for t in [ret] + params]
+        return out
 
     def out_of_line(self):
         """Names of functions defined in a .cpp (not inline in a header).
@@ -315,22 +332,50 @@ class Classes:
         return out
 
     def exec_thunk(self, row):
-        """DECLARE_FUNCTION(exec<Name>): read each parameter with
-        Stack.Step, P_FINISH, call <Name>, store its result."""
+        """DECLARE_FUNCTION(exec<Name>): read each parameter with the
+        script compiler's P_GET_* macro (Stack.Step into a local; by
+        reference through GPropAddr; optional ones clear
+        RUC_SkippedOptionalParm first), P_FINISH, call <Name>, store its
+        result. None when a parameter is of a kind it doesn't read."""
         cls, member = row['name'].rsplit('::', 1)
         native = [m for m in self.header.methods(self.t.find(cls)) if m['name'] == member[4:]]
+        native = [m for m in native if 'Grip::' not in self.header.method_decl(cls, m)]  # script-facing overload
         if len(native) != 1:
             return None
         ret, params = self.signature(native[0]['type'])
-        if not all(simple_parameter(p) for p in params) or not (ret == 'void' or simple_parameter(ret)):
+        optional = script_optionals(self.package_of(cls), cls, member[4:], len(params))
+        if ret != 'void' and parameter_kind(ret) not in ('scalar', 'object', 'value'):
             return None
         lines = [f'inline void {cls}::{member}(FFrame &Stack, void *const{"" if ret == "void" else " Result"})', '{']
         for i, p in enumerate(params):
-            init = '' if p in STRUCT_PARAMETERS else ' = 0'
-            lines += [f'    {p}{"" if p.endswith("*") else " "}A{i}{init};',
-                      f'    Stack.Step(Stack.Object, &A{i});']
+            kind = parameter_kind(p)
+            opt, default = optional[i]
+            a = f'A{i}'
+            if kind in ('scalar', 'object'):
+                value = cpp_default(p, default) if opt else '0'
+                lines.append(f'    {declare(p, a)} = {value};')
+            elif kind == 'value' and not opt:
+                lines.append(f'    {declare(p, a)};')
+            elif kind == 'const-ref' and not opt:
+                lines.append(f'    {declare(p[6:-2], a)};')
+            elif kind == 'ref' and not opt:  # P_GET_*_REF: the caller's variable, when script passed one
+                base = p[:-2]
+                lines += [f'    {declare(base, a + "T")}{" = 0" if parameter_kind(base) == "scalar" else ""};',
+                          '    GPropAddr = 0;',
+                          f'    Stack.Step(Stack.Object, &{a}T);',
+                          '    if (GPropObject)',
+                          '    {',
+                          '        GPropObject->NetDirty(GProperty);',
+                          '    }',
+                          f'    {base} &{a} = GPropAddr ? *({base} *)GPropAddr : {a}T;']
+                continue
+            else:
+                return None
+            if opt:
+                lines.append('    GRuntimeUCFlags &= ~RUC_SkippedOptionalParm;')
+            lines.append(f'    Stack.Step(Stack.Object, &{a});')
             if p == UBOOL:  # P_GET_UBOOL: script's bitfield bit becomes 1
-                lines.append(f'    A{i} = A{i} ? 1 : 0;')
+                lines.append(f'    {a} = {a} ? 1 : 0;')
         lines.append('    Stack.Code++;')
         call = f'{member[4:]}({", ".join(f"A{i}" for i in range(len(params)))})'
         lines.append(f'    {call};' if ret == 'void' else f'    *({ret}{"" if ret.endswith("*") else " "}*)Result = {call};')
@@ -445,20 +490,59 @@ class Classes:
 
 
 UBOOL = 'unsigned int'
-# The script VM's parameter kinds exec thunks read by value (P_GET_INT, _FLOAT,
-# _UBOOL, _BYTE, _NAME, _OBJECT, _STRUCT); the structs have empty constructors.
+# The script VM's scalar parameter kinds (P_GET_INT, _FLOAT, _UBOOL, _BYTE)
 SCALAR_PARAMETERS = ('int', 'float', 'unsigned int', 'unsigned char')
-STRUCT_PARAMETERS = ('FVector', 'FRotator')
 
 
-def simple_parameter(ptype):
-    return ptype in SCALAR_PARAMETERS + STRUCT_PARAMETERS or (
-        re.fullmatch(r'[AU]\w+ \*', ptype) is not None)
+def parameter_kind(ptype):
+    """How an exec thunk reads a parameter of C++ type `ptype`: 'scalar',
+    'object' (a pointer), 'value' (a struct, string, name or array by
+    value), 'const-ref', 'ref' (an out parameter), or None."""
+    if ptype in SCALAR_PARAMETERS:
+        return 'scalar'
+    if re.fullmatch(r'[AU]\w+ \*', ptype):
+        return 'object'
+    if re.fullmatch(r'(F\w+|TArray<.+>)', ptype):
+        return 'value'
+    if ptype.startswith('const ') and ptype.endswith(' &') and parameter_kind(ptype[6:-2]) == 'value':
+        return 'const-ref'
+    if ptype.endswith(' &') and parameter_kind(ptype[:-2]) in ('scalar', 'value'):
+        return 'ref'
+    return None
+
+
+def declare(ptype, name):
+    return f'{ptype}{"" if ptype.endswith("*") else " "}{name}'
+
+
+def cpp_default(ptype, default):
+    """A script default value as C++ (0 when the script gives none)."""
+    if default is None or default in ('None', 'false', 'False'):
+        return '0'
+    if default in ('true', 'True'):
+        return '1'
+    if ptype == 'float':
+        return f'{float(default)!r}f'
+    return default
+
+
+def script_optionals(package, cls, func, count):
+    """(optional, default text) of each of a native function's parameters,
+    from its script declaration; all (False, None) when it isn't found."""
+    path = paths.ROOT / 'script' / package / 'Classes' / f'{cls[1:]}.uc'
+    text = path.read_text(encoding='utf-8', errors='replace') if path.exists() else ''
+    m = re.search(r'\bfunction\s+(?:[\w.<>]+\s+)?' + re.escape(func) + r'\s*\(([^)]*)\)', text)
+    out = []
+    for p in (m.group(1).split(',') if m and m.group(1).strip() else []):
+        default = p.split('=', 1)[1].strip() if '=' in p else None
+        out.append(('optional' in p.split(), default))
+    return out if len(out) == count else [(False, None)] * count
 # Inline constructors of engine classes the packages' constructors expand
 # (written from the disassembly); emitted when the class is a target.
 # (class, body, whether the class must be a target)
 KNOWN_BODIES = [
     ('FRenderCommandFence', 'inline FRenderCommandFence::FRenderCommandFence() : NumPendingFences(0) {}', True),
+    ('FString', 'inline FString::FString() {}', False),
     ('FString', 'inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}', False),
     ('FStringNoInit', 'inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}', False),
 ]
