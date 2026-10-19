@@ -443,3 +443,12 @@ inline FBoxSphereBounds::FBoxSphereBounds(const FBox &Box)
     SphereRadius = BoxExtent.Size();
 }
 #endif
+
+// EngineClasses.h: DECLARE_CLASS's config name, inlined into
+// UCCSActorFactory's class registration
+inline const wchar_t *UActorFactory::StaticConfigName() { return L"Editor"; }
+
+// UnClass.h
+#define CLASS_Abstract 0x00000001
+inline AActor *UClass::GetDefaultActor() { return (AActor *)GetDefaultObject(0); }
+inline unsigned int FString::operator!=(const wchar_t *Other) const { return appStricmp(**this, Other) != 0; }

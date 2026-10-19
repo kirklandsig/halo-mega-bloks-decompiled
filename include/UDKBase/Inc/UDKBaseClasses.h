@@ -40,8 +40,11 @@ template <int T0> class TStaticBitArray;
 template <class T0> class TStaticBitReference;
 template <class T0> class TTransArray;
 class AAIController;
+class AAccessControl;
 class AActor;
 class AActor const;
+class AAutoTestManager;
+class ABroadcastHandler;
 class ABrush;
 class ACCSController;
 class ACamera;
@@ -79,6 +82,7 @@ class ALadderVolume;
 class ALight;
 class AMassiveLODOverrideVolume;
 class AMatineeActor;
+class AMutator;
 class ANavigationPoint;
 class AParticleEventManager;
 class APawn;
@@ -108,6 +112,7 @@ class AUDKCarriedObject;
 class AUDKCover;
 class AUDKPawn;
 class AUDKPlayerController;
+class AUDKProjectile;
 class AUDKVehicle;
 class AUDKVehicleBase;
 class AUDKWeapon;
@@ -285,6 +290,7 @@ class FBox;
 class FBoxCenterAndExtent;
 struct FBoxSphereBounds;
 class FBranchingPCFProjectionPixelShaderInterface;
+struct FBurnOutDatum;
 struct FCCSCoverData;
 struct FCCSMoveCmdData;
 struct FCCSSystemConfigData;
@@ -314,6 +320,7 @@ struct FCoverSlot;
 class FCurveEdInterface;
 struct FCurveKey;
 struct FCylinder;
+struct FDamageParamScales;
 struct FDebugNavCost;
 class FDebugRenderSceneProxy;
 struct FDebugTextInfo;
@@ -337,6 +344,7 @@ class FEditPropertyChain;
 struct FEnemyThreatInfo;
 struct FEnumPatchData;
 class FExportObjectInnerContext;
+struct FFDamageMorphTargets;
 class FFeedbackContext;
 struct FFireLink;
 class FFloat16Color;
@@ -348,6 +356,8 @@ struct FFrame;
 struct FGCReferenceInfo;
 struct FGCReferenceTokenStream;
 struct FGCSkipInfo;
+struct FGameClassShortName;
+struct FGameTypePrefix;
 struct FGeomSelection;
 class FGlobalBoundShaderStateResource;
 class FGuid;
@@ -391,10 +401,12 @@ struct FLinearColor;
 struct FLinearDOFSetup;
 struct FListener;
 class FMaterialInstanceResource;
+struct FMaterialParticleEffect;
 struct FMaterialReferenceList;
 class FMaterialRenderProxy;
 class FMaterialResource;
 class FMaterialShaderMap;
+struct FMaterialSoundEffect;
 class FMaterialViewRelevance;
 class FMatrix;
 class FMemStack;
@@ -562,6 +574,10 @@ class FVector;
 struct FVector2D;
 class FVector4;
 struct FVectorParameterValue;
+struct FVehicleAnim;
+struct FVehicleEffect;
+struct FVehicleSeat;
+struct FVehicleSound;
 struct FVehicleState;
 struct FVertInfluence;
 class FVertexBuffer;
@@ -955,6 +971,7 @@ class UUDKAnimBlendByTurnInPlace;
 class UUDKAnimBlendByWeapType;
 class UUDKAnimNodeCopyBoneTranslation;
 class UUDKAnimNodeSeqWeap;
+class UUDKSkelControl_Damage;
 class UUDKSkeletalMeshComponent;
 class UUDKTargetableComponent;
 class UUIDataStore_OnlinePlayerData;
@@ -6789,6 +6806,331 @@ public:
     #endif
 };
 
+struct FGameClassShortName  // size 0x18, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FGameClassShortName(EEventParm);
+    FGameClassShortName();
+    #endif
+HG_PRIVATE:
+    unsigned int FGameClassShortNameData[0x6];
+};
+
+struct FGameTypePrefix  // size 0x34, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FGameTypePrefix(EEventParm);
+    FGameTypePrefix();
+    #endif
+HG_PRIVATE:
+    unsigned int FGameTypePrefixData[0xD];
+};
+
+struct FScriptDelegate  // size 0xC
+{
+public:
+    unsigned int IsCallable(const UObject *) const;
+    FString ToString(const UObject *) const;
+    unsigned int operator==(const FScriptDelegate &) const;
+    unsigned int operator!=(const FScriptDelegate &) const;
+    #ifndef HAGGAR_HOST
+    FScriptDelegate(EEventParm);
+    FScriptDelegate();
+    #endif
+    #ifndef HAGGAR_HOST
+    UObject *Object;  // 0x0
+    FName FunctionName;  // 0x4
+    #else
+    hg::gptr<UObject> Object;
+    FName FunctionName;
+    #endif
+};
+
+class IInterface  // size 0x4, opaque
+{
+    HG_VFPTR
+HG_PROTECTED:
+    HG_XDK(HG_VIRTUAL ~IInterface();)
+public:
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    IInterface();
+public:
+    #endif
+};
+
+class AGameInfo : public AInfo  // size 0x3A0
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL unsigned int GetSupportedGameTypes(const FString &, FGameTypePrefix &, unsigned int) const;
+    HG_VIRTUAL unsigned int GetMapCommonPackageName(const FString &, FString &) const;
+    HG_VIRTUAL FString GetNetworkNumber();
+    HG_VIRTUAL void SetBandwidthLimit(float);
+    HG_VIRTUAL void EnableStandbyCheatDetection(unsigned int);
+    HG_VIRTUAL void AddSupportedGameTypes(AWorldInfo *, const wchar_t *, TArray<FString,FDefaultAllocator> &) const;
+    unsigned int ShouldStartInCinematicMode(int &, int &, int &, int &, int &);
+    void DoNavFearCostFallOff();
+    void ForceClearUnpauseDelegates(AActor *);
+    UPlayer *PauseLogin();
+    void ResumeLogin(UPlayer *);
+    void RejectLogin(UPlayer *, const FString &);
+    int GetNextPlayerID();
+    void SwapPlayerControllers(APlayerController *, APlayerController *);
+    void execGetSupportedGameTypes(FFrame &, void *const);
+    void execGetMapCommonPackageName(FFrame &, void *const);
+    void execShouldStartInCinematicMode(FFrame &, void *const);
+    void execDoNavFearCostFallOff(FFrame &, void *const);
+    void execGetNetworkNumber(FFrame &, void *const);
+    void execForceClearUnpauseDelegates(FFrame &, void *const);
+    void execPauseLogin(FFrame &, void *const);
+    void execResumeLogin(FFrame &, void *const);
+    void execRejectLogin(FFrame &, void *const);
+    void execGetNextPlayerID(FFrame &, void *const);
+    void execSwapPlayerControllers(FFrame &, void *const);
+    void execSetBandwidthLimit(FFrame &, void *const);
+    void execEnableStandbyCheatDetection(FFrame &, void *const);
+    void eventLevelStreamingStatusChanged(ULevelStreaming *, unsigned int, unsigned int, unsigned int);
+    void eventOnEngineHasLoaded();
+    void eventStandbyCheatDetected(unsigned char);
+    void eventMatineeCancelled();
+    void eventHandleSeamlessTravelPlayer(AController *&);
+    void eventPostSeamlessTravel();
+    void eventGetSeamlessTravelActorList(unsigned int, TArray<AActor *,FDefaultAllocator> &);
+    void eventPostCommitMapChange();
+    void eventPreCommitMapChange(const FString &, const FString &);
+    void eventBroadcastLocalizedTeam(int, AActor *, UClass *, int, APlayerReplicationInfo *, APlayerReplicationInfo *, UObject *);
+    void eventBroadcastLocalized(AActor *, UClass *, int, APlayerReplicationInfo *, APlayerReplicationInfo *, UObject *);
+    void eventBroadcast(AActor *, const FString &, FName);
+    void eventAddDefaultInventory(APawn *);
+    void eventAcceptInventory(APawn *);
+    void eventPreExit();
+    void eventPostLogin(APlayerController *);
+    APlayerController *eventLogin(const FString &, const FString &, const FUniqueNetId, FString &);
+    void eventPreLogin(const FString &, const FString &, const FUniqueNetId, unsigned int, FString &);
+    void eventNotifyPendingConnectionLost();
+    void eventInitGame(const FString &, FString &);
+    UClass *eventSetGameType(const FString &, const FString &, const FString &);
+    FString eventGetDefaultGameClassPath(const FString &, const FString &, const FString &);
+    void eventClearPause();
+    unsigned int delegateCanUnpause();
+    void eventForceKickPlayer(APlayerController *, const FString &);
+    void eventKickIdler(APlayerController *);
+    void eventGameEnding();
+HG_PRIVATE:
+    AGameInfo &operator=(const AGameInfo &);
+public:
+    static UClass *GetPrivateStaticClassAGameInfo(const wchar_t *);
+    static void InitializePrivateStaticClassAGameInfo();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    static const wchar_t *StaticConfigName();
+    static FString StaticGetRemappedGameClassName(const FString &);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AGameInfo();
+public:
+    #endif
+    typedef AInfo Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    unsigned long bRestartLevel : 1;  // 0x1D4
+    unsigned long bPauseable : 1;
+    unsigned long bTeamGame : 1;
+    unsigned long bGameEnded : 1;
+    unsigned long bOverTime : 1;
+    unsigned long bDelayedStart : 1;
+    unsigned long bWaitingToStartMatch : 1;
+    unsigned long bChangeLevels : 1;
+    unsigned long bAlreadyChanged : 1;
+    unsigned long bAdminCanPause : 1;
+    unsigned long bGameRestarted : 1;
+    unsigned long bLevelChange : 1;
+    unsigned long bKickLiveIdlers : 1;
+    unsigned long bUsingArbitration : 1;
+    unsigned long bHasArbitratedHandshakeBegun : 1;
+    unsigned long bNeedsEndGameHandshake : 1;
+    unsigned long bIsEndGameHandshakeComplete : 1;
+    unsigned long bHasEndGameHandshakeBegun : 1;
+    unsigned long bFixedPlayerStart : 1;
+    unsigned long bDoFearCostFallOff : 1;
+    unsigned long bUseSeamlessTravel : 1;
+    unsigned long bHasNetworkError : 1;
+    unsigned long bRequiresPushToTalk : 1;
+    unsigned long bIsStandbyCheckingEnabled : 1;
+    unsigned long bIsStandbyCheckingOn : 1;
+    unsigned long bHasStandbyCheatTriggered : 1;
+    FStringNoInit CauseEventCommand;  // 0x1D8
+    FStringNoInit BugLocString;  // 0x1E4
+    FStringNoInit BugRotString;  // 0x1F0
+    TArrayNoInit<APlayerController *> PendingArbitrationPCs;  // 0x1FC
+    TArrayNoInit<APlayerController *> ArbitrationPCs;  // 0x208
+    float ArbitrationHandshakeTimeout;  // 0x214
+    float GameDifficulty;  // 0x218
+    int GoreLevel;  // 0x21C
+    float GameSpeed;  // 0x220
+    UClass *DefaultPawnClass;  // 0x224
+    UClass *HUDType;  // 0x228
+    UClass *SecondaryHUDType;  // 0x22C
+    int MaxSpectators;  // 0x230
+    int MaxSpectatorsAllowed;  // 0x234
+    int NumSpectators;  // 0x238
+    int MaxPlayers;  // 0x23C
+    int MaxPlayersAllowed;  // 0x240
+    int NumPlayers;  // 0x244
+    int NumBots;  // 0x248
+    int NumTravellingPlayers;  // 0x24C
+    int CurrentID;  // 0x250
+    FStringNoInit DefaultPlayerName;  // 0x254
+    FStringNoInit GameName;  // 0x260
+    float FearCostFallOff;  // 0x26C
+    int GoalScore;  // 0x270
+    int MaxLives;  // 0x274
+    int TimeLimit;  // 0x278
+    UClass *DeathMessageClass;  // 0x27C
+    UClass *GameMessageClass;  // 0x280
+    AMutator *BaseMutator;  // 0x284
+    UClass *AccessControlClass;  // 0x288
+    AAccessControl *AccessControl;  // 0x28C
+    UClass *BroadcastHandlerClass;  // 0x290
+    ABroadcastHandler *BroadcastHandler;  // 0x294
+    UClass *AutoTestManagerClass;  // 0x298
+    AAutoTestManager *MyAutoTestManager;  // 0x29C
+    UClass *PlayerControllerClass;  // 0x2A0
+    UClass *PlayerReplicationInfoClass;  // 0x2A4
+    UClass *GameReplicationInfoClass;  // 0x2A8
+    AGameReplicationInfo *GameReplicationInfo;  // 0x2AC
+    ACrowdPopulationManagerBase *PopulationManager;  // 0x2B0
+    UClass *PopulationManagerClass;  // 0x2B4
+    FStringNoInit GripAIManagerClassPath;  // 0x2B8
+    AActor *GripAIManagerHolder;  // 0x2C4
+    float MaxIdleTime;  // 0x2C8
+    float MaxTimeMargin;  // 0x2CC
+    float TimeMarginSlack;  // 0x2D0
+    float MinTimeMargin;  // 0x2D4
+    TArrayNoInit<APlayerReplicationInfo *> InactivePRIArray;  // 0x2D8
+    TArrayNoInit<FScriptDelegate> Pausers;  // 0x2E4
+    UOnlineSubsystem *OnlineSub;  // 0x2F0
+    TScriptInterface<IInterface> GameInterface;  // 0x2F4
+    UClass *OnlineStatsWriteClass;  // 0x2FC
+    int LeaderboardId;  // 0x300
+    int ArbitratedLeaderboardId;  // 0x304
+    ACoverReplicator *CoverReplicatorBase;  // 0x308
+    UClass *OnlineGameSettingsClass;  // 0x30C
+    FStringNoInit ServerOptions;  // 0x310
+    int AdjustedNetSpeed;  // 0x31C
+    float LastNetSpeedUpdateTime;  // 0x320
+    int TotalNetBandwidth;  // 0x324
+    int MinDynamicBandwidth;  // 0x328
+    int MaxDynamicBandwidth;  // 0x32C
+    float StandbyRxCheatTime;  // 0x330
+    float StandbyTxCheatTime;  // 0x334
+    int BadPingThreshold;  // 0x338
+    float PercentMissingForRxStandby;  // 0x33C
+    float PercentMissingForTxStandby;  // 0x340
+    float PercentForBadPing;  // 0x344
+    float JoinInProgressStandbyWaitTime;  // 0x348
+    UMaterial *StreamingPauseIcon;  // 0x34C
+    TArrayNoInit<FGameClassShortName> GameInfoClassAliases;  // 0x350
+    FStringNoInit DefaultGameType;  // 0x35C
+    TArrayNoInit<FGameTypePrefix> DefaultMapPrefixes;  // 0x368
+    TArrayNoInit<FGameTypePrefix> CustomMapPrefixes;  // 0x374
+    int AnimTreePoolSize;  // 0x380
+    FStringNoInit GwNavWorldActorClassPath;  // 0x384
+    AActor *GwNavWorldActor;  // 0x390
+    FScriptDelegate __CanUnpause__Delegate;  // 0x394
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::be<unsigned int> _bits1D4;  // 0x1D4, from bRestartLevel
+    FStringNoInit CauseEventCommand;
+    FStringNoInit BugLocString;
+    FStringNoInit BugRotString;
+    TArrayNoInit<APlayerController *> PendingArbitrationPCs;
+    TArrayNoInit<APlayerController *> ArbitrationPCs;
+    hg::be<float> ArbitrationHandshakeTimeout;
+    hg::be<float> GameDifficulty;
+    hg::be<int> GoreLevel;
+    hg::be<float> GameSpeed;
+    hg::gptr<UClass> DefaultPawnClass;
+    hg::gptr<UClass> HUDType;
+    hg::gptr<UClass> SecondaryHUDType;
+    hg::be<int> MaxSpectators;
+    hg::be<int> MaxSpectatorsAllowed;
+    hg::be<int> NumSpectators;
+    hg::be<int> MaxPlayers;
+    hg::be<int> MaxPlayersAllowed;
+    hg::be<int> NumPlayers;
+    hg::be<int> NumBots;
+    hg::be<int> NumTravellingPlayers;
+    hg::be<int> CurrentID;
+    FStringNoInit DefaultPlayerName;
+    FStringNoInit GameName;
+    hg::be<float> FearCostFallOff;
+    hg::be<int> GoalScore;
+    hg::be<int> MaxLives;
+    hg::be<int> TimeLimit;
+    hg::gptr<UClass> DeathMessageClass;
+    hg::gptr<UClass> GameMessageClass;
+    hg::gptr<AMutator> BaseMutator;
+    hg::gptr<UClass> AccessControlClass;
+    hg::gptr<AAccessControl> AccessControl;
+    hg::gptr<UClass> BroadcastHandlerClass;
+    hg::gptr<ABroadcastHandler> BroadcastHandler;
+    hg::gptr<UClass> AutoTestManagerClass;
+    hg::gptr<AAutoTestManager> MyAutoTestManager;
+    hg::gptr<UClass> PlayerControllerClass;
+    hg::gptr<UClass> PlayerReplicationInfoClass;
+    hg::gptr<UClass> GameReplicationInfoClass;
+    hg::gptr<AGameReplicationInfo> GameReplicationInfo;
+    hg::gptr<ACrowdPopulationManagerBase> PopulationManager;
+    hg::gptr<UClass> PopulationManagerClass;
+    FStringNoInit GripAIManagerClassPath;
+    hg::gptr<AActor> GripAIManagerHolder;
+    hg::be<float> MaxIdleTime;
+    hg::be<float> MaxTimeMargin;
+    hg::be<float> TimeMarginSlack;
+    hg::be<float> MinTimeMargin;
+    TArrayNoInit<APlayerReplicationInfo *> InactivePRIArray;
+    TArrayNoInit<FScriptDelegate> Pausers;
+    hg::gptr<UOnlineSubsystem> OnlineSub;
+    TScriptInterface<IInterface> GameInterface;
+    hg::gptr<UClass> OnlineStatsWriteClass;
+    hg::be<int> LeaderboardId;
+    hg::be<int> ArbitratedLeaderboardId;
+    hg::gptr<ACoverReplicator> CoverReplicatorBase;
+    hg::gptr<UClass> OnlineGameSettingsClass;
+    FStringNoInit ServerOptions;
+    hg::be<int> AdjustedNetSpeed;
+    hg::be<float> LastNetSpeedUpdateTime;
+    hg::be<int> TotalNetBandwidth;
+    hg::be<int> MinDynamicBandwidth;
+    hg::be<int> MaxDynamicBandwidth;
+    hg::be<float> StandbyRxCheatTime;
+    hg::be<float> StandbyTxCheatTime;
+    hg::be<int> BadPingThreshold;
+    hg::be<float> PercentMissingForRxStandby;
+    hg::be<float> PercentMissingForTxStandby;
+    hg::be<float> PercentForBadPing;
+    hg::be<float> JoinInProgressStandbyWaitTime;
+    hg::gptr<UMaterial> StreamingPauseIcon;
+    TArrayNoInit<FGameClassShortName> GameInfoClassAliases;
+    FStringNoInit DefaultGameType;
+    TArrayNoInit<FGameTypePrefix> DefaultMapPrefixes;
+    TArrayNoInit<FGameTypePrefix> CustomMapPrefixes;
+    hg::be<int> AnimTreePoolSize;
+    FStringNoInit GwNavWorldActorClassPath;
+    hg::gptr<AActor> GwNavWorldActor;
+    FScriptDelegate __CanUnpause__Delegate;
+    #endif
+};
+
 template <> class FInterpCurve<FVector>  // size 0x10, opaque
 {
 public:
@@ -7624,26 +7966,6 @@ HG_PRIVATE:
     unsigned int FInputMatchRequestData[0xF];
 };
 
-struct FScriptDelegate  // size 0xC
-{
-public:
-    unsigned int IsCallable(const UObject *) const;
-    FString ToString(const UObject *) const;
-    unsigned int operator==(const FScriptDelegate &) const;
-    unsigned int operator!=(const FScriptDelegate &) const;
-    #ifndef HAGGAR_HOST
-    FScriptDelegate(EEventParm);
-    FScriptDelegate();
-    #endif
-    #ifndef HAGGAR_HOST
-    UObject *Object;  // 0x0
-    FName FunctionName;  // 0x4
-    #else
-    hg::gptr<UObject> Object;
-    FName FunctionName;
-    #endif
-};
-
 struct FUniqueNetId  // size 0x8, opaque
 {
 public:
@@ -7660,19 +7982,6 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int FUniqueNetIdData[0x2];
-};
-
-class IInterface  // size 0x4, opaque
-{
-    HG_VFPTR
-HG_PROTECTED:
-    HG_XDK(HG_VIRTUAL ~IInterface();)
-public:
-    #ifndef HAGGAR_HOST
-HG_PROTECTED:
-    IInterface();
-public:
-    #endif
 };
 
 class APlayerController : public AController  // size 0x590
@@ -10216,6 +10525,424 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int AUDKVehicleBaseData[0x4];
+};
+
+struct FBurnOutDatum  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FBurnOutDatum(EEventParm);
+    FBurnOutDatum();
+    #endif
+HG_PRIVATE:
+    unsigned int FBurnOutDatumData[0x2];
+};
+
+struct FDamageParamScales  // size 0xC, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FDamageParamScales(EEventParm);
+    FDamageParamScales();
+    #endif
+HG_PRIVATE:
+    unsigned int FDamageParamScalesData[0x3];
+};
+
+struct FFDamageMorphTargets  // size 0x30, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FFDamageMorphTargets(EEventParm);
+    FFDamageMorphTargets();
+    #endif
+HG_PRIVATE:
+    unsigned int FFDamageMorphTargetsData[0xC];
+};
+
+struct FMaterialParticleEffect  // size 0xC, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FMaterialParticleEffect(EEventParm);
+    FMaterialParticleEffect();
+    #endif
+HG_PRIVATE:
+    unsigned int FMaterialParticleEffectData[0x3];
+};
+
+struct FMaterialSoundEffect  // size 0xC, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FMaterialSoundEffect(EEventParm);
+    FMaterialSoundEffect();
+    #endif
+HG_PRIVATE:
+    unsigned int FMaterialSoundEffectData[0x3];
+};
+
+struct FVehicleAnim  // size 0x24, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FVehicleAnim(EEventParm);
+    FVehicleAnim();
+    #endif
+HG_PRIVATE:
+    unsigned int FVehicleAnimData[0x9];
+};
+
+struct FVehicleEffect  // size 0x28, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FVehicleEffect(EEventParm);
+    FVehicleEffect();
+    #endif
+HG_PRIVATE:
+    unsigned int FVehicleEffectData[0xA];
+};
+
+struct FVehicleSeat  // size 0x12C, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FVehicleSeat(EEventParm);
+    FVehicleSeat();
+    #endif
+HG_PRIVATE:
+    unsigned int FVehicleSeatData[0x4B];
+};
+
+struct FVehicleSound  // size 0x18, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FVehicleSound(EEventParm);
+    FVehicleSound();
+    #endif
+HG_PRIVATE:
+    unsigned int FVehicleSoundData[0x6];
+};
+
+class AUDKVehicle : public AUDKVehicleBase, public ICCSPawn  // size 0x820
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL FRotator SeatWeaponRotation(int, FRotator, unsigned int);
+    HG_VIRTUAL FVector SeatFlashLocation(int, FVector, unsigned int);
+    HG_VIRTUAL unsigned char SeatFlashCount(int, unsigned char, unsigned int);
+    HG_VIRTUAL unsigned char SeatFiringMode(int, unsigned char, unsigned int);
+    HG_VIRTUAL void ForceWeaponRotation(int, FRotator);
+    HG_VIRTUAL FVector GetSeatPivotPoint(int);
+    HG_VIRTUAL int GetBarrelIndex(int);
+    HG_VIRTUAL unsigned int CheckAutoDestruct(ATeamInfo *, float);
+    HG_VIRTUAL unsigned int InUseableRange(AUDKPlayerController *, float);
+    HG_VIRTUAL void InitDamageSkel();
+    HG_VIRTUAL void UpdateDamageMaterial();
+    HG_VIRTUAL void ApplyMorphDamage(FVector, int, FVector);
+    HG_VIRTUAL void ApplyWeaponRotation(int, FRotator);
+    HG_VIRTUAL void moveTowardGWNavDefault(const FVector &);
+    HG_VIRTUAL void moveTowardGwNavStrafe(const FVector &);
+    HG_VIRTUAL void moveTowardGwNavLookSteer(const FVector &);
+    HG_VIRTUAL void moveTowardGwNavLSStrafe(const FVector &);
+    HG_VIRTUAL void moveTowardGwNavLSDefault(const FVector &);
+    HG_VIRTUAL void moveTowardGwNavLSEncircle(const FVector &);
+    HG_VIRTUAL float GetGravityZ();
+    HG_VIRTUAL float GetMaxRiseForce();
+    HG_VIRTUAL unsigned char GetTeamNum();
+    HG_VIRTUAL void NativePostRenderFor(APlayerController *, UCanvas *, FVector, FVector);
+    HG_VIRTUAL void SetHUDLocation(FVector);
+    HG_VIRTUAL unsigned char GetMovementType();
+    HG_VIRTUAL void SetMovementType(unsigned char);
+    HG_VIRTUAL void SetMovementTypeDefault();
+    HG_VIRTUAL unsigned char GetAlertness();
+    HG_VIRTUAL void SetAlertness(unsigned char);
+    HG_VIRTUAL void SetAlertnessDefault();
+    HG_VIRTUAL unsigned char GetSpeed();
+    HG_VIRTUAL void SetSpeed(unsigned char);
+    HG_VIRTUAL void SetMovementSpeedDefault();
+    HG_VIRTUAL unsigned int IsCrouched();
+    HG_VIRTUAL void SetCrouched(unsigned int);
+    HG_VIRTUAL void SetPostureDefault();
+    HG_VIRTUAL unsigned int PostureTransitionOver();
+    HG_VIRTUAL unsigned int CanAim(FRotator);
+    HG_VIRTUAL void SetCoverPose(unsigned char, float);
+    HG_VIRTUAL void SetNoCoverPose();
+    HG_VIRTUAL unsigned int CoverPoseTransitionOver();
+    HG_VIRTUAL void MoveToInCover(FVector);
+    HG_VIRTUAL unsigned int IsInCover();
+    HG_VIRTUAL void SetIsPanicking(unsigned int);
+    HG_VIRTUAL unsigned int GetIsPanicking();
+    HG_VIRTUAL float GetYellingDistance();
+    HG_VIRTUAL UCCSBTTree *GetDefaultBehaviorTree();
+    HG_VIRTUAL void SetDefaultBehaviorTree(UCCSBTTree *);
+    void execSeatWeaponRotation(FFrame &, void *const);
+    void execSeatFlashLocation(FFrame &, void *const);
+    void execSeatFlashCount(FFrame &, void *const);
+    void execSeatFiringMode(FFrame &, void *const);
+    void execForceWeaponRotation(FFrame &, void *const);
+    void execGetSeatPivotPoint(FFrame &, void *const);
+    void execGetBarrelIndex(FFrame &, void *const);
+    void execIsSeatControllerReplicationViewer(FFrame &, void *const);
+    void execCheckAutoDestruct(FFrame &, void *const);
+    void execInUseableRange(FFrame &, void *const);
+    void execInitDamageSkel(FFrame &, void *const);
+    void execUpdateDamageMaterial(FFrame &, void *const);
+    void execApplyMorphDamage(FFrame &, void *const);
+    void execGetMovementType(FFrame &, void *const);
+    void execSetMovementType(FFrame &, void *const);
+    void execSetMovementTypeDefault(FFrame &, void *const);
+    void execGetAlertness(FFrame &, void *const);
+    void execSetAlertness(FFrame &, void *const);
+    void execSetAlertnessDefault(FFrame &, void *const);
+    void execGetSpeed(FFrame &, void *const);
+    void execSetSpeed(FFrame &, void *const);
+    void execSetMovementSpeedDefault(FFrame &, void *const);
+    void execIsCrouched(FFrame &, void *const);
+    void execSetCrouched(FFrame &, void *const);
+    void execSetPostureDefault(FFrame &, void *const);
+    void execPostureTransitionOver(FFrame &, void *const);
+    void execCanAim(FFrame &, void *const);
+    void execSetCoverPose(FFrame &, void *const);
+    void execSetNoCoverPose(FFrame &, void *const);
+    void execCoverPoseTransitionOver(FFrame &, void *const);
+    void execMoveToInCover(FFrame &, void *const);
+    void execIsInCover(FFrame &, void *const);
+    void execSetIsPanicking(FFrame &, void *const);
+    void execGetIsPanicking(FFrame &, void *const);
+    void execGetYellingDistance(FFrame &, void *const);
+    void execGetDefaultBehaviorTree(FFrame &, void *const);
+    void execSetDefaultBehaviorTree(FFrame &, void *const);
+    void eventUpdateHoverboardDustEffect(float);
+    void eventPostInitRigidBody(UPrimitiveComponent *);
+    void eventTakeFireDamage();
+    void eventCheckReset();
+    void eventTakeWaterDamage();
+    void eventRBPenetrationDestroy();
+    void eventMorphTargetDestroyed(int);
+    void eventSelfDestruct(AActor *);
+    void eventJumpOutCheck();
+    void eventReceivedHealthChange();
+    void eventPlayTakeHitEffects();
+    void eventOnPropertyChange(FName);
+    void eventLockOnWarning(AUDKProjectile *);
+HG_PRIVATE:
+    AUDKVehicle &operator=(const AUDKVehicle &);
+public:
+    static UClass *GetPrivateStaticClassAUDKVehicle(const wchar_t *);
+    static void InitializePrivateStaticClassAUDKVehicle();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL UObject *GetUObjectInterfaceCCSPawn();
+    HG_VIRTUAL void OnRigidBodyCollision(const FRigidBodyCollisionInfo &, const FRigidBodyCollisionInfo &, const FCollisionImpactData &);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void TickSpecial(float);
+    void RequestTrackingFor(AUDKBot *);
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL void PreNetReceive();
+    HG_VIRTUAL void PostNetReceive();
+    HG_VIRTUAL FVector GetDampingForce(const FVector &);
+    HG_VIRTUAL unsigned int JumpOutCheck(AActor *, float, float);
+    HG_VIRTUAL unsigned int ReachThresholdTest(const FVector &, const FVector &, AActor *, float, float, float);
+    HG_VIRTUAL void VehicleUnpackRBState();
+    HG_VIRTUAL void moveTowardGwNav(const FVector &);
+    HG_VIRTUAL void PostInitRigidBody(NxActor *, NxActorDesc &, UPrimitiveComponent *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AUDKVehicle();
+public:
+    #endif
+    typedef AUDKVehicleBase Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    unsigned char MovementType;  // 0x644
+    unsigned char WantedCoverPose;  // 0x645
+    unsigned char CurrentCoverPose;  // 0x646
+    unsigned char AlertnessState;  // 0x647
+    unsigned char Team;  // 0x648
+    FVector2D AimYawRange;  // 0x64C
+    FVector2D AimPitchRange;  // 0x654
+    unsigned long bIsPanicking : 1;  // 0x65C
+    unsigned long bShouldCover : 1;
+    unsigned long bInCover : 1;
+    unsigned long bEjectKilledBodies : 1;
+    unsigned long bHomingTarget : 1;
+    unsigned long bFrontalCollision : 1;
+    unsigned long bFrontalCollisionWithFixed : 1;
+    unsigned long bNoZDampingInAir : 1;
+    unsigned long bNoZDamping : 1;
+    unsigned long bIsDisabled : 1;
+    unsigned long bIsBurning : 1;
+    unsigned long bEjectPassengersWhenFlipped : 1;
+    unsigned long bIsScraping : 1;
+    unsigned long bTakeWaterDamageWhileDriving : 1;
+    unsigned long bIsInDestroyablePenetration : 1;
+    unsigned long bDeadVehicle : 1;
+    unsigned long bJostleWhileDriving : 1;
+    unsigned long bFloatWhenDriven : 1;
+    unsigned long bAllowedExit : 1;
+    unsigned long bUseAlternatePaths : 1;
+    unsigned long bDisableDriverlessReset : 1;
+    unsigned long bShowLocked : 1;
+    unsigned long bTeamLocked : 1;
+    unsigned long bDisableRepulsorsAtMaxFallSpeed : 1;
+    unsigned long bTrickJumping : 1;
+    unsigned long bGrab1 : 1;
+    unsigned long bGrab2 : 1;
+    unsigned long bForceSpinWarmup : 1;
+    float CoverPct;  // 0x660
+    float CoverPoseBlendTimeOverride;  // 0x664
+    float RemainingBurn;  // 0x668
+    TArrayNoInit<FBurnOutDatum> BurnOutMaterialInstances;  // 0x66C
+    UAudioComponent *TireAudioComp;  // 0x678
+    TArrayNoInit<FMaterialSoundEffect> TireSoundList;  // 0x67C
+    FName CurrentTireMaterial;  // 0x688
+    float MaxWheelEffectDistSq;  // 0x690
+    TArrayNoInit<FMaterialParticleEffect> WheelParticleEffects;  // 0x694
+    int WheelIndexToParticleCheck;  // 0x6A0
+    int DefaultWheelParticleIndex;  // 0x6A4
+    float LastCheckUpsideDownTime;  // 0x6A8
+    float FlippedCount;  // 0x6AC
+    UAudioComponent *ScrapeSound;  // 0x6B0
+    float FireDamageThreshold;  // 0x6B4
+    float FireDamagePerSec;  // 0x6B8
+    float AccruedFireDamage;  // 0x6BC
+    float UpsideDownDamagePerSec;  // 0x6C0
+    float OccupiedUpsideDownDamagePerSec;  // 0x6C4
+    float WaterDamage;  // 0x6C8
+    float AccumulatedWaterDamage;  // 0x6CC
+    TArrayNoInit<int> GroundEffectIndices;  // 0x6D0
+    float MaxGroundEffectDist;  // 0x6DC
+    FName GroundEffectDistParameterName;  // 0x6E0
+    UParticleSystem *WaterGroundEffect;  // 0x6E8
+    FRotator WeaponRotation;  // 0x6EC
+    TArrayNoInit<FVehicleSeat> Seats;  // 0x6F8
+    int SeatMask;  // 0x704
+    TArrayNoInit<FVehicleAnim> VehicleAnims;  // 0x708
+    TArrayNoInit<FVehicleSound> VehicleSounds;  // 0x714
+    FName DrivingAnim;  // 0x720
+    float DestroyOnPenetrationThreshold;  // 0x728
+    float DestroyOnPenetrationDuration;  // 0x72C
+    float TimeInDestroyablePenetration;  // 0x730
+    float LastDeathImpactTime;  // 0x734
+    USoundCue *LargeChunkImpactSound;  // 0x738
+    USoundCue *MediumChunkImpactSound;  // 0x73C
+    USoundCue *SmallChunkImpactSound;  // 0x740
+    float CustomGravityScaling;  // 0x744
+    TArrayNoInit<FDamageParamScales> DamageParamScaleLevels;  // 0x748
+    TArrayNoInit<UUDKSkelControl_Damage *> DamageSkelControls;  // 0x754
+    TArrayNoInit<FFDamageMorphTargets> DamageMorphTargets;  // 0x760
+    UMaterialInstanceConstant *DamageMaterialInstance[2];  // 0x76C
+    FUTTakeHitInfo LastTakeHitInfo;  // 0x774
+    float LastTakeHitTimeout;  // 0x79C
+    TArrayNoInit<FVehicleEffect> VehicleEffects;  // 0x7A0
+    AController *KillerController;  // 0x7AC
+    float LastJumpOutCheck;  // 0x7B0
+    FName WaterEffectType;  // 0x7B4
+    TArrayNoInit<int> ContrailEffectIndices;  // 0x7BC
+    FName ContrailColorParameterName;  // 0x7C8
+    float ObjectiveGetOutDist;  // 0x7D0
+    TArrayNoInit<AUDKBot *> Trackers;  // 0x7D4
+    float ExtraReachDownThreshold;  // 0x7E0
+    float ResetTime;  // 0x7E4
+    float MinRunOverSpeed;  // 0x7E8
+    float LastRunOverWarningTime;  // 0x7EC
+    float MinRunOverWarningAim;  // 0x7F0
+    float TeamBeaconMaxDist;  // 0x7F4
+    float LastPostRenderTraceTime;  // 0x7F8
+    float ShowLockedMaxDist;  // 0x7FC
+    FVector HUDLocation;  // 0x800
+    UParticleSystemComponent *HoverboardDust;  // 0x80C
+    UCCSBTTree *DefaultBehaviorTree;  // 0x810
+    float YellingDistance;  // 0x814
+    float MoveToRadius;  // 0x818
+    char _pad1[0x4];
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    unsigned char MovementType;
+    unsigned char WantedCoverPose;
+    unsigned char CurrentCoverPose;
+    unsigned char AlertnessState;
+    unsigned char Team;
+    char _pad0[0x3];
+    FVector2D AimYawRange;
+    FVector2D AimPitchRange;
+    hg::be<unsigned int> _bits65C;  // 0x65C, from bIsPanicking
+    hg::be<float> CoverPct;
+    hg::be<float> CoverPoseBlendTimeOverride;
+    hg::be<float> RemainingBurn;
+    TArrayNoInit<FBurnOutDatum> BurnOutMaterialInstances;
+    hg::gptr<UAudioComponent> TireAudioComp;
+    TArrayNoInit<FMaterialSoundEffect> TireSoundList;
+    FName CurrentTireMaterial;
+    hg::be<float> MaxWheelEffectDistSq;
+    TArrayNoInit<FMaterialParticleEffect> WheelParticleEffects;
+    hg::be<int> WheelIndexToParticleCheck;
+    hg::be<int> DefaultWheelParticleIndex;
+    hg::be<float> LastCheckUpsideDownTime;
+    hg::be<float> FlippedCount;
+    hg::gptr<UAudioComponent> ScrapeSound;
+    hg::be<float> FireDamageThreshold;
+    hg::be<float> FireDamagePerSec;
+    hg::be<float> AccruedFireDamage;
+    hg::be<float> UpsideDownDamagePerSec;
+    hg::be<float> OccupiedUpsideDownDamagePerSec;
+    hg::be<float> WaterDamage;
+    hg::be<float> AccumulatedWaterDamage;
+    TArrayNoInit<int> GroundEffectIndices;
+    hg::be<float> MaxGroundEffectDist;
+    FName GroundEffectDistParameterName;
+    hg::gptr<UParticleSystem> WaterGroundEffect;
+    FRotator WeaponRotation;
+    TArrayNoInit<FVehicleSeat> Seats;
+    hg::be<int> SeatMask;
+    TArrayNoInit<FVehicleAnim> VehicleAnims;
+    TArrayNoInit<FVehicleSound> VehicleSounds;
+    FName DrivingAnim;
+    hg::be<float> DestroyOnPenetrationThreshold;
+    hg::be<float> DestroyOnPenetrationDuration;
+    hg::be<float> TimeInDestroyablePenetration;
+    hg::be<float> LastDeathImpactTime;
+    hg::gptr<USoundCue> LargeChunkImpactSound;
+    hg::gptr<USoundCue> MediumChunkImpactSound;
+    hg::gptr<USoundCue> SmallChunkImpactSound;
+    hg::be<float> CustomGravityScaling;
+    TArrayNoInit<FDamageParamScales> DamageParamScaleLevels;
+    TArrayNoInit<UUDKSkelControl_Damage *> DamageSkelControls;
+    TArrayNoInit<FFDamageMorphTargets> DamageMorphTargets;
+    hg::gptr<UMaterialInstanceConstant> DamageMaterialInstance[2];
+    FUTTakeHitInfo LastTakeHitInfo;
+    hg::be<float> LastTakeHitTimeout;
+    TArrayNoInit<FVehicleEffect> VehicleEffects;
+    hg::gptr<AController> KillerController;
+    hg::be<float> LastJumpOutCheck;
+    FName WaterEffectType;
+    TArrayNoInit<int> ContrailEffectIndices;
+    FName ContrailColorParameterName;
+    hg::be<float> ObjectiveGetOutDist;
+    TArrayNoInit<AUDKBot *> Trackers;
+    hg::be<float> ExtraReachDownThreshold;
+    hg::be<float> ResetTime;
+    hg::be<float> MinRunOverSpeed;
+    hg::be<float> LastRunOverWarningTime;
+    hg::be<float> MinRunOverWarningAim;
+    hg::be<float> TeamBeaconMaxDist;
+    hg::be<float> LastPostRenderTraceTime;
+    hg::be<float> ShowLockedMaxDist;
+    FVector HUDLocation;
+    hg::gptr<UParticleSystemComponent> HoverboardDust;
+    hg::gptr<UCCSBTTree> DefaultBehaviorTree;
+    hg::be<float> YellingDistance;
+    hg::be<float> MoveToRadius;
+    char _pad1[0x4];
+    #endif
 };
 
 class AUDKWeaponPawn : public AUDKVehicleBase, public ICCSPawn  // size 0x670
@@ -38182,6 +38909,15 @@ inline UClass *AFluidSurfaceActor::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UClass *AGameInfo::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAGameInfo(L"Engine");
+        InitializePrivateStaticClassAGameInfo();
+    }
+    return PrivateStaticClass;
+}
 inline UClass *AGamePawn::StaticClass()
 {
     if (!PrivateStaticClass)
@@ -38404,6 +39140,15 @@ inline UClass *AUDKPlayerController::StaticClass()
     {
         PrivateStaticClass = GetPrivateStaticClassAUDKPlayerController(L"UDKBase");
         InitializePrivateStaticClassAUDKPlayerController();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AUDKVehicle::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAUDKVehicle(L"UDKBase");
+        InitializePrivateStaticClassAUDKVehicle();
     }
     return PrivateStaticClass;
 }
@@ -39307,6 +40052,7 @@ inline FAnimSlotInfo::FAnimSlotInfo() {}
 inline FApexModuleDestructibleSettings::FApexModuleDestructibleSettings() {}
 inline FAutomatedTestingDatum::FAutomatedTestingDatum() {}
 inline FBoneCopyInfo::FBoneCopyInfo() {}
+inline FBurnOutDatum::FBurnOutDatum() {}
 inline FCCSCoverData::FCCSCoverData() {}
 inline FCCSMoveCmdData::FCCSMoveCmdData() {}
 inline FCCSSystemConfigData::FCCSSystemConfigData() {}
@@ -39317,12 +40063,16 @@ inline FCollisionImpactData::FCollisionImpactData() {}
 inline FCompartmentRunList::FCompartmentRunList() {}
 inline FConnectedPeerInfo::FConnectedPeerInfo() {}
 inline FCylinder::FCylinder() {}
+inline FDamageParamScales::FDamageParamScales() {}
 inline FDebugNavCost::FDebugNavCost() {}
 inline FDebugTextInfo::FDebugTextInfo() {}
 inline FDecalReceiver::FDecalReceiver() {}
 inline FDrivenWeaponPawnInfo::FDrivenWeaponPawnInfo() {}
 inline FDynamicLinkInfo::FDynamicLinkInfo() {}
 inline FEnemyThreatInfo::FEnemyThreatInfo() {}
+inline FFDamageMorphTargets::FFDamageMorphTargets() {}
+inline FGameClassShortName::FGameClassShortName() {}
+inline FGameTypePrefix::FGameTypePrefix() {}
 inline FGeomSelection::FGeomSelection() {}
 inline FGuid::FGuid() {}
 inline FHostMigrationState::FHostMigrationState() {}
@@ -39333,6 +40083,8 @@ inline FLODSoloTrack::FLODSoloTrack() {}
 inline FLightmassMaterialInterfaceSettings::FLightmassMaterialInterfaceSettings() {}
 inline FLightmassWorldInfoSettings::FLightmassWorldInfoSettings() {}
 inline FLinearDOFSetup::FLinearDOFSetup() {}
+inline FMaterialParticleEffect::FMaterialParticleEffect() {}
+inline FMaterialSoundEffect::FMaterialSoundEffect() {}
 inline FMusicTrackStruct::FMusicTrackStruct() {}
 inline FNavMeshPathParams::FNavMeshPathParams() {}
 inline FNodeChild::FNodeChild() {}
@@ -39354,6 +40106,10 @@ inline FTrailSample::FTrailSample() {}
 inline FTrailSamplePoint::FTrailSamplePoint() {}
 inline FUTTakeHitInfo::FUTTakeHitInfo() {}
 inline FUniqueNetId::FUniqueNetId() {}
+inline FVehicleAnim::FVehicleAnim() {}
+inline FVehicleEffect::FVehicleEffect() {}
+inline FVehicleSeat::FVehicleSeat() {}
+inline FVehicleSound::FVehicleSound() {}
 inline FVehicleState::FVehicleState() {}
 inline FVisiblePortalInfo::FVisiblePortalInfo() {}
 #endif
