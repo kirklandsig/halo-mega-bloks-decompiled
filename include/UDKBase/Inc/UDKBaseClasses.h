@@ -2,6 +2,18 @@
 #pragma once
 #include <vectorintrinsics.h>
 
+namespace Grip {
+template <int T0> class AllocatorBaseGH;
+template <class T0, int T1> struct AllocatorGH;
+template <class T0> class ConstructorMov;
+struct MemAddressStub;
+class MemoryHeap;
+class String;
+class StringBuffer;
+}
+
+template <class T0, class T1> class Grip_Array;
+template <class T0, int T1> class Grip_ArrayPOD;
 template <class T0, class T1> class TArray;
 template <class T0> class TArrayNoInit;
 template <class T0, class T1> class TIndirectArray;
@@ -24,18 +36,53 @@ class AKAsset;
 class ANavigationPoint;
 class APawn;
 class APhysicsVolume;
+class APickupFactory;
 class APlayerController;
 class APlayerReplicationInfo;
 class APortalTeleporter;
 class APrefabInstance;
 class AProjectile;
 class ASVehicle;
+class AScout;
 class AUDKCover;
+class AUDKPawn;
 class AUSSController;
 class AUSSPawn;
 class AVehicle;
 class AVolume;
 class AWeapon;
+class AWorldInfo;
+struct ActorWrapper;
+class CCSAFAction;
+class CCSAFEncircleTarget;
+class CCSAFEnterCover;
+class CCSAFExitCover;
+class CCSAFFireBurst;
+class CCSAFFlee;
+class CCSAFGetInCover;
+class CCSAFGetOutCover;
+class CCSAFIdle;
+class CCSAFMoveTo;
+class CCSAFMoveToActor;
+class CCSAFOrientToward;
+class CCSAFStrafeTarget;
+class CCSAFStrafeTo;
+struct CCSAOEncircleTarget;
+struct CCSAOEnterCover;
+struct CCSAOExitCover;
+struct CCSAOFireBurst;
+struct CCSAOFlee;
+struct CCSAOGetInCover;
+struct CCSAOGetOutCover;
+struct CCSAOIdle;
+struct CCSAOMoveTo;
+struct CCSAOMoveToActor;
+struct CCSAOOrientToward;
+struct CCSAOStrafeTarget;
+struct CCSAOStrafeTo;
+class CCSBlackboard;
+class CCSBrain;
+struct CCSCharacter;
 struct CCSController_eventActionStopFiring_Parms;
 struct CCSController_eventAimAt_Parms;
 struct CCSController_eventCanFireAt_Parms;
@@ -47,6 +94,17 @@ struct CCSController_eventNotifyAIMoveToActorCompleted_Parms;
 struct CCSController_eventStartFireBurstObj_Parms;
 struct CCSController_eventStartFireBurst_Parms;
 struct CCSController_eventStopFireBurst_Parms;
+struct CCSCover;
+class CCSCoverRenderingComponent;
+struct CCSGameCover;
+class CCSNorman;
+class CCSPSCover;
+class CCSPSTargetAwareness;
+class CCSSensorSystem;
+struct CCSSystemsConfig;
+struct CCSTarget;
+class CCSTargetRenderingComponent;
+struct CoverLink_eventSetDisabled_Parms;
 struct FActorReference;
 struct FAnimSlotDesc;
 struct FAnimSlotInfo;
@@ -63,15 +121,21 @@ class FCanvas;
 struct FCheckResult;
 struct FCollisionImpactData;
 class FColor;
+struct FCoverInfo;
+struct FCoverReference;
+struct FCoverSlot;
 struct FCurveKey;
+struct FCylinder;
 class FDecalRenderData;
 class FDecalState;
 class FDefaultAllocator;
 class FDefaultBitArrayAllocator;
 class FDefaultSetAllocator;
+struct FDynamicLinkInfo;
 class FEditPropertyChain;
 class FExportObjectInnerContext;
 class FFeedbackContext;
+struct FFireLink;
 class FForceApplicator;
 struct FFrame;
 class FGuid;
@@ -102,6 +166,7 @@ struct FRBCollisionChannelContainer;
 class FRBPhysScene;
 struct FReferencerInformation;
 struct FReferencerInformationList;
+class FRenderCommandFence;
 struct FRigidBodyCollisionInfo;
 struct FRigidBodyContactInfo;
 struct FRigidBodyState;
@@ -114,21 +179,36 @@ struct FStateFrame;
 struct FStaticLightingPrimitiveInfo;
 struct FStreamingTexturePrimitiveInfo;
 class FString;
+struct FTimerData;
 struct FTraceHitInfo;
 class FVector;
 struct FVector2D;
 class FVector4;
 class GMainThreadMemStack;
+class GripAFAction;
 class GripAFFactory;
+class GripAFModifier;
+class GripBBMember;
+class GripBBVisualization;
 struct GripBTScriptNodeCache_eventCacheAllConditions_Parms;
 struct GripBTScriptNodeCache_eventInitializeAllNodes_Parms;
 struct GripBTScriptNodeCache_eventSurveyUsedBBMembers_Parms;
+class GripBTSystemFlags;
 class GripBlackboard;
+class GripBrainSystem;
+struct GripEvent;
 class GripHUDRenderer;
+class GripHeapObject;
 class GripRBTNode;
+struct GripSystemConfig;
+class GripVHeapObject;
+struct Grip_Rotation;
+struct Grip_Vector;
 struct GwNavVehicle_eventExecuteVehicleCommand_Parms;
+class ICCSMeatPuppet;
 class ICCSPawn;
 class IGJKHelper;
+class IGripSceneRenderer;
 class IInterface_NavigationHandle;
 class IInterface_Speaker;
 class NxActor;
@@ -264,6 +344,7 @@ class ULinkerSave;
 class UMaterialInterface;
 class UMorphNodeBase;
 class UNavigationHandle;
+class UNavigationMeshBase;
 class UObject;
 class UObjectSerializer;
 class UPackage;
@@ -284,6 +365,7 @@ class USVehicleWheel;
 class USelection;
 class USeqAct_ActorFactory;
 class USeqAct_Interp;
+class USeqAct_Latent;
 class USequenceEvent;
 class USequenceObject;
 class USequenceOp;
@@ -453,6 +535,10 @@ enum EFindName
     FNAME_Find = 0,
     FNAME_Add = 1,
     FNAME_Replace = 2,
+};
+enum EForceInit
+{
+    E_ForceInit = 0,
 };
 enum EGotoState
 {
@@ -1117,6 +1203,26 @@ enum ETestMoveResult
     TESTMOVE_Fell = 2,
     TESTMOVE_HitGoal = 5,
 };
+enum EThreatType
+{
+};
+
+namespace CCS {
+enum ECoverShootConfig
+{
+    CoverShootConfig_None = 0,
+    CoverShootConfig_All = 1,
+    CoverShootConfig_Left = 2,
+    CoverShootConfig_Right = 3,
+    CoverShootConfig_LeftOrRight = 4,
+};
+enum ECoverType
+{
+    CoverType_None = 0,
+    CoverType_Stand = 1,
+    CoverType_Crouch = 2,
+};
+}
 
 namespace UE3 {
 enum EPlatformType
@@ -1231,12 +1337,614 @@ private:
     unsigned int FNameData[0x2];
 };
 
+class FRenderCommandFence  // size 0x4, opaque
+{
+public:
+    FRenderCommandFence();
+    void BeginFence();
+    void Wait(unsigned int) const;
+    unsigned int GetNumPendingFences() const;
+private:
+    unsigned int FRenderCommandFenceData[0x1];
+};
+
+class FRotator  // size 0xC, opaque
+{
+public:
+    void SerializeCompressed(FArchive &);
+    FRotator(const FQuat &);
+    FRotator(EEventParm);
+    FRotator(int, int, int);
+    FRotator();
+    FRotator operator+(const FRotator &) const;
+    FRotator operator-(const FRotator &) const;
+    FRotator operator*(float) const;
+    FRotator operator*=(float);
+    unsigned int operator==(const FRotator &) const;
+    unsigned int operator!=(const FRotator &) const;
+    FRotator operator+=(const FRotator &);
+    FRotator operator-=(const FRotator &);
+    FRotator Reduce() const;
+    int IsZero() const;
+    FRotator Add(int, int, int);
+    FRotator AddBounded(int, int, int);
+    FRotator GridSnap(const FRotator &) const;
+    FVector Vector() const;
+    FQuat Quaternion() const;
+    FVector Euler() const;
+    static FRotator MakeFromEuler(const FVector &);
+    FRotator Clamp() const;
+    static int NormalizeAxis(int);
+    FRotator GetNormalized() const;
+    FRotator GetDenormalized() const;
+    void MakeShortestRoute();
+    void GetWindingAndRemainder(FRotator &, FRotator &) const;
+    FString ToString() const;
+    unsigned int InitFromString(const FString &);
+    static FRotator ZeroRotator;
+private:
+    unsigned int FRotatorData[0x3];
+};
+
 struct FStaticLightingPrimitiveInfo  // size 0x1C, opaque
 {
 public:
     FStaticLightingPrimitiveInfo();
 private:
     unsigned int FStaticLightingPrimitiveInfoData[0x7];
+};
+
+class FVector  // size 0xC
+{
+public:
+    FVector(EEventParm);
+    FVector(FIntPoint);
+    FVector(const FLinearColor &);
+    FVector(const FVector4 &);
+    FVector(const FVector2D, float);
+    FVector(float, float, float);
+    FVector(float);
+    FVector();
+    FVector operator^(const FVector &) const;
+    float operator|(const FVector &) const;
+    FVector operator+(float) const;
+    FVector operator+(const FVector &) const;
+    FVector operator-() const;
+    FVector operator-(float) const;
+    FVector operator-(const FVector &) const;
+    FVector operator*(const FVector &) const;
+    FVector operator*(float) const;
+    FVector operator/(const FVector &) const;
+    FVector operator/(float) const;
+    unsigned int operator==(const FVector &) const;
+    unsigned int operator!=(const FVector &) const;
+    unsigned int Equals(const FVector &, float) const;
+    unsigned int AllComponentsEqual(float) const;
+    FVector operator+=(const FVector &);
+    FVector operator-=(const FVector &);
+    FVector operator*=(const FVector &);
+    FVector operator*=(float);
+    FVector operator/=(const FVector &);
+    FVector operator/=(float);
+    float operator[](int) const;
+    float &operator[](int);
+    void Set(float, float, float);
+    float GetMax() const;
+    float GetAbsMax() const;
+    float GetMin() const;
+    float Size() const;
+    float SizeSquared() const;
+    float Size2D() const;
+    float SizeSquared2D() const;
+    float Distance(const FVector &) const;
+    float DistanceSquared(const FVector &) const;
+    int IsNearlyZero(float) const;
+    unsigned int IsZero() const;
+    unsigned int Normalize(float);
+    unsigned int IsNormalized() const;
+    void ToDirectionAndLength(FVector &, float &);
+    FVector Projection() const;
+    FVector UnsafeNormal() const;
+    FVector GridSnap(const float &) const;
+    FVector BoundToCube(float) const;
+    void AddBounded(const FVector &, float);
+    float &Component(int);
+    unsigned int IsUniform(float) const;
+    FVector MirrorByVector(const FVector &) const;
+    FVector MirrorByPlane(const FPlane &) const;
+    FVector RotateAngleAxis(const int, const FVector &) const;
+    FVector SafeNormal(float) const;
+    FVector SafeNormal2D(float) const;
+    float Dot2d(FVector);
+    FVector ProjectOnTo(const FVector &) const;
+    FRotator Rotation() const;
+    void FindBestAxisVectors(FVector &, FVector &) const;
+    void UnwindEuler();
+    unsigned int ContainsNaN() const;
+    unsigned int IsUnit(float) const;
+    FString ToString() const;
+    unsigned int InitFromString(const FString &);
+    void SerializeCompressed(FArchive &);
+    float X;  // 0x0
+    float Y;  // 0x4
+    float Z;  // 0x8
+    static FVector ZeroVector;
+};
+
+template <> class TArray<AActor *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<AActor *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    AActor **GetTypedData() const;
+    AActor **GetTypedData();
+    AActor **GetData() const;
+    AActor **GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    AActor *&operator()(int) const;
+    AActor *&operator()(int);
+    AActor *Pop();
+    void Push(AActor *&);
+    AActor *&Top() const;
+    AActor *&Top();
+    AActor *&Last(int) const;
+    AActor *&Last(int);
+    void Shrink();
+    unsigned int FindItem(AActor *&, int &) const;
+    int FindItemIndex(AActor *&) const;
+    unsigned int ContainsItem(AActor *&) const;
+    unsigned int operator==(const TArray<AActor *,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<AActor *,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(AActor *&, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<AActor *,FDefaultAllocator> &);
+    TArray<AActor *,FDefaultAllocator> &operator+=(const TArray<AActor *,FDefaultAllocator> &);
+    TArray<AActor *,FDefaultAllocator> &operator=(const TArray<AActor *,FDefaultAllocator> &);
+    int AddItem(AActor *&);
+    int AddZeroed(int);
+    int AddUniqueItem(AActor *&);
+    void Reserve(int);
+    void Init(AActor *&, int);
+    void Init(int);
+    int RemoveSingleItem(AActor *&);
+    int RemoveItem(AActor *&);
+    int RemoveSingleItemSwap(AActor *&);
+    int RemoveItemSwap(AActor *&);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    AActor *&DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<AActor *> : public TArray<AActor *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<AActor *> &operator=(const TArray<AActor *,FDefaultAllocator> &);
+    TArrayNoInit<AActor *> &operator=(const TArrayNoInit<AActor *> &);
+};
+
+struct FTimerData  // size 0x1C, opaque
+{
+public:
+    FTimerData(EEventParm);
+private:
+    unsigned int FTimerDataData[0x7];
+};
+
+template <> class TArray<FTimerData,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<FTimerData,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    const FTimerData *GetTypedData() const;
+    FTimerData *GetTypedData();
+    const FTimerData *GetData() const;
+    FTimerData *GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    const FTimerData &operator()(int) const;
+    FTimerData &operator()(int);
+    FTimerData Pop();
+    void Push(const FTimerData &);
+    const FTimerData &Top() const;
+    FTimerData &Top();
+    const FTimerData &Last(int) const;
+    FTimerData &Last(int);
+    void Shrink();
+    unsigned int FindItem(const FTimerData &, int &) const;
+    int FindItemIndex(const FTimerData &) const;
+    unsigned int ContainsItem(const FTimerData &) const;
+    unsigned int operator==(const TArray<FTimerData,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<FTimerData,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(const FTimerData &, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<FTimerData,FDefaultAllocator> &);
+    TArray<FTimerData,FDefaultAllocator> &operator+=(const TArray<FTimerData,FDefaultAllocator> &);
+    TArray<FTimerData,FDefaultAllocator> &operator=(const TArray<FTimerData,FDefaultAllocator> &);
+    int AddItem(const FTimerData &);
+    int AddZeroed(int);
+    int AddUniqueItem(const FTimerData &);
+    void Reserve(int);
+    void Init(const FTimerData &, int);
+    void Init(int);
+    int RemoveSingleItem(const FTimerData &);
+    int RemoveItem(const FTimerData &);
+    int RemoveSingleItemSwap(const FTimerData &);
+    int RemoveItemSwap(const FTimerData &);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    const FTimerData &DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<FTimerData> : public TArray<FTimerData,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<FTimerData> &operator=(const TArray<FTimerData,FDefaultAllocator> &);
+    TArrayNoInit<FTimerData> &operator=(const TArrayNoInit<FTimerData> &);
+};
+
+template <> class TArray<UActorComponent *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<UActorComponent *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    UActorComponent **GetTypedData() const;
+    UActorComponent **GetTypedData();
+    UActorComponent **GetData() const;
+    UActorComponent **GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    UActorComponent *&operator()(int) const;
+    UActorComponent *&operator()(int);
+    UActorComponent *Pop();
+    void Push(UActorComponent *&);
+    UActorComponent *&Top() const;
+    UActorComponent *&Top();
+    UActorComponent *&Last(int) const;
+    UActorComponent *&Last(int);
+    void Shrink();
+    unsigned int FindItem(UActorComponent *&, int &) const;
+    int FindItemIndex(UActorComponent *&) const;
+    unsigned int ContainsItem(UActorComponent *&) const;
+    unsigned int operator==(const TArray<UActorComponent *,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<UActorComponent *,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(UActorComponent *&, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<UActorComponent *,FDefaultAllocator> &);
+    TArray<UActorComponent *,FDefaultAllocator> &operator+=(const TArray<UActorComponent *,FDefaultAllocator> &);
+    TArray<UActorComponent *,FDefaultAllocator> &operator=(const TArray<UActorComponent *,FDefaultAllocator> &);
+    int AddItem(UActorComponent *&);
+    int AddZeroed(int);
+    int AddUniqueItem(UActorComponent *&);
+    void Reserve(int);
+    void Init(UActorComponent *&, int);
+    void Init(int);
+    int RemoveSingleItem(UActorComponent *&);
+    int RemoveItem(UActorComponent *&);
+    int RemoveSingleItemSwap(UActorComponent *&);
+    int RemoveItemSwap(UActorComponent *&);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    UActorComponent *&DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<UActorComponent *> : public TArray<UActorComponent *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<UActorComponent *> &operator=(const TArray<UActorComponent *,FDefaultAllocator> &);
+    TArrayNoInit<UActorComponent *> &operator=(const TArrayNoInit<UActorComponent *> &);
+};
+
+template <> class TArray<UClass *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<UClass *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    UClass **GetTypedData() const;
+    UClass **GetTypedData();
+    UClass **GetData() const;
+    UClass **GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    UClass *&operator()(int) const;
+    UClass *&operator()(int);
+    UClass *Pop();
+    void Push(UClass *&);
+    UClass *&Top() const;
+    UClass *&Top();
+    UClass *&Last(int) const;
+    UClass *&Last(int);
+    void Shrink();
+    unsigned int FindItem(UClass *&, int &) const;
+    int FindItemIndex(UClass *&) const;
+    unsigned int ContainsItem(UClass *&) const;
+    unsigned int operator==(const TArray<UClass *,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<UClass *,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(UClass *&, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<UClass *,FDefaultAllocator> &);
+    TArray<UClass *,FDefaultAllocator> &operator+=(const TArray<UClass *,FDefaultAllocator> &);
+    TArray<UClass *,FDefaultAllocator> &operator=(const TArray<UClass *,FDefaultAllocator> &);
+    int AddItem(UClass *&);
+    int AddZeroed(int);
+    int AddUniqueItem(UClass *&);
+    void Reserve(int);
+    void Init(UClass *&, int);
+    void Init(int);
+    int RemoveSingleItem(UClass *&);
+    int RemoveItem(UClass *&);
+    int RemoveSingleItemSwap(UClass *&);
+    int RemoveItemSwap(UClass *&);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    UClass *&DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<UClass *> : public TArray<UClass *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<UClass *> &operator=(const TArray<UClass *,FDefaultAllocator> &);
+    TArrayNoInit<UClass *> &operator=(const TArrayNoInit<UClass *> &);
+};
+
+template <> class TArray<USeqAct_Latent *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    USeqAct_Latent **GetTypedData() const;
+    USeqAct_Latent **GetTypedData();
+    USeqAct_Latent **GetData() const;
+    USeqAct_Latent **GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    USeqAct_Latent *&operator()(int) const;
+    USeqAct_Latent *&operator()(int);
+    USeqAct_Latent *Pop();
+    void Push(USeqAct_Latent *&);
+    USeqAct_Latent *&Top() const;
+    USeqAct_Latent *&Top();
+    USeqAct_Latent *&Last(int) const;
+    USeqAct_Latent *&Last(int);
+    void Shrink();
+    unsigned int FindItem(USeqAct_Latent *&, int &) const;
+    int FindItemIndex(USeqAct_Latent *&) const;
+    unsigned int ContainsItem(USeqAct_Latent *&) const;
+    unsigned int operator==(const TArray<USeqAct_Latent *,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<USeqAct_Latent *,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(USeqAct_Latent *&, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
+    TArray<USeqAct_Latent *,FDefaultAllocator> &operator+=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
+    TArray<USeqAct_Latent *,FDefaultAllocator> &operator=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
+    int AddItem(USeqAct_Latent *&);
+    int AddZeroed(int);
+    int AddUniqueItem(USeqAct_Latent *&);
+    void Reserve(int);
+    void Init(USeqAct_Latent *&, int);
+    void Init(int);
+    int RemoveSingleItem(USeqAct_Latent *&);
+    int RemoveItem(USeqAct_Latent *&);
+    int RemoveSingleItemSwap(USeqAct_Latent *&);
+    int RemoveItemSwap(USeqAct_Latent *&);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    USeqAct_Latent *&DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<USeqAct_Latent *> : public TArray<USeqAct_Latent *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<USeqAct_Latent *> &operator=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
+    TArrayNoInit<USeqAct_Latent *> &operator=(const TArrayNoInit<USeqAct_Latent *> &);
+};
+
+template <> class TArray<USequenceEvent *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<USequenceEvent *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    USequenceEvent **GetTypedData() const;
+    USequenceEvent **GetTypedData();
+    USequenceEvent **GetData() const;
+    USequenceEvent **GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    USequenceEvent *&operator()(int) const;
+    USequenceEvent *&operator()(int);
+    USequenceEvent *Pop();
+    void Push(USequenceEvent *&);
+    USequenceEvent *&Top() const;
+    USequenceEvent *&Top();
+    USequenceEvent *&Last(int) const;
+    USequenceEvent *&Last(int);
+    void Shrink();
+    unsigned int FindItem(USequenceEvent *&, int &) const;
+    int FindItemIndex(USequenceEvent *&) const;
+    unsigned int ContainsItem(USequenceEvent *&) const;
+    unsigned int operator==(const TArray<USequenceEvent *,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<USequenceEvent *,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(USequenceEvent *&, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<USequenceEvent *,FDefaultAllocator> &);
+    TArray<USequenceEvent *,FDefaultAllocator> &operator+=(const TArray<USequenceEvent *,FDefaultAllocator> &);
+    TArray<USequenceEvent *,FDefaultAllocator> &operator=(const TArray<USequenceEvent *,FDefaultAllocator> &);
+    int AddItem(USequenceEvent *&);
+    int AddZeroed(int);
+    int AddUniqueItem(USequenceEvent *&);
+    void Reserve(int);
+    void Init(USequenceEvent *&, int);
+    void Init(int);
+    int RemoveSingleItem(USequenceEvent *&);
+    int RemoveItem(USequenceEvent *&);
+    int RemoveSingleItemSwap(USequenceEvent *&);
+    int RemoveItemSwap(USequenceEvent *&);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    USequenceEvent *&DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<USequenceEvent *> : public TArray<USequenceEvent *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<USequenceEvent *> &operator=(const TArray<USequenceEvent *,FDefaultAllocator> &);
+    TArrayNoInit<USequenceEvent *> &operator=(const TArrayNoInit<USequenceEvent *> &);
 };
 
 class FSerializableObject  // size 0x4, opaque
@@ -2178,7 +2886,7 @@ private:
     unsigned int UObjectData[0xE];
 };
 
-class AActor : public UObject  // size 0x1D4, opaque
+class AActor : public UObject  // size 0x1D4
 {
 public:
     enum
@@ -2726,12 +3434,167 @@ public:
     unsigned int IsReferencedByKismet(USequenceObject **) const;
     unsigned int HasSingleCollidingComponent();
     virtual unsigned int Get_bDebug();
+    typedef UObject Super;
+    AActor *Next_Actor;  // 0x3C
+    AActor *Next_Reactive;  // 0x40
+    AActor *Next_Vehicle;  // 0x44
+    AActor *Next_Target_Actor;  // 0x48
+    TArrayNoInit<UActorComponent *> Components;  // 0x4C
+    TArrayNoInit<UActorComponent *> AllComponents;  // 0x58
+    FVector Location;  // 0x64
+    FRotator Rotation;  // 0x70
+    float DrawScale;  // 0x7C
+    FVector DrawScale3D;  // 0x80
+    FVector PrePivot;  // 0x8C
+    FRenderCommandFence DetachFence;  // 0x98
+    float CustomTimeDilation;  // 0x9C
+    unsigned char Physics;  // 0xA0
+    unsigned char RemoteRole;  // 0xA1
+    unsigned char Role;  // 0xA2
+    unsigned char CollisionType;  // 0xA3
+    unsigned char ReplicatedCollisionType;  // 0xA4
+    unsigned char TickGroup;  // 0xA5
+    char _pad0[0x2];
+    AActor *Owner;  // 0xA8
+    AActor *Base;  // 0xAC
+    TArrayNoInit<FTimerData> Timers;  // 0xB0
+    unsigned long bStatic : 1;  // 0xBC
+    unsigned long bHidden : 1;
+    unsigned long bNoDelete : 1;
+    unsigned long bDeleteMe : 1;
+    unsigned long bTicked : 1;
+    unsigned long bOnlyOwnerSee : 1;
+    unsigned long bTickIsDisabled : 1;
+    unsigned long bWorldGeometry : 1;
+    unsigned long bIgnoreRigidBodyPawns : 1;
+    unsigned long bOrientOnSlope : 1;
+    unsigned long bIgnoreEncroachers : 1;
+    unsigned long bPushedByEncroachers : 1;
+    unsigned long bDestroyedByInterpActor : 1;
+    unsigned long bRouteBeginPlayEvenIfStatic : 1;
+    unsigned long bIsMoving : 1;
+    unsigned long bAlwaysEncroachCheck : 1;
+    unsigned long bHasAlternateTargetLocation : 1;
+    unsigned long bCanStepUpOn : 1;
+    unsigned long bNetTemporary : 1;
+    unsigned long bOnlyRelevantToOwner : 1;
+    unsigned long bNetDirty : 1;
+    unsigned long bAlwaysRelevant : 1;
+    unsigned long bReplicateInstigator : 1;
+    unsigned long bReplicateMovement : 1;
+    unsigned long bSkipActorPropertyReplication : 1;
+    unsigned long bUpdateSimulatedPosition : 1;
+    unsigned long bTearOff : 1;
+    unsigned long bOnlyDirtyReplication : 1;
+    unsigned long bAllowFluidSurfaceInteraction : 1;
+    unsigned long bDemoRecording : 1;
+    unsigned long bDemoOwner : 1;
+    unsigned long bForceDemoRelevant : 1;
+    unsigned long bNetInitialRotation : 1;  // 0xC0
+    unsigned long bReplicateRigidBodyLocation : 1;
+    unsigned long bKillDuringLevelTransition : 1;
+    unsigned long bExchangedRoles : 1;
+    unsigned long bConsiderAllStaticMeshComponentsForStreaming : 1;
+    unsigned long bDebug : 1;
+    unsigned long bPostRenderIfNotVisible : 1;
+    unsigned long bForceNetUpdate : 1;
+    unsigned long bPendingNetUpdate : 1;
+    unsigned long bHardAttach : 1;
+    unsigned long bIgnoreBaseRotation : 1;
+    unsigned long bShadowParented : 1;
+    unsigned long bSkipAttachedMoves : 1;
+    unsigned long bCanBeAdheredTo : 1;
+    unsigned long bCanBeFrictionedTo : 1;
+    unsigned long bHurtEntry : 1;
+    unsigned long bGameRelevant : 1;
+    unsigned long bMovable : 1;
+    unsigned long bDestroyInPainVolume : 1;
+    unsigned long bCanBeDamaged : 1;
+    unsigned long bShouldBaseAtStartup : 1;
+    unsigned long bPendingDelete : 1;
+    unsigned long bCanTeleport : 1;
+    unsigned long bAlwaysTick : 1;
+    unsigned long bBlocksNavigation : 1;
+    unsigned long BlockRigidBody : 1;
+    unsigned long bCollideWhenPlacing : 1;
+    unsigned long bCollideActors : 1;
+    unsigned long bCollideWorld : 1;
+    unsigned long bCollideComplex : 1;
+    unsigned long bBlockActors : 1;
+    unsigned long bProjTarget : 1;
+    unsigned long bBlocksTeleport : 1;  // 0xC4
+    unsigned long bMoveIgnoresDestruction : 1;
+    unsigned long bProjectileMoveSingleBlocking : 1;
+    unsigned long bNoEncroachCheck : 1;
+    unsigned long bCollideAsEncroacher : 1;
+    unsigned long bPhysRigidBodyOutOfWorldCheck : 1;
+    unsigned long bComponentOutsideWorld : 1;
+    unsigned long bForceOctreeSNFilter : 1;
+    unsigned long bForceOctreeMNFilter : 1;
+    unsigned long bRigidBodyWasAwake : 1;
+    unsigned long bCallRigidBodyWakeEvents : 1;
+    unsigned long bBounce : 1;
+    unsigned long bJustTeleported : 1;
+    unsigned long bEnableMobileTouch : 1;
+    unsigned long bNetInitial : 1;
+    unsigned long bNetOwner : 1;
+    unsigned long bHiddenEd : 1;
+    unsigned long bEditable : 1;
+    unsigned long bHiddenEdGroup_DEPRECATED : 1;
+    unsigned long bHiddenEdLayer : 1;
+    unsigned long bHiddenEdCustom : 1;
+    unsigned long bHiddenEdTemporary : 1;
+    unsigned long bHiddenEdLevel : 1;
+    unsigned long bHiddenEdScene : 1;
+    unsigned long bEdShouldSnap : 1;
+    unsigned long bTempEditor : 1;
+    unsigned long bPathColliding : 1;
+    unsigned long bPathTemp : 1;
+    unsigned long bScriptInitialized : 1;
+    unsigned long bLockLocation : 1;
+    unsigned long bForceAllowKismetModification : 1;
+    unsigned long bDebugEffectIsRelevant : 1;
+    int NetTag;  // 0xC8
+    float NetUpdateTime;  // 0xCC
+    float NetUpdateFrequency;  // 0xD0
+    float NetPriority;  // 0xD4
+    float LastNetUpdateTime;  // 0xD8
+    float TimeSinceLastTick;  // 0xDC
+    APawn *Instigator;  // 0xE0
+    AWorldInfo *WorldInfo;  // 0xE4
+    float LifeSpan;  // 0xE8
+    float CreationTime;  // 0xEC
+    float LastRenderTime;  // 0xF0
+    FName Tag;  // 0xF4
+    FName InitialState;  // 0xFC
+    FName Layer;  // 0x104
+    FName Group_DEPRECATED;  // 0x10C
+    unsigned __int64 HiddenEditorViews;  // 0x114
+    TArrayNoInit<AActor *> Touching;  // 0x11C
+    TArrayNoInit<AActor *> Children;  // 0x128
+    float LatentFloat;  // 0x134
+    UAnimNodeSequence *LatentSeqNode;  // 0x138
+    APhysicsVolume *PhysicsVolume;  // 0x13C
+    FVector Velocity;  // 0x140
+    FVector Acceleration;  // 0x14C
+    FVector AngularVelocity;  // 0x158
+    USkeletalMeshComponent *BaseSkelComponent;  // 0x164
+    FName BaseBoneName;  // 0x168
+    TArrayNoInit<AActor *> Attached;  // 0x170
+    FVector RelativeLocation;  // 0x17C
+    FRotator RelativeRotation;  // 0x188
+    UPrimitiveComponent *CollisionComponent;  // 0x194
+    int OverlapTag;  // 0x198
+    FRotator RotationRate;  // 0x19C
+    AActor *PendingTouch;  // 0x1A8
+    UClass *MessageClass;  // 0x1AC
+    TArrayNoInit<UClass *> SupportedEvents;  // 0x1B0
+    TArrayNoInit<USequenceEvent *> GeneratedEvents;  // 0x1BC
+    TArrayNoInit<USeqAct_Latent *> LatentActions;  // 0x1C8
 private:
     static UClass *PrivateStaticClass;
 public:
     static FVector OverlapAdjust;
-private:
-    unsigned int AActorData[0x66];
 };
 
 class IInterface_NavigationHandle  // size 0x4, opaque
@@ -2944,6 +3807,7 @@ public:
     virtual void InitForPathfinding();
     virtual int ExtraEdgeCostToAddWhenActive(FNavMeshEdgeBase *);
     virtual FVector GetEdgeZAdjust(FNavMeshEdgeBase *);
+    typedef AActor Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int AControllerData[0x60];
@@ -2974,6 +3838,7 @@ public:
     virtual void SetAdjustLocation(FVector, unsigned int, unsigned int);
     virtual FVector DesiredDirection();
     virtual void PostScriptDestroyed();
+    typedef AController Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int AAIControllerData[0x6];
@@ -3000,6 +3865,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     AGwNavAIController();
+public:
+    typedef AAIController Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -3052,6 +3919,7 @@ public:
     virtual EGotoState GotoState(FName, unsigned int, unsigned int);
     virtual void ProcessState(float);
     virtual void DebugLogInternal(const wchar_t *);
+    typedef AGwNavAIController Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int AGameAIControllerData[0xE];
@@ -3117,8 +3985,497 @@ public:
     virtual void HearNoise(AActor *, float, FName);
 private:
     void DestroyBrain();
+public:
+    typedef AGameAIController Super;
+private:
     static UClass *PrivateStaticClass;
     unsigned int ACCSControllerData[0x42];
+};
+
+class ANavigationPoint : public AActor  // size 0x294, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    virtual unsigned int IsUsableAnchorFor(APawn *);
+    virtual unsigned int CanTeleport(AActor *);
+    virtual UClass *GetReachSpecClass(ANavigationPoint *, UClass *);
+    virtual void ClearPaths();
+    virtual unsigned int ShouldBeBased();
+    virtual void Validate();
+    virtual void TogglePathRendering(unsigned int);
+    virtual void InitForPathFinding();
+    virtual void ClearForPathFinding();
+    virtual APickupFactory *GetAPickupFactory();
+    virtual unsigned int GetUpDir(FVector &);
+    virtual void AddToNavigationOctree();
+    virtual void RemoveFromNavigationOctree();
+    virtual unsigned int PlaceScout(AScout *);
+    virtual void GetBoundingCylinder(float &, float &) const;
+    UReachSpec *GetReachSpecTo(ANavigationPoint *, UClass *);
+    unsigned int GetAllNavInRadius(AActor *, FVector, float, TArray<ANavigationPoint *,FDefaultAllocator> &, unsigned int, int, FCylinder);
+    unsigned int IsOnDifferentNetwork(ANavigationPoint *);
+    void execGetReachSpecTo(FFrame &, void *);
+    void execIsUsableAnchorFor(FFrame &, void *);
+    void execCanTeleport(FFrame &, void *);
+    void execGetAllNavInRadius(FFrame &, void *);
+    void execIsOnDifferentNetwork(FFrame &, void *);
+    FString eventGetDebugAbbrev();
+    unsigned int eventSuggestMovePreparation(APawn *);
+    float eventDetourWeight(APawn *, float);
+    unsigned int eventAccept(AActor *, AActor *);
+    int eventSpecialCost(APawn *, UReachSpec *);
+private:
+    ANavigationPoint &operator=(const ANavigationPoint &);
+public:
+    static UClass *GetPrivateStaticClassANavigationPoint(const wchar_t *);
+    static void InitializePrivateStaticClassANavigationPoint();
+    static UClass *StaticClass();
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+protected:
+    virtual ~ANavigationPoint();
+public:
+    static void InternalConstructor(void *);
+    virtual void FindBase();
+    virtual void PostScriptDestroyed();
+protected:
+    virtual void UpdateComponentsInternal(unsigned int);
+public:
+    virtual void PostEditMove(unsigned int);
+    virtual void Spawned();
+    void UpdateMaxPathSize();
+    unsigned int FindAlternatePath(UReachSpec *, int);
+    unsigned int CanReach(ANavigationPoint *, float, unsigned int, unsigned int);
+    virtual void SetVolumes();
+    virtual void SetVolumes(const TArray<AVolume *,FDefaultAllocator> &);
+    virtual unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
+    virtual unsigned int TouchReachSucceeded(APawn *, const FVector &);
+    virtual FVector GetDestination(AController *);
+    void SortPathList();
+    virtual void GetActorReferences(TArray<FActorReference *,FDefaultAllocator> &, unsigned int);
+    virtual void ClearCrossLevelReferences();
+    virtual FGuid *GetGuid();
+    virtual ANavigationPoint *SpecifyEndAnchor(APawn *);
+    virtual void MarkComponentsAsPendingKill(unsigned int);
+    typedef AActor Super;
+private:
+    static UClass *PrivateStaticClass;
+    unsigned int ANavigationPointData[0x30];
+};
+
+template <> class TArray<APawn *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<APawn *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    APawn **GetTypedData() const;
+    APawn **GetTypedData();
+    APawn **GetData() const;
+    APawn **GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    APawn *&operator()(int) const;
+    APawn *&operator()(int);
+    APawn *Pop();
+    void Push(APawn *&);
+    APawn *&Top() const;
+    APawn *&Top();
+    APawn *&Last(int) const;
+    APawn *&Last(int);
+    void Shrink();
+    unsigned int FindItem(APawn *&, int &) const;
+    int FindItemIndex(APawn *&) const;
+    unsigned int ContainsItem(APawn *&) const;
+    unsigned int operator==(const TArray<APawn *,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<APawn *,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(APawn *&, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<APawn *,FDefaultAllocator> &);
+    TArray<APawn *,FDefaultAllocator> &operator+=(const TArray<APawn *,FDefaultAllocator> &);
+    TArray<APawn *,FDefaultAllocator> &operator=(const TArray<APawn *,FDefaultAllocator> &);
+    int AddItem(APawn *&);
+    int AddZeroed(int);
+    int AddUniqueItem(APawn *&);
+    void Reserve(int);
+    void Init(APawn *&, int);
+    void Init(int);
+    int RemoveSingleItem(APawn *&);
+    int RemoveItem(APawn *&);
+    int RemoveSingleItemSwap(APawn *&);
+    int RemoveItemSwap(APawn *&);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    APawn *&DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<APawn *> : public TArray<APawn *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<APawn *> &operator=(const TArray<APawn *,FDefaultAllocator> &);
+    TArrayNoInit<APawn *> &operator=(const TArrayNoInit<APawn *> &);
+};
+
+struct FCoverSlot  // size 0x78, opaque
+{
+public:
+    void SetExposedCoverRefIdx(int, int);
+    unsigned long GetExposedCoverRefIdx(int);
+    void SetExposedScale(int, int);
+    unsigned char GetExposedScale(int);
+    void SetLeftTurnTargetCoverRefIdx(int);
+    unsigned long GetLeftTurnTargetCoverRefIdx();
+    void SetRightTurnTargetCoverRefIdx(int);
+    unsigned long GetRightTurnTargetCoverRefIdx();
+    FFireLink &GetFireLinkRef(int, unsigned char);
+private:
+    unsigned int FCoverSlotData[0x1E];
+};
+
+template <> class TArray<FCoverSlot,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<FCoverSlot,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    const FCoverSlot *GetTypedData() const;
+    FCoverSlot *GetTypedData();
+    const FCoverSlot *GetData() const;
+    FCoverSlot *GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    const FCoverSlot &operator()(int) const;
+    FCoverSlot &operator()(int);
+    FCoverSlot Pop();
+    void Push(const FCoverSlot &);
+    const FCoverSlot &Top() const;
+    FCoverSlot &Top();
+    const FCoverSlot &Last(int) const;
+    FCoverSlot &Last(int);
+    void Shrink();
+    unsigned int FindItem(const FCoverSlot &, int &) const;
+    int FindItemIndex(const FCoverSlot &) const;
+    unsigned int ContainsItem(const FCoverSlot &) const;
+    unsigned int operator==(const TArray<FCoverSlot,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<FCoverSlot,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(const FCoverSlot &, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<FCoverSlot,FDefaultAllocator> &);
+    TArray<FCoverSlot,FDefaultAllocator> &operator+=(const TArray<FCoverSlot,FDefaultAllocator> &);
+    TArray<FCoverSlot,FDefaultAllocator> &operator=(const TArray<FCoverSlot,FDefaultAllocator> &);
+    int AddItem(const FCoverSlot &);
+    int AddZeroed(int);
+    int AddUniqueItem(const FCoverSlot &);
+    void Reserve(int);
+    void Init(const FCoverSlot &, int);
+    void Init(int);
+    int RemoveSingleItem(const FCoverSlot &);
+    int RemoveItem(const FCoverSlot &);
+    int RemoveSingleItemSwap(const FCoverSlot &);
+    int RemoveItemSwap(const FCoverSlot &);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    const FCoverSlot &DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<FCoverSlot> : public TArray<FCoverSlot,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<FCoverSlot> &operator=(const TArray<FCoverSlot,FDefaultAllocator> &);
+    TArrayNoInit<FCoverSlot> &operator=(const TArrayNoInit<FCoverSlot> &);
+};
+
+struct FDynamicLinkInfo  // size 0x18, opaque
+{
+public:
+    FDynamicLinkInfo(EEventParm);
+    FDynamicLinkInfo();
+private:
+    unsigned int FDynamicLinkInfoData[0x6];
+};
+
+template <> class TArray<FDynamicLinkInfo,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    const FDynamicLinkInfo *GetTypedData() const;
+    FDynamicLinkInfo *GetTypedData();
+    const FDynamicLinkInfo *GetData() const;
+    FDynamicLinkInfo *GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    const FDynamicLinkInfo &operator()(int) const;
+    FDynamicLinkInfo &operator()(int);
+    FDynamicLinkInfo Pop();
+    void Push(const FDynamicLinkInfo &);
+    const FDynamicLinkInfo &Top() const;
+    FDynamicLinkInfo &Top();
+    const FDynamicLinkInfo &Last(int) const;
+    FDynamicLinkInfo &Last(int);
+    void Shrink();
+    unsigned int FindItem(const FDynamicLinkInfo &, int &) const;
+    int FindItemIndex(const FDynamicLinkInfo &) const;
+    unsigned int ContainsItem(const FDynamicLinkInfo &) const;
+    unsigned int operator==(const TArray<FDynamicLinkInfo,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(const FDynamicLinkInfo &, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
+    TArray<FDynamicLinkInfo,FDefaultAllocator> &operator+=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
+    TArray<FDynamicLinkInfo,FDefaultAllocator> &operator=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
+    int AddItem(const FDynamicLinkInfo &);
+    int AddZeroed(int);
+    int AddUniqueItem(const FDynamicLinkInfo &);
+    void Reserve(int);
+    void Init(const FDynamicLinkInfo &, int);
+    void Init(int);
+    int RemoveSingleItem(const FDynamicLinkInfo &);
+    int RemoveItem(const FDynamicLinkInfo &);
+    int RemoveSingleItemSwap(const FDynamicLinkInfo &);
+    int RemoveItemSwap(const FDynamicLinkInfo &);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    const FDynamicLinkInfo &DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArrayNoInit<FDynamicLinkInfo> : public TArray<FDynamicLinkInfo,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    TArrayNoInit<FDynamicLinkInfo> &operator=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
+    TArrayNoInit<FDynamicLinkInfo> &operator=(const TArrayNoInit<FDynamicLinkInfo> &);
+};
+
+class ACoverLink : public ANavigationPoint  // size 0x328
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    struct FFireLinkInfo;
+    virtual unsigned int GetFireLinkTargetCoverInfo(int, int, FCoverInfo &, unsigned char);
+    virtual unsigned int GetSwatTurnTarget(int, int, FCoverInfo &);
+    virtual void BuildSlotInfo(int, unsigned int, AScout *);
+    virtual void BuildSlotInfoInternal(AScout *, int, unsigned int);
+    virtual unsigned int GetFireLinkTo(int, const FCoverInfo &, unsigned char, unsigned char, int &, TArray<int,FDefaultAllocator> &);
+    virtual unsigned int HasFireLinkTo(int, const FCoverInfo &, unsigned int);
+    virtual unsigned int IsFireLinkValid(int, int, unsigned char);
+    virtual unsigned int LinkCoverSlotToNavigationMesh(int, UNavigationMeshBase *);
+    virtual int FindCoverReference(ACoverLink *, int, unsigned int);
+    virtual unsigned int GetCachedCoverInfo(int, FCoverInfo &);
+    unsigned char PackFireLinkInteractionInfo(unsigned char, unsigned char, unsigned char, unsigned char);
+    void UnPackFireLinkInteractionInfo(const unsigned char, unsigned char &, unsigned char &, unsigned char &, unsigned char &);
+    FVector GetSlotLocation(int, unsigned int);
+    FRotator GetSlotRotation(int, unsigned int);
+    FVector GetSlotViewPoint(int, unsigned char, unsigned char);
+    unsigned int IsExposedTo(int, FCoverInfo, float &);
+    unsigned int IsValidClaim(APawn *, int, unsigned int, unsigned int);
+    unsigned int IsValidClaimBetween(APawn *, int, int, unsigned int, unsigned int);
+    unsigned int FindSlots(FVector, float, int &, int &);
+    unsigned int IsEdgeSlot(int, unsigned int);
+    unsigned int IsLeftEdgeSlot(int, unsigned int);
+    unsigned int IsRightEdgeSlot(int, unsigned int);
+    int GetSlotIdxToLeft(int, int);
+    int GetSlotIdxToRight(int, int);
+    void GetSlotActions(int, TArray<unsigned char,FDefaultAllocator> &);
+    unsigned int AutoAdjustSlot(int, unsigned int);
+    unsigned int IsEnabled();
+    int AddCoverSlot(FVector &, FRotator &, FCoverSlot, int);
+    int AddCoverSlot(FVector, FRotator, int, unsigned int, AScout *);
+    unsigned char GetLocationDescription(int);
+    void AddToNorman();
+    void RemoveFromNorman();
+    void execGetFireLinkTargetCoverInfo(FFrame &, void *);
+    void execPackFireLinkInteractionInfo(FFrame &, void *);
+    void execUnPackFireLinkInteractionInfo(FFrame &, void *);
+    void execGetSlotLocation(FFrame &, void *);
+    void execGetSlotRotation(FFrame &, void *);
+    void execGetSlotViewPoint(FFrame &, void *);
+    void execIsExposedTo(FFrame &, void *);
+    void execIsValidClaim(FFrame &, void *);
+    void execIsValidClaimBetween(FFrame &, void *);
+    void execFindSlots(FFrame &, void *);
+    void execIsEdgeSlot(FFrame &, void *);
+    void execIsLeftEdgeSlot(FFrame &, void *);
+    void execIsRightEdgeSlot(FFrame &, void *);
+    void execGetSlotIdxToLeft(FFrame &, void *);
+    void execGetSlotIdxToRight(FFrame &, void *);
+    void execGetFireLinkTo(FFrame &, void *);
+    void execHasFireLinkTo(FFrame &, void *);
+    void execGetSlotActions(FFrame &, void *);
+    void execAutoAdjustSlot(FFrame &, void *);
+    void execIsEnabled(FFrame &, void *);
+    void execGetSwatTurnTarget(FFrame &, void *);
+    void execAddCoverSlot(FFrame &, void *);
+    void execGetLocationDescription(FFrame &, void *);
+    void execAddToNorman(FFrame &, void *);
+    void execRemoveFromNorman(FFrame &, void *);
+    FString eventGetDebugString(int);
+    void eventSetSlotPlayerOnly(int, unsigned int);
+    void eventSetSlotEnabled(int, unsigned int);
+    void eventSetDisabled(unsigned int);
+    unsigned int eventUnClaim(APawn *, int, unsigned int);
+    unsigned int eventClaim(APawn *, int);
+    void eventSetInvalidUntil(int, float);
+private:
+    ACoverLink &operator=(const ACoverLink &);
+public:
+    static UClass *GetPrivateStaticClassACoverLink(const wchar_t *);
+    static void InitializePrivateStaticClassACoverLink();
+    static UClass *StaticClass();
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+protected:
+    virtual ~ACoverLink();
+public:
+    static void InternalConstructor(void *);
+    static const wchar_t *StaticConfigName();
+    virtual void BeginDestroy();
+    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
+    void SortSlots(FCoverSlot **);
+    void BuildFireLinks(AScout *);
+    void BuildOtherLinks(AScout *);
+    unsigned int GetFireActions(ACoverLink::FFireLinkInfo &, ACoverLink *, int, unsigned int);
+    unsigned int CanFireLinkHit(const FVector &, const FVector &, unsigned int);
+    unsigned int GetExposedInfo(ACoverLink *, int, ACoverLink *, int, float &);
+    float GetSlotHeight(int);
+    virtual void GetActorReferences(TArray<FActorReference *,FDefaultAllocator> &, unsigned int);
+    unsigned int IsOverlapSlotClaimed(APawn *, int, unsigned int);
+    static FCoverSlot *CoverInfoToSlotPtr(FCoverInfo &);
+    static FCoverSlot *CoverRefToSlotPtr(FCoverReference &);
+    unsigned int FindCoverEdges(const FVector &, FVector, FVector, FVector);
+    void EditorAutoSetup(FVector, FVector *, FVector *);
+    void ClearExposedFireLinks();
+    void FixupLevelCoverReferences();
+    static void FireLinkInteraction_PackSrcType(unsigned char, unsigned char &);
+    static void FireLinkInteraction_PackSrcAction(unsigned char, unsigned char &);
+    static void FireLinkInteraction_PackDestType(unsigned char, unsigned char &);
+    static void FireLinkInteraction_PackDestAction(unsigned char, unsigned char &);
+    static unsigned char FireLinkInteraction_UnpackSrcType(const unsigned char);
+    static unsigned char FireLinkInteraction_UnpackSrcAction(const unsigned char);
+    static unsigned char FireLinkInteraction_UnpackDestType(const unsigned char);
+    static unsigned char FireLinkInteraction_UnpackDestAction(const unsigned char);
+    typedef ANavigationPoint Super;
+    unsigned long GLOBAL_bUseSlotMarkers : 1;  // 0x294
+    unsigned long bDisabled : 1;
+    unsigned long bClaimAllSlots : 1;
+    unsigned long bAutoSort : 1;
+    unsigned long bAutoAdjust : 1;
+    unsigned long bCircular : 1;
+    unsigned long bLooped : 1;
+    unsigned long bPlayerOnly : 1;
+    unsigned long bDynamicCover : 1;
+    unsigned long bFractureOnTouch : 1;
+    unsigned long bDebug_FireLinks : 1;
+    unsigned long bDebug_ExposedLinks : 1;
+    unsigned long bDebug_CoverGen : 1;
+    unsigned long bDoAutoSlotDensityFixup : 1;
+    AActor *DestructibleCoverActor;  // 0x298
+    ACoverLink *NextDestructibleCoverLink;  // 0x29C
+    float LeanTraceDist;  // 0x2A0
+    TArrayNoInit<FCoverSlot> Slots;  // 0x2A4
+    TArrayNoInit<FDynamicLinkInfo> DynamicLinkInfos;  // 0x2B0
+    TArrayNoInit<APawn *> Claims;  // 0x2BC
+    float InvalidateDistance;  // 0x2C8
+    float MaxFireLinkDist;  // 0x2CC
+    FVector CircularOrigin;  // 0x2D0
+    float CircularRadius;  // 0x2DC
+    float AlignDist;  // 0x2E0
+    float AutoCoverSlotInterval;  // 0x2E4
+    float StandHeight;  // 0x2E8
+    float MidHeight;  // 0x2EC
+    FVector StandingLeanOffset;  // 0x2F0
+    FVector CrouchLeanOffset;  // 0x2FC
+    FVector PopupOffset;  // 0x308
+    float SlipDist;  // 0x314
+    float TurnDist;  // 0x318
+    float DangerScale;  // 0x31C
+    ACoverLink *NextCoverLink;  // 0x320
+    unsigned char LocationDescription;  // 0x324
+private:
+    static UClass *PrivateStaticClass;
+public:
+    char _pad0[0x3];
 };
 
 struct FRigidBodyContactInfo  // size 0x3C, opaque
@@ -3438,6 +4795,9 @@ private:
     void SpiderstepUp(const FVector &, const FVector &, FCheckResult &);
     int findNewFloor(FVector, float, float, int);
     int checkFloor(FVector, FCheckResult &);
+public:
+    typedef AActor Super;
+private:
     static UClass *PrivateStaticClass;
     unsigned int APawnData[0xA9];
 };
@@ -3489,6 +4849,7 @@ public:
     virtual void MarkEndPoints(ANavigationPoint *, AActor *, const FVector &);
     virtual float SecondRouteAttempt(ANavigationPoint *, ANavigationPoint *, float (*)(ANavigationPoint *, APawn *, float), float, AActor *, const FVector &, float, float, int, int);
     virtual unsigned int IsGlider();
+    typedef APawn Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int AVehicleData[0x1D];
@@ -3545,6 +4906,7 @@ public:
     virtual void PostInitRigidBody(NxActor *, NxActorDesc &, UPrimitiveComponent *);
     virtual void PreTermRigidBody(NxActor *);
     virtual void TermRBPhys(FRBPhysScene *);
+    typedef AVehicle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int ASVehicleData[0x4C];
@@ -3579,6 +4941,7 @@ public:
     static const wchar_t *StaticConfigName();
     virtual void PostBeginPlay();
     virtual void PostScriptDestroyed();
+    typedef ASVehicle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int AGwNavVehicleData[0x4];
@@ -3606,12 +4969,13 @@ public:
     virtual int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
     virtual unsigned int ShouldTrace(UPrimitiveComponent *, AActor *, unsigned long);
     virtual unsigned int IgnoreBlockingBy(const AActor *) const;
+    typedef AActor Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int AKAssetData[0x4];
 };
 
-class AUDKCover : public AKAsset  // size 0x1E8, opaque
+class AUDKCover : public AKAsset  // size 0x1E8
 {
 public:
     enum
@@ -3639,9 +5003,10 @@ public:
     static void InternalConstructor(void *);
     virtual void BeginDestroy();
     virtual void PreBeginPlay();
+    typedef AKAsset Super;
+    ACoverLink *FirstCoverLink;  // 0x1E4
 private:
     static UClass *PrivateStaticClass;
-    unsigned int AUDKCoverData[0x1];
 };
 
 class AUSSController : public ACCSController  // size 0x4B0, opaque
@@ -3667,6 +5032,7 @@ protected:
     virtual void PostPollMove();
 public:
     virtual void DrawHUD(GripHUDRenderer *, int &);
+    typedef ACCSController Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -3775,9 +5141,566 @@ public:
     virtual UObject *GetUObjectInterfaceCCSPawn();
     virtual void TickSpecial(float);
     virtual float MaxSpeedModifier();
+    typedef APawn Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int AUSSPawnData[0x13];
+};
+
+class GripVHeapObject  // size 0x4, opaque
+{
+public:
+    virtual ~GripVHeapObject();
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemAddressStub *);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Grip::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Grip::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Grip::MemAddressStub *, int);
+    static void operator delete(void *, Grip::MemAddressStub *);
+    static void operator delete(void *, Grip::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Grip::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Grip::MemoryHeap *, int);
+    static void operator delete(void *, Grip::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+};
+
+class GripAFAction : public GripVHeapObject  // size 0x1C, opaque
+{
+public:
+    enum EGripAFActionStatus
+    {
+        AS_DONE = 0,
+        AS_FAILURE = 1,
+        AS_INPROGRESS = 2,
+        AS_QUEUED = 3,
+    };
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float) = 0;
+    virtual const char *GetName();
+    GripAFAction();
+    virtual ~GripAFAction();
+    GripAFAction::EGripAFActionStatus GetStatus();
+    Grip_ArrayPOD<GripAFModifier *,2> &GetModifiers();
+private:
+    unsigned int GripAFActionData[0x6];
+};
+
+class CCSAFAction : public GripAFAction  // size 0x20, opaque
+{
+public:
+    CCSAFAction();
+private:
+    unsigned int CCSAFActionData[0x1];
+};
+
+class CCSAFEncircleTarget : public CCSAFAction  // size 0x5C, opaque
+{
+protected:
+    CCSAFEncircleTarget();
+    void SetObjective(const CCSAOEncircleTarget &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    void UpdateGoal();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFEncircleTargetData[0xF];
+};
+
+class CCSAFEnterCover : public CCSAFAction  // size 0x58, opaque
+{
+protected:
+    CCSAFEnterCover();
+    void SetObjective(const CCSAOEnterCover &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFEnterCoverData[0xE];
+};
+
+class CCSAFExitCover : public CCSAFAction  // size 0x24, opaque
+{
+protected:
+    CCSAFExitCover();
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    void SetObjective(const CCSAOExitCover &);
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFExitCoverData[0x1];
+};
+
+class CCSAFFireBurst : public CCSAFAction  // size 0x44, opaque
+{
+protected:
+    CCSAFFireBurst();
+    void SetObjective(const CCSAOFireBurst &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFFireBurstData[0x9];
+};
+
+class CCSAFFlee : public CCSAFAction  // size 0x58, opaque
+{
+protected:
+    CCSAFFlee();
+    void SetObjective(const CCSAOFlee &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    void UpdateMoveTarget();
+    unsigned int CCSAFFleeData[0xE];
+};
+
+class CCSAFGetInCover : public CCSAFAction  // size 0x58, opaque
+{
+protected:
+    CCSAFGetInCover();
+    void SetObjective(const CCSAOGetInCover &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFGetInCoverData[0xE];
+};
+
+class CCSAFGetOutCover : public CCSAFAction  // size 0x58, opaque
+{
+protected:
+    CCSAFGetOutCover();
+    void SetObjective(const CCSAOGetOutCover &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFGetOutCoverData[0xE];
+};
+
+class CCSAFIdle : public CCSAFAction  // size 0x28, opaque
+{
+protected:
+    CCSAFIdle();
+public:
+    virtual void PostCreate();
+    virtual void Tick(float);
+    void SetObjective(const CCSAOIdle &);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFIdleData[0x2];
+};
+
+class CCSAFMoveTo : public CCSAFAction  // size 0x38, opaque
+{
+protected:
+    CCSAFMoveTo();
+    void SetObjective(const CCSAOMoveTo &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFMoveToData[0x6];
+};
+
+class CCSAFMoveToActor : public CCSAFAction  // size 0x5C, opaque
+{
+protected:
+    CCSAFMoveToActor();
+    void SetObjective(const CCSAOMoveToActor &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFMoveToActorData[0xF];
+};
+
+class CCSAFOrientToward : public CCSAFAction  // size 0x38, opaque
+{
+protected:
+    CCSAFOrientToward();
+    void SetObjective(const CCSAOOrientToward &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFOrientTowardData[0x6];
+};
+
+class CCSAFStrafeTarget : public CCSAFAction  // size 0x5C, opaque
+{
+protected:
+    CCSAFStrafeTarget();
+    void SetObjective(const CCSAOStrafeTarget &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    bool UpdateGoal();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFStrafeTargetData[0xF];
+};
+
+class CCSAFStrafeTo : public CCSAFAction  // size 0x38, opaque
+{
+protected:
+    CCSAFStrafeTo();
+    void SetObjective(const CCSAOStrafeTo &);
+public:
+    virtual void PostCreate();
+    virtual void OnActivate();
+    virtual bool TransitionTo(GripAFAction *);
+    virtual void Tick(float);
+    virtual const char *GetName();
+private:
+    unsigned int CCSAFStrafeToData[0x6];
+};
+
+namespace Grip {
+template <> class AllocatorBaseGH<2>  // size 0x1, opaque
+{
+public:
+    enum
+    {
+        StatId = 2,
+    };
+    static void *Alloc(const void *, unsigned int, const char *, unsigned int);
+    static void *Realloc(void *, unsigned int, const char *, unsigned int);
+    static void Free(void *);
+};
+}
+
+namespace Grip {
+class String  // size 0x4, opaque
+{
+public:
+    enum FlagConstants
+    {
+        Flag_LengthIsSizeShift = 31,
+    };
+    struct DataDesc;
+    enum HeapType
+    {
+        HT_Global = 0,
+        HT_Local = 1,
+        HT_Dynamic = 2,
+        HT_Mask = 3,
+    };
+    struct NoConstructor;
+    struct InitStruct;
+    struct NoCaseKey;
+    static void *operator new(unsigned int, void *);
+    static void operator delete(void *, void *);
+protected:
+    Grip::String::HeapType GetHeapType() const;
+    Grip::String::DataDesc *GetData() const;
+    void SetData(Grip::String::DataDesc *);
+    Grip::String::DataDesc *AllocData(Grip::MemoryHeap *, unsigned int, unsigned int);
+    Grip::String::DataDesc *AllocDataCopy1(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int);
+    Grip::String::DataDesc *AllocDataCopy2(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int, const char *, unsigned int);
+public:
+    String(const wchar_t *);
+    String(const Grip::String::InitStruct &, unsigned int);
+    String(const Grip::StringBuffer &);
+    String(const Grip::String &);
+    String(const char *, unsigned int);
+    String(const char *, const char *, const char *);
+    String(const char *);
+    String();
+protected:
+    String(const Grip::String::NoConstructor &);
+public:
+    ~String();
+    Grip::MemoryHeap *GetHeap() const;
+    void Clear();
+    operator const char *() const;
+    const char *ToCStr() const;
+    unsigned int GetSize() const;
+    bool IsEmpty() const;
+    unsigned int GetLength() const;
+    unsigned long GetCharAt(unsigned int) const;
+    unsigned long GetFirstCharAt(unsigned int, const char **) const;
+    unsigned long GetNextChar(const char **) const;
+    void AppendChar(unsigned long);
+    void AppendString(const char *, int);
+    void AppendString(const wchar_t *, int);
+    void AssignString(const char *, unsigned int);
+    void AssignString(const Grip::String::InitStruct &, unsigned int);
+    void Remove(unsigned int, int);
+    Grip::String Substring(unsigned int, unsigned int) const;
+    Grip::String ToUpper() const;
+    Grip::String ToLower() const;
+    Grip::String &Insert(const char *, unsigned int, int);
+    unsigned int InsertCharAt(unsigned long, unsigned int);
+    unsigned int GetByteIndex(unsigned int) const;
+    int CompareNoCase(const Grip::String &) const;
+    int CompareNoCase(const char *) const;
+    static int CompareNoCase(const char *, const char *, int);
+    static int CompareNoCase(const char *, const char *);
+    static unsigned int BernsteinHashFunctionCIS(const void *, unsigned int, unsigned int);
+    static unsigned int BernsteinHashFunction(const void *, unsigned int, unsigned int);
+    static void EscapeSpecialHTML(const char *, unsigned int, Grip::String *);
+    static void UnescapeSpecialHTML(const char *, unsigned int, Grip::String *);
+    bool HasAbsolutePath() const;
+    static bool HasAbsolutePath(const char *);
+    bool HasExtension() const;
+    static bool HasExtension(const char *);
+    bool HasProtocol() const;
+    static bool HasProtocol(const char *);
+    Grip::String GetProtocol() const;
+    Grip::String GetPath() const;
+    Grip::String GetFilename() const;
+    Grip::String GetExtension() const;
+    void StripProtocol();
+    void StripExtension();
+    void operator=(const Grip::StringBuffer &);
+    void operator=(const Grip::String &);
+    void operator=(const wchar_t *);
+    void operator=(const char *);
+    void operator+=(char);
+    void operator+=(const wchar_t *);
+    void operator+=(const char *);
+    void operator+=(const Grip::String &);
+    Grip::String operator+(const Grip::String &) const;
+    Grip::String operator+(const char *) const;
+    bool operator==(const Grip::String::NoCaseKey &) const;
+    bool operator==(const char *) const;
+    bool operator==(const Grip::String &) const;
+    bool operator!=(const Grip::String::NoCaseKey &) const;
+    bool operator!=(const char *) const;
+    bool operator!=(const Grip::String &) const;
+    bool operator<(const Grip::String &) const;
+    bool operator<(const char *) const;
+    bool operator>(const Grip::String &) const;
+    bool operator>(const char *) const;
+    const char &operator[](unsigned int) const;
+    const char &operator[](int) const;
+    static Grip::String::DataDesc NullData;
+private:
+    unsigned int StringData[0x1];
+};
+}
+
+namespace Grip {
+template <> class ConstructorMov<Grip::String>  // size 0x1, opaque
+{
+public:
+    static void Construct(void *, const Grip::String &);
+    static void Construct(void *);
+    static void ConstructArray(void *, unsigned int, const Grip::String *);
+    static void ConstructArray(void *, unsigned int, const Grip::String &);
+    static void ConstructArray(void *, unsigned int);
+    static void Destruct(Grip::String *);
+    static void DestructArray(Grip::String *, unsigned int);
+    static void CopyArrayForward(Grip::String *, const Grip::String *, unsigned int);
+    static void CopyArrayBackward(Grip::String *, const Grip::String *, unsigned int);
+    static bool IsMovable();
+};
+}
+
+namespace Grip {
+template <> struct AllocatorGH<Grip::String,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<Grip::String>  // size 0x1, opaque
+{
+};
+}
+
+class GripBlackboard : public GripVHeapObject  // size 0x8C, opaque
+{
+public:
+    virtual void Reset();
+    virtual void RegisterMembers();
+    virtual GripBBVisualization *GetVisualizer() = 0;
+    virtual void DrawHUD(GripHUDRenderer *, int &);
+    GripBlackboard();
+    void Initialize();
+    void GetUsedPerceptionSystems(GripBTSystemFlags &, GripBTSystemFlags &);
+    void AddMember(GripBBMember &);
+    bool ContainState(const Grip::String) const;
+    void AddState(const Grip::String);
+    void RemoveState(const Grip::String);
+    Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > &GetStates();
+    void ClearAllState();
+    void FlagStatesAsUsed();
+    bool AreStatesUsed() const;
+    GripEvent GetLastValidEvent() const;
+    void SetLastValidEvent(const GripEvent &);
+    void ClearLastValidEvent();
+    void FlagEventsAsUsed();
+    bool IsDirty() const;
+    void SetDirty();
+    void ClearDirty();
+private:
+    unsigned int GripBlackboardData[0x22];
+};
+
+class CCSBlackboard : public GripBlackboard  // size 0x67C, opaque
+{
+public:
+    enum EMoveCmd
+    {
+        MOVE_CMD_NONE = 0,
+        MOVE_CMD_POS = 1,
+    };
+    CCSBlackboard();
+    virtual void Reset();
+    virtual void RegisterMembers();
+    virtual GripBBVisualization *GetVisualizer();
+    void ClearMoveCommand();
+    void SetMoveCommand(Grip_Vector);
+    CCSBlackboard::EMoveCmd GetMoveCommand() const;
+    Grip_Vector GetMovePosition() const;
+    void FlagMoveCommandAsUsed();
+    void OnNewTarget(const CCSTarget &);
+    void OnTargetDestroyed(int);
+    void OnNewVehicle(const CCSTarget &);
+    void OnVehicleDestroyed(int);
+    void OnNewThreatTarget(const CCSTarget &);
+    void OnThreatTargetDestroyed(int);
+    void OnNewFriendly(const CCSTarget &);
+    void OnFriendlyDestroyed(int);
+    void OnNewCover(const CCSCover &);
+    void OnCoverDestroyed(int);
+    void FlagThreatLocationAsUsed();
+    void FlagThreatDirectionAsUsed();
+    Grip_Vector GetThreatLocation() const;
+    Grip_Vector GetThreatDirection() const;
+    EThreatType GetThreatType() const;
+    CCSTarget *GetClosestVisibleEnemy();
+    CCSTarget *GetClosestVisibleEnemy() const;
+    void FlagClosestVisibleEnemyAsUsed();
+    void UpdateTargetListsByRange(const Grip_Vector &, const float, const float);
+    void SetHeatGenerated(float);
+    float GetHeatGenerated() const;
+    void FlagHeatGeneratedAsUsed();
+    CCSTarget *GetHighestThreatTarget();
+    void SetHighestThreatTarget(CCSTarget *);
+    void FlagHighestThreatTarget();
+    CCSTarget *GetClosestEnemy();
+    void SetClosestEnemy(CCSTarget *);
+    void FlagClosestEnemy();
+    void SetClosestVisibleEnemy(CCSTarget *);
+    void FlagClosestVisibleEnemy();
+    CCSTarget *GetCurrentTarget();
+    void SetCurrentTarget(CCSTarget *);
+    void FlagCurrentTarget();
+    CCSTarget *GetLowestLKPAgeEnemy();
+    void SetLowestLKPAgeEnemy(CCSTarget *);
+    void FlagLowestLKPAgeEnemy();
+    CCSTarget *GetClosestObjective();
+    void SetClosestObjective(CCSTarget *);
+    void FlagClosestObjective();
+    CCSTarget *GetReactiveTarget();
+    void SetReactiveTarget(CCSTarget *);
+    void FlagReactiveTarget();
+    CCSTarget *GetSecondaryTarget();
+    void SetSecondaryTarget(CCSTarget *);
+    void FlagSecondaryTarget();
+    bool GetHasBecomeAware();
+    void SetHasBecomeAware(bool);
+    void FlagHasBecomeAware();
+private:
+    void UpdateTargetPointers();
+public:
+    CCSTarget *GetSpecificTarget(FString);
+    FVector GetCurrentTether();
+private:
+    unsigned int CCSBlackboardData[0x17C];
+};
+
+class GripHeapObject  // size 0x1, opaque
+{
+public:
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemAddressStub *);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Grip::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Grip::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Grip::MemAddressStub *, int);
+    static void operator delete(void *, Grip::MemAddressStub *);
+    static void operator delete(void *, Grip::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Grip::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Grip::MemoryHeap *, int);
+    static void operator delete(void *, Grip::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+};
+
+struct CCSCharacter : public GripHeapObject  // size 0x14, opaque
+{
+public:
+    CCSCharacter();
+    bool operator==(const CCSCharacter &) const;
+    bool operator!=(const CCSCharacter &) const;
+    void *GetActor() const;
+    CCSBrain *GetBrain() const;
+    UUDKTargetableComponent *GetTargetableComponent();
+    Grip_Vector GetEyesPosition() const;
+    float GetHeight() const;
+    Grip_Rotation GetOrientation() const;
+    Grip_Vector GetPosition() const;
+    float GetSize() const;
+    int GetTeam();
+    bool IsPlayer() const;
+    static const CCSCharacter NONE;
+private:
+    char CCSCharacterData[0x13];
 };
 
 struct CCSController_eventActionStopFiring_Parms  // size 0x1
@@ -3805,82 +5728,6 @@ struct CCSController_eventCreateDebugVizComponent_Parms  // size 0x1
 {
 public:
     CCSController_eventCreateDebugVizComponent_Parms(EEventParm);
-};
-
-class FVector  // size 0xC, opaque
-{
-public:
-    FVector(EEventParm);
-    FVector(FIntPoint);
-    FVector(const FLinearColor &);
-    FVector(const FVector4 &);
-    FVector(const FVector2D, float);
-    FVector(float, float, float);
-    FVector(float);
-    FVector();
-    FVector operator^(const FVector &) const;
-    float operator|(const FVector &) const;
-    FVector operator+(float) const;
-    FVector operator+(const FVector &) const;
-    FVector operator-() const;
-    FVector operator-(float) const;
-    FVector operator-(const FVector &) const;
-    FVector operator*(const FVector &) const;
-    FVector operator*(float) const;
-    FVector operator/(const FVector &) const;
-    FVector operator/(float) const;
-    unsigned int operator==(const FVector &) const;
-    unsigned int operator!=(const FVector &) const;
-    unsigned int Equals(const FVector &, float) const;
-    unsigned int AllComponentsEqual(float) const;
-    FVector operator+=(const FVector &);
-    FVector operator-=(const FVector &);
-    FVector operator*=(const FVector &);
-    FVector operator*=(float);
-    FVector operator/=(const FVector &);
-    FVector operator/=(float);
-    float operator[](int) const;
-    float &operator[](int);
-    void Set(float, float, float);
-    float GetMax() const;
-    float GetAbsMax() const;
-    float GetMin() const;
-    float Size() const;
-    float SizeSquared() const;
-    float Size2D() const;
-    float SizeSquared2D() const;
-    float Distance(const FVector &) const;
-    float DistanceSquared(const FVector &) const;
-    int IsNearlyZero(float) const;
-    unsigned int IsZero() const;
-    unsigned int Normalize(float);
-    unsigned int IsNormalized() const;
-    void ToDirectionAndLength(FVector &, float &);
-    FVector Projection() const;
-    FVector UnsafeNormal() const;
-    FVector GridSnap(const float &) const;
-    FVector BoundToCube(float) const;
-    void AddBounded(const FVector &, float);
-    float &Component(int);
-    unsigned int IsUniform(float) const;
-    FVector MirrorByVector(const FVector &) const;
-    FVector MirrorByPlane(const FPlane &) const;
-    FVector RotateAngleAxis(const int, const FVector &) const;
-    FVector SafeNormal(float) const;
-    FVector SafeNormal2D(float) const;
-    float Dot2d(FVector);
-    FVector ProjectOnTo(const FVector &) const;
-    FRotator Rotation() const;
-    void FindBestAxisVectors(FVector &, FVector &) const;
-    void UnwindEuler();
-    unsigned int ContainsNaN() const;
-    unsigned int IsUnit(float) const;
-    FString ToString() const;
-    unsigned int InitFromString(const FString &);
-    void SerializeCompressed(FArchive &);
-    static FVector ZeroVector;
-private:
-    unsigned int FVectorData[0x3];
 };
 
 struct CCSController_eventFindNavMeshDistance_Parms  // size 0x14
@@ -3937,6 +5784,407 @@ struct CCSController_eventStopFireBurst_Parms  // size 0x4
 public:
     CCSController_eventStopFireBurst_Parms(EEventParm);
     unsigned int ReturnValue;  // 0x0
+};
+
+struct CCSGameCover : public GripHeapObject  // size 0x8, opaque
+{
+public:
+    bool IsEnabled() const;
+    bool IsLocked() const;
+    bool IsLockedBy(CCSCharacter) const;
+    bool LockCover(CCSCharacter);
+    bool UnlockCover(CCSCharacter);
+    bool IsOccupied() const;
+    bool IsOccupiedBy(CCSCharacter) const;
+    bool OccupyCover(CCSCharacter);
+    bool VacateCover(CCSCharacter);
+    Grip_Vector GetPosition() const;
+    Grip_Rotation GetOrientation() const;
+    CCS::ECoverShootConfig GetShootConfig() const;
+    CCS::ECoverType GetType() const;
+    Grip_Vector GetShootPosition(const CCS::ECoverShootConfig, const float) const;
+    bool operator==(const CCSGameCover &) const;
+    static const CCSGameCover NONE;
+private:
+    char CCSGameCoverData[0x7];
+};
+
+template <> class TArray<ActorWrapper *,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<ActorWrapper *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    ActorWrapper **GetTypedData() const;
+    ActorWrapper **GetTypedData();
+    ActorWrapper **GetData() const;
+    ActorWrapper **GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    ActorWrapper *&operator()(int) const;
+    ActorWrapper *&operator()(int);
+    ActorWrapper *Pop();
+    void Push(ActorWrapper *&);
+    ActorWrapper *&Top() const;
+    ActorWrapper *&Top();
+    ActorWrapper *&Last(int) const;
+    ActorWrapper *&Last(int);
+    void Shrink();
+    unsigned int FindItem(ActorWrapper *&, int &) const;
+    int FindItemIndex(ActorWrapper *&) const;
+    unsigned int ContainsItem(ActorWrapper *&) const;
+    unsigned int operator==(const TArray<ActorWrapper *,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<ActorWrapper *,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(ActorWrapper *&, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<ActorWrapper *,FDefaultAllocator> &);
+    TArray<ActorWrapper *,FDefaultAllocator> &operator+=(const TArray<ActorWrapper *,FDefaultAllocator> &);
+    TArray<ActorWrapper *,FDefaultAllocator> &operator=(const TArray<ActorWrapper *,FDefaultAllocator> &);
+    int AddItem(ActorWrapper *&);
+    int AddZeroed(int);
+    int AddUniqueItem(ActorWrapper *&);
+    void Reserve(int);
+    void Init(ActorWrapper *&, int);
+    void Init(int);
+    int RemoveSingleItem(ActorWrapper *&);
+    int RemoveItem(ActorWrapper *&);
+    int RemoveSingleItemSwap(ActorWrapper *&);
+    int RemoveItemSwap(ActorWrapper *&);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    ActorWrapper *&DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+template <> class TArray<CCSGameCover,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    enum
+    {
+        AllocatorNeedsElementType = 0,
+    };
+    TArray(const TArray<CCSGameCover,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    const CCSGameCover *GetTypedData() const;
+    CCSGameCover *GetTypedData();
+    const CCSGameCover *GetData() const;
+    CCSGameCover *GetData();
+    unsigned long GetTypeSize() const;
+    unsigned long GetAllocatedSize() const;
+    int GetSlack() const;
+    unsigned int IsValidIndex(int) const;
+    int Num() const;
+    const CCSGameCover &operator()(int) const;
+    CCSGameCover &operator()(int);
+    CCSGameCover Pop();
+    void Push(const CCSGameCover &);
+    const CCSGameCover &Top() const;
+    CCSGameCover &Top();
+    const CCSGameCover &Last(int) const;
+    CCSGameCover &Last(int);
+    void Shrink();
+    unsigned int FindItem(const CCSGameCover &, int &) const;
+    int FindItemIndex(const CCSGameCover &) const;
+    unsigned int ContainsItem(const CCSGameCover &) const;
+    unsigned int operator==(const TArray<CCSGameCover,FDefaultAllocator> &) const;
+    unsigned int operator!=(const TArray<CCSGameCover,FDefaultAllocator> &) const;
+    void BulkSerialize(FArchive &, int);
+    void CountBytes(FArchive &);
+    int Add(int);
+    void Insert(int, int);
+    void InsertZeroed(int, int);
+    int InsertItem(const CCSGameCover &, int);
+    void Remove(int, int);
+    void RemoveSwap(int, int);
+    void Empty(int);
+    void SetNum(int);
+    void Append(const TArray<CCSGameCover,FDefaultAllocator> &);
+    TArray<CCSGameCover,FDefaultAllocator> &operator+=(const TArray<CCSGameCover,FDefaultAllocator> &);
+    TArray<CCSGameCover,FDefaultAllocator> &operator=(const TArray<CCSGameCover,FDefaultAllocator> &);
+    int AddItem(const CCSGameCover &);
+    int AddZeroed(int);
+    int AddUniqueItem(const CCSGameCover &);
+    void Reserve(int);
+    void Init(const CCSGameCover &, int);
+    void Init(int);
+    int RemoveSingleItem(const CCSGameCover &);
+    int RemoveItem(const CCSGameCover &);
+    int RemoveSingleItemSwap(const CCSGameCover &);
+    int RemoveItemSwap(const CCSGameCover &);
+    void Swap(int, int);
+    void SwapItems(int, int);
+    void Reset(int);
+private:
+    const CCSGameCover &DebugGet(int) const;
+protected:
+    void DestructItems(int, int);
+private:
+    unsigned int TArrayData[0x3];
+};
+
+class CCSNorman  // size 0x2C
+{
+private:
+    CCSNorman();
+public:
+    void reset();
+    static CCSNorman *getInstance();
+    void AddTarget(AActor *);
+    void RemoveTarget(AActor *);
+    void AddTargeter(CCSPSTargetAwareness *);
+    void RemoveTargeter(CCSPSTargetAwareness *);
+    void AddCover(ACoverLink *);
+    void RemoveCover(ACoverLink *);
+    void AddCoverSeeker(CCSPSCover *);
+    void RemoveCoverSeeker(CCSPSCover *);
+    ACoverLink *GetDestructibleCoverList(AUDKCover *);
+    void CountBrainlessCover(AUDKPawn *);
+    void VacateAllBrainlessCover(AUDKPawn *);
+    bool IsAlertedEnemyInRange(AActor *, float);
+private:
+    static CCSNorman *instance;
+public:
+    CCSPSTargetAwareness *pFirstTargeter;  // 0x0
+    TArray<ActorWrapper *,FDefaultAllocator> m_ThreatTargetsMasterList;  // 0x4
+    CCSPSCover *pFirstCoverSeeker;  // 0x10
+    TArray<CCSGameCover,FDefaultAllocator> m_CoverMasterList;  // 0x14
+    int m_ThreatTargetsMasterListRefCount;  // 0x20
+    int m_CoverMasterListRefCount;  // 0x24
+    ACoverLink *FirstCoverLink;  // 0x28
+};
+
+class GripBrainSystem : public GripVHeapObject  // size 0xC, opaque
+{
+public:
+    enum EActivationState
+    {
+        AS_ACTIVE = 0,
+        AS_INACTIVE = 1,
+        AS_DEACTIVATING = 2,
+    };
+    virtual void Initialize(const GripSystemConfig *);
+    virtual void Finalize();
+    virtual void FlagAsUsed();
+    virtual void Activate();
+    virtual void Deactivate();
+    virtual void Tick(float) = 0;
+    virtual bool TickBudget(float, int &);
+    virtual int GetId() const;
+    virtual int GetFamily() const;
+    virtual void DrawHUD(GripHUDRenderer *, int &);
+    virtual void DrawScene(IGripSceneRenderer *);
+    GripBrainSystem();
+    virtual ~GripBrainSystem();
+    GripBrainSystem::EActivationState GetState() const;
+    bool IsInStasis() const;
+    bool IsUsed() const;
+    void OnTickCycleCompleted();
+private:
+    unsigned int GripBrainSystemData[0x2];
+};
+
+class CCSSensorSystem : public GripBrainSystem  // size 0x10, opaque
+{
+public:
+    enum EType
+    {
+        SST_SELF_AWARENESS = 0,
+        SST_TARGET_AWARENESS = 1,
+        SST_COVER = 2,
+        SST_NUM_OF = 3,
+    };
+    CCSSensorSystem(CCSBrain *);
+    virtual void Initialize(const GripSystemConfig *);
+    static int SGetFamily();
+    virtual int GetFamily() const;
+    void BecomeAware(bool);
+    void AlertFriends();
+private:
+    unsigned int CCSSensorSystemData[0x1];
+};
+
+struct GripSystemConfig : public GripVHeapObject  // size 0x4, opaque
+{
+};
+
+struct CCSSystemsConfig : public GripSystemConfig  // size 0x34, opaque
+{
+private:
+    unsigned int CCSSystemsConfigData[0xC];
+};
+
+class CCSPSCover : public CCSSensorSystem  // size 0x50
+{
+public:
+    CCSPSCover(CCSBrain *);
+    virtual ~CCSPSCover();
+    virtual void Initialize(const GripSystemConfig *);
+    virtual void Finalize();
+    void AddCover(ACoverLink *);
+    void AddCover(CCSGameCover &);
+    void RemoveCover(ACoverLink *);
+    void RemoveCover(CCSGameCover &);
+    virtual void Tick(float);
+    virtual bool TickBudget(float, int &);
+    static int SGetId();
+    virtual int GetId() const;
+private:
+    void LowCostPerception();
+    void ResetCoverForLowCostPerception();
+    void ComputeDistanceToTarget();
+    bool DisabledCulling(CCSCover &);
+    bool OccupiedCulling(CCSCover &);
+    bool DistanceCulling(CCSCover &);
+    bool DefensiveAngleCulling(CCSCover &);
+    bool AttackAngleCulling(CCSCover &);
+    bool PathCulling(CCSCover &);
+    void UpdateFromGlobalData();
+    bool HighCostPerception(int &);
+    bool HasValidDefensiveAngle(const float, const float, const Grip_Vector, const Grip_Rotation &, const CCSTarget *);
+    bool HasValidAttackAngle(ICCSMeatPuppet *, const CCSCover &, const Grip_Rotation &, const CCSTarget *);
+    float GetCurrentTargetDistance(const CCSCover &);
+public:
+    CCSPSCover *pNextCoverSeeker;  // 0x10
+    int m_coverIdx;  // 0x14
+    CCSSystemsConfig m_config;  // 0x18
+    CCSCoverRenderingComponent *m_pDebugComponent;  // 0x4C
+};
+
+namespace Grip {
+template <> class ConstructorMov<CCSCharacter>  // size 0x1, opaque
+{
+public:
+    static void Construct(void *, const CCSCharacter &);
+    static void Construct(void *);
+    static void ConstructArray(void *, unsigned int, const CCSCharacter *);
+    static void ConstructArray(void *, unsigned int, const CCSCharacter &);
+    static void ConstructArray(void *, unsigned int);
+    static void Destruct(CCSCharacter *);
+    static void DestructArray(CCSCharacter *, unsigned int);
+    static void CopyArrayForward(CCSCharacter *, const CCSCharacter *, unsigned int);
+    static void CopyArrayBackward(CCSCharacter *, const CCSCharacter *, unsigned int);
+    static bool IsMovable();
+};
+}
+
+namespace Grip {
+template <> struct AllocatorGH<CCSCharacter,2> : public Grip::AllocatorBaseGH<2>, public Grip::ConstructorMov<CCSCharacter>  // size 0x1, opaque
+{
+};
+}
+
+template <> class Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > : public GripVHeapObject  // size 0x10, opaque
+{
+public:
+    Grip_Array(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
+    Grip_Array(const int);
+    virtual ~Grip_Array();
+    Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &operator=(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
+    void Clone(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
+    void Empty();
+    void Reset();
+    void Reserve(int);
+    int FindObject(const CCSCharacter &) const;
+    bool ContainsItem(const CCSCharacter &) const;
+    int Num() const;
+    const CCSCharacter &operator[](int) const;
+    CCSCharacter &operator[](int);
+    void AddItem(const CCSCharacter &);
+    void AddUniqueItem(const CCSCharacter &);
+    void InsertItemAt(const CCSCharacter &, int);
+    void RemoveItemSwap(int);
+    void RemoveItem(int);
+    void RemoveItemItem(const CCSCharacter &);
+    CCSCharacter *GetData();
+protected:
+    void CloneContainer(CCSCharacter *, int, int);
+    void DestructItems(int, int);
+    void ResizeTo(int);
+    void DeleteContainerContent();
+public:
+    static const int increment;
+private:
+    unsigned int Grip_ArrayData[0x3];
+};
+
+class CCSPSTargetAwareness : public CCSSensorSystem  // size 0x5C
+{
+public:
+    struct Config  // size 0x28, opaque
+    {
+    public:
+        Config();
+    private:
+        unsigned int ConfigData[0xA];
+    };
+    CCSPSTargetAwareness(CCSBrain *);
+    virtual void Initialize(const GripSystemConfig *);
+    virtual void Finalize();
+    virtual void Tick(float);
+    virtual bool TickBudget(float, int &);
+    static int SGetId();
+    virtual int GetId() const;
+    void AddThreatTarget(AActor *);
+    void RemoveThreatTarget(AActor *);
+private:
+    void UpdateTargetList();
+    void UpdateTargetListsByRange();
+    void ComputeLowCostAwareness(float);
+    void ComputeHighCostAwareness(float, CCSTarget &);
+    bool IsTargetHeard(const CCSTarget &, ICCSMeatPuppet *);
+    bool IsTargetVisible(const CCSTarget &, ICCSMeatPuppet *);
+    bool IsEnemy(CCSBlackboard *, ICCSMeatPuppet *);
+    bool TargetPlayers();
+    bool TargetNPCs();
+    bool TargetObjectives();
+    void UpdateClosestVisibleEnemy();
+    void UpdateLowestLKPAgeEnemy();
+    void NotifyTargetBecameVisible(CCSTarget &);
+    void UpdateHighestThreatTarget(float);
+    int ComputeTotalThreat(CCSTarget &, float);
+    void UpdateCurrentTarget();
+    void AlertFriends();
+public:
+    CCSPSTargetAwareness *pNextTargeter;  // 0x10
+    int m_targetIdx;  // 0x14
+    int m_vehicleIdx;  // 0x18
+    bool m_curTargetIsCamoed;  // 0x1C
+    char _pad0[0x3];
+    CCSPSTargetAwareness::Config m_config;  // 0x20
+    Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > m_vehicles;  // 0x48
+    CCSTargetRenderingComponent *m_pDebugComponent;  // 0x58
+};
+
+struct CoverLink_eventSetDisabled_Parms  // size 0x4
+{
+public:
+    CoverLink_eventSetDisabled_Parms(EEventParm);
+    unsigned int bNewDisabled;  // 0x0
 };
 
 class FBoneAtom  // size 0x20, opaque
@@ -4215,6 +6463,7 @@ public:
     virtual unsigned int GetNativePropertyValues(TMap<FString,FString,FDefaultSetAllocator> &, unsigned long) const;
     virtual unsigned int IsPendingKill() const;
     virtual unsigned int IsAComponent() const;
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UComponentData[0x3];
@@ -4283,6 +6532,7 @@ public:
     void SetTickGroup(unsigned char);
     void execForceUpdate(FFrame &, void *);
     void execDetachFromAny(FFrame &, void *);
+    typedef UComponent Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UActorComponentData[0x4];
@@ -4317,6 +6567,8 @@ public:
     static const wchar_t *StaticConfigName();
 protected:
     unsigned int IsEnoughRoomToSpawnPawn(const FVector *, const USeqAct_ActorFactory *) const;
+public:
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UActorFactoryData[0xB];
@@ -4344,6 +6596,7 @@ public:
     virtual AActor *CreateActor(const FVector *, const FRotator *, const USeqAct_ActorFactory *);
     virtual unsigned int CanCreateActor(FString &, unsigned int);
     virtual AActor *GetDefaultActor();
+    typedef UActorFactory Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UActorFactoryAIData[0xB];
@@ -4373,6 +6626,7 @@ protected:
     virtual ~UAnimObject();
 public:
     static void InternalConstructor(void *);
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UAnimObjectData[0x1];
@@ -4456,6 +6710,7 @@ public:
     static void FillWithRefPose(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, const TArray<FMeshBone,FDefaultAllocator> &);
     static void FillWithRefPose(TArray<FBoneAtom,FDefaultAllocator> &, const TArray<unsigned char,FDefaultAllocator> &, const TArray<FMeshBone,FDefaultAllocator> &);
     static void EnsureParentsPresent(TArray<unsigned char,FDefaultAllocator> &, USkeletalMesh *);
+    typedef UAnimObject Super;
 private:
     static UClass *PrivateStaticClass;
 public:
@@ -4513,6 +6768,7 @@ public:
     float GetChildWeightTotal();
     virtual void GetNodesInternal(TArray<UAnimNode *,FDefaultAllocator> &);
     virtual void OnPaste();
+    typedef UAnimNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UAnimNodeBlendBaseData[0x8];
@@ -4550,6 +6806,7 @@ public:
     virtual void OnAddChild(int);
     virtual void OnRemoveChild(int);
     virtual void OnPaste();
+    typedef UAnimNodeBlendBase Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UAnimNodeBlendListData[0x8];
@@ -4620,6 +6877,8 @@ public:
 protected:
     virtual void UpdateChildWeight(int);
     void EnsureChildExists(int, unsigned int);
+public:
+    typedef UAnimNodeBlendBase Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UAnimNodeSlotData[0x8];
@@ -4645,6 +6904,7 @@ protected:
     virtual ~UGripAFActionHandle();
 public:
     static void InternalConstructor(void *);
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripAFActionHandleData[0x1];
@@ -4670,6 +6930,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFEncircleTargetData[0x1];
@@ -4695,6 +6956,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFEnterCoverData[0x2];
@@ -4720,6 +6982,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -4744,6 +7007,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFFireBurstData[0x1];
@@ -4769,6 +7033,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFFleeData[0x1];
@@ -4794,6 +7059,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFGetInCoverData[0x2];
@@ -4819,6 +7085,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFGetOutCoverData[0x2];
@@ -4844,6 +7111,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFIdleData[0x1];
@@ -4869,6 +7137,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFMoveToData[0x4];
@@ -4894,6 +7163,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFMoveToActorData[0x2];
@@ -4919,6 +7189,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFOrientTowardData[0x4];
@@ -4944,6 +7215,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFStrafeTargetData[0x1];
@@ -4969,6 +7241,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual int CreateAction(GripAFFactory *);
+    typedef UGripAFActionHandle Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSAFStrafeToData[0x5];
@@ -4998,6 +7271,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSATAnimNodeSlot();
+public:
+    typedef UAnimNodeSlot Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5023,6 +7298,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSATBlendListBase();
+public:
+    typedef UAnimNodeBlendList Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSATBlendListBaseData[0x4];
@@ -5048,6 +7325,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual AActor *CreateActor(const FVector *, const FRotator *, const USeqAct_ActorFactory *);
+    typedef UActorFactoryAI Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGwNavActorFactoryAIData[0x3];
@@ -5075,6 +7353,7 @@ public:
     virtual AActor *CreateActor(const FVector *, const FRotator *, const USeqAct_ActorFactory *);
     virtual unsigned int CanCreateActor(FString &, unsigned int);
     virtual AActor *GetDefaultActor();
+    typedef UGwNavActorFactoryAI Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSActorFactoryData[0xE];
@@ -5101,6 +7380,7 @@ protected:
     virtual ~UGripBTObject();
 public:
     static void InternalConstructor(void *);
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripBTObjectData[0x2];
@@ -5135,6 +7415,7 @@ public:
     void GetNodes(TArray<UGripBTNode *,FDefaultAllocator> &);
     UGripBTNode *GetGripBTChild(const int) const;
     unsigned int IsChildOf(UGripBTNode *);
+    typedef UGripBTObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripBTNodeData[0x11];
@@ -5163,6 +7444,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTEncircleTargetData[0x4];
@@ -5191,6 +7473,7 @@ public:
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
     virtual FString GetNodeTitle();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripBTBooleanConditionData[0x1];
@@ -5217,6 +7500,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTBooleanCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5245,6 +7529,7 @@ public:
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
     virtual FString GetNodeTitle();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripBTNumericConditionData[0x3];
@@ -5271,6 +7556,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNumericCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5299,6 +7585,7 @@ public:
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
     virtual FString GetNodeTitle();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripBTFloatConditionData[0x3];
@@ -5325,6 +7612,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5351,6 +7639,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5378,6 +7667,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTIdleData[0x1];
@@ -5405,6 +7695,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTMoveToData[0xC];
@@ -5431,6 +7722,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSBTMoveIntoCover();
+public:
+    typedef UCCSBTMoveTo Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5458,6 +7751,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveIntoCover Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTMoveIntoBestCoverData[0x2];
@@ -5484,6 +7778,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveIntoCover Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5510,6 +7805,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveIntoCover Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5536,6 +7832,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveTo Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5562,6 +7859,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveTo Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5588,6 +7886,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveTo Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5614,6 +7913,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveToTarget Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5641,6 +7941,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTOrientTowardTargetData[0x1];
@@ -5669,6 +7970,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual FString GetNodeTitle();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripBTScriptNodeData[0x3];
@@ -5696,6 +7998,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTScriptNode Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5721,6 +8024,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSBTScriptBehavior();
+public:
+    typedef UGripBTScriptBehavior Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTScriptBehaviorData[0x1];
@@ -5748,6 +8053,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTScriptNode Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5773,6 +8079,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSBTScriptCondition();
+public:
+    typedef UGripBTScriptCondition Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTScriptConditionData[0x1];
@@ -5798,6 +8106,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTScriptBehavior Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTScriptCoverData[0xD];
@@ -5824,6 +8133,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveTo Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -5852,6 +8162,7 @@ public:
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
     virtual FString GetNodeTitle();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTSelectTargetData[0x4];
@@ -5880,6 +8191,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTShootData[0x3];
@@ -5908,6 +8220,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTShootFromCoverData[0x2];
@@ -5936,6 +8249,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTStrafeTargetData[0x5];
@@ -5963,6 +8277,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual void InitializeRuntime(GripRBTNode *);
     virtual BTMenuType GetMenuType();
+    typedef UGripBTBooleanCondition Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTTargetAngleData[0x1];
@@ -5989,6 +8304,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTBooleanCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6014,6 +8330,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTBooleanCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6039,6 +8356,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTBooleanCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6064,6 +8382,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNumericCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6089,6 +8408,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTBooleanCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6114,6 +8434,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTBooleanCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6139,6 +8460,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6164,6 +8486,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6189,6 +8512,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6216,6 +8540,7 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual BTMenuType GetMenuType();
     virtual FString GetNodeTitle();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSBTTimeSinceEventData[0x3];
@@ -6242,6 +8567,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6267,6 +8593,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6292,6 +8619,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6317,6 +8645,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6342,6 +8671,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6367,6 +8697,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTFloatCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6392,6 +8723,7 @@ public:
     static void InternalConstructor(void *);
     virtual GripRBTNode *CreateRuntime();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTBooleanCondition Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6418,6 +8750,7 @@ public:
     virtual GripRBTNode *CreateRuntime();
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UGripBTNode Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6446,6 +8779,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     void Initialize(GripBlackboard *);
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripBlackboardData[0x1];
@@ -6518,6 +8852,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSBlackboard();
+public:
+    typedef UGripBlackboard Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6543,6 +8879,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSCover();
+public:
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6568,6 +8906,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UInterface();
+public:
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6593,6 +8933,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSPawn();
+public:
+    typedef UInterface Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6618,6 +8960,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSSystemConfig();
+public:
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6643,6 +8987,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UCCSTarget();
+public:
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -6825,6 +9171,7 @@ public:
     void PushHoveredToProxy(const unsigned int);
     void PushEditorVisibilityToProxy(unsigned __int64);
     UPrimitiveComponent();
+    typedef UActorComponent Super;
 private:
     static UClass *PrivateStaticClass;
 public:
@@ -6854,6 +9201,7 @@ public:
     static void InternalConstructor(void *);
     virtual void UpdateBounds();
     virtual FPrimitiveSceneProxy *CreateSceneProxy();
+    typedef UPrimitiveComponent Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UCCSVisualizationComponentData[0x4];
@@ -6891,6 +9239,9 @@ public:
     UStruct *GetOwnerStruct() const;
 private:
     virtual UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
+public:
+    typedef UObject Super;
+private:
     static UClass *PrivateStaticClass;
     unsigned int UFieldData[0x1];
 };
@@ -6944,6 +9295,7 @@ public:
     unsigned int IsChildOf(const UStruct *) const;
     UStruct *GetSuperStruct() const;
     unsigned int StructCompare(const void *, const void *, unsigned long);
+    typedef UField Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UStructData[0xD];
@@ -6979,6 +9331,7 @@ public:
     virtual unsigned int MergeBools();
     virtual UStruct *GetInheritanceSuper() const;
     UState *GetSuperState() const;
+    typedef UStruct Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UStateData[0x12];
@@ -7049,6 +9402,9 @@ public:
     void SerializeDefaultObject(UObject *, FArchive &);
 private:
     unsigned int IsA(UClass *) const;
+public:
+    typedef UState Super;
+private:
     static UClass *PrivateStaticClass;
     unsigned int UClassData[0x26];
 };
@@ -7077,6 +9433,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UGripBTScriptNodeCache();
+public:
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UGripBTScriptNodeCacheData[0x3];
@@ -7108,6 +9466,7 @@ public:
     static void InternalConstructor(void *);
     virtual void TickAnim(float);
     virtual void HandleSliderMove(int, int, float);
+    typedef UAnimNodeBlendList Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UUDKAnimBlendBaseData[0x8];
@@ -7133,6 +9492,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     void WeapTypeChanged(FName);
+    typedef UUDKAnimBlendBase Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -7163,6 +9523,7 @@ public:
     virtual FString GetSliderDrawValue(int);
     void UpdateChildWeights();
     virtual void HandleSliderMove(int, int, float);
+    typedef UUDKAnimBlendBase Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -7191,6 +9552,7 @@ public:
     virtual void TickAnim(float);
     virtual void SetActiveChild(int, float);
     virtual void OnBecomeRelevant();
+    typedef UUDKAnimBlendBase Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UHaloAnimBlendByJumpTypeData[0x4];
@@ -7216,6 +9578,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual void TickAnim(float);
+    typedef UUDKAnimBlendBase Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UUDKAnimBlendByPhysicsData[0x14];
@@ -7241,6 +9604,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual void SetActiveChild(int, float);
+    typedef UUDKAnimBlendByPhysics Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UHaloAnimBlendByPhysicsData[0x4];
@@ -7267,6 +9631,7 @@ public:
     static void InternalConstructor(void *);
     virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
     virtual void TickAnim(float);
+    typedef UUDKAnimBlendBase Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UUDKAnimBlendByTurnInPlaceData[0x4];
@@ -7292,6 +9657,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual void TickAnim(float);
+    typedef UUDKAnimBlendByTurnInPlace Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -7320,6 +9686,7 @@ public:
     virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
     virtual void TickAnim(float);
     virtual void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
+    typedef UAnimNodeBlendBase Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UUDKAnimNodeCopyBoneTranslationData[0x18];
@@ -7346,6 +9713,7 @@ public:
     static void InternalConstructor(void *);
     virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
     virtual void TickAnim(float);
+    typedef UUDKAnimNodeCopyBoneTranslation Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UHaloAnimNodeCopyBoneTranslationData[0x4];
@@ -7374,12 +9742,13 @@ public:
     virtual void InitializeRuntime(GripRBTNode *);
     virtual EGripBTNodeType GetType();
     virtual BTMenuType GetMenuType();
+    typedef UCCSBTMoveTo Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UHaloBTKamikazeData[0x7];
 };
 
-class UUDKTargetableComponent : public UActorComponent  // size 0x84, opaque
+class UUDKTargetableComponent : public UActorComponent  // size 0x84
 {
 public:
     enum
@@ -7404,9 +9773,22 @@ public:
     virtual void BeginPlay();
     virtual void BeginDestroy();
     AActor *GetOwner();
+    typedef UActorComponent Super;
+    int BaseThreatVal;  // 0x58
+    float MaxAIHeat;  // 0x5C
+    float CurAIHeat;  // 0x60
+    float ReduceHeatPerSecond;  // 0x64
+    float InnerThreatRadius;  // 0x68
+    float OutterThreatRadius;  // 0x6C
+    float ModifiableThreatPct;  // 0x70
+    float fAITargetHeight;  // 0x74
+    unsigned char AITargetType;  // 0x78
+    char _pad0[0x3];
+    unsigned long bAITargetable : 1;  // 0x7C
+    unsigned long bIsVehicle : 1;
+    AActor *myOwner;  // 0x80
 private:
     static UClass *PrivateStaticClass;
-    unsigned int UUDKTargetableComponentData[0xB];
 };
 
 class UUSSATBlendByAlertness : public UCCSATBlendListBase  // size 0x110, opaque
@@ -7429,6 +9811,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual void TickAnim(float);
+    typedef UCCSATBlendListBase Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -7453,6 +9836,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual void TickAnim(float);
+    typedef UCCSATBlendListBase Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -7478,6 +9862,7 @@ public:
     static void InternalConstructor(void *);
     virtual void TickAnim(float);
     virtual void OnCeaseRelevant();
+    typedef UCCSATBlendListBase Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -7502,6 +9887,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual void TickAnim(float);
+    typedef UCCSATBlendListBase Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -7526,6 +9912,7 @@ protected:
 public:
     static void InternalConstructor(void *);
     virtual void TickAnim(float);
+    typedef UCCSATBlendListBase Super;
 private:
     static UClass *PrivateStaticClass;
 };
@@ -8973,12 +11360,14 @@ extern FName UDKBASE_FindNavMeshPath;
 extern FName UDKBASE_FireWeapon;
 extern FName UDKBASE_InitializeAllNodes;
 extern FName UDKBASE_NotifyAIMoveToActorCompleted;
+extern FName UDKBASE_SetDisabled;
 extern FName UDKBASE_StartFireBurst;
 extern FName UDKBASE_StartFireBurstObj;
 extern FName UDKBASE_StopFireBurst;
 extern FName UDKBASE_SurveyUsedBBMembers;
 
 inline FVector::FVector() {}
+inline FRotator::FRotator() {}
 inline GwNavVehicle_eventExecuteVehicleCommand_Parms::GwNavVehicle_eventExecuteVehicleCommand_Parms(EEventParm) {}
 inline CCSController_eventCreateDebugVizComponent_Parms::CCSController_eventCreateDebugVizComponent_Parms(EEventParm) {}
 inline CCSController_eventFindNavMeshDistance_Parms::CCSController_eventFindNavMeshDistance_Parms(EEventParm) {}
@@ -8994,6 +11383,7 @@ inline CCSController_eventNotifyAIMoveToActorCompleted_Parms::CCSController_even
 inline GripBTScriptNodeCache_eventCacheAllConditions_Parms::GripBTScriptNodeCache_eventCacheAllConditions_Parms(EEventParm) {}
 inline GripBTScriptNodeCache_eventSurveyUsedBBMembers_Parms::GripBTScriptNodeCache_eventSurveyUsedBBMembers_Parms(EEventParm) {}
 inline GripBTScriptNodeCache_eventInitializeAllNodes_Parms::GripBTScriptNodeCache_eventInitializeAllNodes_Parms(EEventParm) {}
+inline CoverLink_eventSetDisabled_Parms::CoverLink_eventSetDisabled_Parms(EEventParm) {}
 inline void AGwNavVehicle::eventExecuteVehicleCommand(unsigned char HVC)
 {
     GwNavVehicle_eventExecuteVehicleCommand_Parms Parms(EC_EventParm);
@@ -9106,6 +11496,13 @@ inline void UGripBTScriptNodeCache::eventSurveyUsedBBMembers(UGripBlackboard *Bl
 inline void UGripBTScriptNodeCache::eventInitializeAllNodes()
 {
     ProcessEvent(FindFunctionChecked(UDKBASE_InitializeAllNodes, 0), 0, 0);
+}
+
+inline void ACoverLink::eventSetDisabled(unsigned int bNewDisabled)
+{
+    CoverLink_eventSetDisabled_Parms Parms(EC_EventParm);
+    Parms.bNewDisabled = bNewDisabled ? FIRST_BITFIELD : 0;
+    ProcessEvent(FindFunctionChecked(UDKBASE_SetDisabled, 0), &Parms, 0);
 }
 
 // ---- written by hand below this line (gen_header.py keeps it) ----

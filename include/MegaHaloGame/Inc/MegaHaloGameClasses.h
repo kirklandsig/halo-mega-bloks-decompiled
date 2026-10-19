@@ -2093,6 +2093,9 @@ public:
     UStruct *GetOwnerStruct() const;
 private:
     virtual UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
+public:
+    typedef UObject Super;
+private:
     static UClass *PrivateStaticClass;
     unsigned int UFieldData[0x1];
 };
@@ -2146,6 +2149,7 @@ public:
     unsigned int IsChildOf(const UStruct *) const;
     UStruct *GetSuperStruct() const;
     unsigned int StructCompare(const void *, const void *, unsigned long);
+    typedef UField Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UStructData[0xD];
@@ -2181,6 +2185,7 @@ public:
     virtual unsigned int MergeBools();
     virtual UStruct *GetInheritanceSuper() const;
     UState *GetSuperState() const;
+    typedef UStruct Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UStateData[0x12];
@@ -2251,6 +2256,9 @@ public:
     void SerializeDefaultObject(UObject *, FArchive &);
 private:
     unsigned int IsA(UClass *) const;
+public:
+    typedef UState Super;
+private:
     static UClass *PrivateStaticClass;
     unsigned int UClassData[0x26];
 };
@@ -2280,6 +2288,8 @@ public:
     static void InternalConstructor(void *);
 protected:
     UHaloSaveGame();
+public:
+    typedef UObject Super;
 private:
     static UClass *PrivateStaticClass;
     unsigned int UHaloSaveGameData[0xB];

@@ -15,6 +15,7 @@ script/<Package>/Classes/.
 """
 import argparse
 import re
+import struct
 from pathlib import Path
 
 import gen_header
@@ -24,8 +25,10 @@ import pdbtype
 
 # Classes the hand-written code of a package needs in its header as well:
 # with their members (TARGETS) or opaque (OPAQUE).
-TARGETS = {'MegaHaloGame': ['FSystemSettings']}
+TARGETS = {'MegaHaloGame': ['FSystemSettings'], 'UDKBase': ['AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover']}
 OPAQUE = {}
+# Event thunks of other classes that a package's code calls (inlined there).
+EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 
 
 def nspace_rows():
@@ -83,16 +86,25 @@ class Classes:
     def __init__(self, types, package, rows):
         self.t = types
         self.package = package
+        all_rows = rows
         rows = [r for r in rows if r['package'] == package.lower() and kind(r)]
         self.events = [r for r in rows if kind(r) == 'event']
         rows = [r for r in rows if kind(r) != 'event']
         self.classes = sorted(c for c in {r['name'].rsplit('::', 1)[0] for r in rows} if self.is_uobject(c))
         self.rows = [r for r in rows if r['name'].rsplit('::', 1)[0] in self.classes] + self.events
-        event_classes = sorted({r['name'].rsplit('::', 1)[0] for r in self.events})
-        self.parms = [self.parms_name(r) for r in self.events if self._exists(self.parms_name(r))]
+        self.events_all = self.events + [{'name': n} for n in EVENTS.get(package, [])]
+        event_classes = sorted({r['name'].rsplit('::', 1)[0] for r in self.events_all})
+        self.tiny = [(r, shape) for r in all_rows if r['package'] == package.lower() and not kind(r)
+                     and (shape := tiny_shape(r)) and self._exists(r['name'].rsplit('::', 1)[0])]
+        event_classes += sorted({r['name'].rsplit('::', 1)[0] for r, _s in self.tiny})
+        self.parms = [self.parms_name(r) for r in self.events_all if self._exists(self.parms_name(r))]
         self.header = gen_header.Header(types, self.parms + TARGETS.get(package, []),
                                         self.classes + event_classes + ['UClass'] + OPAQUE.get(package, []))
         self.packages = script_packages()
+        for name, ti in self.header.classes.items():  # DECLARE_CLASS's typedef Super
+            bases = self.header.bases(ti)
+            if bases and any(m['name'] == 'StaticClass' for m in self.header.methods(ti)):
+                self.header.extra.setdefault(name, []).append(f'typedef {self.header._rname(bases[0][0])} Super;')
 
     def _exists(self, name):
         try:
@@ -188,8 +200,36 @@ class Classes:
                 out.append('')
         return out
 
+    def tiny_definition(self, row, shape):
+        """The definition of a one-instruction function (a constant or a
+        string returned, or nothing done), or None when its declaration
+        isn't unique."""
+        cls, member = row['name'].rsplit('::', 1)
+        methods = [m for m in self.header.methods(self.t.find(cls)) if m['name'] == member]
+        if len(methods) != 1:
+            return None
+        m = methods[0]
+        decl = self.header.method_decl(cls, m)
+        if decl is None or member.startswith('operator'):
+            return None
+        decl = re.sub(r'^(virtual |static )', '', decl).rstrip(';').replace(' = 0', '')
+        decl = decl.replace(f'{member}(', f'{cls}::{member}(', 1)
+        ret = self.signature(m['type'])[0]
+        what, value = shape
+        if what == 'empty':
+            body = ''
+        elif what == 'string':
+            body = f' return {"L" if "wchar_t" in ret else ""}"{value}"; '
+        elif ret == 'bool':
+            body = f' return {"true" if value else "false"}; '
+        else:
+            enum = self.header._enum_index(ret)
+            name = enumerator(self.t, enum, value) if enum else None
+            body = f' return {(ret.rsplit("::", 1)[0] + "::" if "::" in ret else "") + name if name else value}; '
+        return [f'// @retail {row["address"]}', f'{decl}', '{' + body + '}', '']
+
     def event_bodies(self):
-        names = sorted({f'{self.package.upper()}_{r["name"].rsplit("::", 1)[1][5:]}' for r in self.events})
+        names = sorted({f'{self.package.upper()}_{r["name"].rsplit("::", 1)[1][5:]}' for r in self.events_all})
         out = [f'extern FName {n};' for n in names] + ['']
         for t in EMPTY_CONSTRUCTORS:
             if t in self.header.classes and self._has(t, t):
@@ -197,7 +237,7 @@ class Classes:
         for parms in self.parms:
             if any(m['name'] == parms for m in self.header.methods(self.t.find(parms))):
                 out.append(f'inline {parms}::{parms}(EEventParm) {{}}')
-        for r in self.events:
+        for r in self.events_all:
             out += self.event_thunk(r) + ['']
         return out
 
@@ -313,6 +353,56 @@ def event_thunk(cls, member, ret, args, fname, parms, has_ctor):
     return lines + ['}']
 
 
+def tiny_shape(row):
+    """('const', value), ('string', text), ('empty', None) for a function
+    whose whole body is `li r3, N; blr`, `lis; addi r3; blr` (a string) or
+    `blr`, else None."""
+    size = int(row['size'])
+    if size > 12 or not paths.basefile().exists():
+        return None
+    va = int(row['address'], 16)
+    image = basefile()
+    words = [int.from_bytes(image[va - IMAGE_BASE + i:va - IMAGE_BASE + i + 4], 'big') for i in range(0, size, 4)]
+    if words == [0x4E800020]:
+        return ('empty', None)
+    if len(words) == 2 and words[1] == 0x4E800020 and words[0] >> 16 == 0x3860:
+        imm = words[0] & 0xFFFF
+        return ('const', imm - 0x10000 if imm & 0x8000 else imm)
+    if len(words) == 3 and words[2] == 0x4E800020 and words[0] >> 21 == (15 << 5) | 11 \
+            and words[1] >> 16 == (14 << 10) | (3 << 5) | 11:
+        hi, lo = words[0] & 0xFFFF, words[1] & 0xFFFF
+        addr = ((hi << 16) + (lo - 0x10000 if lo & 0x8000 else lo)) & 0xFFFFFFFF
+        return ('string', read_string(image, addr))
+    return None
+
+
+def read_string(image, addr):
+    """The C string at `addr` (UTF-16 when it looks wide), escaped for C++."""
+    data = image[addr - IMAGE_BASE:addr - IMAGE_BASE + 256]
+    if len(data) > 1 and data[0] == 0 and data[1]:
+        text = data[:next(i for i in range(0, len(data), 2) if data[i:i + 2] == b'\0\0')].decode('utf-16-be')
+    else:
+        text = data[:data.index(0)].decode('latin1')
+    return text.replace('\\', '\\\\').replace('"', '\\"')
+
+
+def basefile():
+    if not hasattr(basefile, 'cache'):
+        basefile.cache = paths.basefile().read_bytes()
+    return basefile.cache
+
+
+def enumerator(types, ti, value):
+    """The name of `value` in enum `ti`, or None."""
+    _count, _prop, _utype, field = struct.unpack_from('<HHII', types.data, types.record(types._resolve(ti))[1])
+    for leaf, q in types._fields(field):
+        if leaf == pdbtype.LF_ENUMERATE:
+            v, r = pdbtype.numeric(types.data, q + 2)
+            if v == value:
+                return pdbtype.cstr(types.data, r)[0]
+    return None
+
+
 def argument_registers(va, size, regs, callee='UClass::UClass'):
     """The constants loaded into `regs` (li, or lis then ori) at the
     function's call to `callee`, from the basefile."""
@@ -370,6 +460,18 @@ def main(argv=None):
             by_object.setdefault(r['object'], []).append(r)
         for obj, orows in sorted(by_object.items()):
             write_source(c, package, obj, orows)
+        tiny = {}
+        for r, shape in c.tiny:
+            text = c.tiny_definition(r, shape)
+            if text:
+                tiny.setdefault(r['object'], []).extend(text)
+        for obj, lines in sorted(tiny.items()):
+            stem = obj.split('.')[0].replace('Unity_', '')
+            path = paths.ROOT / 'src' / package / 'Src' / f'{stem}Constants.cpp'
+            head = [f'// @object {obj}', f'// Generated by: python tools/gen_classes.py {package}',
+                    '// Functions whose whole body returns a constant or a string, or does nothing.',
+                    f'#include "{package}/Inc/{package}Classes.h"', '']
+            path.write_text('\n'.join(head + lines), encoding='utf-8', newline='\n')
     return 0
 
 

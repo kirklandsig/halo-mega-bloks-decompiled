@@ -49,3 +49,6 @@ unsigned char GRegisterNative(int iNative, const Native &Func);
     Native int##cls##func = (Native)&cls::func;                  \
     }                                                            \
     static unsigned char cls##func##Temp = GRegisterNative(num, int##cls##func);
+
+// Cast<T>: retail calls its out-of-line copy
+template <class T> T *Cast(UObject *Src);
