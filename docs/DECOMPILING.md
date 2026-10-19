@@ -177,6 +177,44 @@ never written by it.
   `static const VectorRegister` globals (`include/Core/Inc/UnMathXe.h`).
   Other vector code is untested.
 
+### From the AI code (2026-10-19)
+
+- **Include the unity's other `.cpp` files** (`#include "CCSCover.cpp"`, each
+  with `#pragma once`) so their functions inline where retail inlines them;
+  `check.py` only reads the markers of the file it is given.
+- **Inline layers are hand-written headers:** `Core/Inc/Core.h`, `Array.h`
+  (`TArray`, with `#line` so each `check()` carries retail's line),
+  `ScriptInterface.h`, `Grip/Inc/GripContainers.h`, `GwNav/Inc/RefCount.h`
+  and `<Package>Inline.h`. gen_header.py skips the types they provide
+  (`PROVIDED_*`; Grip's containers are included mid-header, once their bases
+  are complete).
+- **Callee bodies change the caller.** MSVC uses what it knows of an inline
+  callee (what it reads and writes); a declared-only callee forces reloads.
+- **The inlining budget is real.** Retail sometimes calls a function it
+  inlines elsewhere (a second `GetHighestThreatTarget`, `StaticClass`,
+  `CCSCharacter::GetActor`). Forced inlining (`__forceinline`) fixes the
+  opposite case.
+- **Natural padding stays implicit** in the XDK branch of generated headers,
+  so an aggregate initializer (`CCSAOFlee Objective = {Target};`) zero-fills
+  the tail in words, as retail does.
+- **Named locals change evaluation order.** For `obj->f(arg)`, MSVC fetches
+  `obj` first; retail's order (argument, then object) comes from a named
+  local for the argument (`FRotator Delta = ...; CCSPawn->CanAim(Delta)`). A
+  named temporary also makes a constructor's result come from its address
+  (`addi`) rather than from `r3`.
+- **`a == b` versus `b == a`** decides which register is subtracted from which
+  (`subf`), and `x * s` versus `s * x` the operand order of `fmuls`.
+- **Result variables:** `li r3,1` before the work, or a bool set to `false`
+  in a branch, means the source kept a result variable.
+- **Float `Min`/`Max` use `fsel`** (Xenon specializations), and
+  `appInvSqrt` is `1.0 / __fsqrt(x)` in double; `appSqrt` is `__fsqrts`.
+- **`slwi rX, rY, 0`** appears when a value is forwarded from a store to a
+  later use (an `FRotator` written and then subtracted).
+- **Interlocked operations** (`_InterlockedExchangeAdd`) compile to the
+  `mfmsr`/`mtmsrd`/`lwarx`/`stwcx.` sequence of Grip's string release.
+- **By-value class parameters are destroyed by the callee** (`FString`,
+  `Grip::String`).
+
 ## When it doesn't match
 
 Try a few distinct ideas (member order, an inline helper, a different

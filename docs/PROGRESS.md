@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-18 (Phase 3 done: n-Space's C++). Matching progress is
+Updated 2026-10-19 (n-Space's C++: 1,226 of 1,258 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -22,37 +22,42 @@ then Phase 5 (UDK rebuild, later).
 
 1,258 functions (136,660 bytes) are in scope: the `nspace` rows of
 `config/functions.csv`. `config/status.csv` records every function that isn't
-`todo`. **875 are matched, 4 are near and 379 are todo** (877 matched in all,
-counting 2 Grip and CCS helpers owned by `epic`). Most come from
-`tools/gen_classes.py`: what UE3's class macros and the script compiler's
-event and exec thunks expand to, and the one-instruction functions.
+`todo`. **1,226 are matched (115,044 bytes, 84%), 6 are near (1,904 bytes)
+and 26 are todo (19,712 bytes)**; 1,278 functions match in all, counting the
+Grip, CCS and Epic helpers that the same objects keep out of line.
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 962 | 108,304 | 646 | 4 | 312 |
-| `Unity_UDKWeaponEtAl.cpp.obj` | 195 | 18,544 | 157 | 0 | 38 |
-| `Unity_UDKCoverEtAl.cpp.obj` | 42 | 5,784 | 21 | 0 | 21 |
-| `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 26 | 0 | 8 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 962 | 108,304 | 933 | 4 | 25 |
+| `Unity_UDKWeaponEtAl.cpp.obj` | 195 | 18,544 | 195 | 0 | 0 |
+| `Unity_UDKCoverEtAl.cpp.obj` | 42 | 5,784 | 42 | 0 | 0 |
+| `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 31 | 2 | 1 |
 | `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 25 | 0 | 0 |
 
-Why the 379 are still `todo` (Phase 3 did the generated and mechanical code
-and stopped there; the rest is open for anyone):
+Each remaining function has a comment in its source file saying why it
+isn't matched. In short:
 
-- **Most inline UE3 or Grip templates that aren't written yet:** `TArray`
-  (`Num`, `operator()`, `Empty`, `AddItem`, its destructor), `TMap`,
-  `FMemoryWriter`, `Grip_Array`. Writing those inline bodies once (in the
-  style of `include/Core/Inc/UnMath.h`) unlocks most of CCSNorman, the
-  blackboards and the BT nodes' runtime code.
-- **Destructors and constructors of classes with members** need the class
-  rendered with its members (a `TARGETS` entry in `gen_classes.py`) and the
-  members' inline constructors and destructors.
-- **n-Space's AI code itself** (`ccsbtnodes.cpp`, `ccsactions.cpp`,
-  `ccsblackboard.cpp`, `usspawn.cpp`, `ccscontroller.cpp`, the `CCSAF*` action
-  frameworks, the Halo anim nodes) was not attempted. The source files that
-  were started list what's left in a closing comment.
-- **9 exec thunks** take parameter kinds the generator doesn't read yet
-  (`FName`, `FString`, arrays, references), and the 4 `near` are two
-  controllers' constructors (their interfaces' vtable pointers).
+- **Not attempted yet** (large): `ACCSController::Tick`, `TakePossession` and
+  `DrawHUD`; `AUSSController::DrawHUD` and `PostPollMove`; `CCSBlackboard`'s
+  `RegisterMembers`, `GetSpecificTarget`, `UpdateTargetListsByRange` and
+  `UpdateTargetPointers`; two `GetNodeTitle` cpptext functions;
+  `AutoInitializeRegistrantsMegaHaloGame` (needs `TMap`/`TSet`).
+- **Written, not matched:** the code is retail's but registers, stack slots or
+  inlining differ: the `CCSAF*` actions' `UpdateGoal`/`UpdateMoveTarget`/`Tick`,
+  `CCSBlackboard`'s constructor and destructor, `UCCSActorFactory::CreateActor`
+  (retail calls two `StaticClass` out of line), `AUSSPawn::CanAim` and
+  `TickSpecial` (a rotator kept in a stack copy), `ACCSController::SetState`
+  and `RemoveState`, `HaloRBTKamikaze::ExecuteInternal`.
+- **Near (6):** `UHaloSaveGame::BasicSerializeObject` and
+  `BasicDeserializeObject`, `CCSTarget::FindDestinationReachable`,
+  `UCCSBlackboard::GetCovers` and `GetTargets`, `AUSSPawn::MoveToInCover`: a
+  swapped register pair or operand order.
+
+The inline layer they rest on is hand-written in `include/`: `Core/Inc/Core.h`
+(memory, `check()`, `Min`/`Max` with `fsel`, `appSqrt`), `Core/Inc/Array.h`
+(`TArray`), `Core/Inc/UnMath.h`, `Grip/Inc/GripContainers.h` (`Grip_Array`,
+the blackboard members), `GwNav/Inc/RefCount.h` (`Kaim::Ptr`), and the
+packages' `*Inline.h` files.
 
 The port can run matched code in place of the recompiled code; see
 `docs/specs/phase3-port-swap.md` (recommendation: only for code worth
