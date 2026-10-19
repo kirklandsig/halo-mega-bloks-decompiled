@@ -226,3 +226,11 @@ float AUSSPawn::MaxSpeedModifier()
     }
     return Super::MaxSpeedModifier();
 }
+
+// UDKBaseClasses.h: the interface's way back to its object
+UObject *AUSSPawn::GetUObjectInterfaceCCSPawn()
+{
+    return this;
+}
+// @retail 0x8335BDD0
+// AUSSPawn::GetUObjectInterfaceCCSPawn

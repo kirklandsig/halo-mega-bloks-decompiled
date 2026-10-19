@@ -433,3 +433,13 @@ inline Grip::String::~String()
     }
 }
 #endif
+
+// UnMath.h: boxes
+#ifndef HAGGAR_HOST
+inline FBox::FBox() {}
+inline FBoxSphereBounds::FBoxSphereBounds(const FBox &Box)
+{
+    Box.GetCenterAndExtents(Origin, BoxExtent);
+    SphereRadius = BoxExtent.Size();
+}
+#endif

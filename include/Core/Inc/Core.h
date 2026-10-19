@@ -81,6 +81,7 @@ void appFailAssertFuncDebug(const char *Expr, const char *File, int Line, const 
 
 template <class T> inline T Min(const T A, const T B) { return (A <= B) ? A : B; }
 template <class T> inline T Max(const T A, const T B) { return (A >= B) ? A : B; }
+template <class T> inline T Abs(const T A) { return (A >= (T)0) ? A : -A; }
 template <class T> inline T Clamp(const T X, const T Lo, const T Hi) { return X < Lo ? Lo : X < Hi ? X : Hi; }
 #ifndef HAGGAR_HOST
 // floats select without a branch on this target
