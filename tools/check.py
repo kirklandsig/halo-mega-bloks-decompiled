@@ -87,7 +87,11 @@ def split_cmd(cmd):
 
 def plain_name(symbol):
     """'Class::Name' of a simple decorated name ('?Name@Class@@...'); other
-    names unchanged. Templates and operators are not handled."""
+    names unchanged. Templates and operators are not handled, except a
+    dynamic initializer ('??__E<Var>@<Scope>@@YAXXZ')."""
+    if symbol.startswith('??__E'):
+        var, *scope = symbol[5:].split('@@', 1)[0].split('@')
+        return '::'.join(list(reversed(scope)) + [f"`dynamic initializer for '{var}''"])
     if not symbol.startswith('?') or symbol.startswith('??'):
         return symbol
     return '::'.join(reversed(symbol[1:].split('@@', 1)[0].split('@')))
