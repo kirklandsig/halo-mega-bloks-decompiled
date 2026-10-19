@@ -91,10 +91,11 @@ The limits found:
    overrides it. Fixing that means either a vtable call with a "not from my
    own override" check, or writing qualified base calls with a macro. Pure
    virtuals have no such problem.
-3. **Marshalling covers scalars, pointers, references and enums.** Records
-   by value (`FVector`, `FString`), varargs and struct returns aren't
-   marshalled yet; such methods get no thunk, and a call to one fails at
-   link time.
+3. **Marshalling covers scalars, enums and pointers to guest objects.** A
+   reference, or a pointer to a scalar, could point at host memory (a local)
+   or hand guest memory over as a native value, so such methods get no
+   thunk. Records by value (`FVector`, `FString`), varargs and struct returns
+   aren't marshalled either. A call to any of them fails at link time.
 4. **The float convention follows rex's.** Floats take FPRs and count
    separately from the GPRs, as ReXGlue's own marshalling does; no function
    tried here mixes them, so that is untested too.

@@ -7,57 +7,26 @@
 __attribute__((weak)) void GripBBVisualization::SetBlackboard(GripBlackboard *a0) { hg::call<void>(0x833203F0, this, a0); }
 __attribute__((weak)) void GripBBVisualization::Refresh() { return hg::vcall<void>(1, this); }
 __attribute__((weak)) void GripBBVisualization::Serialize(GripSerializer *a0) { hg::call<void>(0x833E3400, this, a0); }
-__attribute__((weak)) const Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > & GripBBVisualization::GetMembers() const { return hg::call<const Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > &>(0x833203F8, this); }
 __attribute__((weak)) void CCSBBVisualization::Refresh() { hg::call<void>(0x83355060, this); }
 __attribute__((weak)) void GripBBMember::FlagAsUsed() { hg::call<void>(0x824150B0, this); }
 __attribute__((weak)) bool GripBBMember::IsUsed() const { return hg::call<bool>(0x824150C0, this); }
-__attribute__((weak)) void GripBBMember::GetUsedPerceptionSystems(GripBTSystemFlags &a0, GripBTSystemFlags &a1) { hg::call<void>(0x833D86D0, this, &a0, &a1); }
 __attribute__((weak)) void GripBBMember::AddUsedSensorSystems(const int a0) { hg::call<void>(0x8331EA10, this, a0); }
 __attribute__((weak)) void GripBBMember::AddUsedAnalysisSystems(const int a0) { hg::call<void>(0x8331EA30, this, a0); }
 __attribute__((weak)) void GripBBMember::SetBlackboard(GripBlackboard *a0) { hg::call<void>(0x833D80F8, this, a0); }
 __attribute__((weak)) void GripBBMember::DirtyBlackboard() { hg::call<void>(0x833E0E90, this); }
-__attribute__((weak)) void GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > >::AddItem(const CCSCover &a0) { hg::call<void>(0x833410A8, this, &a0); }
 __attribute__((weak)) void GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > >::RemoveItemSwap(int a0) { hg::call<void>(0x833410E0, this, a0); }
 __attribute__((weak)) void GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > >::Reset() { hg::call<void>(0x83341148, this); }
 __attribute__((weak)) int GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > >::Num() const { return hg::call<int>(0x83334010, this); }
-__attribute__((weak)) const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > & GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > >::GetArray() const { return hg::call<const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &>(0x83325AE8, this); }
-__attribute__((weak)) Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > & GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > >::GetArray() { return hg::call<Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &>(0x83325AE8, this); }
-__attribute__((weak)) void GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > >::AddItem(const CCSTarget &a0) { hg::call<void>(0x8334D1E0, this, &a0); }
 __attribute__((weak)) void GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > >::RemoveItemSwap(int a0) { hg::call<void>(0x8334D218, this, a0); }
 __attribute__((weak)) void GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > >::Reset() { hg::call<void>(0x8334D280, this); }
 __attribute__((weak)) int GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > >::Num() const { return hg::call<int>(0x83333FF8, this); }
-__attribute__((weak)) const CCSCover & GripBBProperty<CCSCover>::Get() const { return hg::call<const CCSCover &>(0x83325B70, this); }
-__attribute__((weak)) void GripBBProperty<CCSCover>::Set(const CCSCover &a0) { hg::call<void>(0x83325B78, this, &a0); }
-__attribute__((weak)) CCSTarget *const & GripBBProperty<CCSTarget *>::Get() const { return hg::call<CCSTarget *const &>(0x83325820, this); }
-__attribute__((weak)) void GripBBProperty<CCSTarget *>::Set(CCSTarget *const &a0) { hg::call<void>(0x83325828, this, &a0); }
-__attribute__((weak)) const FVector & GripBBProperty<FVector>::Get() const { return hg::call<const FVector &>(0x83325AC0, this); }
-__attribute__((weak)) void GripBBProperty<FVector>::Set(const FVector &a0) { hg::call<void>(0x83325AC8, this, &a0); }
-__attribute__((weak)) const Grip_Vector & GripBBProperty<Grip_Vector>::Get() const { return hg::call<const Grip_Vector &>(0x83325A10, this); }
-__attribute__((weak)) void GripBBProperty<Grip_Vector>::Set(const Grip_Vector &a0) { hg::call<void>(0x83325A18, this, &a0); }
-__attribute__((weak)) UClass *const & GripBBProperty<UClass *>::Get() const { return hg::call<UClass *const &>(0x833259B0, this); }
-__attribute__((weak)) void GripBBProperty<UClass *>::Set(UClass *const &a0) { hg::call<void>(0x833259B8, this, &a0); }
-__attribute__((weak)) const bool & GripBBProperty<bool>::Get() const { return hg::call<const bool &>(0x83325870, this); }
-__attribute__((weak)) void GripBBProperty<bool>::Set(const bool &a0) { hg::call<void>(0x83325878, this, &a0); }
-__attribute__((weak)) const EEventType & GripBBProperty<enum EEventType>::Get() const { return hg::call<const EEventType &>(0x83325960, this); }
-__attribute__((weak)) void GripBBProperty<enum EEventType>::Set(const EEventType &a0) { hg::call<void>(0x83325968, this, &a0); }
-__attribute__((weak)) const EThreatType & GripBBProperty<enum EThreatType>::Get() const { return hg::call<const EThreatType &>(0x83325A70, this); }
-__attribute__((weak)) void GripBBProperty<enum EThreatType>::Set(const EThreatType &a0) { hg::call<void>(0x83325A78, this, &a0); }
-__attribute__((weak)) const float & GripBBProperty<float>::Get() const { return hg::call<const float &>(0x83325910, this); }
-__attribute__((weak)) void GripBBProperty<float>::Set(const float &a0) { hg::call<void>(0x83325918, this, &a0); }
-__attribute__((weak)) const int & GripBBProperty<int>::Get() const { return hg::call<const int &>(0x833258C0, this); }
-__attribute__((weak)) void GripBBProperty<int>::Set(const int &a0) { hg::call<void>(0x833258C8, this, &a0); }
 __attribute__((weak)) void GripBlackboard::Initialize() { hg::call<void>(0x833D8100, this); }
-__attribute__((weak)) void GripBlackboard::GetUsedPerceptionSystems(GripBTSystemFlags &a0, GripBTSystemFlags &a1) { hg::call<void>(0x833D86E8, this, &a0, &a1); }
 __attribute__((weak)) void GripBlackboard::Reset() { hg::call<void>(0x833D8BD0, this); }
 __attribute__((weak)) void GripBlackboard::RegisterMembers() { hg::call<void>(0x833D8A70, this); }
-__attribute__((weak)) void GripBlackboard::AddMember(GripBBMember &a0) { hg::call<void>(0x833D8818, this, &a0); }
 __attribute__((weak)) GripBBVisualization * GripBlackboard::GetVisualizer() { return hg::vcall<GripBBVisualization *>(3, this); }
-__attribute__((weak)) void GripBlackboard::DrawHUD(GripHUDRenderer *a0, int &a1) { hg::call<void>(0x833D8430, this, a0, &a1); }
-__attribute__((weak)) Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > & GripBlackboard::GetStates() { return hg::call<Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > &>(0x83329700, this); }
 __attribute__((weak)) void GripBlackboard::ClearAllState() { hg::call<void>(0x833D8C30, this); }
 __attribute__((weak)) void GripBlackboard::FlagStatesAsUsed() { hg::call<void>(0x824150C8, this); }
 __attribute__((weak)) bool GripBlackboard::AreStatesUsed() const { return hg::call<bool>(0x824150D8, this); }
-__attribute__((weak)) void GripBlackboard::SetLastValidEvent(const GripEvent &a0) { hg::call<void>(0x833D92E8, this, &a0); }
 __attribute__((weak)) void GripBlackboard::FlagEventsAsUsed() { hg::call<void>(0x833D9208, this); }
 __attribute__((weak)) bool GripBlackboard::IsDirty() const { return hg::call<bool>(0x833EBBC0, this); }
 __attribute__((weak)) void GripBlackboard::SetDirty() { hg::call<void>(0x833E0E80, this); }
@@ -68,19 +37,13 @@ __attribute__((weak)) GripBBVisualization * CCSBlackboard::GetVisualizer() { ret
 __attribute__((weak)) void CCSBlackboard::ClearMoveCommand() { hg::call<void>(0x83329720, this); }
 __attribute__((weak)) CCSBlackboard::EMoveCmd CCSBlackboard::GetMoveCommand() const { return hg::call<CCSBlackboard::EMoveCmd>(0x83329738, this); }
 __attribute__((weak)) void CCSBlackboard::FlagMoveCommandAsUsed() { hg::call<void>(0x83320508, this); }
-__attribute__((weak)) void CCSBlackboard::OnNewTarget(const CCSTarget &a0) { hg::call<void>(0x83323AE8, this, &a0); }
 __attribute__((weak)) void CCSBlackboard::OnTargetDestroyed(int a0) { hg::call<void>(0x83323AF0, this, a0); }
-__attribute__((weak)) void CCSBlackboard::OnNewVehicle(const CCSTarget &a0) { hg::call<void>(0x83356618, this, &a0); }
 __attribute__((weak)) void CCSBlackboard::OnVehicleDestroyed(int a0) { hg::call<void>(0x83356708, this, a0); }
-__attribute__((weak)) void CCSBlackboard::OnNewThreatTarget(const CCSTarget &a0) { hg::call<void>(0x83356668, this, &a0); }
 __attribute__((weak)) void CCSBlackboard::OnThreatTargetDestroyed(int a0) { hg::call<void>(0x83356778, this, a0); }
-__attribute__((weak)) void CCSBlackboard::OnNewFriendly(const CCSTarget &a0) { hg::call<void>(0x833566B8, this, &a0); }
 __attribute__((weak)) void CCSBlackboard::OnFriendlyDestroyed(int a0) { hg::call<void>(0x833567C8, this, a0); }
-__attribute__((weak)) void CCSBlackboard::OnNewCover(const CCSCover &a0) { hg::call<void>(0x83344128, this, &a0); }
 __attribute__((weak)) void CCSBlackboard::OnCoverDestroyed(int a0) { hg::call<void>(0x83344160, this, a0); }
 __attribute__((weak)) CCSTarget * CCSBlackboard::GetClosestVisibleEnemy() { return hg::call<CCSTarget *>(0x8332E6B8, this); }
 __attribute__((weak)) CCSTarget * CCSBlackboard::GetClosestVisibleEnemy() const { return hg::call<CCSTarget *>(0x8332E6B8, this); }
-__attribute__((weak)) void CCSBlackboard::UpdateTargetListsByRange(const Grip_Vector &a0, const float a1, const float a2) { hg::call<void>(0x83356838, this, &a0, a1, a2); }
 __attribute__((weak)) void CCSBlackboard::SetHeatGenerated(float a0) { hg::call<void>(0x83329708, this, a0); }
 __attribute__((weak)) float CCSBlackboard::GetHeatGenerated() const { return hg::call<float>(0x83329718, this); }
 __attribute__((weak)) CCSTarget * CCSBlackboard::GetHighestThreatTarget() { return hg::call<CCSTarget *>(0x8332E5E8, this); }
@@ -140,22 +103,13 @@ __attribute__((weak)) void GripBrain::SchedulerUnregistration() { hg::call<void>
 __attribute__((weak)) void GripBrain::TickBehaviorTree() { hg::call<void>(0x833DACF0, this); }
 __attribute__((weak)) void GripBrain::TickSystems(float a0) { hg::call<void>(0x833DD758, this, a0); }
 __attribute__((weak)) int GripBrain::GetBrainID() { return hg::call<int>(0x8331B9F0, this); }
-__attribute__((weak)) GripBrainSystemContainer & GripBrain::GetSystems() { return hg::call<GripBrainSystemContainer &>(0x833DAD78, this); }
-__attribute__((weak)) GripGameEventHandler & GripBrain::GetGameEventHandler() { return hg::call<GripGameEventHandler &>(0x833DAD80, this); }
 __attribute__((weak)) void GripBrain::NotifyBrainEvent(IGripBrainListener::EEventType a0) { hg::call<void>(0x833DAD88, this, a0); }
-__attribute__((weak)) void GripBrain::OnGameEvent(const GripEvent &a0) { hg::call<void>(0x833DADE8, this, &a0); }
 __attribute__((weak)) void GripBrain::SetStepDebug(const bool a0) { hg::call<void>(0x833DADF0, this, a0); }
 __attribute__((weak)) void GripBrain::SetDebug(bool a0) { hg::call<void>(0x833D02C0, this, a0); }
 __attribute__((weak)) bool GripBrain::IsDebug() { return hg::call<bool>(0x8331B9F8, this); }
-__attribute__((weak)) GripBTStack & GripBrain::GetEvalStackDraw(bool &a0) { return hg::call<GripBTStack &>(0x833DAD40, this, &a0); }
 __attribute__((weak)) bool GripBrain::IsDisabled() { return hg::call<bool>(0x8331BA00, this); }
-__attribute__((weak)) void GripBrain::DrawHUD(GripHUDRenderer *a0, int &a1) { hg::call<void>(0x833DC860, this, a0, &a1); }
-__attribute__((weak)) void GripBrain::DrawHUDBlackboard(GripHUDRenderer *a0, int &a1) { hg::call<void>(0x833DB3A0, this, a0, &a1); }
-__attribute__((weak)) void GripBrain::DrawHUDEvents(GripHUDRenderer *a0, int &a1) { hg::call<void>(0x833DADF8, this, a0, &a1); }
-__attribute__((weak)) void GripBrain::DrawHUDBehaviorTree(GripHUDRenderer *a0, int &a1) { hg::call<void>(0x833DB410, this, a0, &a1); }
 __attribute__((weak)) void GripBrain::AddDebugRenderer(IGripSRComponent *a0) { hg::call<void>(0x83341B50, this, a0); }
 __attribute__((weak)) void GripBrain::RemoveDebugRenderer(IGripSRComponent *a0) { hg::call<void>(0x8334AA60, this, a0); }
-__attribute__((weak)) void GripBrain::CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *,2> &a0) { hg::call<void>(0x833DBF70, this, &a0); }
 __attribute__((weak)) GripRBTTree * GripBrain::GetBehaviorTree() { return hg::call<GripRBTTree *>(0x833D02C8, this); }
 __attribute__((weak)) GripBrainSnapshotSerializer * GripBrain::GetSnapshotSerializer() { return hg::call<GripBrainSnapshotSerializer *>(0x833DB640, this); }
 __attribute__((weak)) void CCSBrain::SetUpBlackboard(GripBlackboard *a0) { hg::call<void>(0x83323AF8, this, a0); }
@@ -165,7 +119,6 @@ __attribute__((weak)) void CCSBrain::SetUpActionFramework(GripAFFramework *a0) {
 __attribute__((weak)) void CCSBrain::SetUpControlSystemInterface(CCSCSInterface *a0) { hg::call<void>(0x83323B18, this, a0); }
 __attribute__((weak)) void CCSBrain::SetUpMeatPuppet(ICCSMeatPuppet *a0) { hg::call<void>(0x83323B20, this, a0); }
 __attribute__((weak)) void CCSBrain::SetUpGlobalBlackboard(CCSGlobalBlackboard *a0) { hg::call<void>(0x83323B28, this, a0); }
-__attribute__((weak)) void CCSBrain::SetUpSystemConfig(const CCSSystemsConfig &a0) { hg::call<void>(0x8333B860, this, &a0); }
 __attribute__((weak)) void CCSBrain::CompleteSetUp() { hg::call<void>(0x83344180, this); }
 __attribute__((weak)) float CCSBrain::GetRandomFloat() { return hg::call<float>(0x83323C28, this); }
 __attribute__((weak)) GripAFFactory * CCSBrain::GetActionFactoryInternal() { return hg::call<GripAFFactory *>(0x83323B50, this); }
@@ -181,19 +134,13 @@ __attribute__((weak)) void CCSBrain::TickSystems(float a0) { hg::call<void>(0x83
 __attribute__((weak)) ICCSMeatPuppet * CCSBrain::GetMeatPuppet() { return hg::call<ICCSMeatPuppet *>(0x83320518, this); }
 __attribute__((weak)) CCSGlobalBlackboard * CCSBrain::GetGlobalBB() { return hg::call<CCSGlobalBlackboard *>(0x83320520, this); }
 __attribute__((weak)) void CCSBrain::InitializeSystems() { hg::call<void>(0x8333B8C8, this); }
-__attribute__((weak)) void CCSBrain::InitializePerceptionSystems(Grip_Array<GripBrainSystem *,Grip::AllocatorGH<GripBrainSystem *,2> > &a0, const CCSSystemsConfig &a1, const GripBTSystemFlags &a2) { hg::call<void>(0x8332EC40, this, &a0, &a1, &a2); }
-__attribute__((weak)) void CCSBrain::InitializeControlSystems(const CCSSystemsConfig &a0) { hg::call<void>(0x8332ED08, this, &a0); }
-__attribute__((weak)) void CCSBrain::DrawHUD(GripHUDRenderer *a0, int &a1) { hg::call<void>(0x8333BB88, this, a0, &a1); }
-__attribute__((weak)) void CCSBrain::CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *,2> &a0) { hg::call<void>(0x8333BC98, this, &a0); }
 decltype(CCSGameCharacter::NONE) CCSGameCharacter::NONE = *hg::host<std::remove_reference_t<decltype(CCSGameCharacter::NONE)>>(0x8436CAD4);
-__attribute__((weak)) void * CCSGameCharacter::GetActor() const { return hg::call<void *>(0x83321050, this); }
 __attribute__((weak)) UUDKTargetableComponent * CCSGameCharacter::GetTargetableComponent() { return hg::call<UUDKTargetableComponent *>(0x8332B3B0, this); }
 __attribute__((weak)) float CCSGameCharacter::GetHeight() const { return hg::call<float>(0x83321220, this); }
 __attribute__((weak)) float CCSGameCharacter::GetSize() const { return hg::call<float>(0x83321330, this); }
 __attribute__((weak)) int CCSGameCharacter::GetTeam() { return hg::call<int>(0x83321368, this); }
 __attribute__((weak)) bool CCSGameCharacter::IsPlayer() const { return hg::call<bool>(0x833213D0, this); }
 decltype(CCSCharacter::NONE) CCSCharacter::NONE = *hg::host<std::remove_reference_t<decltype(CCSCharacter::NONE)>>(0x8436CAE8);
-__attribute__((weak)) void * CCSCharacter::GetActor() const { return hg::call<void *>(0x83327B28, this); }
 __attribute__((weak)) CCSBrain * CCSCharacter::GetBrain() const { return hg::call<CCSBrain *>(0x8336D7D0, this); }
 __attribute__((weak)) UUDKTargetableComponent * CCSCharacter::GetTargetableComponent() { return hg::call<UUDKTargetableComponent *>(0x833357B0, this); }
 __attribute__((weak)) float CCSCharacter::GetHeight() const { return hg::call<float>(0x83327BA0, this); }
@@ -210,10 +157,7 @@ __attribute__((weak)) GripRBTNode::EBTExecutionResult GripRBTNode::ExecutePreInt
 __attribute__((weak)) GripRBTNode::EBTExecutionResult GripRBTNode::ExecuteInternal(IGripBTInterface *a0, GripBTStack *a1, bool a2) { return hg::call<GripRBTNode::EBTExecutionResult>(0x833CC1F0, this, a0, a1, a2); }
 __attribute__((weak)) void GripRBTNode::ExecutePostInternal(IGripBTInterface *a0, bool a1) { hg::call<void>(0x833CC1F8, this, a0, a1); }
 __attribute__((weak)) void GripRBTNode::FlagUsedBBMembers(GripBlackboard *a0) { hg::call<void>(0x82414BD0, this, a0); }
-__attribute__((weak)) void GripRBTNode::GameEventRegistration(GripGameEventHandler &a0) { hg::call<void>(0x82414A80, this, &a0); }
 __attribute__((weak)) void GripRBTNode::SurveyUsedBBMembers(GripBlackboard *a0) { hg::call<void>(0x833CC200, this, a0); }
-__attribute__((weak)) void GripRBTNode::InitiateGameEventRegistration(GripGameEventHandler &a0) { hg::call<void>(0x833CC268, this, &a0); }
-__attribute__((weak)) void GripRBTNode::GetUsedControlSystems(GripBTSystemFlags &a0) { hg::call<void>(0x82414A88, this, &a0); }
 __attribute__((weak)) GripRBTNode::EBTEvaluationResult GripRBTNode::Evaluate(IGripBTInterface *a0, GripBTStack *a1) { return hg::call<GripRBTNode::EBTEvaluationResult>(0x833CC2C8, this, a0, a1); }
 __attribute__((weak)) GripRBTNode::EBTExecutionResult GripRBTNode::Execute(IGripBTInterface *a0, GripBTStack *a1, bool a2) { return hg::call<GripRBTNode::EBTExecutionResult>(0x833CC748, this, a0, a1, a2); }
 __attribute__((weak)) int GripRBTNode::GetChildCount() const { return hg::call<int>(0x833CC138, this); }
@@ -273,13 +217,10 @@ decltype(FName::NumAnsiNames) FName::NumAnsiNames = *hg::host<std::remove_refere
 decltype(FName::NumUnicodeNames) FName::NumUnicodeNames = *hg::host<std::remove_reference_t<decltype(FName::NumUnicodeNames)>>(0x843BC4A0);
 __attribute__((weak)) int FName::GetIndex() const { return hg::call<int>(0x824AE480, this); }
 __attribute__((weak)) int FName::GetNumber() const { return hg::call<int>(0x82586500, this); }
-__attribute__((weak)) void FName::AppendString(FString &a0) const { hg::call<void>(0x825977A0, this, &a0); }
 __attribute__((weak)) void FName::SetFlags(unsigned __int64 a0) const { hg::call<void>(0x825888E0, this, a0); }
 __attribute__((weak)) void FName::ClearFlags(unsigned __int64 a0) const { hg::call<void>(0x825A90E8, this, a0); }
 __attribute__((weak)) unsigned int FName::IsValid() const { return hg::call<unsigned int>(0x82726818, this); }
-__attribute__((weak)) int FName::Compare(const FName &a0) const { return hg::call<int>(0x82591078, this, &a0); }
 __attribute__((weak)) void FName::StaticInit() { hg::scall<void>(0x82597838); }
-__attribute__((weak)) void FName::DisplayHash(FOutputDevice &a0) { hg::scall<void>(0x8258CC00, &a0); }
 __attribute__((weak)) void FName::Hardcode(FNameEntry *a0) { hg::scall<void>(0x82590BB0, a0); }
 __attribute__((weak)) unsigned int FName::SafeSuppressed(EName a0) { return hg::scall<unsigned int>(0x82588908, a0); }
 __attribute__((weak)) int FName::GetMaxNames() { return hg::scall<int>(0x824DFE10); }
@@ -288,10 +229,6 @@ __attribute__((weak)) int FName::GetNameTableMemorySize() { return hg::scall<int
 __attribute__((weak)) int FName::GetNumAnsiNames() { return hg::scall<int>(0x825A5F30); }
 __attribute__((weak)) int FName::GetNumUnicodeNames() { return hg::scall<int>(0x825A5F40); }
 __attribute__((weak)) FNameEntry * FName::GetEntry(int a0) { return hg::scall<FNameEntry *>(0x824B4548, a0); }
-__attribute__((weak)) void FName::SplitOldName(const wchar_t *a0, FString &a1, int &a2) { hg::scall<void>(0x82588288, a0, &a1, &a2); }
-__attribute__((weak)) unsigned int FName::SplitNameWithCheck(const wchar_t *a0, wchar_t *a1, int a2, int &a3) { return hg::scall<unsigned int>(0x82586558, a0, a1, a2, &a3); }
-__attribute__((weak)) unsigned int & FName::GetIsInitialized() { return hg::scall<unsigned int &>(0x82582750); }
-__attribute__((weak)) TArray<FNameEntry *,FDefaultAllocator> & FName::GetPureNamesTable() { return hg::scall<TArray<FNameEntry *,FDefaultAllocator> &>(0x824AE488); }
 __attribute__((weak)) bool HaloRBTKamikaze::TestPreCondition(IGripBTInterface *a0) { return hg::call<bool>(0x83333A88, this, a0); }
 __attribute__((weak)) GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecutePreInternal(IGripBTInterface *a0, bool a1) { return hg::call<GripRBTNode::EBTExecutionResult>(0x83333B58, this, a0, a1); }
 __attribute__((weak)) GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecuteInternal(IGripBTInterface *a0, GripBTStack *a1, bool a2) { return hg::call<GripRBTNode::EBTExecutionResult>(0x83340B78, this, a0, a1, a2); }
@@ -328,6 +265,5 @@ __attribute__((weak)) EThreatType ICCSMeatPuppet::GetThreatType() { return hg::v
 __attribute__((weak)) UAnimNodeSlot * ICCSMeatPuppet::GetFullBodyAnimSlot() { return hg::vcall<UAnimNodeSlot *>(41, this); }
 __attribute__((weak)) UAnimNodeSlot * ICCSMeatPuppet::GetTopHalfAnimSlot() { return hg::vcall<UAnimNodeSlot *>(42, this); }
 __attribute__((weak)) UClass * ICCSMeatPuppet::GetEventClass() { return hg::vcall<UClass *>(43, this); }
-__attribute__((weak)) void ICCSMeatPuppet::DrawHUD(GripHUDRenderer *a0, int &a1) { return hg::vcall<void>(44, this, a0, &a1); }
 
 #endif

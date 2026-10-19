@@ -257,9 +257,12 @@ class Classes:
         ret = self.signature(m['type'])[0]
         what, value = shape
         if what == 'empty':
+            if ret != 'void':
+                return None  # a lone blr returns r3 untouched: not an empty body
             body = ''
         elif what == 'string':
-            body = f' return {"L" if "wchar_t" in ret else ""}"{value}"; '
+            wide = 'wchar_t' in ret
+            body = f' return {"L" if wide else ""}"{read_string(basefile(), value, wide)}"; '
         elif ret == 'bool':
             body = f' return {"true" if value else "false"}; '
         else:
@@ -450,18 +453,25 @@ def tiny_shape(row):
     if len(words) == 2 and words[1] == 0x4E800020 and words[0] >> 16 == 0x3860:
         imm = words[0] & 0xFFFF
         return ('const', imm - 0x10000 if imm & 0x8000 else imm)
-    if len(words) == 3 and words[2] == 0x4E800020 and words[0] >> 21 == (15 << 5) | 11 \
-            and words[1] >> 16 == (14 << 10) | (3 << 5) | 11:
-        hi, lo = words[0] & 0xFFFF, words[1] & 0xFFFF
-        addr = ((hi << 16) + (lo - 0x10000 if lo & 0x8000 else lo)) & 0xFFFFFFFF
-        return ('string', read_string(image, addr))
+    addr = string_address(words)
+    if addr is not None:
+        return ('string', addr)  # read once the return type says how wide
     return None
 
 
-def read_string(image, addr):
-    """The C string at `addr` (UTF-16 when it looks wide), escaped for C++."""
-    data = image[addr - IMAGE_BASE:addr - IMAGE_BASE + 256]
-    if len(data) > 1 and data[0] == 0 and data[1]:
+def string_address(words):
+    """The address `lis r11, hi; addi r3, r11, lo; blr` returns, or None."""
+    if len(words) == 3 and words[2] == 0x4E800020 and words[0] >> 16 == (15 << 10) | (11 << 5) \
+            and words[1] >> 16 == (14 << 10) | (3 << 5) | 11:
+        hi, lo = words[0] & 0xFFFF, words[1] & 0xFFFF
+        return ((hi << 16) + (lo - 0x10000 if lo & 0x8000 else lo)) & 0xFFFFFFFF
+    return None
+
+
+def read_string(image, addr, wide):
+    """The C string at `addr` (UTF-16 when `wide`), escaped for C++."""
+    data = image[addr - IMAGE_BASE:addr - IMAGE_BASE + 512]
+    if wide:
         text = data[:next(i for i in range(0, len(data), 2) if data[i:i + 2] == b'\0\0')].decode('utf-16-be')
     else:
         text = data[:data.index(0)].decode('latin1')

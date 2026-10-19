@@ -424,7 +424,7 @@ class Header:
         for text in self.extra.get(name, ()):
             emit(3, text)
         size = self.t.sizeof(ti)
-        cur = max([off + self.t.sizeof(b) for b, off in self.bases(ti)] + [4 if self.has_vfptr(ti) and not self.bases(ti) else 0])
+        cur = max([off + self.own_size(b) for b, off in self.bases(ti)] + [4 if self.has_vfptr(ti) and not self.bases(ti) else 0])
         if size == 1 and not any(off is not None for _n, _t, off, _a in self.members(ti)):
             size = cur  # an empty class stays empty, so empty-base layout holds
         if not self.bases(ti) and self.has_vfptr(ti) and not intro:
@@ -510,6 +510,13 @@ class Header:
         if kind == pt.LF_ENUM:
             return f'hg::be<{self.t.name(ti)}> {name}'
         return self.t.decl(ti, name)
+
+    def own_size(self, ti):
+        """A base's size as its derived class lays it out: 0 for an empty class."""
+        empty = (self.t.sizeof(ti) == 1 and not self.has_vfptr(ti)
+                 and not any(off is not None for _n, _t, off, _a in self.members(ti))
+                 and all(self.own_size(b) == 0 for b, _o in self.bases(ti)))
+        return 0 if empty else self.t.sizeof(ti)
 
     def alignment(self, ti):
         """The alignment a record's own members give it (before -Zp4)."""
@@ -744,10 +751,18 @@ def signature(h, mtype):
         if ti == 0:
             return False  # varargs
         if ti < h.t.begin:
-            return True
+            return not ti & 0xF00  # a scalar, not a pointer to one
         kind = h._kind(ti)
-        if kind in (pt.LF_POINTER, pt.LF_ENUM):
+        if kind == pt.LF_ENUM:
             return True
+        if kind == pt.LF_POINTER:
+            # a guest object by pointer only: a reference, or a pointer to a
+            # scalar, would hand guest memory (or a host local) over as native
+            utype, attr = struct.unpack_from('<II', d, h.t.record(ti)[1])
+            while utype >= h.t.begin and h._kind(utype) == pt.LF_MODIFIER:
+                utype = struct.unpack_from('<I', d, h.t.record(utype)[1])[0]
+            return (attr >> 5) & 7 == 0 and utype >= h.t.begin and \
+                h._kind(utype) in (pt.LF_CLASS, pt.LF_STRUCTURE, pt.LF_UNION)
         if kind == pt.LF_MODIFIER:
             return ok(struct.unpack_from('<I', d, h.t.record(ti)[1])[0])
         return False  # a record by value

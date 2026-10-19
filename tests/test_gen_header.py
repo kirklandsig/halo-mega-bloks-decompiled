@@ -1,3 +1,4 @@
+import re
 import struct
 
 import pytest
@@ -109,3 +110,49 @@ def test_host_layout_matches_pdb(real, tmp_path):
     r = subprocess.run([clang, '-std=c++23', '-fsyntax-only', '-DHAGGAR_HOST', '-fms-extensions', '-Wno-everything',
                         f'-I{tmp_path}', f'-I{paths.ROOT / "include"}', f'-I{sdk}', str(src)], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def committed_header_targets():
+    """The targets the committed Kamikaze header was generated with."""
+    import shlex
+    text = (paths.ROOT / 'include' / 'UDKBase' / 'Inc' / 'HaloRBTKamikaze.h').read_text(encoding='utf-8')
+    command = text.splitlines()[1].lstrip('/ ').split(' -o ')[0]
+    args = shlex.split(command)[2:]
+    names = []
+    for a in args:
+        if a.startswith('--'):
+            break
+        names.append(a)
+    return names
+
+
+@pytest.mark.orig
+def test_host_layout_of_the_committed_header(real, tmp_path):
+    clang, sdk = host_compiler()
+    targets = committed_header_targets()
+    header = gen_header.Header(real, targets)
+    (tmp_path / 'gen.h').write_text(header.render(), encoding='utf-8')
+    lines = ['#include "gen.h"', '#include <cstddef>']
+    for name in targets:
+        ti = real.find(name)
+        lines.append(f'static_assert(sizeof({name}) == {real.sizeof(ti)}, "{name}");')
+        for mname, mtype, off, _acc in header.members(ti):
+            if off is not None and header._kind(mtype) != pdbtype.LF_BITFIELD and not header.blob_member(mtype):
+                lines.append(f'static_assert(offsetof({name}, {mname}) == {off}, "{name}::{mname}");')
+    src = tmp_path / 'host.cpp'
+    src.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    import subprocess
+    r = subprocess.run([clang, '-std=c++23', '-fsyntax-only', '-DHAGGAR_HOST', '-fms-extensions', '-Wno-everything',
+                        f'-I{tmp_path}', f'-I{paths.ROOT / "include"}', f'-I{sdk}', str(src)], capture_output=True, text=True)
+    assert r.returncode == 0, (r.stdout + r.stderr)[:3000]
+
+
+@pytest.mark.orig
+def test_host_thunks_marshal_no_host_references(real):
+    header = gen_header.Header(real, committed_header_targets())
+    header.render()
+    text = gen_header.host_thunks(header, 'UDKBase/Inc/HaloRBTKamikaze.h')
+    thunks = [line for line in text.splitlines() if line.startswith('__attribute__((weak))')]
+    assert thunks
+    # a reference, or a pointer to a scalar, would hand guest memory to host code as a native value
+    assert not [t for t in thunks if re.search(r'&a\d|&\)|& |(int|float|bool|char) \*', t.split('{')[0])]

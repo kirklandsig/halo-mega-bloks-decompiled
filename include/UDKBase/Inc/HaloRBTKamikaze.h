@@ -1649,7 +1649,7 @@ public:
     Grip_Vector();
     #endif
 HG_PRIVATE:
-    char Grip_VectorData[0xB];
+    unsigned int Grip_VectorData[0x3];
 };
 
 namespace Kaim {

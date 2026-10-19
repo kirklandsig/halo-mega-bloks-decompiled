@@ -61,3 +61,18 @@ def test_kind_of_rows():
     assert gen_classes.kind({'name': 'UCCSBTTree::operator new', 'symbol': '??2UCCSBTTree@@SAPAXIPAW4EInternal@@@Z'}) == 'new'
     assert gen_classes.kind({'name': 'ACCSController::eventAimAt', 'symbol': ''}) == 'event'
     assert gen_classes.kind({'name': 'ACCSController::Tick', 'symbol': ''}) is None
+
+
+def test_read_string_width_follows_the_return_type():
+    # "" followed by another string: a byte peek would misread it as UTF-16
+    image = bytes(0x100) + b'\0Next\0'
+    addr = gen_classes.IMAGE_BASE + 0x100
+    assert gen_classes.read_string(image, addr, wide=False) == ''
+    wide = bytes(0x100) + 'Hi'.encode('utf-16-be') + b'\0\0'
+    assert gen_classes.read_string(wide, addr, wide=True) == 'Hi'
+
+
+def test_string_shape_needs_lis_from_zero():
+    # addis r11,r3,hi (rA = r3) is this-relative, not a string address
+    assert gen_classes.string_address([0x3D638200, 0x386B1000, 0x4E800020]) is None
+    assert gen_classes.string_address([0x3D608200, 0x386B1000, 0x4E800020]) == 0x82001000
