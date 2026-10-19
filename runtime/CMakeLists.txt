@@ -86,6 +86,22 @@ if(GENERATED_SOURCES)
     target_link_libraries(haggar PRIVATE haggar_recomp)
 endif()
 
+# ON: replace a few recompiled functions with their matched C++ (src/), built
+# for the host (Phase 3's port-swap spike, docs/specs/phase3-port-swap.md).
+option(HAGGAR_DECOMP_HOOKS "Hook matched decompiled functions into the port" OFF)
+if(HAGGAR_DECOMP_HOOKS)
+    add_library(haggar_decomp OBJECT
+        src/decomp/hooks.cpp
+        src/decomp/HaloRBTKamikaze.thunks.cpp
+        ../src/UDKBase/Src/HaloRBTKamikaze.cpp)
+    target_compile_definitions(haggar_decomp PRIVATE HAGGAR_HOST)
+    target_include_directories(haggar_decomp PRIVATE ../include)
+    target_compile_options(haggar_decomp PRIVATE -fms-extensions -Wno-microsoft-template)
+    target_link_libraries(haggar_decomp PRIVATE rex::runtime)
+    rexglue_apply_target_settings(haggar_decomp)
+    target_link_libraries(haggar PRIVATE haggar_decomp)
+endif()
+
 rexglue_configure_target(haggar GPU_PLUGINS xenos)
 
 # On Linux the host finds librexruntime.so through $ORIGIN, as the Windows

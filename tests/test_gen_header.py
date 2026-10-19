@@ -30,7 +30,7 @@ def make_types():
 def test_render_opaque_base():
     text = gen_header.render_class(make_types(), 'FDerived')
     assert 'struct FBase  // size 0x8, opaque' in text
-    assert 'virtual ~FBase();' in text
+    assert 'HG_XDK(HG_VIRTUAL ~FBase();)' in text
     assert 'unsigned int FBaseData[0x1];' in text  # the blob keeps the vtable's 4-byte alignment
     assert 'Count' not in text
     assert 'struct FDerived : public FBase  // size 0x10' in text
@@ -74,6 +74,38 @@ def test_offsets_match_pdb(real, tmp_path):
     src.write_text('\n'.join(lines) + '\n', encoding='utf-8')
     objects = {r['object']: r for r in inventory.read_csv(paths.CONFIG / 'objects.csv')}
     r = check.compile_file(cl, objects['Unity_HaloRBTKamikazeEtAl.cpp.obj']['cmd'],
-                           [tmp_path, paths.xdk() / 'include' / 'xbox'], src, tmp_path / 'offsets.obj')
+                           [tmp_path, paths.ROOT / 'include', paths.xdk() / 'include' / 'xbox'], src, tmp_path / 'offsets.obj')
     assert r.returncode == 0, r.stdout + r.stderr
     assert len(lines) > 20
+
+
+def host_compiler():
+    """The port's clang++ and the ReXGlue SDK's headers, or skip."""
+    import os
+    import shutil
+    sdk = paths.ROOT / 'third_party' / 'rexglue' / 'out' / 'install' / 'win-amd64' / 'include'
+    clang = os.environ.get('HAGGAR_CLANG') or shutil.which('clang++')
+    if clang is None or not sdk.exists():
+        pytest.skip('needs clang++ and the installed ReXGlue SDK')
+    return clang, sdk
+
+
+@pytest.mark.orig
+def test_host_layout_matches_pdb(real, tmp_path):
+    clang, sdk = host_compiler()
+    targets = ['HaloRBTKamikaze', 'CCSBlackboard']
+    header = gen_header.Header(real, targets)
+    (tmp_path / 'gen.h').write_text(header.render(), encoding='utf-8')
+    lines = ['#include "gen.h"', '#include <cstddef>']
+    for name in targets:
+        ti = real.find(name)
+        lines.append(f'static_assert(sizeof({name}) == {real.sizeof(ti)}, "{name}");')
+        for mname, mtype, off, _acc in header.members(ti):
+            if off is not None and header._kind(mtype) != pdbtype.LF_BITFIELD and not header.blob_member(mtype):
+                lines.append(f'static_assert(offsetof({name}, {mname}) == {off}, "{name}::{mname}");')
+    src = tmp_path / 'host.cpp'
+    src.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    import subprocess
+    r = subprocess.run([clang, '-std=c++23', '-fsyntax-only', '-DHAGGAR_HOST', '-fms-extensions', '-Wno-everything',
+                        f'-I{tmp_path}', f'-I{paths.ROOT / "include"}', f'-I{sdk}', str(src)], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr

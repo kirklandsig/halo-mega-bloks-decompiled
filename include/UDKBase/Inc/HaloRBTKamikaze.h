@@ -1,6 +1,7 @@
 // Generated from the PDB by:
-//   python tools/gen_header.py HaloRBTKamikaze CCSBlackboard CCSBrain CCSTarget CCSCharacter CCSGameCharacter "GripBBProperty<CCSTarget *>" FName --opaque ICCSMeatPuppet --add "IGripBTInterface=template <class T0> T0 *GetBlackboard();" -o <this file>
+//   python tools/gen_header.py HaloRBTKamikaze CCSBlackboard CCSBrain CCSTarget CCSCharacter CCSGameCharacter "GripBBProperty<CCSTarget *>" FName --opaque ICCSMeatPuppet --add "IGripBTInterface=template <class T0> T0 *GetBlackboard();" --host-thunks runtime/src/decomp/HaloRBTKamikaze.thunks.cpp -o <this file>
 #pragma once
+#include "Core/Inc/HostGuest.h"
 
 namespace Grip {
 template <class T0, int T1> struct AllocatorGH;
@@ -749,8 +750,10 @@ enum EMovementType
 
 class GripVHeapObject  // size 0x4, opaque
 {
+    HG_VFPTR
 public:
-    virtual ~GripVHeapObject();
+    HG_XDK(HG_VIRTUAL ~GripVHeapObject();)
+    #ifndef HAGGAR_HOST
     static void *operator new(unsigned int, void *);
     static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
     static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
@@ -774,31 +777,32 @@ public:
     static void operator delete(void *, int, const char *, int);
     static void operator delete(void *, const char *, int);
     static void operator delete(void *);
+    #endif
 };
 
 class GripBBVisualization : public GripVHeapObject  // size 0x18, opaque
 {
 public:
-    virtual void Refresh() = 0;
-    virtual void Serialize(GripSerializer *);
-    GripBBVisualization();
+    HG_VIRTUAL void Refresh() HG_PURE;
+    HG_VIRTUAL void Serialize(GripSerializer *);
     void SetBlackboard(GripBlackboard *);
     const Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > &GetMembers() const;
-private:
+    #ifndef HAGGAR_HOST
+    GripBBVisualization();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBVisualizationData[0x5];
 };
 
 class CCSBBVisualization : public GripBBVisualization  // size 0x18, opaque
 {
 public:
-    virtual void Refresh();
+    HG_VIRTUAL void Refresh();
 };
 
 class GripBBMember : public GripVHeapObject  // size 0x1C, opaque
 {
 public:
-    GripBBMember();
-    virtual ~GripBBMember();
     void FlagAsUsed();
     bool IsUsed() const;
     void GetUsedPerceptionSystems(GripBTSystemFlags &, GripBTSystemFlags &);
@@ -806,14 +810,17 @@ public:
     void AddUsedAnalysisSystems(const int);
     void SetBlackboard(GripBlackboard *);
     void DirtyBlackboard();
-private:
+    #ifndef HAGGAR_HOST
+    GripBBMember();
+    HG_VIRTUAL ~GripBBMember();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBMemberData[0x6];
 };
 
 template <> class GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > : public GripBBMember  // size 0x2C, opaque
 {
 public:
-    GripBBArray();
     void AddItem(const CCSCover &);
     void AddUniqueItem(const CCSCover &);
     void Remove(int);
@@ -828,14 +835,16 @@ public:
     Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &GetArray();
     const CCSCover &operator[](int) const;
     CCSCover &operator[](int);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBArray();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBArrayData[0x4];
 };
 
 template <> class GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > : public GripBBMember  // size 0x2C, opaque
 {
 public:
-    GripBBArray();
     void AddItem(const CCSTarget &);
     void AddUniqueItem(const CCSTarget &);
     void Remove(int);
@@ -850,127 +859,153 @@ public:
     Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > &GetArray();
     const CCSTarget &operator[](int) const;
     CCSTarget &operator[](int);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBArray();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBArrayData[0x4];
 };
 
 template <> class GripBBProperty<CCSCover> : public GripBBMember  // size 0x3C, opaque
 {
 public:
-    GripBBProperty();
     CCSCover &GetReference();
     const CCSCover &Get() const;
     void Set(const CCSCover &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x8];
 };
 
 template <> class GripBBProperty<CCSTarget *> : public GripBBMember  // size 0x20
 {
 public:
-    GripBBProperty();
     CCSTarget *&GetReference();
     CCSTarget *const &Get() const;
     void Set(CCSTarget *const &);
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+    #ifndef HAGGAR_HOST
     CCSTarget *m_value;  // 0x1C
+    #else
+    hg::gptr<CCSTarget> m_value;
+    #endif
 };
 
 template <> class GripBBProperty<FVector> : public GripBBMember  // size 0x28, opaque
 {
 public:
-    GripBBProperty();
     FVector &GetReference();
     const FVector &Get() const;
     void Set(const FVector &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x3];
 };
 
 template <> class GripBBProperty<Grip_Vector> : public GripBBMember  // size 0x28, opaque
 {
 public:
-    GripBBProperty();
     Grip_Vector &GetReference();
     const Grip_Vector &Get() const;
     void Set(const Grip_Vector &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x3];
 };
 
 template <> class GripBBProperty<UClass *> : public GripBBMember  // size 0x20, opaque
 {
 public:
-    GripBBProperty();
     UClass *&GetReference();
     UClass *const &Get() const;
     void Set(UClass *const &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<bool> : public GripBBMember  // size 0x20, opaque
 {
 public:
-    GripBBProperty();
     bool &GetReference();
     const bool &Get() const;
     void Set(const bool &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<enum EEventType> : public GripBBMember  // size 0x20, opaque
 {
 public:
-    GripBBProperty();
     EEventType &GetReference();
     const EEventType &Get() const;
     void Set(const EEventType &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<enum EThreatType> : public GripBBMember  // size 0x20, opaque
 {
 public:
-    GripBBProperty();
     EThreatType &GetReference();
     const EThreatType &Get() const;
     void Set(const EThreatType &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<float> : public GripBBMember  // size 0x20, opaque
 {
 public:
-    GripBBProperty();
     float &GetReference();
     const float &Get() const;
     void Set(const float &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x1];
 };
 
 template <> class GripBBProperty<int> : public GripBBMember  // size 0x20, opaque
 {
 public:
-    GripBBProperty();
     int &GetReference();
     const int &Get() const;
     void Set(const int &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBBProperty();
+    #endif
+HG_PRIVATE:
     unsigned int GripBBPropertyData[0x1];
 };
 
 class GripBlackboard : public GripVHeapObject  // size 0x8C, opaque
 {
 public:
-    virtual void Reset();
-    virtual void RegisterMembers();
-    virtual GripBBVisualization *GetVisualizer() = 0;
-    virtual void DrawHUD(GripHUDRenderer *, int &);
-    GripBlackboard();
+    HG_VIRTUAL void Reset();
+    HG_VIRTUAL void RegisterMembers();
+    HG_VIRTUAL GripBBVisualization *GetVisualizer() HG_PURE;
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
     void Initialize();
     void GetUsedPerceptionSystems(GripBTSystemFlags &, GripBTSystemFlags &);
     void AddMember(GripBBMember &);
@@ -988,7 +1023,10 @@ public:
     bool IsDirty() const;
     void SetDirty();
     void ClearDirty();
-private:
+    #ifndef HAGGAR_HOST
+    GripBlackboard();
+    #endif
+HG_PRIVATE:
     unsigned int GripBlackboardData[0x22];
 };
 
@@ -1000,10 +1038,9 @@ public:
         MOVE_CMD_NONE = 0,
         MOVE_CMD_POS = 1,
     };
-    CCSBlackboard();
-    virtual void Reset();
-    virtual void RegisterMembers();
-    virtual GripBBVisualization *GetVisualizer();
+    HG_VIRTUAL void Reset();
+    HG_VIRTUAL void RegisterMembers();
+    HG_VIRTUAL GripBBVisualization *GetVisualizer();
     void ClearMoveCommand();
     void SetMoveCommand(Grip_Vector);
     CCSBlackboard::EMoveCmd GetMoveCommand() const;
@@ -1057,11 +1094,15 @@ public:
     bool GetHasBecomeAware();
     void SetHasBecomeAware(bool);
     void FlagHasBecomeAware();
-private:
+HG_PRIVATE:
     void UpdateTargetPointers();
 public:
     CCSTarget *GetSpecificTarget(FString);
     FVector GetCurrentTether();
+    #ifndef HAGGAR_HOST
+    CCSBlackboard();
+    #endif
+    #ifndef HAGGAR_HOST
     GripBBProperty<CCSTarget *> m_pHighestThreatTarget;  // 0x8C
     GripBBProperty<CCSTarget *> m_closestEnemy;  // 0xAC
     GripBBProperty<CCSTarget *> m_closestVisibleEnemy;  // 0xCC
@@ -1105,6 +1146,51 @@ public:
     char m_moveCommand[0x20];  // 0x61C GripBBProperty<enum CCSBlackboard::EMoveCmd>
     GripBBProperty<Grip_Vector> m_movePosition;  // 0x63C
     CCSBBVisualization m_vis;  // 0x664
+    #else
+    GripBBProperty<CCSTarget *> m_pHighestThreatTarget;
+    GripBBProperty<CCSTarget *> m_closestEnemy;
+    GripBBProperty<CCSTarget *> m_closestVisibleEnemy;
+    GripBBProperty<CCSTarget *> m_currentTarget;
+    GripBBProperty<CCSTarget *> m_lowestLKPAgeEnemy;
+    GripBBProperty<CCSTarget *> m_closestObjective;
+    GripBBProperty<CCSTarget *> m_closestReactiveTarget;
+    GripBBProperty<CCSTarget *> m_secondaryTarget;
+    GripBBProperty<bool> m_bHasBecomeAware;
+    GripBBProperty<bool> m_visibleToPlayerCamera;
+    GripBBProperty<int> m_team;
+    GripBBProperty<float> m_timeSinceDamage;
+    GripBBProperty<int> m_health;
+    GripBBProperty<float> m_timeSinceAimedAt;
+    GripBBProperty<float> m_timeSinceStaggered;
+    GripBBProperty<float> m_timeSinceThreatened;
+    GripBBProperty<float> m_timeSinceGrenadeStuck;
+    GripBBProperty<float> m_timeSinceSuccessfulAttack;
+    GripBBProperty<enum EEventType> m_eventType;
+    GripBBProperty<float> m_timeSinceEvent;
+    GripBBProperty<UClass *> m_eventSenderClass;
+    GripBBProperty<Grip_Vector> m_eventLocation;
+    GripBBProperty<Grip_Vector> m_threatLocation;
+    GripBBProperty<Grip_Vector> m_threatDirection;
+    GripBBProperty<enum EThreatType> m_threatType;
+    GripBBProperty<float> m_timeSinceThreatTargetChanged;
+    GripBBProperty<float> m_timeSinceTargetCamoed;
+    GripBBProperty<float> m_timeSinceBecameAware;
+    GripBBProperty<float> m_timeSinceLostAware;
+    GripBBProperty<float> m_heatGenerated;
+    GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_targets;
+    GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_OutRangeThreatTargets;
+    GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_friendlies;
+    char m_TargetThreatData[0x2C];  // 0x4E8 GripBBProperty<Grip_Array<CCSBlackboard::TargetThreatData,Grip::AllocatorGH<CCSBlackboard::TargetThreatData,2> > >
+    GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > m_Vehicles;
+    GripBBProperty<CCSTarget *> m_closestEntryVehicle;
+    GripBBProperty<FVector> m_currentTether;
+    GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > m_covers;
+    GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > m_invalidcovers;
+    GripBBProperty<CCSCover> m_initialCover;
+    char m_moveCommand[0x20];  // 0x61C GripBBProperty<enum CCSBlackboard::EMoveCmd>
+    GripBBProperty<Grip_Vector> m_movePosition;
+    CCSBBVisualization m_vis;
+    #endif
 };
 
 struct GripSystemConfig : public GripVHeapObject  // size 0x4, opaque
@@ -1113,38 +1199,41 @@ struct GripSystemConfig : public GripVHeapObject  // size 0x4, opaque
 
 struct CCSSystemsConfig : public GripSystemConfig  // size 0x34, opaque
 {
-private:
+HG_PRIVATE:
     unsigned int CCSSystemsConfigData[0xC];
 };
 
 class GripBTSystemFlags : public GripVHeapObject  // size 0x8, opaque
 {
 public:
-    GripBTSystemFlags();
     void ClearFlag(int);
     bool TestFlag(int) const;
     void SetFlag(int);
     void Reset();
     GripBTSystemFlags &operator|=(const GripBTSystemFlags &);
-private:
+    #ifndef HAGGAR_HOST
+    GripBTSystemFlags();
+    #endif
+HG_PRIVATE:
     unsigned int GripBTSystemFlagsData[0x1];
 };
 
 class IGripBTInterface  // size 0x4, opaque
 {
+    HG_VFPTR
 public:
-    virtual ~IGripBTInterface();
-    virtual float GetDeltaTime() = 0;
-    virtual float GetTime() = 0;
-    virtual float GetRandomFloat() = 0;
-    virtual GripAFScheduler *GetActionScheduler() = 0;
-    virtual void BroadcastGameEvent(const Grip::String) = 0;
-    virtual void ConsumeGameEvent(const Grip::String) = 0;
-protected:
-    virtual GripAFFactory *GetActionFactoryInternal() = 0;
-    virtual GripBlackboard *GetBlackboardInternal() = 0;
-    virtual IGripMeatPuppetQuery *GetMeatPuppetQueryInternal() = 0;
-    virtual IGripWorldQuery *GetWorldQueryInternal() = 0;
+    HG_XDK(HG_VIRTUAL ~IGripBTInterface();)
+    HG_VIRTUAL float GetDeltaTime() HG_PURE;
+    HG_VIRTUAL float GetTime() HG_PURE;
+    HG_VIRTUAL float GetRandomFloat() HG_PURE;
+    HG_VIRTUAL GripAFScheduler *GetActionScheduler() HG_PURE;
+    HG_VIRTUAL void BroadcastGameEvent(const Grip::String) HG_PURE;
+    HG_VIRTUAL void ConsumeGameEvent(const Grip::String) HG_PURE;
+HG_PROTECTED:
+    HG_VIRTUAL GripAFFactory *GetActionFactoryInternal() HG_PURE;
+    HG_VIRTUAL GripBlackboard *GetBlackboardInternal() HG_PURE;
+    HG_VIRTUAL IGripMeatPuppetQuery *GetMeatPuppetQueryInternal() HG_PURE;
+    HG_VIRTUAL IGripWorldQuery *GetWorldQueryInternal() HG_PURE;
 public:
     template <class T0> T0 *GetBlackboard();
 };
@@ -1161,47 +1250,48 @@ public:
         DISABLED = 4,
         ENABLED = 5,
     };
-    virtual ~IGripBrainListener();
-    virtual void OnBrainEvent(GripBrain *, IGripBrainListener::EEventType) = 0;
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~IGripBrainListener();)
+    HG_VIRTUAL void OnBrainEvent(GripBrain *, IGripBrainListener::EEventType) HG_PURE;
 };
 
 class IGripRBTTreeListener  // size 0x4, opaque
 {
+    HG_VFPTR
 public:
-    virtual ~IGripRBTTreeListener();
-    virtual void OnTreeChanged(GripRBTTree *) = 0;
-    virtual void OnTreeBreakpoint(GripRBTTree *) = 0;
-    virtual void OnTreeEvaluated(GripRBTTree *) = 0;
+    HG_XDK(HG_VIRTUAL ~IGripRBTTreeListener();)
+    HG_VIRTUAL void OnTreeChanged(GripRBTTree *) HG_PURE;
+    HG_VIRTUAL void OnTreeBreakpoint(GripRBTTree *) HG_PURE;
+    HG_VIRTUAL void OnTreeEvaluated(GripRBTTree *) HG_PURE;
 };
 
 class GripBrain : public GripVHeapObject, public IGripBTInterface, public IGripRBTTreeListener  // size 0x9C, opaque
 {
 public:
-    virtual void CompleteSetUp();
-    virtual void FinalizeInternal();
-    virtual void Tick(float);
-    virtual void StasisTick();
-protected:
-    virtual void SchedulerRegistration();
-    virtual void SchedulerUnregistration();
-    virtual void TickBehaviorTree();
-    virtual void TickSystems(float);
+    HG_VIRTUAL void CompleteSetUp();
+    HG_VIRTUAL void FinalizeInternal();
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL void StasisTick();
+HG_PROTECTED:
+    HG_VIRTUAL void SchedulerRegistration();
+    HG_VIRTUAL void SchedulerUnregistration();
+    HG_VIRTUAL void TickBehaviorTree();
+    HG_VIRTUAL void TickSystems(float);
 public:
-    virtual void DrawHUD(GripHUDRenderer *, int &);
-    virtual void DrawHUDBlackboard(GripHUDRenderer *, int &);
-    virtual void DrawHUDEvents(GripHUDRenderer *, int &);
-    virtual void CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *,2> &);
-    virtual GripBrainSnapshotSerializer *GetSnapshotSerializer();
-    GripBrain(GripRBTTree *);
-    virtual ~GripBrain();
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
+    HG_VIRTUAL void DrawHUDBlackboard(GripHUDRenderer *, int &);
+    HG_VIRTUAL void DrawHUDEvents(GripHUDRenderer *, int &);
+    HG_VIRTUAL void CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *,2> &);
+    HG_VIRTUAL GripBrainSnapshotSerializer *GetSnapshotSerializer();
     void Finalize();
-    virtual float GetDeltaTime();
-    virtual float GetTime();
-    virtual void BroadcastGameEvent(const Grip::String);
-    virtual void ConsumeGameEvent(const Grip::String);
-    virtual void OnTreeChanged(GripRBTTree *);
-    virtual void OnTreeBreakpoint(GripRBTTree *);
-    virtual void OnTreeEvaluated(GripRBTTree *);
+    HG_VIRTUAL float GetDeltaTime();
+    HG_VIRTUAL float GetTime();
+    HG_VIRTUAL void BroadcastGameEvent(const Grip::String);
+    HG_VIRTUAL void ConsumeGameEvent(const Grip::String);
+    HG_VIRTUAL void OnTreeChanged(GripRBTTree *);
+    HG_VIRTUAL void OnTreeBreakpoint(GripRBTTree *);
+    HG_VIRTUAL void OnTreeEvaluated(GripRBTTree *);
     void Disable(bool);
     Grip::String GetBehaviorTreeName() const;
     int GetBrainID();
@@ -1218,18 +1308,22 @@ public:
     void AddDebugRenderer(IGripSRComponent *);
     void RemoveDebugRenderer(IGripSRComponent *);
     GripRBTTree *GetBehaviorTree();
-protected:
+    #ifndef HAGGAR_HOST
+    GripBrain(GripRBTTree *);
+    HG_VIRTUAL ~GripBrain();
+    #endif
+    #ifndef HAGGAR_HOST
     static int ms_brainCounter;
-private:
+    #else
+    static hg::be<int> (&ms_brainCounter);
+    #endif
+HG_PRIVATE:
     unsigned int GripBrainData[0x24];
 };
 
 class CCSBrain : public GripBrain  // size 0xFC
 {
-public:
-    virtual ~CCSBrain();
-private:
-    CCSBrain(GripRBTTree *);
+HG_PRIVATE:
     void SetUpBlackboard(GripBlackboard *);
     void SetUpMeatPuppetQuery(IGripMeatPuppetQuery *);
     void SetUpWorldQuery(IGripWorldQuery *);
@@ -1238,30 +1332,37 @@ private:
     void SetUpMeatPuppet(ICCSMeatPuppet *);
     void SetUpGlobalBlackboard(CCSGlobalBlackboard *);
     void SetUpSystemConfig(const CCSSystemsConfig &);
-    virtual void CompleteSetUp();
+    HG_VIRTUAL void CompleteSetUp();
 public:
-    virtual float GetRandomFloat();
-    virtual GripAFFactory *GetActionFactoryInternal();
-    virtual GripAFScheduler *GetActionScheduler();
-    virtual GripBlackboard *GetBlackboardInternal();
-    virtual IGripMeatPuppetQuery *GetMeatPuppetQueryInternal();
-    virtual IGripWorldQuery *GetWorldQueryInternal();
-    virtual void Tick(float);
-protected:
-    virtual void SchedulerRegistration();
-    virtual void SchedulerUnregistration();
-    virtual void TickBehaviorTree();
-    virtual void TickSystems(float);
+    HG_VIRTUAL float GetRandomFloat();
+    HG_VIRTUAL GripAFFactory *GetActionFactoryInternal();
+    HG_VIRTUAL GripAFScheduler *GetActionScheduler();
+    HG_VIRTUAL GripBlackboard *GetBlackboardInternal();
+    HG_VIRTUAL IGripMeatPuppetQuery *GetMeatPuppetQueryInternal();
+    HG_VIRTUAL IGripWorldQuery *GetWorldQueryInternal();
+    HG_VIRTUAL void Tick(float);
+HG_PROTECTED:
+    HG_VIRTUAL void SchedulerRegistration();
+    HG_VIRTUAL void SchedulerUnregistration();
+    HG_VIRTUAL void TickBehaviorTree();
+    HG_VIRTUAL void TickSystems(float);
 public:
     ICCSMeatPuppet *GetMeatPuppet();
     CCSGlobalBlackboard *GetGlobalBB();
-private:
+HG_PRIVATE:
     void InitializeSystems();
     void InitializePerceptionSystems(Grip_Array<GripBrainSystem *,Grip::AllocatorGH<GripBrainSystem *,2> > &, const CCSSystemsConfig &, const GripBTSystemFlags &);
     void InitializeControlSystems(const CCSSystemsConfig &);
 public:
-    virtual void DrawHUD(GripHUDRenderer *, int &);
-    virtual void CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *,2> &);
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
+    HG_VIRTUAL void CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *,2> &);
+    #ifndef HAGGAR_HOST
+    HG_VIRTUAL ~CCSBrain();
+HG_PRIVATE:
+    CCSBrain(GripRBTTree *);
+public:
+    #endif
+    #ifndef HAGGAR_HOST
     ICCSMeatPuppet *m_meatPuppet;  // 0x9C
     GripBTSystemFlags m_ssFlags;  // 0xA0
     GripBTSystemFlags m_asFlags;  // 0xA8
@@ -1272,11 +1373,24 @@ public:
     CCSSystemsConfig m_systemsConfig;  // 0xC0
     IGripMeatPuppetQuery *m_meatPuppetQuery;  // 0xF4
     IGripWorldQuery *m_worldQuery;  // 0xF8
+    #else
+    hg::gptr<ICCSMeatPuppet> m_meatPuppet;
+    GripBTSystemFlags m_ssFlags;
+    GripBTSystemFlags m_asFlags;
+    hg::gptr<GripBlackboard> m_blackboard;
+    hg::gptr<CCSGlobalBlackboard> m_pGlobalBB;
+    hg::gptr<GripAFFramework> m_afFramework;
+    hg::gptr<CCSCSInterface> m_csInterface;
+    CCSSystemsConfig m_systemsConfig;
+    hg::gptr<IGripMeatPuppetQuery> m_meatPuppetQuery;
+    hg::gptr<IGripWorldQuery> m_worldQuery;
+    #endif
 };
 
 class GripHeapObject  // size 0x1, opaque
 {
 public:
+    #ifndef HAGGAR_HOST
     static void *operator new(unsigned int, void *);
     static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
     static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
@@ -1300,12 +1414,12 @@ public:
     static void operator delete(void *, int, const char *, int);
     static void operator delete(void *, const char *, int);
     static void operator delete(void *);
+    #endif
 };
 
 struct CCSGameCharacter : public GripHeapObject  // size 0x14
 {
 public:
-    CCSGameCharacter();
     bool operator==(const CCSGameCharacter &) const;
     void *GetActor() const;
     UUDKTargetableComponent *GetTargetableComponent();
@@ -1316,19 +1430,31 @@ public:
     float GetSize() const;
     int GetTeam();
     bool IsPlayer() const;
+    #ifndef HAGGAR_HOST
+    CCSGameCharacter();
+    #endif
+    #ifndef HAGGAR_HOST
+    static const CCSGameCharacter NONE;
     APawn *m_pawn;  // 0x0
     AActor *m_actor;  // 0x4
     UUDKTargetableComponent *m_targetableComponent;  // 0x8
     bool m_targetableComponentCheck;  // 0xC
     char _pad0[0x3];
     int m_cachedTeamNum;  // 0x10
-    static const CCSGameCharacter NONE;
+    #else
+    static const CCSGameCharacter (&NONE);
+    hg::gptr<APawn> m_pawn;
+    hg::gptr<AActor> m_actor;
+    hg::gptr<UUDKTargetableComponent> m_targetableComponent;
+    bool m_targetableComponentCheck;
+    char _pad0[0x3];
+    hg::be<int> m_cachedTeamNum;
+    #endif
 };
 
 struct CCSCharacter : public GripHeapObject  // size 0x14
 {
 public:
-    CCSCharacter();
     bool operator==(const CCSCharacter &) const;
     bool operator!=(const CCSCharacter &) const;
     void *GetActor() const;
@@ -1341,8 +1467,16 @@ public:
     float GetSize() const;
     int GetTeam();
     bool IsPlayer() const;
-    CCSGameCharacter m_gameCharacter;  // 0x0
+    #ifndef HAGGAR_HOST
+    CCSCharacter();
+    #endif
+    #ifndef HAGGAR_HOST
     static const CCSCharacter NONE;
+    CCSGameCharacter m_gameCharacter;  // 0x0
+    #else
+    static const CCSCharacter (&NONE);
+    CCSGameCharacter m_gameCharacter;
+    #endif
 };
 
 class GripRBTNode : public GripVHeapObject  // size 0x64, opaque
@@ -1370,26 +1504,24 @@ public:
         ER_NOT_READY = 6,
         ER_MAX = 7,
     };
-    virtual void GripBTInitialize();
-    virtual void Delete();
-    virtual bool TestPreCondition(IGripBTInterface *);
-protected:
-    virtual GripRBTNode::EBTEvaluationResult EvaluateInternal(IGripBTInterface *, GripBTStack *);
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual void GameEventRegistration(GripGameEventHandler &);
+    HG_VIRTUAL void GripBTInitialize();
+    HG_VIRTUAL void Delete();
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTEvaluationResult EvaluateInternal(IGripBTInterface *, GripBTStack *);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL void GameEventRegistration(GripGameEventHandler &);
 public:
-    virtual void SurveyUsedBBMembers(GripBlackboard *);
-    virtual void GetUsedControlSystems(GripBTSystemFlags &);
-    virtual GripRBTNode::EBTEvaluationResult Evaluate(IGripBTInterface *, GripBTStack *);
-    virtual GripRBTNode::EBTExecutionResult Execute(IGripBTInterface *, GripBTStack *, bool);
-    virtual EGripBTNodeType GetType();
-    virtual EGripBTNodeFamily GetFamily();
-    virtual float GetWeight(IGripBTInterface *);
-    GripRBTNode();
-    virtual ~GripRBTNode();
+    HG_VIRTUAL void SurveyUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL void GetUsedControlSystems(GripBTSystemFlags &);
+    HG_VIRTUAL GripRBTNode::EBTEvaluationResult Evaluate(IGripBTInterface *, GripBTStack *);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult Execute(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL EGripBTNodeFamily GetFamily();
+    HG_VIRTUAL float GetWeight(IGripBTInterface *);
     void InitiateGameEventRegistration(GripGameEventHandler &);
     int GetChildCount() const;
     bool AddChild(GripRBTNode *);
@@ -1402,10 +1534,8 @@ public:
     int GetCardinality() const;
     void SetAsContextSwitch(bool);
     bool IsContextSwitch() const;
-    static void *operator new(unsigned int);
-    static void operator delete(void *);
     void Serialize(GripSerializer *);
-private:
+HG_PRIVATE:
     Grip::String GetNodeTypeLabel();
 public:
     GripRBTNode::EBTExecutionResult GetExecutionResultVisualization() const;
@@ -1413,24 +1543,34 @@ public:
     int GetNodeID() const;
     void SetName(Grip::String);
     Grip::String GetJSONRepresentation();
-protected:
+    #ifndef HAGGAR_HOST
+    GripRBTNode();
+    HG_VIRTUAL ~GripRBTNode();
+    static void *operator new(unsigned int);
+    static void operator delete(void *);
+    #endif
+    #ifndef HAGGAR_HOST
     static int ms_IDCounter;
     static GripRBTAllocator *ms_pAllocator;
-private:
+    #else
+    static hg::be<int> (&ms_IDCounter);
+    static hg::gptr<GripRBTAllocator> (&ms_pAllocator);
+    #endif
+HG_PRIVATE:
     unsigned int GripRBTNodeData[0x18];
 };
 
 class GripRBTBehavior : public GripRBTNode  // size 0x64, opaque
 {
 public:
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
-    virtual bool TestPreCondition(IGripBTInterface *);
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
-    virtual EGripBTNodeType GetType();
-    virtual EGripBTNodeFamily GetFamily();
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL EGripBTNodeFamily GetFamily();
 };
 
 class CCSRBTMoveTo : public GripRBTBehavior  // size 0xA4, opaque
@@ -1443,12 +1583,11 @@ public:
         EBTMoveToShootState_Delay = 2,
         EBTMoveToShootState_Done = 3,
     };
-    CCSRBTMoveTo();
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
 public:
     void SetSpeed(CCS::EMovementSpeed);
     void SetAlertness(CCS::EAlertnessState);
@@ -1463,18 +1602,19 @@ public:
     void SetPlayerTargetWeight(float);
     void SetReactiveTargetWeight(float);
     void SetObjectiveTargetWeight(float);
-private:
+HG_PRIVATE:
     CCSTarget *GetSecondaryTarget(IGripBTInterface *);
+public:
+    #ifndef HAGGAR_HOST
+    CCSRBTMoveTo();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTMoveToData[0x10];
 };
 
 struct Grip_Vector : public GripHeapObject  // size 0xC, opaque
 {
 public:
-    Grip_Vector(float, float, float);
-    Grip_Vector(float);
-    Grip_Vector(const FVector &);
-    Grip_Vector();
     operator class FVector() const;
     Grip_Vector operator+(const Grip_Vector &) const;
     Grip_Vector operator+=(const Grip_Vector &);
@@ -1502,7 +1642,13 @@ public:
     int IsNearlyZero(float) const;
     bool ContainsNaN() const;
     Grip_Rotation Rotation() const;
-private:
+    #ifndef HAGGAR_HOST
+    Grip_Vector(float, float, float);
+    Grip_Vector(float);
+    Grip_Vector(const FVector &);
+    Grip_Vector();
+    #endif
+HG_PRIVATE:
     char Grip_VectorData[0xB];
 };
 
@@ -1510,13 +1656,6 @@ namespace Kaim {
 template <> class Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >  // size 0x4, opaque
 {
 public:
-    Ptr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Ptr(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &, Kaim::PickType);
-    Ptr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    Ptr();
-    ~Ptr();
     bool operator==(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
     bool operator==(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
     bool operator!=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
@@ -1540,7 +1679,16 @@ public:
     Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
     Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
     Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-private:
+    #ifndef HAGGAR_HOST
+    Ptr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    Ptr(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &, Kaim::PickType);
+    Ptr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
+    Ptr();
+    ~Ptr();
+    #endif
+HG_PRIVATE:
     unsigned int PtrData[0x1];
 };
 }
@@ -1548,8 +1696,6 @@ private:
 struct CCSTarget : public GripHeapObject  // size 0x64
 {
 public:
-    CCSTarget(CCSBrain *);
-    CCSTarget();
     Grip_Vector GetDefaultShootLocation() const;
     bool IsValid() const;
     void ResetAwareness();
@@ -1557,6 +1703,11 @@ public:
     void FindDestinationReachable(Grip_Vector);
     void UpdateDestinationReachable();
     bool CanFindPath();
+    #ifndef HAGGAR_HOST
+    CCSTarget(CCSBrain *);
+    CCSTarget();
+    #endif
+    #ifndef HAGGAR_HOST
     CCSCharacter character;  // 0x0
     int teamNum;  // 0x14
     Grip_Vector position;  // 0x18
@@ -1580,6 +1731,31 @@ public:
     Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > m_asyncAStarQuery;  // 0x58
     UGwNavBotHandle *m_pGwNavBotHandle;  // 0x5C
     Kaim::AStarQueryResult pathResult;  // 0x60
+    #else
+    CCSCharacter character;
+    hg::be<int> teamNum;
+    Grip_Vector position;
+    Grip_Vector LKP;
+    hg::be<float> LKPAge;
+    hg::be<float> CNTAge;
+    hg::be<float> range2D;
+    hg::be<float> rangeNavMesh;
+    hg::be<float> currentThreat;
+    bool canShoot;
+    bool ClearOfFriendlies;
+    bool isAware;
+    bool isFiring;
+    bool isVisible;
+    bool isHeard;
+    bool isAvailableVehicle;
+    bool isBehindCover;
+    hg::be<float> forwardDot;
+    hg::be<float> rightDot;
+    hg::be<EAITargetType> m_aiTargetType;
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > m_asyncAStarQuery;
+    hg::gptr<UGwNavBotHandle> m_pGwNavBotHandle;
+    hg::be<Kaim::AStarQueryResult> pathResult;
+    #endif
 };
 
 class FName  // size 0x8
@@ -1599,15 +1775,6 @@ public:
     unsigned int operator!=(const FName &) const;
     unsigned int IsValid() const;
     int Compare(const FName &) const;
-    FName(ELinkerNameTableConstructor, const char *);
-    FName(ELinkerNameTableConstructor, const wchar_t *);
-    FName(const wchar_t *, int, EFindName);
-    FName(int);
-    FName(const char *, EFindName);
-    FName(const wchar_t *, EFindName, unsigned int);
-    FName();
-    FName(EName, int);
-    FName(EName);
     static void StaticInit();
     static void DisplayHash(FOutputDevice &);
     static void Hardcode(FNameEntry *);
@@ -1622,20 +1789,40 @@ public:
     static unsigned int GetInitialized();
     static void SplitOldName(const wchar_t *, FString &, int &);
     static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
-private:
+HG_PRIVATE:
     static unsigned int &GetIsInitialized();
     void Init(const char *, int, EFindName);
     void Init(const wchar_t *, int, EFindName, unsigned int);
 public:
     static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
-    int Index;  // 0x0
-    int Number;  // 0x4
-private:
+    #ifndef HAGGAR_HOST
+    FName(ELinkerNameTableConstructor, const char *);
+    FName(ELinkerNameTableConstructor, const wchar_t *);
+    FName(const wchar_t *, int, EFindName);
+    FName(int);
+    FName(const char *, EFindName);
+    FName(const wchar_t *, EFindName, unsigned int);
+    FName();
+    FName(EName, int);
+    FName(EName);
+    #endif
+    #ifndef HAGGAR_HOST
     static TArrayNoInit<FNameEntry *> Names;
     static FNameEntry *NameHash[4096];
     static int NameEntryMemorySize;
     static int NumAnsiNames;
     static int NumUnicodeNames;
+    int Index;  // 0x0
+    int Number;  // 0x4
+    #else
+    static TArrayNoInit<FNameEntry *> (&Names);
+    static hg::gptr<FNameEntry> (&NameHash)[4096];
+    static hg::be<int> (&NameEntryMemorySize);
+    static hg::be<int> (&NumAnsiNames);
+    static hg::be<int> (&NumUnicodeNames);
+    hg::be<int> Index;
+    hg::be<int> Number;
+    #endif
 };
 
 class HaloRBTKamikaze : public CCSRBTMoveTo  // size 0xD0
@@ -1648,16 +1835,19 @@ public:
         Chasing = 2,
         Detonating = 3,
     };
-    HaloRBTKamikaze();
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
     void SetDetonationDistance(float);
     void SetArmKamikazeAnimName(FName);
     void SetDetonateKamikazeAnimName(FName);
     void SetBlendTimes(float, float);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
 public:
+    #ifndef HAGGAR_HOST
+    HaloRBTKamikaze();
+    #endif
+    #ifndef HAGGAR_HOST
     int m_actionHandle;  // 0xA4
     float m_detonationDistance;  // 0xA8
     HaloRBTKamikaze::KamikazeState m_kamikazeState;  // 0xAC
@@ -1667,56 +1857,68 @@ public:
     float m_BlendInTime;  // 0xC4
     float m_BlendOutTime;  // 0xC8
     CCSTarget *kamikazeTarget;  // 0xCC
+    #else
+    hg::be<int> m_actionHandle;
+    hg::be<float> m_detonationDistance;
+    hg::be<HaloRBTKamikaze::KamikazeState> m_kamikazeState;
+    hg::gptr<UAnimNodeSlot> m_FullBodyAnimSlot;
+    FName m_ArmKamikazeAnimName;
+    FName m_DetonateKamikazeAnimName;
+    hg::be<float> m_BlendInTime;
+    hg::be<float> m_BlendOutTime;
+    hg::gptr<CCSTarget> kamikazeTarget;
+    #endif
 };
 
 class ICCSMeatPuppet  // size 0x4, opaque
 {
+    HG_VFPTR
 public:
-    virtual ~ICCSMeatPuppet();
-    virtual CCS::EMovementType GetMovementType() = 0;
-    virtual void SetMovementType(CCS::EMovementType) = 0;
-    virtual void SetMovementTypeDefault() = 0;
-    virtual CCS::EAlertnessState GetAlertness() = 0;
-    virtual void SetAlertness(CCS::EAlertnessState) = 0;
-    virtual void SetAlertnessDefault() = 0;
-    virtual CCS::EMovementSpeed GetSpeed() = 0;
-    virtual void SetSpeed(CCS::EMovementSpeed) = 0;
-    virtual void SetMovementSpeedDefault() = 0;
-    virtual bool IsMoving() = 0;
-    virtual bool ReachedPoint(Grip_Vector) = 0;
-    virtual void Stop() = 0;
-    virtual bool IsCrouched() = 0;
-    virtual void SetCrouched(bool) = 0;
-    virtual void SetPostureDefault() = 0;
-    virtual bool PostureTransitionOver() = 0;
-    virtual bool GetIsPanicking() = 0;
-    virtual void SetIsPanicking(bool) = 0;
-    virtual bool CanAim(Grip_Rotation) = 0;
-    virtual bool CanFireAt(CCSCharacter) = 0;
-    virtual Grip_Vector GetWeaponStartPosition() = 0;
-    virtual bool HasLineOfSightTo(CCSCharacter) = 0;
-    virtual int GetTeam() = 0;
-    virtual bool CanPlayerSeeMe() = 0;
-    virtual int GetHealth() = 0;
-    virtual bool HasHeardCharacter(CCSCharacter) = 0;
-    virtual void NotifyAIMoveToActorCompleted() = 0;
-    virtual CCSCharacter GetCharacter() = 0;
-    virtual bool AimedAt() = 0;
-    virtual bool Threatened() = 0;
-    virtual bool GrenadeStuck() = 0;
-    virtual bool Staggered() = 0;
-    virtual bool SuccessfulAttack() = 0;
-    virtual bool HeardNoise() = 0;
-    virtual bool Event() = 0;
-    virtual EEventType GetEventType() = 0;
-    virtual Grip_Vector GetThreatLocation() = 0;
-    virtual Grip_Vector GetThreatDirection() = 0;
-    virtual Grip_Vector GetEventLocation() = 0;
-    virtual EThreatType GetThreatType() = 0;
-    virtual UAnimNodeSlot *GetFullBodyAnimSlot() = 0;
-    virtual UAnimNodeSlot *GetTopHalfAnimSlot() = 0;
-    virtual UClass *GetEventClass() = 0;
-    virtual void DrawHUD(GripHUDRenderer *, int &) = 0;
+    HG_XDK(HG_VIRTUAL ~ICCSMeatPuppet();)
+    HG_VIRTUAL CCS::EMovementType GetMovementType() HG_PURE;
+    HG_VIRTUAL void SetMovementType(CCS::EMovementType) HG_PURE;
+    HG_VIRTUAL void SetMovementTypeDefault() HG_PURE;
+    HG_VIRTUAL CCS::EAlertnessState GetAlertness() HG_PURE;
+    HG_VIRTUAL void SetAlertness(CCS::EAlertnessState) HG_PURE;
+    HG_VIRTUAL void SetAlertnessDefault() HG_PURE;
+    HG_VIRTUAL CCS::EMovementSpeed GetSpeed() HG_PURE;
+    HG_VIRTUAL void SetSpeed(CCS::EMovementSpeed) HG_PURE;
+    HG_VIRTUAL void SetMovementSpeedDefault() HG_PURE;
+    HG_VIRTUAL bool IsMoving() HG_PURE;
+    HG_VIRTUAL bool ReachedPoint(Grip_Vector) HG_PURE;
+    HG_VIRTUAL void Stop() HG_PURE;
+    HG_VIRTUAL bool IsCrouched() HG_PURE;
+    HG_VIRTUAL void SetCrouched(bool) HG_PURE;
+    HG_VIRTUAL void SetPostureDefault() HG_PURE;
+    HG_VIRTUAL bool PostureTransitionOver() HG_PURE;
+    HG_VIRTUAL bool GetIsPanicking() HG_PURE;
+    HG_VIRTUAL void SetIsPanicking(bool) HG_PURE;
+    HG_VIRTUAL bool CanAim(Grip_Rotation) HG_PURE;
+    HG_VIRTUAL bool CanFireAt(CCSCharacter) HG_PURE;
+    HG_VIRTUAL Grip_Vector GetWeaponStartPosition() HG_PURE;
+    HG_VIRTUAL bool HasLineOfSightTo(CCSCharacter) HG_PURE;
+    HG_VIRTUAL int GetTeam() HG_PURE;
+    HG_VIRTUAL bool CanPlayerSeeMe() HG_PURE;
+    HG_VIRTUAL int GetHealth() HG_PURE;
+    HG_VIRTUAL bool HasHeardCharacter(CCSCharacter) HG_PURE;
+    HG_VIRTUAL void NotifyAIMoveToActorCompleted() HG_PURE;
+    HG_VIRTUAL CCSCharacter GetCharacter() HG_PURE;
+    HG_VIRTUAL bool AimedAt() HG_PURE;
+    HG_VIRTUAL bool Threatened() HG_PURE;
+    HG_VIRTUAL bool GrenadeStuck() HG_PURE;
+    HG_VIRTUAL bool Staggered() HG_PURE;
+    HG_VIRTUAL bool SuccessfulAttack() HG_PURE;
+    HG_VIRTUAL bool HeardNoise() HG_PURE;
+    HG_VIRTUAL bool Event() HG_PURE;
+    HG_VIRTUAL EEventType GetEventType() HG_PURE;
+    HG_VIRTUAL Grip_Vector GetThreatLocation() HG_PURE;
+    HG_VIRTUAL Grip_Vector GetThreatDirection() HG_PURE;
+    HG_VIRTUAL Grip_Vector GetEventLocation() HG_PURE;
+    HG_VIRTUAL EThreatType GetThreatType() HG_PURE;
+    HG_VIRTUAL UAnimNodeSlot *GetFullBodyAnimSlot() HG_PURE;
+    HG_VIRTUAL UAnimNodeSlot *GetTopHalfAnimSlot() HG_PURE;
+    HG_VIRTUAL UClass *GetEventClass() HG_PURE;
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &) HG_PURE;
 };
 
 // ---- written by hand below this line (gen_header.py keeps it) ----
@@ -1741,4 +1943,6 @@ inline void HaloRBTKamikaze::SetBlendTimes(float BlendIn, float BlendOut)
     m_BlendOutTime = BlendOut;
 }
 
+#ifndef HAGGAR_HOST  // constructors stay recompiled in the port
 inline FName::FName() {}
+#endif

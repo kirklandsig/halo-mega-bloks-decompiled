@@ -1,5 +1,6 @@
 // Generated from the PDB by: python tools/gen_classes.py Cognition
 #pragma once
+#include "Core/Inc/HostGuest.h"
 
 template <class T0, class T1> class TArray;
 template <class T0, class T1> class TIndirectArray;
@@ -250,104 +251,99 @@ public:
     {
         StaticClassCastFlags = 0,
     };
-    virtual ~UObject();
-    virtual unsigned int PreSaveRoot(const wchar_t *, TArray<FString,FDefaultAllocator> &);
-    virtual void PostSaveRoot(unsigned int);
-    virtual void PreSave();
-    virtual void Modify(unsigned int);
-    virtual unsigned int SaveToTransactionBuffer(unsigned int);
-    virtual void PostLoad();
-    virtual void BeginDestroy();
-    virtual unsigned int IsReadyForFinishDestroy();
-    virtual void FinishDestroy();
-    virtual void Serialize(FArchive &);
-    virtual unsigned int IsPendingKill() const;
-    virtual void ShutdownAfterError();
-    virtual void PreEditChange(UProperty *);
-    virtual void PreEditChange(FEditPropertyChain &);
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
-    virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent &);
-    virtual unsigned int CanEditChange(const UProperty *) const;
-    virtual void PreEditUndo();
-    virtual void PostEditUndo();
-    virtual void PostRename();
-    virtual void PostDuplicate();
-    virtual void GetDynamicListValues(const FString &, TArray<FString,FDefaultAllocator> &);
-    virtual unsigned int UsesManagedArchetypePropagation(UObject **) const;
-    virtual void PreSerializeIntoPropagationArchive();
-    virtual void PostSerializeIntoPropagationArchive();
-    virtual void PreSerializeFromPropagationArchive();
-    virtual void PostSerializeFromPropagationArchive();
-    virtual void GetArchetypeInstances(TArray<UObject *,FDefaultAllocator> &);
-    virtual void SaveInstancesIntoPropagationArchive(TArray<UObject *,FDefaultAllocator> &);
-    virtual void LoadInstancesFromPropagationArchive(TArray<UObject *,FDefaultAllocator> &);
-    virtual void PostCrossLevelFixup();
-    virtual void Register();
-    virtual void LanguageChange();
-    virtual unsigned int NeedsLoadForClient() const;
-    virtual unsigned int NeedsLoadForServer() const;
-    virtual unsigned int NeedsLoadForEdit() const;
-protected:
-    virtual UObject *GetProfilerAssetObjectInternal() const;
-    virtual FString GetDetailedInfoInternal() const;
+    HG_VFPTR
 public:
-    virtual FObjectInstancingGraph *GetCustomPostLoadInstanceGraph();
-    virtual void ExportCustomProperties(FOutputDevice &, unsigned int);
-    virtual void ImportCustomProperties(const wchar_t *, FFeedbackContext *);
-    virtual void PostEditImport();
-    virtual unsigned int IsAComponent() const;
-    virtual unsigned int IsAPrefabArchetype(UObject **) const;
-    virtual unsigned int IsInPrefabInstance() const;
-    virtual unsigned int Rename(const wchar_t *, UObject *, unsigned long);
-    virtual UComponent *FindComponent(FName, unsigned int);
-    virtual void PostReloadConfig(UProperty *);
-    virtual void NetDirty(UProperty *);
-    virtual void StripData(UE3::EPlatformType, unsigned int);
-    virtual FString GetDesc();
-    virtual FString GetDetailedDescription(int);
-    virtual unsigned int GetNativePropertyValues(TMap<FString,FString,FDefaultSetAllocator> &, unsigned long) const;
-    virtual unsigned int IsSelected() const;
-    virtual void MarkPackageDirty(unsigned int) const;
-    virtual UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
-    virtual void UpdateArchetype();
-    virtual int GetResourceSize();
-    virtual FName GetExporterName();
-    virtual unsigned int IsLocalizedResource();
-    virtual void InitializeProperties(UObject *, FObjectInstancingGraph *);
-    virtual void SetArchetype(UObject *, unsigned int, FObjectInstancingGraph *);
-    virtual void AddReferencedObjects(TArray<UObject *,FDefaultAllocator> &);
-    virtual void ProcessEvent(UFunction *, void *, void *);
-    virtual void ProcessDelegate(FName, const FScriptDelegate *, void *, void *);
-    virtual void ProcessState(float);
-    virtual unsigned int ProcessRemoteFunction(UFunction *, void *, FFrame *);
-    virtual void InitExecution();
-    virtual unsigned int GotoLabel(FName);
-    virtual EGotoState GotoState(FName, unsigned int, unsigned int);
-    virtual unsigned int ScriptConsoleExec(const wchar_t *, FOutputDevice &, UObject *);
-    virtual unsigned int Get_bDebug();
-private:
+    HG_XDK(HG_VIRTUAL ~UObject();)
+    HG_VIRTUAL unsigned int PreSaveRoot(const wchar_t *, TArray<FString,FDefaultAllocator> &);
+    HG_VIRTUAL void PostSaveRoot(unsigned int);
+    HG_VIRTUAL void PreSave();
+    HG_VIRTUAL void Modify(unsigned int);
+    HG_VIRTUAL unsigned int SaveToTransactionBuffer(unsigned int);
+    HG_VIRTUAL void PostLoad();
+    HG_VIRTUAL void BeginDestroy();
+    HG_VIRTUAL unsigned int IsReadyForFinishDestroy();
+    HG_VIRTUAL void FinishDestroy();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL unsigned int IsPendingKill() const;
+    HG_VIRTUAL void ShutdownAfterError();
+    HG_VIRTUAL void PreEditChange(UProperty *);
+    HG_VIRTUAL void PreEditChange(FEditPropertyChain &);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void PostEditChangeChainProperty(FPropertyChangedChainEvent &);
+    HG_VIRTUAL unsigned int CanEditChange(const UProperty *) const;
+    HG_VIRTUAL void PreEditUndo();
+    HG_VIRTUAL void PostEditUndo();
+    HG_VIRTUAL void PostRename();
+    HG_VIRTUAL void PostDuplicate();
+    HG_VIRTUAL void GetDynamicListValues(const FString &, TArray<FString,FDefaultAllocator> &);
+    HG_VIRTUAL unsigned int UsesManagedArchetypePropagation(UObject **) const;
+    HG_VIRTUAL void PreSerializeIntoPropagationArchive();
+    HG_VIRTUAL void PostSerializeIntoPropagationArchive();
+    HG_VIRTUAL void PreSerializeFromPropagationArchive();
+    HG_VIRTUAL void PostSerializeFromPropagationArchive();
+    HG_VIRTUAL void GetArchetypeInstances(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void SaveInstancesIntoPropagationArchive(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void LoadInstancesFromPropagationArchive(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void PostCrossLevelFixup();
+    HG_VIRTUAL void Register();
+    HG_VIRTUAL void LanguageChange();
+    HG_VIRTUAL unsigned int NeedsLoadForClient() const;
+    HG_VIRTUAL unsigned int NeedsLoadForServer() const;
+    HG_VIRTUAL unsigned int NeedsLoadForEdit() const;
+HG_PROTECTED:
+    HG_VIRTUAL UObject *GetProfilerAssetObjectInternal() const;
+    HG_VIRTUAL FString GetDetailedInfoInternal() const;
+public:
+    HG_VIRTUAL FObjectInstancingGraph *GetCustomPostLoadInstanceGraph();
+    HG_VIRTUAL void ExportCustomProperties(FOutputDevice &, unsigned int);
+    HG_VIRTUAL void ImportCustomProperties(const wchar_t *, FFeedbackContext *);
+    HG_VIRTUAL void PostEditImport();
+    HG_VIRTUAL unsigned int IsAComponent() const;
+    HG_VIRTUAL unsigned int IsAPrefabArchetype(UObject **) const;
+    HG_VIRTUAL unsigned int IsInPrefabInstance() const;
+    HG_VIRTUAL unsigned int Rename(const wchar_t *, UObject *, unsigned long);
+    HG_VIRTUAL UComponent *FindComponent(FName, unsigned int);
+    HG_VIRTUAL void PostReloadConfig(UProperty *);
+    HG_VIRTUAL void NetDirty(UProperty *);
+    HG_VIRTUAL void StripData(UE3::EPlatformType, unsigned int);
+    HG_VIRTUAL FString GetDesc();
+    HG_VIRTUAL FString GetDetailedDescription(int);
+    HG_VIRTUAL unsigned int GetNativePropertyValues(TMap<FString,FString,FDefaultSetAllocator> &, unsigned long) const;
+    HG_VIRTUAL unsigned int IsSelected() const;
+    HG_VIRTUAL void MarkPackageDirty(unsigned int) const;
+    HG_VIRTUAL UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
+    HG_VIRTUAL void UpdateArchetype();
+    HG_VIRTUAL int GetResourceSize();
+    HG_VIRTUAL FName GetExporterName();
+    HG_VIRTUAL unsigned int IsLocalizedResource();
+    HG_VIRTUAL void InitializeProperties(UObject *, FObjectInstancingGraph *);
+    HG_VIRTUAL void SetArchetype(UObject *, unsigned int, FObjectInstancingGraph *);
+    HG_VIRTUAL void AddReferencedObjects(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void ProcessEvent(UFunction *, void *, void *);
+    HG_VIRTUAL void ProcessDelegate(FName, const FScriptDelegate *, void *, void *);
+    HG_VIRTUAL void ProcessState(float);
+    HG_VIRTUAL unsigned int ProcessRemoteFunction(UFunction *, void *, FFrame *);
+    HG_VIRTUAL void InitExecution();
+    HG_VIRTUAL unsigned int GotoLabel(FName);
+    HG_VIRTUAL EGotoState GotoState(FName, unsigned int, unsigned int);
+    HG_VIRTUAL unsigned int ScriptConsoleExec(const wchar_t *, FOutputDevice &, UObject *);
+    HG_VIRTUAL unsigned int Get_bDebug();
+HG_PRIVATE:
     UObject &operator=(const UObject &);
 public:
     static UClass *GetPrivateStaticClassUObject(const wchar_t *);
     static void InitializePrivateStaticClassUObject();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
     static const wchar_t *StaticConfigName();
-private:
+HG_PRIVATE:
     void AddObject(int);
     void HashObject();
     void UnhashObject();
     static ULinkerLoad *GetLoader(int);
     static unsigned int ResolveName(UObject *&, FString &, unsigned int, unsigned int, unsigned int);
     static void SafeLoadError(UObject *, unsigned long, const wchar_t *, const wchar_t *, ...);
-    static void operator delete(void *, unsigned int);
     unsigned int IsNameHashed();
 public:
-    UObject(EStaticConstructor, const wchar_t *, const wchar_t *, unsigned __int64);
-    UObject(ENativeConstructor, UClass *, const wchar_t *, const wchar_t *, unsigned __int64);
-    UObject(const UObject &);
-    UObject();
     void StaticConstructor();
     void InitializeIntrinsicPropertyValues();
     static void InternalConstructor(void *);
@@ -361,7 +357,7 @@ public:
     void ConditionalCleanupCrossLevelReferences();
     int GetNetIndex();
     FName GetStateName();
-private:
+HG_PRIVATE:
     static UObject *StaticFindObjectFastInternal(UClass *, UObject *, FName, unsigned int, unsigned int, unsigned __int64);
     void SetNetIndex(int);
 public:
@@ -425,7 +421,7 @@ public:
     static void ClearPackageToFileMapping();
     static TMap<FName,FName,FDefaultSetAllocator> *GetPackageNameToFileMapping();
     FString GetFullName(const UObject *) const;
-private:
+HG_PRIVATE:
     void GetPathName(const UObject *, FString &) const;
 public:
     FString GetPathName(const UObject *) const;
@@ -906,7 +902,18 @@ public:
     void eventPoppedState();
     void eventPausedState();
     void eventContinuedState();
-private:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PRIVATE:
+    static void operator delete(void *, unsigned int);
+public:
+    UObject(EStaticConstructor, const wchar_t *, const wchar_t *, unsigned __int64);
+    UObject(ENativeConstructor, UClass *, const wchar_t *, const wchar_t *, unsigned __int64);
+    UObject(const UObject &);
+    UObject();
+    #endif
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     static unsigned int GObjInitialized;
     static unsigned int GObjNoRegister;
@@ -940,9 +947,44 @@ private:
     static unsigned char *GPermanentObjectPoolTail;
     static TArray<int,FDefaultAllocator> GGCObjectsPendingDestruction;
     static int GGCObjectsPendingDestructionCount;
-protected:
     static unsigned int GExclusiveResourceSizeMode;
-private:
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    static hg::be<unsigned int> (&GObjInitialized);
+    static hg::be<unsigned int> (&GObjNoRegister);
+    static hg::be<int> (&GObjBeginLoadCount);
+    static hg::be<unsigned int> (&GIsSavingPackage);
+    static hg::be<int> (&GObjRegisterCount);
+    static hg::be<int> (&GImportCount);
+    static hg::be<int> (&GForcedExportCount);
+    static hg::gptr<UObject> (&GObjHash)[32768];
+    static hg::gptr<UObject> (&GObjHashOuter)[32768];
+    static hg::gptr<UObject> (&GAutoRegister);
+    static TArray<UObject *,FDefaultAllocator> (&GObjLoaded);
+    static TArray<UObject *,FDefaultAllocator> (&GObjConstructedDuringAsyncLoading);
+    static TArray<UObject *,FDefaultAllocator> (&GObjObjects);
+    static TArray<int,FDefaultAllocator> (&GObjAvailable);
+    static TArray<ULinkerLoad *,FDefaultAllocator> (&GObjLoaders);
+    static TMap<FName,FName,FDefaultSetAllocator> (&PackageNameToFileMapping);
+    static hg::gptr<UPackage> (&GObjTransientPkg);
+    static hg::be<wchar_t> (&GObjCachedLanguage)[32];
+    static TArray<UObject *,FDefaultAllocator> (&GObjRegistrants);
+    static TIndirectArray<FAsyncPackage,FDefaultAllocator> (&GObjAsyncPackages);
+    static hg::be<wchar_t> (&GLanguage)[64];
+    static hg::be<unsigned int> (&GObjIncrementalPurgeIsInProgress);
+    static hg::be<unsigned int> (&GObjFinishDestroyHasBeenRoutedToAllObjects);
+    static hg::be<unsigned int> (&GObjPurgeIsRequired);
+    static hg::be<int> (&GObjCurrentPurgeObjectIndex);
+    static hg::be<int> (&GObjFirstGCIndex);
+    static hg::be<int> (&GObjLastNonGCIndex);
+    static hg::be<int> (&GPermanentObjectPoolSize);
+    static hg::gptr<unsigned char> (&GPermanentObjectPool);
+    static hg::gptr<unsigned char> (&GPermanentObjectPoolTail);
+    static TArray<int,FDefaultAllocator> (&GGCObjectsPendingDestruction);
+    static hg::be<int> (&GGCObjectsPendingDestructionCount);
+    static hg::be<unsigned int> (&GExclusiveResourceSizeMode);
+    #endif
+HG_PRIVATE:
     unsigned int UObjectData[0xE];
 };
 
@@ -953,23 +995,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual UGripBTNode *GetNode();
-    virtual void DrawNode(FCanvas *, unsigned int, unsigned int, unsigned int);
-private:
+    HG_VIRTUAL UGripBTNode *GetNode();
+    HG_VIRTUAL void DrawNode(FCanvas *, unsigned int, unsigned int, unsigned int);
+HG_PRIVATE:
     UGripBTObject &operator=(const UGripBTObject &);
 public:
     static UClass *GetPrivateStaticClassUGripBTObject(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTObject();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTObject();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTObject();
 public:
-    static void InternalConstructor(void *);
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTObjectData[0x2];
 };
 
@@ -980,31 +1028,37 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
-    virtual FString GetNodeTitle();
-private:
-    virtual void GetNodesInternal(TArray<UGripBTNode *,FDefaultAllocator> &);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    HG_VIRTUAL FString GetNodeTitle();
+HG_PRIVATE:
+    HG_VIRTUAL void GetNodesInternal(TArray<UGripBTNode *,FDefaultAllocator> &);
     UGripBTNode &operator=(const UGripBTNode &);
 public:
     static UClass *GetPrivateStaticClassUGripBTNode(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTNode();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTNode();
-public:
     static void InternalConstructor(void *);
-    virtual UGripBTNode *GetNode();
+    HG_VIRTUAL UGripBTNode *GetNode();
     void GetNodes(TArray<UGripBTNode *,FDefaultAllocator> &);
     UGripBTNode *GetGripBTChild(const int) const;
     unsigned int IsChildOf(UGripBTNode *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTNode();
+public:
+    #endif
     typedef UGripBTObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTNodeData[0x11];
 };
 
@@ -1015,23 +1069,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UGripBTPriority &operator=(const UGripBTPriority &);
 public:
     static UClass *GetPrivateStaticClassUGripBTPriority(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTPriority();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTPriority();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTPriority();
 public:
-    static void InternalConstructor(void *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UGripBTTree : public UGripBTPriority  // size 0x98, opaque
@@ -1041,23 +1100,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UGripBTTree &operator=(const UGripBTTree &);
 public:
     static UClass *GetPrivateStaticClassUGripBTTree(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTTree();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTTree();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTTree();
 public:
-    static void InternalConstructor(void *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTPriority Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTTreeData[0x4];
 };
 
@@ -1068,24 +1133,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTree &operator=(const UCCSBTTree &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTree(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTree();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTree();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTree();
     UCCSBTTree();
 public:
+    #endif
     typedef UGripBTTree Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UField : public UObject  // size 0x40, opaque
@@ -1095,35 +1163,41 @@ public:
     {
         IsIntrinsic = 1,
     };
-    virtual void AddCppProperty(UProperty *);
-    virtual unsigned int MergeBools();
-    virtual void Bind();
-private:
+    HG_VIRTUAL void AddCppProperty(UProperty *);
+    HG_VIRTUAL unsigned int MergeBools();
+    HG_VIRTUAL void Bind();
+HG_PRIVATE:
     UField &operator=(const UField &);
 public:
     static UClass *GetPrivateStaticClassUField(const wchar_t *);
     static void InitializePrivateStaticClassUField();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    void StaticConstructor();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL void PostLoad();
+    UClass *GetOwnerClass() const;
+    UStruct *GetOwnerStruct() const;
+HG_PRIVATE:
+    HG_VIRTUAL UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
+public:
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UField();
+HG_PROTECTED:
+    HG_VIRTUAL ~UField();
 public:
-    static void InternalConstructor(void *);
     UField();
     UField(EStaticConstructor, const wchar_t *, const wchar_t *, unsigned __int64);
     UField(ENativeConstructor, UClass *, const wchar_t *, const wchar_t *, unsigned __int64);
-    void StaticConstructor();
-    virtual void Serialize(FArchive &);
-    virtual void PostLoad();
-    UClass *GetOwnerClass() const;
-    UStruct *GetOwnerStruct() const;
-private:
-    virtual UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
-public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UFieldData[0x1];
 };
 
@@ -1134,37 +1208,26 @@ public:
     {
         IsIntrinsic = 1,
     };
-    virtual UStruct *GetInheritanceSuper() const;
-    virtual void Link(FArchive &, unsigned int);
-    virtual void SerializeBin(FArchive &, unsigned char *, int) const;
-    virtual EExprToken SerializeExpr(int &, FArchive &);
-    virtual void PropagateStructDefaults();
-    virtual const wchar_t *GetPrefixCPP();
-private:
+    HG_VIRTUAL UStruct *GetInheritanceSuper() const;
+    HG_VIRTUAL void Link(FArchive &, unsigned int);
+    HG_VIRTUAL void SerializeBin(FArchive &, unsigned char *, int) const;
+    HG_VIRTUAL EExprToken SerializeExpr(int &, FArchive &);
+    HG_VIRTUAL void PropagateStructDefaults();
+    HG_VIRTUAL const wchar_t *GetPrefixCPP();
+HG_PRIVATE:
     UStruct &operator=(const UStruct &);
 public:
     static UClass *GetPrivateStaticClassUStruct(const wchar_t *);
     static void InitializePrivateStaticClassUStruct();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UStruct();
-public:
     static void InternalConstructor(void *);
-    UStruct(UStruct *);
-    UStruct(EStaticConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64);
-    UStruct(ENativeConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64, UStruct *);
-protected:
-    UStruct();
-public:
     void StaticConstructor();
-    virtual void Serialize(FArchive &);
-    virtual void PostLoad();
-    virtual void FinishDestroy();
-    virtual void Register();
-    virtual void StripData(UE3::EPlatformType, unsigned int);
-    virtual void AddCppProperty(UProperty *);
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL void PostLoad();
+    HG_VIRTUAL void FinishDestroy();
+    HG_VIRTUAL void Register();
+    HG_VIRTUAL void StripData(UE3::EPlatformType, unsigned int);
+    HG_VIRTUAL void AddCppProperty(UProperty *);
     void InstanceComponentTemplates(unsigned char *, unsigned char *, int, UObject *, FObjectInstancingGraph *);
     void InstanceSubobjectTemplates(unsigned char *, unsigned char *, int, UObject *, FObjectInstancingGraph *) const;
     void SerializeBinProperty(UProperty *, FArchive &, unsigned char *) const;
@@ -1176,9 +1239,26 @@ public:
     unsigned int IsChildOf(const UStruct *) const;
     UStruct *GetSuperStruct() const;
     unsigned int StructCompare(const void *, const void *, unsigned long);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UStruct();
+public:
+    UStruct(UStruct *);
+    UStruct(EStaticConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64);
+    UStruct(ENativeConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64, UStruct *);
+HG_PROTECTED:
+    UStruct();
+public:
+    #endif
     typedef UField Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UStructData[0xD];
 };
 
@@ -1189,32 +1269,38 @@ public:
     {
         IsIntrinsic = 1,
     };
-private:
+HG_PRIVATE:
     UState &operator=(const UState &);
 public:
     static UClass *GetPrivateStaticClassUState(const wchar_t *);
     static void InitializePrivateStaticClassUState();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    void StaticConstructor();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL unsigned int MergeBools();
+    HG_VIRTUAL UStruct *GetInheritanceSuper() const;
+    UState *GetSuperState() const;
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UState();
+HG_PROTECTED:
+    HG_VIRTUAL ~UState();
 public:
-    static void InternalConstructor(void *);
     UState(UState *);
     UState(EStaticConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64);
     UState(ENativeConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64, UState *);
-protected:
+HG_PROTECTED:
     UState();
 public:
-    void StaticConstructor();
-    virtual void Serialize(FArchive &);
-    virtual unsigned int MergeBools();
-    virtual UStruct *GetInheritanceSuper() const;
-    UState *GetSuperState() const;
+    #endif
     typedef UStruct Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UStateData[0x12];
 };
 
@@ -1225,40 +1311,31 @@ public:
     {
         IsIntrinsic = 1,
     };
-private:
+HG_PRIVATE:
     UClass &operator=(const UClass &);
 public:
     static UClass *GetPrivateStaticClassUClass(const wchar_t *);
     static void InitializePrivateStaticClassUClass();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UClass();
-public:
     static void InternalConstructor(void *);
     UPackage *GetOuterUPackage() const;
-    UClass(EStaticConstructor, unsigned long, unsigned long, unsigned long, const wchar_t *, const wchar_t *, const wchar_t *, unsigned __int64, void (*)(void *), void (UObject::*)(), void (UObject::*)());
-    UClass(ENativeConstructor, unsigned long, unsigned long, unsigned long, UClass *, UClass *, const wchar_t *, const wchar_t *, const wchar_t *, unsigned __int64, void (*)(void *), void (UObject::*)(), void (UObject::*)());
-    UClass(UClass *);
-    UClass();
     void StaticConstructor();
-    virtual void Serialize(FArchive &);
-    virtual void PostLoad();
-    virtual void FinishDestroy();
-    virtual void Register();
-    virtual unsigned int Rename(const wchar_t *, UObject *, unsigned long);
-    virtual UComponent *FindComponent(FName, unsigned int);
-    virtual void AddReferencedObjects(TArray<UObject *,FDefaultAllocator> &);
-    virtual void Bind();
-    virtual void PropagateStructDefaults();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL void PostLoad();
+    HG_VIRTUAL void FinishDestroy();
+    HG_VIRTUAL void Register();
+    HG_VIRTUAL unsigned int Rename(const wchar_t *, UObject *, unsigned long);
+    HG_VIRTUAL UComponent *FindComponent(FName, unsigned int);
+    HG_VIRTUAL void AddReferencedObjects(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void Bind();
+    HG_VIRTUAL void PropagateStructDefaults();
     unsigned char *GetDefaults();
     int GetDefaultsCount();
-    virtual unsigned int MergeBools();
-    virtual UStruct *GetInheritanceSuper() const;
+    HG_VIRTUAL unsigned int MergeBools();
+    HG_VIRTUAL UStruct *GetInheritanceSuper() const;
     void ConditionalLink();
-    virtual void Link(FArchive &, unsigned int);
-    virtual const wchar_t *GetPrefixCPP();
+    HG_VIRTUAL void Link(FArchive &, unsigned int);
+    HG_VIRTUAL const wchar_t *GetPrefixCPP();
     const FString GetConfigName() const;
     UClass *GetSuperClass() const;
     UObject *GetDefaultObject(unsigned int);
@@ -1269,7 +1346,7 @@ public:
     unsigned int HasAllCastFlags(EClassCastFlag) const;
     unsigned int HasNativesToExport(UObject *);
     unsigned int IsMisaligned();
-    virtual FString GetDesc();
+    HG_VIRTUAL FString GetDesc();
     FString GetDescription() const;
     unsigned int ChangeParentClass(UClass *);
     void EmitObjectReference(int);
@@ -1281,12 +1358,27 @@ public:
     void AssembleReferenceTokenStream();
     unsigned int ImplementsInterface(const UClass *) const;
     void SerializeDefaultObject(UObject *, FArchive &);
-private:
+HG_PRIVATE:
     unsigned int IsA(UClass *) const;
 public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UClass();
+public:
+    UClass(EStaticConstructor, unsigned long, unsigned long, unsigned long, const wchar_t *, const wchar_t *, const wchar_t *, unsigned __int64, void (*)(void *), void (UObject::*)(), void (UObject::*)());
+    UClass(ENativeConstructor, unsigned long, unsigned long, unsigned long, UClass *, UClass *, const wchar_t *, const wchar_t *, const wchar_t *, unsigned __int64, void (*)(void *), void (UObject::*)(), void (UObject::*)());
+    UClass(UClass *);
+    UClass();
+    #endif
     typedef UState Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UClassData[0x26];
 };
 

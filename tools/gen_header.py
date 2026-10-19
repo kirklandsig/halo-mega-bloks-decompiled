@@ -25,7 +25,7 @@ import pdbtype as pt
 
 LF_METHODLIST = 0x1206
 COMPGEN = 0x100
-ACCESS = {1: 'private', 2: 'protected', 3: 'public'}
+ACCESS = {1: 'HG_PRIVATE', 2: 'HG_PROTECTED', 3: 'public'}  # the host build makes them public
 BUILTIN = {'__vector4'}
 
 
@@ -340,8 +340,8 @@ class Header:
             head = f'{name.replace(short, base)}({params})'
         else:
             head = self.t.decl(ret, f'{name}({params})')
-        prefix = {2: 'static ', 1: 'virtual ', 4: 'virtual ', 5: 'virtual ', 6: 'virtual '}.get(m['mprop'], '')
-        pure = ' = 0' if m['mprop'] in (5, 6) else ''
+        prefix = {2: 'static ', 1: 'HG_VIRTUAL ', 4: 'HG_VIRTUAL ', 5: 'HG_VIRTUAL ', 6: 'HG_VIRTUAL '}.get(m['mprop'], '')
+        pure = ' HG_PURE' if m['mprop'] in (5, 6) else ''
         return f'{prefix}{head}{const}{pure};'
 
     def body(self, name):
@@ -365,6 +365,9 @@ class Header:
             elif full in self.forward:
                 kind = 'struct' if self._kind(self.t._resolve(nti)) == pt.LF_STRUCTURE else 'class'
                 emit(3, f'{kind} {nname};')
+        if not self.bases(ti) and self.has_vfptr(ti):
+            lines.append('    HG_VFPTR')  # the host build's explicit vtable pointer
+            access[0] = None
         methods = self.methods(ti)
         intro = sorted((m for m in methods if m['slot'] is not None), key=lambda m: m['slot'])
         first = self._first_slot(ti)
@@ -377,19 +380,31 @@ class Header:
                 groups.append([m])
         for group in groups:
             while slot < group[0]['slot']:
-                emit(3, f'virtual void ReservedSlot{slot}();')
+                emit(3, f'HG_VIRTUAL void ReservedSlot{slot}();')
                 slot += 1
             for m in reversed(group):
-                text = self.method_decl(name, m)
-                emit(m['access'], text or f'virtual void ReservedSlot{m["slot"]}();')
+                text = self.method_decl(name, m) or f'HG_VIRTUAL void ReservedSlot{m["slot"]}();'
+                if m['name'].startswith('~'):  # host code never destroys guest objects
+                    text = f'HG_XDK({text})'
+                emit(m['access'], text)
             slot = group[-1]['slot'] + 1
-        seen = set()
+        seen, xdk_only = set(), []
         for m in methods:
             if m['slot'] is None:
                 text = self.method_decl(name, m)
                 if text and text not in seen:
                     seen.add(text)
-                    emit(m['access'], text)
+                    short = template_args(split_scope(name)[-1])[0]
+                    if m['name'].startswith(('operator new', 'operator delete', '~')) or                             template_args(m['name'])[0] == short:
+                        # the host never creates or destroys guest objects: they stay recompiled
+                        xdk_only.append((m['access'], text))
+                    else:
+                        emit(m['access'], text)
+        if xdk_only:
+            emit(3, '#ifndef HAGGAR_HOST')
+            for acc, text in xdk_only:
+                emit(acc, text)
+            emit(3, '#endif')
         for text in self.extra.get(name, ()):
             emit(3, text)
         size = self.t.sizeof(ti)
@@ -397,35 +412,51 @@ class Header:
         if size == 1 and not any(off is not None for _n, _t, off, _a in self.members(ti)):
             size = cur  # an empty class stays empty, so empty-base layout holds
         if not self.bases(ti) and self.has_vfptr(ti) and not intro:
-            emit(3, 'virtual ~' + template_args(split_scope(name)[-1])[0] + '();')
+            emit(3, 'HG_XDK(HG_VIRTUAL ~' + template_args(split_scope(name)[-1])[0] + '();)')
         pad = 0
+        xdk, host = [], []  # the members, as the XDK build and the host build spell them
+        statics = [(mname, mtype) for mname, mtype, off, _acc in self.members(ti) if off is None]
+        for mname, mtype in statics:
+            xdk.append('static ' + self.t.decl(mtype, mname) + ';')
+            host.append('static ' + self.host_decl(mtype, f'(&{mname})') + ';')
         if target:
             prev_off = None
             for mname, mtype, off, acc in self.members(ti):
                 if off is None:
-                    emit(acc, 'static ' + self.t.decl(mtype, mname) + ';')
                     continue
                 bit = self._kind(mtype) == pt.LF_BITFIELD
                 if bit and off == prev_off:
-                    emit(3, self.t.decl(mtype, mname) + ';')
+                    xdk.append(self.t.decl(mtype, mname) + ';')
                     continue
                 if off > cur:
-                    emit(3, f'char _pad{pad}[0x{off - cur:X}];')
+                    for out in (xdk, host):
+                        out.append(f'char _pad{pad}[0x{off - cur:X}];')
                     pad += 1
                 elif off < cur:  # overlaps a base's tail (empty base, union): keep going
                     pass
                 if self.blob_member(mtype):
-                    emit(3, f'char {mname}[0x{self.t.sizeof(mtype):X}];  // 0x{off:X} {self.t.name(mtype)}')
+                    for out in (xdk, host):
+                        out.append(f'char {mname}[0x{self.t.sizeof(mtype):X}];  // 0x{off:X} {self.t.name(mtype)}')
+                elif bit:
+                    xdk.append(self.t.decl(mtype, mname) + f';  // 0x{off:X}')
+                    host.append(f'hg::be<unsigned int> _bits{off:X};  // 0x{off:X}, from {mname}')
                 else:
-                    emit(3, self.t.decl(mtype, mname) + f';  // 0x{off:X}')
+                    xdk.append(self.t.decl(mtype, mname) + f';  // 0x{off:X}')
+                    host.append(self.host_decl(mtype, mname) + ';')
                 cur = max(cur, off + self.t.sizeof(mtype))
                 prev_off = off
             if size > cur:
-                emit(3, f'char _pad{pad}[0x{size - cur:X}];')
-        else:
-            for mname, mtype, off, acc in self.members(ti):
-                if off is None:
-                    emit(acc, 'static ' + self.t.decl(mtype, mname) + ';')
+                for out in (xdk, host):
+                    out.append(f'char _pad{pad}[0x{size - cur:X}];')
+        if xdk:
+            emit(3, '#ifndef HAGGAR_HOST')
+            for text in xdk:
+                emit(3, text)
+            emit(3, '#else')
+            for text in host:
+                emit(3, text)
+            emit(3, '#endif')
+        if not target:
             if size > cur:
                 # the blob keeps the class's alignment, so copies stay word copies
                 blob = ident(template_args(split_scope(name)[-1])[0]) + 'Data'
@@ -436,6 +467,42 @@ class Header:
                 else:
                     emit(1, f'char {blob}[0x{size - cur:X}];')
         return lines
+
+    def host_decl(self, ti, name):
+        """A declarator for `name` as the host build sees guest memory:
+        big-endian values, 32-bit guest pointers."""
+        d = self.t.data
+        if ti < self.t.begin:
+            base, size = pt.PRIMITIVES.get(ti & 0xFF, ('char', 1))
+            if ti & 0xF00:
+                return f'hg::gptr<{base}> {name}'
+            return f'hg::be<{base}> {name}' if size in (2, 4, 8) and base != 'bool' else f'{base} {name}'
+        kind, p = self.t.record(ti)
+        if kind == pt.LF_POINTER:
+            utype, attr = struct.unpack_from('<II', d, p)
+            ukind = self._kind(utype)
+            if (attr >> 5) & 7 in (2, 3) or ukind in (pt.LF_PROCEDURE, pt.LF_MFUNCTION):
+                return f'hg::be<unsigned int> {name}'
+            return f'hg::gptr<{self.host_decl(utype, "").strip()}> {name}'
+        if kind == pt.LF_MODIFIER:
+            utype, attr = struct.unpack_from('<IH', d, p)
+            return ('const ' if attr & 1 else '') + self.host_decl(utype, name)
+        if kind == pt.LF_ARRAY:
+            elem = struct.unpack_from('<I', d, p)[0]
+            esize = self.t.sizeof(elem)
+            count = pt.numeric(d, p + 8)[0] // esize if esize else 0
+            return self.host_decl(elem, f'{name}[{count}]')
+        if kind == pt.LF_ENUM:
+            return f'hg::be<{self.t.name(ti)}> {name}'
+        return self.t.decl(ti, name)
+
+    def host_constructible(self, ti):
+        """Whether a host constructor body can default-construct `ti`'s bases."""
+        for base, _off in self.bases(ti):
+            ctors = [m for m in self.methods(base) if m['name'] == template_args(split_scope(self._rname(base))[-1])[0]]
+            if ctors and not any(self.t._args(struct.unpack_from('<I', self.t.data, self.t.record(m['type'])[1] + 16)[0]) in ('', 'void') for m in ctors):
+                return False
+        return True
 
     def alignment(self, ti):
         """The alignment a record's own members give it (before -Zp4)."""
@@ -503,7 +570,7 @@ class Header:
         return text, (None if outer else parts[:-1])
 
     def render(self):
-        out = ['#pragma once', '']
+        out = ['#pragma once', '#include "Core/Inc/HostGuest.h"', '']
         scoped = {}  # namespace tuple -> lines
 
         def put(ns, text):
@@ -609,6 +676,91 @@ def render_class(types, name, opaque_bases=True):
 HAND = '// ---- written by hand below this line (gen_header.py keeps it) ----'
 
 
+def host_thunks(h, header, defined=''):
+    """For the host build (HAGGAR_HOST): weak bodies for the header's
+    methods, which call the recompiled code (by address, or through the guest
+    vtable for a pure virtual), and its static members bound to their guest
+    addresses. Decompiled definitions override the weak ones at link time.
+    `defined` is the header's hand-written text: what it defines is skipped."""
+    import inventory
+    from pdbfile import Pdb
+    rows = {}
+    for r in inventory.read_csv(paths.CONFIG / 'functions.csv'):
+        rows.setdefault(r['name'], []).append(r)
+    publics = {name: rva for rva, name in Pdb(paths.pdb()).publics().items()}
+    out = ['// Generated by gen_header.py --host-thunks: the host build\'s bodies for',
+           f'// {header}\'s methods and statics. Not used by the XDK build.',
+           '#ifdef HAGGAR_HOST', f'#include "{header}"', '#include <type_traits>', '']
+    done = set()
+    for cname in h.order() + [c for c in h.classes if c not in h.order()]:
+        ti = h.classes[cname]
+        short = template_args(split_scope(cname)[-1])[0]
+        for mname, mtype, off, _a in h.members(ti):
+            if off is not None:
+                continue
+            scope = '@'.join(reversed(split_scope(cname)))
+            hits = [rva for name, rva in publics.items() if name.startswith(f'?{mname}@{scope}@@') and name[len(mname) + len(scope) + 4] in '012']
+            if len(hits) == 1:
+                out.append(f'decltype({cname}::{mname}) {cname}::{mname} = '
+                           f'*hg::host<std::remove_reference_t<decltype({cname}::{mname})>>(0x{hits[0] + 0x82000000:08X});')
+        for m in h.methods(ti):
+            text = h.method_decl(cname, m)
+            if not text or m['name'].startswith('operator') or '<' in m['name'] or (cname, text) in done:
+                continue
+            done.add((cname, text))
+            ret, args = signature(h, m['type'])
+            if ret is None:
+                continue
+            static = m['mprop'] == 2
+            const = ' const' if text.rstrip(';').replace(' HG_PURE', '').endswith(' const') else ''
+            fname = m['name']
+            candidates = [r for r in rows.get(f'{cname}::{fname}', [])]
+            ctor = fname in (short, '~' + short)
+            if f'{cname}::{fname}(' in defined or ctor or fname.startswith('~'):
+                continue
+            params = ', '.join(f'{t} a{i}' if not t.endswith(('*', '&')) else f'{t}a{i}' for i, t in enumerate(args))
+            names = ''.join(f', &a{i}' if t.endswith('&') else f', a{i}' for i, t in enumerate(args))
+            head = (f'{cname}::{fname}({params}){const}' if ctor else
+                    f'{ret} {cname}::{fname}({params}){const}')
+            call = 'hg::scall' if static else 'hg::call'
+            if len(candidates) == 1:
+                body = f'{"" if ret == "void" or ctor else "return "}{call}<{"void" if ctor else ret}>(0x{int(candidates[0]["address"], 16):08X}{"" if static else ", this"}{names});'
+            elif m['slot'] is not None and m['mprop'] in (5, 6):
+                body = f'return hg::vcall<{ret}>({m["slot"]}, this{names});'
+            else:
+                continue
+            out.append(f'__attribute__((weak)) {head} {{ {body} }}')
+    out += ['', '#endif']
+    return '\n'.join(out) + '\n'
+
+
+def signature(h, mtype):
+    """(return type, [parameter types]) a host thunk can marshal, or (None, None)."""
+    d = h.t.data
+    _kind, p = h.t.record(mtype)
+    ret_ti, _cls, _this = struct.unpack_from('<III', d, p)
+    args_ti = struct.unpack_from('<I', d, p + 16)[0]
+    akind, ap = h.t.record(args_ti)
+    count = struct.unpack_from('<I', d, ap)[0] if akind == pt.LF_ARGLIST else 0
+    args = list(struct.unpack_from(f'<{count}I', d, ap + 4)) if count else []
+
+    def ok(ti, is_ret=False):
+        if ti == 0:
+            return False  # varargs
+        if ti < h.t.begin:
+            return True
+        kind = h._kind(ti)
+        if kind in (pt.LF_POINTER, pt.LF_ENUM):
+            return True
+        if kind == pt.LF_MODIFIER:
+            return ok(struct.unpack_from('<I', d, h.t.record(ti)[1])[0], is_ret)
+        return False  # a record by value
+
+    if not ok(ret_ti, True) or not all(ok(a) for a in args):
+        return None, None
+    return h.t.name(ret_ti), [h.t.name(a) for a in args]
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description='Write C++ declarations from the PDB.')
     ap.add_argument('names', nargs='+')
@@ -616,6 +768,7 @@ def main(argv=None):
     ap.add_argument('--add', action='append', default=[], metavar='CLASS=DECL',
                     help='a member declaration the PDB lacks, such as a member template')
     ap.add_argument('-o', '--output')
+    ap.add_argument('--host-thunks', metavar='FILE', help='also write the host build\'s weak bodies (HAGGAR_HOST)')
     ap.add_argument('--pdb', default=None)
     args = ap.parse_args(argv)
     from pdbfile import Pdb
@@ -623,7 +776,8 @@ def main(argv=None):
     for item in args.add:
         cls, decl = item.split('=', 1)
         extra.setdefault(cls, []).append(decl)
-    text = render_header(pt.Types(Pdb(args.pdb or paths.pdb())), args.names, args.opaque, extra)
+    header = Header(pt.Types(Pdb(args.pdb or paths.pdb())), args.names, args.opaque, extra)
+    text = header.render()
     command = ' '.join(['python tools/gen_header.py'] + [f'"{a}"' if set(a) & set(' <>*&=') else a for a in (argv or sys.argv[1:]) if a != args.output and a not in ('-o', '--output')])
     text = f'// Generated from the PDB by:\n//   {command} -o <this file>\n{text}'
     if args.output:
@@ -631,6 +785,9 @@ def main(argv=None):
         old = out.read_text(encoding='utf-8') if out.exists() else ''
         tail = old.split(HAND, 1)[1] if HAND in old else '\n'
         out.write_text(f'{text}\n{HAND}{tail}', encoding='utf-8', newline='\n')
+        if args.host_thunks:
+            include = out.resolve().relative_to(paths.ROOT / 'include').as_posix()
+            Path(args.host_thunks).write_text(host_thunks(header, include, tail), encoding='utf-8', newline='\n')
     else:
         sys.stdout.write(text + '\n')
     return 0

@@ -1,5 +1,6 @@
 // Generated from the PDB by: python tools/gen_classes.py UDKBase
 #pragma once
+#include "Core/Inc/HostGuest.h"
 
 namespace Grip {
 template <class T0, int T1> struct AllocatorGH;
@@ -1337,15 +1338,6 @@ public:
     unsigned int operator!=(const FName &) const;
     unsigned int IsValid() const;
     int Compare(const FName &) const;
-    FName(ELinkerNameTableConstructor, const char *);
-    FName(ELinkerNameTableConstructor, const wchar_t *);
-    FName(const wchar_t *, int, EFindName);
-    FName(int);
-    FName(const char *, EFindName);
-    FName(const wchar_t *, EFindName, unsigned int);
-    FName();
-    FName(EName, int);
-    FName(EName);
     static void StaticInit();
     static void DisplayHash(FOutputDevice &);
     static void Hardcode(FNameEntry *);
@@ -1360,29 +1352,50 @@ public:
     static unsigned int GetInitialized();
     static void SplitOldName(const wchar_t *, FString &, int &);
     static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
-private:
+HG_PRIVATE:
     static unsigned int &GetIsInitialized();
     void Init(const char *, int, EFindName);
     void Init(const wchar_t *, int, EFindName, unsigned int);
 public:
     static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
-private:
+    #ifndef HAGGAR_HOST
+    FName(ELinkerNameTableConstructor, const char *);
+    FName(ELinkerNameTableConstructor, const wchar_t *);
+    FName(const wchar_t *, int, EFindName);
+    FName(int);
+    FName(const char *, EFindName);
+    FName(const wchar_t *, EFindName, unsigned int);
+    FName();
+    FName(EName, int);
+    FName(EName);
+    #endif
+    #ifndef HAGGAR_HOST
     static TArrayNoInit<FNameEntry *> Names;
     static FNameEntry *NameHash[4096];
     static int NameEntryMemorySize;
     static int NumAnsiNames;
     static int NumUnicodeNames;
+    #else
+    static TArrayNoInit<FNameEntry *> (&Names);
+    static hg::gptr<FNameEntry> (&NameHash)[4096];
+    static hg::be<int> (&NameEntryMemorySize);
+    static hg::be<int> (&NumAnsiNames);
+    static hg::be<int> (&NumUnicodeNames);
+    #endif
+HG_PRIVATE:
     unsigned int FNameData[0x2];
 };
 
 class FRenderCommandFence  // size 0x4, opaque
 {
 public:
-    FRenderCommandFence();
     void BeginFence();
     void Wait(unsigned int) const;
     unsigned int GetNumPendingFences() const;
-private:
+    #ifndef HAGGAR_HOST
+    FRenderCommandFence();
+    #endif
+HG_PRIVATE:
     unsigned int FRenderCommandFenceData[0x1];
 };
 
@@ -1390,10 +1403,6 @@ class FRotator  // size 0xC, opaque
 {
 public:
     void SerializeCompressed(FArchive &);
-    FRotator(const FQuat &);
-    FRotator(EEventParm);
-    FRotator(int, int, int);
-    FRotator();
     FRotator operator+(const FRotator &) const;
     FRotator operator-(const FRotator &) const;
     FRotator operator*(float) const;
@@ -1419,22 +1428,24 @@ public:
     void GetWindingAndRemainder(FRotator &, FRotator &) const;
     FString ToString() const;
     unsigned int InitFromString(const FString &);
+    #ifndef HAGGAR_HOST
+    FRotator(const FQuat &);
+    FRotator(EEventParm);
+    FRotator(int, int, int);
+    FRotator();
+    #endif
+    #ifndef HAGGAR_HOST
     static FRotator ZeroRotator;
-private:
+    #else
+    static FRotator (&ZeroRotator);
+    #endif
+HG_PRIVATE:
     unsigned int FRotatorData[0x3];
 };
 
 class FVector  // size 0xC
 {
 public:
-    FVector(EEventParm);
-    FVector(FIntPoint);
-    FVector(const FLinearColor &);
-    FVector(const FVector4 &);
-    FVector(const FVector2D, float);
-    FVector(float, float, float);
-    FVector(float);
-    FVector();
     FVector operator^(const FVector &) const;
     float operator|(const FVector &) const;
     FVector operator+(float) const;
@@ -1495,10 +1506,27 @@ public:
     FString ToString() const;
     unsigned int InitFromString(const FString &);
     void SerializeCompressed(FArchive &);
+    #ifndef HAGGAR_HOST
+    FVector(EEventParm);
+    FVector(FIntPoint);
+    FVector(const FLinearColor &);
+    FVector(const FVector4 &);
+    FVector(const FVector2D, float);
+    FVector(float, float, float);
+    FVector(float);
+    FVector();
+    #endif
+    #ifndef HAGGAR_HOST
+    static FVector ZeroVector;
     float X;  // 0x0
     float Y;  // 0x4
     float Z;  // 0x8
-    static FVector ZeroVector;
+    #else
+    static FVector (&ZeroVector);
+    hg::be<float> X;
+    hg::be<float> Y;
+    hg::be<float> Z;
+    #endif
 };
 
 template <> class TArray<AActor *,FDefaultAllocator>  // size 0xC, opaque
@@ -1508,11 +1536,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<AActor *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     AActor *const *GetTypedData() const;
     AActor **GetTypedData();
     AActor *const *GetData() const;
@@ -1562,21 +1585,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     AActor *const &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<AActor *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<AActor *> : public TArray<AActor *,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<AActor *> &operator=(const TArray<AActor *,FDefaultAllocator> &);
     TArrayNoInit<AActor *> &operator=(const TArrayNoInit<AActor *> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 template <> class TArray<FTimerData,FDefaultAllocator>  // size 0xC, opaque
@@ -1586,11 +1619,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<FTimerData,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     const FTimerData *GetTypedData() const;
     FTimerData *GetTypedData();
     const FTimerData *GetData() const;
@@ -1640,21 +1668,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     const FTimerData &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<FTimerData,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<FTimerData> : public TArray<FTimerData,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<FTimerData> &operator=(const TArray<FTimerData,FDefaultAllocator> &);
     TArrayNoInit<FTimerData> &operator=(const TArrayNoInit<FTimerData> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 template <> class TArray<UActorComponent *,FDefaultAllocator>  // size 0xC, opaque
@@ -1664,11 +1702,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<UActorComponent *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     UActorComponent *const *GetTypedData() const;
     UActorComponent **GetTypedData();
     UActorComponent *const *GetData() const;
@@ -1718,21 +1751,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     UActorComponent *const &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<UActorComponent *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<UActorComponent *> : public TArray<UActorComponent *,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<UActorComponent *> &operator=(const TArray<UActorComponent *,FDefaultAllocator> &);
     TArrayNoInit<UActorComponent *> &operator=(const TArrayNoInit<UActorComponent *> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 template <> class TArray<UClass *,FDefaultAllocator>  // size 0xC, opaque
@@ -1742,11 +1785,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<UClass *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     UClass *const *GetTypedData() const;
     UClass **GetTypedData();
     UClass *const *GetData() const;
@@ -1796,21 +1834,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     UClass *const &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<UClass *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<UClass *> : public TArray<UClass *,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<UClass *> &operator=(const TArray<UClass *,FDefaultAllocator> &);
     TArrayNoInit<UClass *> &operator=(const TArrayNoInit<UClass *> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 template <> class TArray<USeqAct_Latent *,FDefaultAllocator>  // size 0xC, opaque
@@ -1820,11 +1868,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     USeqAct_Latent *const *GetTypedData() const;
     USeqAct_Latent **GetTypedData();
     USeqAct_Latent *const *GetData() const;
@@ -1874,21 +1917,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     USeqAct_Latent *const &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<USeqAct_Latent *> : public TArray<USeqAct_Latent *,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<USeqAct_Latent *> &operator=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
     TArrayNoInit<USeqAct_Latent *> &operator=(const TArrayNoInit<USeqAct_Latent *> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 template <> class TArray<USequenceEvent *,FDefaultAllocator>  // size 0xC, opaque
@@ -1898,11 +1951,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<USequenceEvent *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     USequenceEvent *const *GetTypedData() const;
     USequenceEvent **GetTypedData();
     USequenceEvent *const *GetData() const;
@@ -1952,21 +2000,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     USequenceEvent *const &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<USequenceEvent *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<USequenceEvent *> : public TArray<USequenceEvent *,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<USequenceEvent *> &operator=(const TArray<USequenceEvent *,FDefaultAllocator> &);
     TArrayNoInit<USequenceEvent *> &operator=(const TArrayNoInit<USequenceEvent *> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 class UObject  // size 0x3C, opaque
@@ -1976,104 +2034,99 @@ public:
     {
         StaticClassCastFlags = 0,
     };
-    virtual ~UObject();
-    virtual unsigned int PreSaveRoot(const wchar_t *, TArray<FString,FDefaultAllocator> &);
-    virtual void PostSaveRoot(unsigned int);
-    virtual void PreSave();
-    virtual void Modify(unsigned int);
-    virtual unsigned int SaveToTransactionBuffer(unsigned int);
-    virtual void PostLoad();
-    virtual void BeginDestroy();
-    virtual unsigned int IsReadyForFinishDestroy();
-    virtual void FinishDestroy();
-    virtual void Serialize(FArchive &);
-    virtual unsigned int IsPendingKill() const;
-    virtual void ShutdownAfterError();
-    virtual void PreEditChange(UProperty *);
-    virtual void PreEditChange(FEditPropertyChain &);
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
-    virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent &);
-    virtual unsigned int CanEditChange(const UProperty *) const;
-    virtual void PreEditUndo();
-    virtual void PostEditUndo();
-    virtual void PostRename();
-    virtual void PostDuplicate();
-    virtual void GetDynamicListValues(const FString &, TArray<FString,FDefaultAllocator> &);
-    virtual unsigned int UsesManagedArchetypePropagation(UObject **) const;
-    virtual void PreSerializeIntoPropagationArchive();
-    virtual void PostSerializeIntoPropagationArchive();
-    virtual void PreSerializeFromPropagationArchive();
-    virtual void PostSerializeFromPropagationArchive();
-    virtual void GetArchetypeInstances(TArray<UObject *,FDefaultAllocator> &);
-    virtual void SaveInstancesIntoPropagationArchive(TArray<UObject *,FDefaultAllocator> &);
-    virtual void LoadInstancesFromPropagationArchive(TArray<UObject *,FDefaultAllocator> &);
-    virtual void PostCrossLevelFixup();
-    virtual void Register();
-    virtual void LanguageChange();
-    virtual unsigned int NeedsLoadForClient() const;
-    virtual unsigned int NeedsLoadForServer() const;
-    virtual unsigned int NeedsLoadForEdit() const;
-protected:
-    virtual UObject *GetProfilerAssetObjectInternal() const;
-    virtual FString GetDetailedInfoInternal() const;
+    HG_VFPTR
 public:
-    virtual FObjectInstancingGraph *GetCustomPostLoadInstanceGraph();
-    virtual void ExportCustomProperties(FOutputDevice &, unsigned int);
-    virtual void ImportCustomProperties(const wchar_t *, FFeedbackContext *);
-    virtual void PostEditImport();
-    virtual unsigned int IsAComponent() const;
-    virtual unsigned int IsAPrefabArchetype(UObject **) const;
-    virtual unsigned int IsInPrefabInstance() const;
-    virtual unsigned int Rename(const wchar_t *, UObject *, unsigned long);
-    virtual UComponent *FindComponent(FName, unsigned int);
-    virtual void PostReloadConfig(UProperty *);
-    virtual void NetDirty(UProperty *);
-    virtual void StripData(UE3::EPlatformType, unsigned int);
-    virtual FString GetDesc();
-    virtual FString GetDetailedDescription(int);
-    virtual unsigned int GetNativePropertyValues(TMap<FString,FString,FDefaultSetAllocator> &, unsigned long) const;
-    virtual unsigned int IsSelected() const;
-    virtual void MarkPackageDirty(unsigned int) const;
-    virtual UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
-    virtual void UpdateArchetype();
-    virtual int GetResourceSize();
-    virtual FName GetExporterName();
-    virtual unsigned int IsLocalizedResource();
-    virtual void InitializeProperties(UObject *, FObjectInstancingGraph *);
-    virtual void SetArchetype(UObject *, unsigned int, FObjectInstancingGraph *);
-    virtual void AddReferencedObjects(TArray<UObject *,FDefaultAllocator> &);
-    virtual void ProcessEvent(UFunction *, void *, void *);
-    virtual void ProcessDelegate(FName, const FScriptDelegate *, void *, void *);
-    virtual void ProcessState(float);
-    virtual unsigned int ProcessRemoteFunction(UFunction *, void *, FFrame *);
-    virtual void InitExecution();
-    virtual unsigned int GotoLabel(FName);
-    virtual EGotoState GotoState(FName, unsigned int, unsigned int);
-    virtual unsigned int ScriptConsoleExec(const wchar_t *, FOutputDevice &, UObject *);
-    virtual unsigned int Get_bDebug();
-private:
+    HG_XDK(HG_VIRTUAL ~UObject();)
+    HG_VIRTUAL unsigned int PreSaveRoot(const wchar_t *, TArray<FString,FDefaultAllocator> &);
+    HG_VIRTUAL void PostSaveRoot(unsigned int);
+    HG_VIRTUAL void PreSave();
+    HG_VIRTUAL void Modify(unsigned int);
+    HG_VIRTUAL unsigned int SaveToTransactionBuffer(unsigned int);
+    HG_VIRTUAL void PostLoad();
+    HG_VIRTUAL void BeginDestroy();
+    HG_VIRTUAL unsigned int IsReadyForFinishDestroy();
+    HG_VIRTUAL void FinishDestroy();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL unsigned int IsPendingKill() const;
+    HG_VIRTUAL void ShutdownAfterError();
+    HG_VIRTUAL void PreEditChange(UProperty *);
+    HG_VIRTUAL void PreEditChange(FEditPropertyChain &);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void PostEditChangeChainProperty(FPropertyChangedChainEvent &);
+    HG_VIRTUAL unsigned int CanEditChange(const UProperty *) const;
+    HG_VIRTUAL void PreEditUndo();
+    HG_VIRTUAL void PostEditUndo();
+    HG_VIRTUAL void PostRename();
+    HG_VIRTUAL void PostDuplicate();
+    HG_VIRTUAL void GetDynamicListValues(const FString &, TArray<FString,FDefaultAllocator> &);
+    HG_VIRTUAL unsigned int UsesManagedArchetypePropagation(UObject **) const;
+    HG_VIRTUAL void PreSerializeIntoPropagationArchive();
+    HG_VIRTUAL void PostSerializeIntoPropagationArchive();
+    HG_VIRTUAL void PreSerializeFromPropagationArchive();
+    HG_VIRTUAL void PostSerializeFromPropagationArchive();
+    HG_VIRTUAL void GetArchetypeInstances(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void SaveInstancesIntoPropagationArchive(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void LoadInstancesFromPropagationArchive(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void PostCrossLevelFixup();
+    HG_VIRTUAL void Register();
+    HG_VIRTUAL void LanguageChange();
+    HG_VIRTUAL unsigned int NeedsLoadForClient() const;
+    HG_VIRTUAL unsigned int NeedsLoadForServer() const;
+    HG_VIRTUAL unsigned int NeedsLoadForEdit() const;
+HG_PROTECTED:
+    HG_VIRTUAL UObject *GetProfilerAssetObjectInternal() const;
+    HG_VIRTUAL FString GetDetailedInfoInternal() const;
+public:
+    HG_VIRTUAL FObjectInstancingGraph *GetCustomPostLoadInstanceGraph();
+    HG_VIRTUAL void ExportCustomProperties(FOutputDevice &, unsigned int);
+    HG_VIRTUAL void ImportCustomProperties(const wchar_t *, FFeedbackContext *);
+    HG_VIRTUAL void PostEditImport();
+    HG_VIRTUAL unsigned int IsAComponent() const;
+    HG_VIRTUAL unsigned int IsAPrefabArchetype(UObject **) const;
+    HG_VIRTUAL unsigned int IsInPrefabInstance() const;
+    HG_VIRTUAL unsigned int Rename(const wchar_t *, UObject *, unsigned long);
+    HG_VIRTUAL UComponent *FindComponent(FName, unsigned int);
+    HG_VIRTUAL void PostReloadConfig(UProperty *);
+    HG_VIRTUAL void NetDirty(UProperty *);
+    HG_VIRTUAL void StripData(UE3::EPlatformType, unsigned int);
+    HG_VIRTUAL FString GetDesc();
+    HG_VIRTUAL FString GetDetailedDescription(int);
+    HG_VIRTUAL unsigned int GetNativePropertyValues(TMap<FString,FString,FDefaultSetAllocator> &, unsigned long) const;
+    HG_VIRTUAL unsigned int IsSelected() const;
+    HG_VIRTUAL void MarkPackageDirty(unsigned int) const;
+    HG_VIRTUAL UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
+    HG_VIRTUAL void UpdateArchetype();
+    HG_VIRTUAL int GetResourceSize();
+    HG_VIRTUAL FName GetExporterName();
+    HG_VIRTUAL unsigned int IsLocalizedResource();
+    HG_VIRTUAL void InitializeProperties(UObject *, FObjectInstancingGraph *);
+    HG_VIRTUAL void SetArchetype(UObject *, unsigned int, FObjectInstancingGraph *);
+    HG_VIRTUAL void AddReferencedObjects(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void ProcessEvent(UFunction *, void *, void *);
+    HG_VIRTUAL void ProcessDelegate(FName, const FScriptDelegate *, void *, void *);
+    HG_VIRTUAL void ProcessState(float);
+    HG_VIRTUAL unsigned int ProcessRemoteFunction(UFunction *, void *, FFrame *);
+    HG_VIRTUAL void InitExecution();
+    HG_VIRTUAL unsigned int GotoLabel(FName);
+    HG_VIRTUAL EGotoState GotoState(FName, unsigned int, unsigned int);
+    HG_VIRTUAL unsigned int ScriptConsoleExec(const wchar_t *, FOutputDevice &, UObject *);
+    HG_VIRTUAL unsigned int Get_bDebug();
+HG_PRIVATE:
     UObject &operator=(const UObject &);
 public:
     static UClass *GetPrivateStaticClassUObject(const wchar_t *);
     static void InitializePrivateStaticClassUObject();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
     static const wchar_t *StaticConfigName();
-private:
+HG_PRIVATE:
     void AddObject(int);
     void HashObject();
     void UnhashObject();
     static ULinkerLoad *GetLoader(int);
     static unsigned int ResolveName(UObject *&, FString &, unsigned int, unsigned int, unsigned int);
     static void SafeLoadError(UObject *, unsigned long, const wchar_t *, const wchar_t *, ...);
-    static void operator delete(void *, unsigned int);
     unsigned int IsNameHashed();
 public:
-    UObject(EStaticConstructor, const wchar_t *, const wchar_t *, unsigned __int64);
-    UObject(ENativeConstructor, UClass *, const wchar_t *, const wchar_t *, unsigned __int64);
-    UObject(const UObject &);
-    UObject();
     void StaticConstructor();
     void InitializeIntrinsicPropertyValues();
     static void InternalConstructor(void *);
@@ -2087,7 +2140,7 @@ public:
     void ConditionalCleanupCrossLevelReferences();
     int GetNetIndex();
     FName GetStateName();
-private:
+HG_PRIVATE:
     static UObject *StaticFindObjectFastInternal(UClass *, UObject *, FName, unsigned int, unsigned int, unsigned __int64);
     void SetNetIndex(int);
 public:
@@ -2151,7 +2204,7 @@ public:
     static void ClearPackageToFileMapping();
     static TMap<FName,FName,FDefaultSetAllocator> *GetPackageNameToFileMapping();
     FString GetFullName(const UObject *) const;
-private:
+HG_PRIVATE:
     void GetPathName(const UObject *, FString &) const;
 public:
     FString GetPathName(const UObject *) const;
@@ -2632,7 +2685,18 @@ public:
     void eventPoppedState();
     void eventPausedState();
     void eventContinuedState();
-private:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PRIVATE:
+    static void operator delete(void *, unsigned int);
+public:
+    UObject(EStaticConstructor, const wchar_t *, const wchar_t *, unsigned __int64);
+    UObject(ENativeConstructor, UClass *, const wchar_t *, const wchar_t *, unsigned __int64);
+    UObject(const UObject &);
+    UObject();
+    #endif
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     static unsigned int GObjInitialized;
     static unsigned int GObjNoRegister;
@@ -2666,9 +2730,44 @@ private:
     static unsigned char *GPermanentObjectPoolTail;
     static TArray<int,FDefaultAllocator> GGCObjectsPendingDestruction;
     static int GGCObjectsPendingDestructionCount;
-protected:
     static unsigned int GExclusiveResourceSizeMode;
-private:
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    static hg::be<unsigned int> (&GObjInitialized);
+    static hg::be<unsigned int> (&GObjNoRegister);
+    static hg::be<int> (&GObjBeginLoadCount);
+    static hg::be<unsigned int> (&GIsSavingPackage);
+    static hg::be<int> (&GObjRegisterCount);
+    static hg::be<int> (&GImportCount);
+    static hg::be<int> (&GForcedExportCount);
+    static hg::gptr<UObject> (&GObjHash)[32768];
+    static hg::gptr<UObject> (&GObjHashOuter)[32768];
+    static hg::gptr<UObject> (&GAutoRegister);
+    static TArray<UObject *,FDefaultAllocator> (&GObjLoaded);
+    static TArray<UObject *,FDefaultAllocator> (&GObjConstructedDuringAsyncLoading);
+    static TArray<UObject *,FDefaultAllocator> (&GObjObjects);
+    static TArray<int,FDefaultAllocator> (&GObjAvailable);
+    static TArray<ULinkerLoad *,FDefaultAllocator> (&GObjLoaders);
+    static TMap<FName,FName,FDefaultSetAllocator> (&PackageNameToFileMapping);
+    static hg::gptr<UPackage> (&GObjTransientPkg);
+    static hg::be<wchar_t> (&GObjCachedLanguage)[32];
+    static TArray<UObject *,FDefaultAllocator> (&GObjRegistrants);
+    static TIndirectArray<FAsyncPackage,FDefaultAllocator> (&GObjAsyncPackages);
+    static hg::be<wchar_t> (&GLanguage)[64];
+    static hg::be<unsigned int> (&GObjIncrementalPurgeIsInProgress);
+    static hg::be<unsigned int> (&GObjFinishDestroyHasBeenRoutedToAllObjects);
+    static hg::be<unsigned int> (&GObjPurgeIsRequired);
+    static hg::be<int> (&GObjCurrentPurgeObjectIndex);
+    static hg::be<int> (&GObjFirstGCIndex);
+    static hg::be<int> (&GObjLastNonGCIndex);
+    static hg::be<int> (&GPermanentObjectPoolSize);
+    static hg::gptr<unsigned char> (&GPermanentObjectPool);
+    static hg::gptr<unsigned char> (&GPermanentObjectPoolTail);
+    static TArray<int,FDefaultAllocator> (&GGCObjectsPendingDestruction);
+    static hg::be<int> (&GGCObjectsPendingDestructionCount);
+    static hg::be<unsigned int> (&GExclusiveResourceSizeMode);
+    #endif
+HG_PRIVATE:
     unsigned int UObjectData[0xE];
 };
 
@@ -2679,164 +2778,164 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void ForceUpdateComponents(unsigned int, unsigned int);
-    virtual FString ConsoleCommand(const FString &, unsigned int);
-    virtual unsigned char MovingWhichWay(float &);
-    virtual void SetShadowParentOnAllAttachedComponents(UPrimitiveComponent *, ULightEnvironmentComponent *);
-    virtual float GetTerminalVelocity();
-    virtual void FindBase();
-    virtual void SearchForBaseBelow(float, AActor *&, FVector &);
-    virtual AActor *GetBaseMost();
-    virtual FBox GetComponentsBoundingBox(unsigned int) const;
-    virtual void GetBoundingCylinder(float &, float &) const;
-    virtual FVector GetDestination(AController *);
-    virtual float GetGravityZ();
-    virtual void PrestreamTextures(float, unsigned int, int);
-    virtual unsigned int IsPlayerOwned();
-    virtual unsigned char GetTeamNum();
-    virtual void SetTeamNum(unsigned char);
-    virtual FVector GetTargetLocation(AActor *, unsigned int) const;
-    virtual void SetHUDLocation(FVector);
-    virtual void NativePostRenderFor(APlayerController *, UCanvas *, FVector, FVector);
-    virtual UParticleSystem *GetAnimTrailParticleSystem(const UAnimNotify_Trails *) const;
-    virtual unsigned int SupportsKismetModification(USequenceOp *, FString &) const;
-    virtual unsigned int ShouldBeHiddenBySHOW_NavigationNodes();
-    virtual int GetActorMetrics(unsigned char);
-    virtual USpriteComponent *GetActorSpriteComponent() const;
-    virtual FVector GetPawnViewLocation();
-    virtual FVector GetNavAdjustedLocation(FVector, float) const;
-    virtual unsigned int IsInvisible();
-    virtual int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
-    virtual APawn *GetPlayerPawn() const;
-    virtual unsigned int IsPlayerPawn() const;
-    virtual unsigned int IgnoreBlockingBy(const AActor *) const;
-    virtual unsigned int CanCauseFractureOnTouch();
-    virtual FVector CreateLocationOffset(unsigned int, unsigned int, int, float) const;
-    virtual float GetNetPriority(const FVector &, const FVector &, APlayerController *, UActorChannel *, float, unsigned int);
-    virtual unsigned int Tick(float, ELevelTick);
-    virtual void PostEditMove(unsigned int);
-    virtual void Spawned();
-    virtual void PreNetReceive();
-    virtual void PostNetReceive();
-    virtual void PostNetReceiveLocation();
-    virtual void PostNetReceiveBase(AActor *);
-    virtual void PostScriptDestroyed();
-    virtual unsigned int ShouldTrace(UPrimitiveComponent *, AActor *, unsigned long);
-    virtual unsigned int IsOverlapping(AActor *, FCheckResult *, UPrimitiveComponent *, UPrimitiveComponent *);
-    virtual unsigned int FindInterpMoveTrack(UInterpTrackMove **, UInterpTrackInstMove **, USeqAct_Interp **);
-    virtual void SetHardAttach(unsigned int);
-    virtual void NotifyBump(AActor *, UPrimitiveComponent *, const FVector &);
-    virtual void NotifyBumpLevel(const FVector &, const FVector &);
-    virtual void SetBase(AActor *, FVector, int, USkeletalMeshComponent *, FName);
-    virtual void TickAuthoritative(float);
-    virtual void TickSimulated(float);
-    virtual void TickSpecial(float);
-    virtual unsigned int PlayerControlled();
-    virtual unsigned int IsNetRelevantFor(APlayerController *, AActor *, const FVector &);
-    virtual unsigned int IsRelevancyOwnerFor(AActor *, AActor *, AActor *);
-    virtual void SetZone(unsigned int, unsigned int);
-    virtual void SetVolumes();
-    virtual void SetVolumes(const TArray<AVolume *,FDefaultAllocator> &);
-    virtual void PreBeginPlay();
-    virtual void PostBeginPlay();
-    virtual void setPhysics(unsigned char, AActor *, FVector);
-    virtual void performPhysics(float);
-    virtual void physProjectile(float, int);
-    virtual void BoundProjectileVelocity();
-    virtual void processHitWall(const FCheckResult &, float);
-    virtual void processLanded(const FVector &, AActor *, float, int);
-    virtual void physFalling(float, int);
-    virtual void physWalking(float, int);
-    virtual void physNavMeshWalking(float);
-    virtual void physCustom(float, int);
-    virtual void physicsRotation(float, FVector);
-    virtual FRotator FindSlopeRotation(const FVector &, const FRotator &);
-    virtual void GetNetBuoyancy(float &, float &);
-    virtual void SmoothHitWall(const FVector &, AActor *);
-    virtual void stepUp(const FVector &, const FVector &, const FVector &, FCheckResult &);
-    virtual unsigned int ShrinkCollision(AActor *, UPrimitiveComponent *, const FVector &);
-    virtual void GrowCollision();
-    virtual unsigned int MoveWithInterpMoveTrack(UInterpTrackMove *, UInterpTrackInstMove *, float, float);
-    virtual void AdjustInterpTrackMove(FVector &, FRotator &, float, unsigned int);
-    virtual void physInterpolating(float);
-    virtual void PushedBy(AActor *);
-    virtual void UpdateBasedRotation(FRotator &, const FRotator &);
-    virtual void ReverseBasedRotation();
-    virtual void physRigidBody(float);
-    virtual void physSoftBody(float);
-    virtual void InitRBPhys();
-    virtual void InitRBPhysEditor();
-    virtual void TermRBPhys(FRBPhysScene *);
-    virtual void BuildPhysStaticMeshCache(ULevel *, int &, int &, int &, int &);
-    virtual void OnRigidBodyCollision(const FRigidBodyCollisionInfo &, const FRigidBodyCollisionInfo &, const FCollisionImpactData &);
-    virtual void UpdatePushBody();
-    virtual void ModifyNxActorDesc(NxActorDesc &, UPrimitiveComponent *, const NxGroupsMask &, unsigned int);
-    virtual void PostInitRigidBody(NxActor *, NxActorDesc &, UPrimitiveComponent *);
-    virtual void PreTermRigidBody(NxActor *);
-    virtual void SyncActorToRBPhysics();
-    virtual void GetAnimControlSlotDesc(TArray<FAnimSlotDesc,FDefaultAllocator> &);
-    virtual void PreviewBeginAnimControl(UInterpGroup *);
-    virtual void PreviewSetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int, float);
-    virtual void PreviewSetAnimWeights(TArray<FAnimSlotInfo,FDefaultAllocator> &);
-    virtual void PreviewFinishAnimControl(UInterpGroup *);
-    virtual void PreviewUpdateFaceFX(unsigned int, const FString &, const FString &, float);
-    virtual void PreviewActorPlayFaceFX(const FString &, const FString &, UAkBaseSoundObject *);
-    virtual void PreviewActorStopFaceFX();
-    virtual UAudioComponent *PreviewGetFaceFXAudioComponent();
-    virtual UFaceFXAsset *PreviewGetActorFaceFXAsset();
-    virtual void PreviewSetMorphWeight(FName, float);
-    virtual void PreviewSetSkelControlScale(FName, float);
-    virtual void SetSkelControlStrength(FName, float);
-    virtual AActor *AssociatedLevelGeometry();
-    virtual unsigned int HasAssociatedLevelGeometry(AActor *);
-    virtual unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
-    virtual unsigned int TouchReachSucceeded(APawn *, const FVector &);
-    virtual unsigned int BlockedByVehicle();
-    virtual void PrePath();
-    virtual void PostPath();
-    virtual unsigned int IsABuilderBrush() const;
-    virtual unsigned int IsCurrentBuilderBrush() const;
-    virtual unsigned int IsABrush() const;
-    virtual unsigned int IsAVolume() const;
-    virtual unsigned int IsABrushShape() const;
-    virtual unsigned int IsAFluidSurface() const;
-    virtual APlayerController *GetAPlayerController();
-    virtual AController *GetAController();
-    virtual APawn *GetAPawn();
-    virtual const APawn *GetAPawn() const;
-    virtual AVehicle *GetAVehicle();
-    virtual AVolume *GetAVolume();
-    virtual AFluidSurfaceActor *GetAFluidSurface();
-    virtual AProjectile *GetAProjectile();
-    virtual const AProjectile *GetAProjectile() const;
-    virtual APortalTeleporter *GetAPortalTeleporter();
-    virtual APlayerController *GetTopPlayerController();
-    virtual unsigned int VerifyNoUnreachableReferences();
-    virtual void ClearComponents();
-    virtual unsigned int WantsOverlapCheckWith(AActor *);
-    virtual unsigned int ForceReturnComponent(UPrimitiveComponent *);
-protected:
-    virtual void UpdateComponentsInternal(unsigned int);
+    HG_VIRTUAL void ForceUpdateComponents(unsigned int, unsigned int);
+    HG_VIRTUAL FString ConsoleCommand(const FString &, unsigned int);
+    HG_VIRTUAL unsigned char MovingWhichWay(float &);
+    HG_VIRTUAL void SetShadowParentOnAllAttachedComponents(UPrimitiveComponent *, ULightEnvironmentComponent *);
+    HG_VIRTUAL float GetTerminalVelocity();
+    HG_VIRTUAL void FindBase();
+    HG_VIRTUAL void SearchForBaseBelow(float, AActor *&, FVector &);
+    HG_VIRTUAL AActor *GetBaseMost();
+    HG_VIRTUAL FBox GetComponentsBoundingBox(unsigned int) const;
+    HG_VIRTUAL void GetBoundingCylinder(float &, float &) const;
+    HG_VIRTUAL FVector GetDestination(AController *);
+    HG_VIRTUAL float GetGravityZ();
+    HG_VIRTUAL void PrestreamTextures(float, unsigned int, int);
+    HG_VIRTUAL unsigned int IsPlayerOwned();
+    HG_VIRTUAL unsigned char GetTeamNum();
+    HG_VIRTUAL void SetTeamNum(unsigned char);
+    HG_VIRTUAL FVector GetTargetLocation(AActor *, unsigned int) const;
+    HG_VIRTUAL void SetHUDLocation(FVector);
+    HG_VIRTUAL void NativePostRenderFor(APlayerController *, UCanvas *, FVector, FVector);
+    HG_VIRTUAL UParticleSystem *GetAnimTrailParticleSystem(const UAnimNotify_Trails *) const;
+    HG_VIRTUAL unsigned int SupportsKismetModification(USequenceOp *, FString &) const;
+    HG_VIRTUAL unsigned int ShouldBeHiddenBySHOW_NavigationNodes();
+    HG_VIRTUAL int GetActorMetrics(unsigned char);
+    HG_VIRTUAL USpriteComponent *GetActorSpriteComponent() const;
+    HG_VIRTUAL FVector GetPawnViewLocation();
+    HG_VIRTUAL FVector GetNavAdjustedLocation(FVector, float) const;
+    HG_VIRTUAL unsigned int IsInvisible();
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL APawn *GetPlayerPawn() const;
+    HG_VIRTUAL unsigned int IsPlayerPawn() const;
+    HG_VIRTUAL unsigned int IgnoreBlockingBy(const AActor *) const;
+    HG_VIRTUAL unsigned int CanCauseFractureOnTouch();
+    HG_VIRTUAL FVector CreateLocationOffset(unsigned int, unsigned int, int, float) const;
+    HG_VIRTUAL float GetNetPriority(const FVector &, const FVector &, APlayerController *, UActorChannel *, float, unsigned int);
+    HG_VIRTUAL unsigned int Tick(float, ELevelTick);
+    HG_VIRTUAL void PostEditMove(unsigned int);
+    HG_VIRTUAL void Spawned();
+    HG_VIRTUAL void PreNetReceive();
+    HG_VIRTUAL void PostNetReceive();
+    HG_VIRTUAL void PostNetReceiveLocation();
+    HG_VIRTUAL void PostNetReceiveBase(AActor *);
+    HG_VIRTUAL void PostScriptDestroyed();
+    HG_VIRTUAL unsigned int ShouldTrace(UPrimitiveComponent *, AActor *, unsigned long);
+    HG_VIRTUAL unsigned int IsOverlapping(AActor *, FCheckResult *, UPrimitiveComponent *, UPrimitiveComponent *);
+    HG_VIRTUAL unsigned int FindInterpMoveTrack(UInterpTrackMove **, UInterpTrackInstMove **, USeqAct_Interp **);
+    HG_VIRTUAL void SetHardAttach(unsigned int);
+    HG_VIRTUAL void NotifyBump(AActor *, UPrimitiveComponent *, const FVector &);
+    HG_VIRTUAL void NotifyBumpLevel(const FVector &, const FVector &);
+    HG_VIRTUAL void SetBase(AActor *, FVector, int, USkeletalMeshComponent *, FName);
+    HG_VIRTUAL void TickAuthoritative(float);
+    HG_VIRTUAL void TickSimulated(float);
+    HG_VIRTUAL void TickSpecial(float);
+    HG_VIRTUAL unsigned int PlayerControlled();
+    HG_VIRTUAL unsigned int IsNetRelevantFor(APlayerController *, AActor *, const FVector &);
+    HG_VIRTUAL unsigned int IsRelevancyOwnerFor(AActor *, AActor *, AActor *);
+    HG_VIRTUAL void SetZone(unsigned int, unsigned int);
+    HG_VIRTUAL void SetVolumes();
+    HG_VIRTUAL void SetVolumes(const TArray<AVolume *,FDefaultAllocator> &);
+    HG_VIRTUAL void PreBeginPlay();
+    HG_VIRTUAL void PostBeginPlay();
+    HG_VIRTUAL void setPhysics(unsigned char, AActor *, FVector);
+    HG_VIRTUAL void performPhysics(float);
+    HG_VIRTUAL void physProjectile(float, int);
+    HG_VIRTUAL void BoundProjectileVelocity();
+    HG_VIRTUAL void processHitWall(const FCheckResult &, float);
+    HG_VIRTUAL void processLanded(const FVector &, AActor *, float, int);
+    HG_VIRTUAL void physFalling(float, int);
+    HG_VIRTUAL void physWalking(float, int);
+    HG_VIRTUAL void physNavMeshWalking(float);
+    HG_VIRTUAL void physCustom(float, int);
+    HG_VIRTUAL void physicsRotation(float, FVector);
+    HG_VIRTUAL FRotator FindSlopeRotation(const FVector &, const FRotator &);
+    HG_VIRTUAL void GetNetBuoyancy(float &, float &);
+    HG_VIRTUAL void SmoothHitWall(const FVector &, AActor *);
+    HG_VIRTUAL void stepUp(const FVector &, const FVector &, const FVector &, FCheckResult &);
+    HG_VIRTUAL unsigned int ShrinkCollision(AActor *, UPrimitiveComponent *, const FVector &);
+    HG_VIRTUAL void GrowCollision();
+    HG_VIRTUAL unsigned int MoveWithInterpMoveTrack(UInterpTrackMove *, UInterpTrackInstMove *, float, float);
+    HG_VIRTUAL void AdjustInterpTrackMove(FVector &, FRotator &, float, unsigned int);
+    HG_VIRTUAL void physInterpolating(float);
+    HG_VIRTUAL void PushedBy(AActor *);
+    HG_VIRTUAL void UpdateBasedRotation(FRotator &, const FRotator &);
+    HG_VIRTUAL void ReverseBasedRotation();
+    HG_VIRTUAL void physRigidBody(float);
+    HG_VIRTUAL void physSoftBody(float);
+    HG_VIRTUAL void InitRBPhys();
+    HG_VIRTUAL void InitRBPhysEditor();
+    HG_VIRTUAL void TermRBPhys(FRBPhysScene *);
+    HG_VIRTUAL void BuildPhysStaticMeshCache(ULevel *, int &, int &, int &, int &);
+    HG_VIRTUAL void OnRigidBodyCollision(const FRigidBodyCollisionInfo &, const FRigidBodyCollisionInfo &, const FCollisionImpactData &);
+    HG_VIRTUAL void UpdatePushBody();
+    HG_VIRTUAL void ModifyNxActorDesc(NxActorDesc &, UPrimitiveComponent *, const NxGroupsMask &, unsigned int);
+    HG_VIRTUAL void PostInitRigidBody(NxActor *, NxActorDesc &, UPrimitiveComponent *);
+    HG_VIRTUAL void PreTermRigidBody(NxActor *);
+    HG_VIRTUAL void SyncActorToRBPhysics();
+    HG_VIRTUAL void GetAnimControlSlotDesc(TArray<FAnimSlotDesc,FDefaultAllocator> &);
+    HG_VIRTUAL void PreviewBeginAnimControl(UInterpGroup *);
+    HG_VIRTUAL void PreviewSetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int, float);
+    HG_VIRTUAL void PreviewSetAnimWeights(TArray<FAnimSlotInfo,FDefaultAllocator> &);
+    HG_VIRTUAL void PreviewFinishAnimControl(UInterpGroup *);
+    HG_VIRTUAL void PreviewUpdateFaceFX(unsigned int, const FString &, const FString &, float);
+    HG_VIRTUAL void PreviewActorPlayFaceFX(const FString &, const FString &, UAkBaseSoundObject *);
+    HG_VIRTUAL void PreviewActorStopFaceFX();
+    HG_VIRTUAL UAudioComponent *PreviewGetFaceFXAudioComponent();
+    HG_VIRTUAL UFaceFXAsset *PreviewGetActorFaceFXAsset();
+    HG_VIRTUAL void PreviewSetMorphWeight(FName, float);
+    HG_VIRTUAL void PreviewSetSkelControlScale(FName, float);
+    HG_VIRTUAL void SetSkelControlStrength(FName, float);
+    HG_VIRTUAL AActor *AssociatedLevelGeometry();
+    HG_VIRTUAL unsigned int HasAssociatedLevelGeometry(AActor *);
+    HG_VIRTUAL unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
+    HG_VIRTUAL unsigned int TouchReachSucceeded(APawn *, const FVector &);
+    HG_VIRTUAL unsigned int BlockedByVehicle();
+    HG_VIRTUAL void PrePath();
+    HG_VIRTUAL void PostPath();
+    HG_VIRTUAL unsigned int IsABuilderBrush() const;
+    HG_VIRTUAL unsigned int IsCurrentBuilderBrush() const;
+    HG_VIRTUAL unsigned int IsABrush() const;
+    HG_VIRTUAL unsigned int IsAVolume() const;
+    HG_VIRTUAL unsigned int IsABrushShape() const;
+    HG_VIRTUAL unsigned int IsAFluidSurface() const;
+    HG_VIRTUAL APlayerController *GetAPlayerController();
+    HG_VIRTUAL AController *GetAController();
+    HG_VIRTUAL APawn *GetAPawn();
+    HG_VIRTUAL const APawn *GetAPawn() const;
+    HG_VIRTUAL AVehicle *GetAVehicle();
+    HG_VIRTUAL AVolume *GetAVolume();
+    HG_VIRTUAL AFluidSurfaceActor *GetAFluidSurface();
+    HG_VIRTUAL AProjectile *GetAProjectile();
+    HG_VIRTUAL const AProjectile *GetAProjectile() const;
+    HG_VIRTUAL APortalTeleporter *GetAPortalTeleporter();
+    HG_VIRTUAL APlayerController *GetTopPlayerController();
+    HG_VIRTUAL unsigned int VerifyNoUnreachableReferences();
+    HG_VIRTUAL void ClearComponents();
+    HG_VIRTUAL unsigned int WantsOverlapCheckWith(AActor *);
+    HG_VIRTUAL unsigned int ForceReturnComponent(UPrimitiveComponent *);
+HG_PROTECTED:
+    HG_VIRTUAL void UpdateComponentsInternal(unsigned int);
 public:
-    virtual void ConditionalForceUpdateComponents(unsigned int, unsigned int);
-    virtual void MarkComponentsAsPendingKill(unsigned int);
-    virtual unsigned int GetActorStaticLightingInfo(TArray<FStaticLightingPrimitiveInfo,FDefaultAllocator> &, const TArray<ULightComponent *,FDefaultAllocator> &, const FLightingBuildOptions &);
-    virtual void OrderComponentsForDeterministicLighting();
-    virtual void InvalidateLightingCache();
-    virtual void FinalizeStaticLighting();
-    virtual unsigned int ActorLineCheck(FCheckResult &, const FVector &, const FVector &, const FVector &, unsigned long);
-    virtual void ClearCrossLevelReferences();
-    virtual void GetActorReferences(TArray<FActorReference *,FDefaultAllocator> &, unsigned int);
-    virtual FGuid *GetGuid();
-    virtual ANavigationPoint *SpecifyEndAnchor(APawn *);
-    virtual unsigned int AnchorNeedNotBeReachable();
-    virtual void NotifyAnchorFindingResult(ANavigationPoint *, APawn *);
-    virtual unsigned int ShouldHideActor(const FVector &);
-    virtual void SetAnimWeights(const TArray<FAnimSlotInfo,FDefaultAllocator> &);
-    virtual unsigned int ResolveAttachedMoveEncroachment(AActor *, const FCheckResult &);
-    virtual void OnEditorAnimEnd(UAnimNodeSequence *, float, float);
-    virtual void OnRemoveFromWorld();
-    virtual unsigned int NeedsCollisionOverrideDuringCoverBuild();
+    HG_VIRTUAL void ConditionalForceUpdateComponents(unsigned int, unsigned int);
+    HG_VIRTUAL void MarkComponentsAsPendingKill(unsigned int);
+    HG_VIRTUAL unsigned int GetActorStaticLightingInfo(TArray<FStaticLightingPrimitiveInfo,FDefaultAllocator> &, const TArray<ULightComponent *,FDefaultAllocator> &, const FLightingBuildOptions &);
+    HG_VIRTUAL void OrderComponentsForDeterministicLighting();
+    HG_VIRTUAL void InvalidateLightingCache();
+    HG_VIRTUAL void FinalizeStaticLighting();
+    HG_VIRTUAL unsigned int ActorLineCheck(FCheckResult &, const FVector &, const FVector &, const FVector &, unsigned long);
+    HG_VIRTUAL void ClearCrossLevelReferences();
+    HG_VIRTUAL void GetActorReferences(TArray<FActorReference *,FDefaultAllocator> &, unsigned int);
+    HG_VIRTUAL FGuid *GetGuid();
+    HG_VIRTUAL ANavigationPoint *SpecifyEndAnchor(APawn *);
+    HG_VIRTUAL unsigned int AnchorNeedNotBeReachable();
+    HG_VIRTUAL void NotifyAnchorFindingResult(ANavigationPoint *, APawn *);
+    HG_VIRTUAL unsigned int ShouldHideActor(const FVector &);
+    HG_VIRTUAL void SetAnimWeights(const TArray<FAnimSlotInfo,FDefaultAllocator> &);
+    HG_VIRTUAL unsigned int ResolveAttachedMoveEncroachment(AActor *, const FCheckResult &);
+    HG_VIRTUAL void OnEditorAnimEnd(UAnimNodeSequence *, float, float);
+    HG_VIRTUAL void OnRemoveFromWorld();
+    HG_VIRTUAL unsigned int NeedsCollisionOverrideDuringCoverBuild();
     void Sleep(float);
     void FinishAnim(UAnimNodeSequence *, unsigned int);
     void SetCollisionSize(float, float);
@@ -3130,30 +3229,25 @@ public:
     void eventGainedChild(AActor *);
     void eventDestroyed();
     void eventReplicatedEvent(FName);
-private:
+HG_PRIVATE:
     AActor &operator=(const AActor &);
 public:
     static UClass *GetPrivateStaticClassAActor(const wchar_t *);
     static void InitializePrivateStaticClassAActor();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AActor();
-public:
     static void InternalConstructor(void *);
-    virtual void BeginDestroy();
-    virtual unsigned int IsReadyForFinishDestroy();
-    virtual void ProcessEvent(UFunction *, void *, void *);
-    virtual void ProcessState(float);
-    virtual unsigned int ProcessRemoteFunction(UFunction *, void *, FFrame *);
+    HG_VIRTUAL void BeginDestroy();
+    HG_VIRTUAL unsigned int IsReadyForFinishDestroy();
+    HG_VIRTUAL void ProcessEvent(UFunction *, void *, void *);
+    HG_VIRTUAL void ProcessState(float);
+    HG_VIRTUAL unsigned int ProcessRemoteFunction(UFunction *, void *, FFrame *);
     void ProcessDemoRecFunction(UFunction *, void *, FFrame *);
-    virtual void InitExecution();
-    virtual void PreEditChange(UProperty *);
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
-    virtual void PreSave();
-    virtual void PostLoad();
-    virtual void NetDirty(UProperty *);
+    HG_VIRTUAL void InitExecution();
+    HG_VIRTUAL void PreEditChange(UProperty *);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void PreSave();
+    HG_VIRTUAL void PostLoad();
+    HG_VIRTUAL void NetDirty(UProperty *);
     unsigned int IsOwnedBy(const AActor *) const;
     unsigned int IsBlockedBy(const AActor *, const UPrimitiveComponent *) const;
     unsigned int IsBasedOn(const AActor *) const;
@@ -3162,15 +3256,15 @@ public:
     void EditorUpdateBase();
     void EditorUpdateAttachedActors(const TArray<AActor *,FDefaultAllocator> &);
     unsigned int IsHiddenEd() const;
-    virtual unsigned int IsSelected() const;
-    virtual void PostRename();
+    HG_VIRTUAL unsigned int IsSelected() const;
+    HG_VIRTUAL void PostRename();
     void SetDefaultCollisionType();
     void SetCollisionFromCollisionType();
     FMatrix LocalToWorld() const;
     FMatrix WorldToLocal() const;
     FVector GetCylinderExtent() const;
     AActor *GetTopOwner();
-    virtual unsigned int IsPendingKill() const;
+    HG_VIRTUAL unsigned int IsPendingKill() const;
     unsigned int ActorIsPendingKill() const;
     void CheckStillInWorld();
     void UnTouchActors();
@@ -3219,8 +3313,18 @@ public:
     ULevel *GetLevel() const;
     unsigned int IsReferencedByKismet(USequenceObject **) const;
     unsigned int HasSingleCollidingComponent();
-    virtual unsigned int Get_bDebug();
+    HG_VIRTUAL unsigned int Get_bDebug();
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AActor();
+public:
+    #endif
     typedef UObject Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    static FVector OverlapAdjust;
     AActor *Next_Actor;  // 0x3C
     AActor *Next_Reactive;  // 0x40
     AActor *Next_Vehicle;  // 0x44
@@ -3377,26 +3481,90 @@ public:
     TArrayNoInit<UClass *> SupportedEvents;  // 0x1B0
     TArrayNoInit<USequenceEvent *> GeneratedEvents;  // 0x1BC
     TArrayNoInit<USeqAct_Latent *> LatentActions;  // 0x1C8
-private:
-    static UClass *PrivateStaticClass;
-public:
-    static FVector OverlapAdjust;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    static FVector (&OverlapAdjust);
+    hg::gptr<AActor> Next_Actor;
+    hg::gptr<AActor> Next_Reactive;
+    hg::gptr<AActor> Next_Vehicle;
+    hg::gptr<AActor> Next_Target_Actor;
+    TArrayNoInit<UActorComponent *> Components;
+    TArrayNoInit<UActorComponent *> AllComponents;
+    FVector Location;
+    FRotator Rotation;
+    hg::be<float> DrawScale;
+    FVector DrawScale3D;
+    FVector PrePivot;
+    FRenderCommandFence DetachFence;
+    hg::be<float> CustomTimeDilation;
+    unsigned char Physics;
+    unsigned char RemoteRole;
+    unsigned char Role;
+    unsigned char CollisionType;
+    unsigned char ReplicatedCollisionType;
+    unsigned char TickGroup;
+    char _pad0[0x2];
+    hg::gptr<AActor> Owner;
+    hg::gptr<AActor> Base;
+    TArrayNoInit<FTimerData> Timers;
+    hg::be<unsigned int> _bitsBC;  // 0xBC, from bStatic
+    hg::be<unsigned int> _bitsC0;  // 0xC0, from bNetInitialRotation
+    hg::be<unsigned int> _bitsC4;  // 0xC4, from bBlocksTeleport
+    hg::be<int> NetTag;
+    hg::be<float> NetUpdateTime;
+    hg::be<float> NetUpdateFrequency;
+    hg::be<float> NetPriority;
+    hg::be<float> LastNetUpdateTime;
+    hg::be<float> TimeSinceLastTick;
+    hg::gptr<APawn> Instigator;
+    hg::gptr<AWorldInfo> WorldInfo;
+    hg::be<float> LifeSpan;
+    hg::be<float> CreationTime;
+    hg::be<float> LastRenderTime;
+    FName Tag;
+    FName InitialState;
+    FName Layer;
+    FName Group_DEPRECATED;
+    hg::be<unsigned __int64> HiddenEditorViews;
+    TArrayNoInit<AActor *> Touching;
+    TArrayNoInit<AActor *> Children;
+    hg::be<float> LatentFloat;
+    hg::gptr<UAnimNodeSequence> LatentSeqNode;
+    hg::gptr<APhysicsVolume> PhysicsVolume;
+    FVector Velocity;
+    FVector Acceleration;
+    FVector AngularVelocity;
+    hg::gptr<USkeletalMeshComponent> BaseSkelComponent;
+    FName BaseBoneName;
+    TArrayNoInit<AActor *> Attached;
+    FVector RelativeLocation;
+    FRotator RelativeRotation;
+    hg::gptr<UPrimitiveComponent> CollisionComponent;
+    hg::be<int> OverlapTag;
+    FRotator RotationRate;
+    hg::gptr<AActor> PendingTouch;
+    hg::gptr<UClass> MessageClass;
+    TArrayNoInit<UClass *> SupportedEvents;
+    TArrayNoInit<USequenceEvent *> GeneratedEvents;
+    TArrayNoInit<USeqAct_Latent *> LatentActions;
+    #endif
 };
 
 class IInterface_NavigationHandle  // size 0x4, opaque
 {
-protected:
-    virtual ~IInterface_NavigationHandle();
+    HG_VFPTR
+HG_PROTECTED:
+    HG_XDK(HG_VIRTUAL ~IInterface_NavigationHandle();)
 public:
-    virtual UObject *GetUObjectInterfaceInterface_NavigationHandle() = 0;
-    virtual void eventNotifyPathChanged() = 0;
-    virtual unsigned int CanCoverSlip(ACoverLink *, int);
-    virtual FVector GetEdgeZAdjust(FNavMeshEdgeBase *) = 0;
-    virtual unsigned int CheckMantleValidity(FNavMeshMantleEdge *);
-    virtual void SetupPathfindingParams(FNavMeshPathParams &) = 0;
-    virtual void InitForPathfinding() = 0;
-    virtual int ExtraEdgeCostToAddWhenActive(FNavMeshEdgeBase *);
-    virtual void DebugLogInternal(const wchar_t *);
+    HG_VIRTUAL UObject *GetUObjectInterfaceInterface_NavigationHandle() HG_PURE;
+    HG_VIRTUAL void eventNotifyPathChanged() HG_PURE;
+    HG_VIRTUAL unsigned int CanCoverSlip(ACoverLink *, int);
+    HG_VIRTUAL FVector GetEdgeZAdjust(FNavMeshEdgeBase *) HG_PURE;
+    HG_VIRTUAL unsigned int CheckMantleValidity(FNavMeshMantleEdge *);
+    HG_VIRTUAL void SetupPathfindingParams(FNavMeshPathParams &) HG_PURE;
+    HG_VIRTUAL void InitForPathfinding() HG_PURE;
+    HG_VIRTUAL int ExtraEdgeCostToAddWhenActive(FNavMeshEdgeBase *);
+    HG_VIRTUAL void DebugLogInternal(const wchar_t *);
 };
 
 class AController : public AActor, public IInterface_NavigationHandle  // size 0x358, opaque
@@ -3406,63 +3574,63 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual unsigned int IsLocalPlayerController();
-    virtual unsigned int IsLocalController();
-    virtual void RouteCache_Empty();
-    virtual void RouteCache_AddItem(ANavigationPoint *);
-    virtual void RouteCache_InsertItem(ANavigationPoint *, int);
-    virtual void RouteCache_RemoveItem(ANavigationPoint *);
-    virtual void RouteCache_RemoveIndex(int, int);
-    virtual void SetAdjustLocation(FVector, unsigned int, unsigned int);
-    virtual void EndClimbLadder();
-    virtual unsigned int IsPlayerOwner();
-    virtual unsigned int CanHear(const FVector &, float, AActor *);
-    virtual void ShowSelf();
-    virtual unsigned int ShouldCheckVisibilityOf(AController *);
-    virtual unsigned long SeePawn(APawn *, unsigned int);
-    virtual unsigned long LineOfSightTo(const AActor *, int, const FVector *, unsigned int);
-    virtual void HearNoise(AActor *, float, FName);
-    virtual int AcceptNearbyPath(AActor *);
-    virtual UReachSpec *PrepareForMove(ANavigationPoint *, UReachSpec *);
-    virtual void AdjustFromWall(FVector, AActor *);
-    virtual void MarkEndPoints(ANavigationPoint *, AActor *, const FVector &);
-    virtual unsigned int OverridePathTo(ANavigationPoint *, AActor *, const FVector &, unsigned int, float &);
-    virtual unsigned int WantsLedgeCheck();
-    virtual unsigned int StopAtLedge();
-    virtual void PrePollMove();
-    virtual void PostPollMove();
-    virtual void PollMoveComplete();
-    virtual AActor *GetViewTarget();
-    virtual void UpdateEnemyInfo(APawn *);
-    virtual void JumpOverWall(FVector);
-    virtual void UpdatePawnRotation();
-    virtual unsigned int ForceReached(ANavigationPoint *, const FVector &);
-    virtual FRotator SetRotationRate(float);
-    virtual FVector DesiredDirection();
-    virtual void FailMove();
-    virtual void PreAirSteering(float);
-    virtual void PostAirSteering(float);
-    virtual void PostPhysFalling(float);
-    virtual void PostPhysWalking(float);
-    virtual void PostPhysSpider(float);
-    virtual unsigned int AirControlFromWall(float, FVector &);
-    virtual void NotifyJumpApex();
-    virtual void ClearCrossLevelPaths(ULevel *);
-    virtual void execPollMoveTo(FFrame &, void *const);
-    virtual void execPollMoveToward(FFrame &, void *const);
-    virtual unsigned int ShouldOffsetCorners();
-    virtual unsigned int ShouldUsePathLanes();
-    virtual unsigned int ShouldIgnoreNavigationBlockingFor(const AActor *);
-    virtual void MoveTo(const FVector &, AActor *, float, unsigned int);
-    virtual void MoveToward(AActor *, AActor *, float, unsigned int, unsigned int);
-    virtual float GetMaxDropHeight();
+    HG_VIRTUAL unsigned int IsLocalPlayerController();
+    HG_VIRTUAL unsigned int IsLocalController();
+    HG_VIRTUAL void RouteCache_Empty();
+    HG_VIRTUAL void RouteCache_AddItem(ANavigationPoint *);
+    HG_VIRTUAL void RouteCache_InsertItem(ANavigationPoint *, int);
+    HG_VIRTUAL void RouteCache_RemoveItem(ANavigationPoint *);
+    HG_VIRTUAL void RouteCache_RemoveIndex(int, int);
+    HG_VIRTUAL void SetAdjustLocation(FVector, unsigned int, unsigned int);
+    HG_VIRTUAL void EndClimbLadder();
+    HG_VIRTUAL unsigned int IsPlayerOwner();
+    HG_VIRTUAL unsigned int CanHear(const FVector &, float, AActor *);
+    HG_VIRTUAL void ShowSelf();
+    HG_VIRTUAL unsigned int ShouldCheckVisibilityOf(AController *);
+    HG_VIRTUAL unsigned long SeePawn(APawn *, unsigned int);
+    HG_VIRTUAL unsigned long LineOfSightTo(const AActor *, int, const FVector *, unsigned int);
+    HG_VIRTUAL void HearNoise(AActor *, float, FName);
+    HG_VIRTUAL int AcceptNearbyPath(AActor *);
+    HG_VIRTUAL UReachSpec *PrepareForMove(ANavigationPoint *, UReachSpec *);
+    HG_VIRTUAL void AdjustFromWall(FVector, AActor *);
+    HG_VIRTUAL void MarkEndPoints(ANavigationPoint *, AActor *, const FVector &);
+    HG_VIRTUAL unsigned int OverridePathTo(ANavigationPoint *, AActor *, const FVector &, unsigned int, float &);
+    HG_VIRTUAL unsigned int WantsLedgeCheck();
+    HG_VIRTUAL unsigned int StopAtLedge();
+    HG_VIRTUAL void PrePollMove();
+    HG_VIRTUAL void PostPollMove();
+    HG_VIRTUAL void PollMoveComplete();
+    HG_VIRTUAL AActor *GetViewTarget();
+    HG_VIRTUAL void UpdateEnemyInfo(APawn *);
+    HG_VIRTUAL void JumpOverWall(FVector);
+    HG_VIRTUAL void UpdatePawnRotation();
+    HG_VIRTUAL unsigned int ForceReached(ANavigationPoint *, const FVector &);
+    HG_VIRTUAL FRotator SetRotationRate(float);
+    HG_VIRTUAL FVector DesiredDirection();
+    HG_VIRTUAL void FailMove();
+    HG_VIRTUAL void PreAirSteering(float);
+    HG_VIRTUAL void PostAirSteering(float);
+    HG_VIRTUAL void PostPhysFalling(float);
+    HG_VIRTUAL void PostPhysWalking(float);
+    HG_VIRTUAL void PostPhysSpider(float);
+    HG_VIRTUAL unsigned int AirControlFromWall(float, FVector &);
+    HG_VIRTUAL void NotifyJumpApex();
+    HG_VIRTUAL void ClearCrossLevelPaths(ULevel *);
+    HG_VIRTUAL void execPollMoveTo(FFrame &, void *const);
+    HG_VIRTUAL void execPollMoveToward(FFrame &, void *const);
+    HG_VIRTUAL unsigned int ShouldOffsetCorners();
+    HG_VIRTUAL unsigned int ShouldUsePathLanes();
+    HG_VIRTUAL unsigned int ShouldIgnoreNavigationBlockingFor(const AActor *);
+    HG_VIRTUAL void MoveTo(const FVector &, AActor *, float, unsigned int);
+    HG_VIRTUAL void MoveToward(AActor *, AActor *, float, unsigned int, unsigned int);
+    HG_VIRTUAL float GetMaxDropHeight();
     void SetFocalPoint(FVector, unsigned int);
     FVector GetFocalPoint();
     void SetDestinationPosition(FVector, unsigned int);
     FVector GetDestinationPosition();
     FVector GetAdjustLocation();
     unsigned int BeyondFogDistance(FVector, FVector);
-    virtual unsigned char GetTeamNum();
+    HG_VIRTUAL unsigned char GetTeamNum();
     unsigned int CanSee(APawn *);
     unsigned int CanSeeByPoints(FVector, FVector, FRotator);
     APawn *PickTarget(UClass *, float &, float &, FVector, FVector, float);
@@ -3543,26 +3711,21 @@ public:
     void eventNotifyPostLanded();
     void eventUnPossess();
     void eventPossess(APawn *, unsigned int);
-    virtual void eventNotifyPathChanged();
-private:
+    HG_VIRTUAL void eventNotifyPathChanged();
+HG_PRIVATE:
     AController &operator=(const AController &);
 public:
     static UClass *GetPrivateStaticClassAController(const wchar_t *);
     static void InitializePrivateStaticClassAController();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AController();
-public:
     static void InternalConstructor(void *);
-    virtual UObject *GetUObjectInterfaceInterface_NavigationHandle();
-    virtual int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
-    virtual unsigned int Tick(float, ELevelTick);
-    virtual void Spawned();
-    virtual void BeginDestroy();
-    virtual unsigned int IsPlayerOwned();
-    virtual AController *GetAController();
+    HG_VIRTUAL UObject *GetUObjectInterfaceInterface_NavigationHandle();
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL unsigned int Tick(float, ELevelTick);
+    HG_VIRTUAL void Spawned();
+    HG_VIRTUAL void BeginDestroy();
+    HG_VIRTUAL unsigned int IsPlayerOwned();
+    HG_VIRTUAL AController *GetAController();
     void CheckEnemyVisible();
     AActor *HandleSpecial(AActor *);
     UReachSpec *GetNextRoutePath(ANavigationPoint *);
@@ -3570,32 +3733,43 @@ public:
     AActor *FindPath(const FVector &, AActor *, unsigned int, int, unsigned int);
     AActor *SetPath(int);
     void SetPathLane(float);
-    virtual void PostBeginPlay();
-    virtual void PostScriptDestroyed();
+    HG_VIRTUAL void PostBeginPlay();
+    HG_VIRTUAL void PostScriptDestroyed();
     void execPollWaitForLanding(FFrame &, void *const);
     void execPollFinishRotation(FFrame &, void *const);
-    virtual void GetAnimControlSlotDesc(TArray<FAnimSlotDesc,FDefaultAllocator> &);
-    virtual void PreviewBeginAnimControl(UInterpGroup *);
-    virtual void PreviewSetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int, float);
-    virtual void PreviewSetAnimWeights(TArray<FAnimSlotInfo,FDefaultAllocator> &);
-    virtual void PreviewFinishAnimControl(UInterpGroup *);
-    virtual void PreviewUpdateFaceFX(unsigned int, const FString &, const FString &, float);
-    virtual void PreviewActorPlayFaceFX(const FString &, const FString &, UAkBaseSoundObject *);
-    virtual void PreviewActorStopFaceFX();
-    virtual UAudioComponent *PreviewGetFaceFXAudioComponent();
-    virtual UFaceFXAsset *PreviewGetActorFaceFXAsset();
-    virtual void PreviewSetMorphWeight(FName, float);
-    virtual void PreviewSetSkelControlScale(FName, float);
-    virtual void SetSkelControlStrength(FName, float);
-    virtual void SetAnimWeights(const TArray<FAnimSlotInfo,FDefaultAllocator> &);
-    virtual unsigned int CanCoverSlip(ACoverLink *, int);
-    virtual void SetupPathfindingParams(FNavMeshPathParams &);
-    virtual void InitForPathfinding();
-    virtual int ExtraEdgeCostToAddWhenActive(FNavMeshEdgeBase *);
-    virtual FVector GetEdgeZAdjust(FNavMeshEdgeBase *);
+    HG_VIRTUAL void GetAnimControlSlotDesc(TArray<FAnimSlotDesc,FDefaultAllocator> &);
+    HG_VIRTUAL void PreviewBeginAnimControl(UInterpGroup *);
+    HG_VIRTUAL void PreviewSetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int, float);
+    HG_VIRTUAL void PreviewSetAnimWeights(TArray<FAnimSlotInfo,FDefaultAllocator> &);
+    HG_VIRTUAL void PreviewFinishAnimControl(UInterpGroup *);
+    HG_VIRTUAL void PreviewUpdateFaceFX(unsigned int, const FString &, const FString &, float);
+    HG_VIRTUAL void PreviewActorPlayFaceFX(const FString &, const FString &, UAkBaseSoundObject *);
+    HG_VIRTUAL void PreviewActorStopFaceFX();
+    HG_VIRTUAL UAudioComponent *PreviewGetFaceFXAudioComponent();
+    HG_VIRTUAL UFaceFXAsset *PreviewGetActorFaceFXAsset();
+    HG_VIRTUAL void PreviewSetMorphWeight(FName, float);
+    HG_VIRTUAL void PreviewSetSkelControlScale(FName, float);
+    HG_VIRTUAL void SetSkelControlStrength(FName, float);
+    HG_VIRTUAL void SetAnimWeights(const TArray<FAnimSlotInfo,FDefaultAllocator> &);
+    HG_VIRTUAL unsigned int CanCoverSlip(ACoverLink *, int);
+    HG_VIRTUAL void SetupPathfindingParams(FNavMeshPathParams &);
+    HG_VIRTUAL void InitForPathfinding();
+    HG_VIRTUAL int ExtraEdgeCostToAddWhenActive(FNavMeshEdgeBase *);
+    HG_VIRTUAL FVector GetEdgeZAdjust(FNavMeshEdgeBase *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AController();
+public:
+    #endif
     typedef AActor Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int AControllerData[0x60];
 };
 
@@ -3607,26 +3781,32 @@ public:
         IsIntrinsic = 0,
     };
     void eventSetTeam(int);
-private:
+HG_PRIVATE:
     AAIController &operator=(const AAIController &);
 public:
     static UClass *GetPrivateStaticClassAAIController(const wchar_t *);
     static void InitializePrivateStaticClassAAIController();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int AcceptNearbyPath(AActor *);
+    HG_VIRTUAL void AdjustFromWall(FVector, AActor *);
+    HG_VIRTUAL void SetAdjustLocation(FVector, unsigned int, unsigned int);
+    HG_VIRTUAL FVector DesiredDirection();
+    HG_VIRTUAL void PostScriptDestroyed();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AAIController();
+HG_PROTECTED:
+    HG_VIRTUAL ~AAIController();
 public:
-    static void InternalConstructor(void *);
-    virtual int AcceptNearbyPath(AActor *);
-    virtual void AdjustFromWall(FVector, AActor *);
-    virtual void SetAdjustLocation(FVector, unsigned int, unsigned int);
-    virtual FVector DesiredDirection();
-    virtual void PostScriptDestroyed();
+    #endif
     typedef AController Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int AAIControllerData[0x6];
 };
 
@@ -3637,24 +3817,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     AGwNavAIController &operator=(const AGwNavAIController &);
 public:
     static UClass *GetPrivateStaticClassAGwNavAIController(const wchar_t *);
     static void InitializePrivateStaticClassAGwNavAIController();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AGwNavAIController();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~AGwNavAIController();
     AGwNavAIController();
 public:
+    #endif
     typedef AAIController Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class AGameAIController : public AGwNavAIController  // size 0x3A8, opaque
@@ -3664,11 +3847,11 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void PushCommand(UGameAICommand *);
-    virtual void PopCommand(UGameAICommand *);
-    virtual unsigned int AbortCommand(UGameAICommand *, UClass *);
-    virtual UGameAICommand *GetAICommandInStack(const UClass *);
-    virtual void StoreCommandHistory(UGameAICommand *);
+    HG_VIRTUAL void PushCommand(UGameAICommand *);
+    HG_VIRTUAL void PopCommand(UGameAICommand *);
+    HG_VIRTUAL unsigned int AbortCommand(UGameAICommand *, UClass *);
+    HG_VIRTUAL UGameAICommand *GetAICommandInStack(const UClass *);
+    HG_VIRTUAL void StoreCommandHistory(UGameAICommand *);
     UGameAICommand *GetActiveCommand();
     void CheckCommandCount();
     void DumpCommandStack();
@@ -3684,30 +3867,36 @@ public:
     void execGetAICommandInStack(FFrame &, void *const);
     FString eventGetActionString();
     void eventAILog_Internal(const FString &, FName, unsigned int);
-private:
+HG_PRIVATE:
     AGameAIController &operator=(const AGameAIController &);
 public:
     static UClass *GetPrivateStaticClassAGameAIController(const wchar_t *);
     static void InitializePrivateStaticClassAGameAIController();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AGameAIController();
-public:
     static void InternalConstructor(void *);
     static const wchar_t *StaticConfigName();
     void AILog__VA(EName, const wchar_t *, ...);
     void AILog__VA(const wchar_t *, ...);
     void AILog(EName, const wchar_t *);
     void AILog(const wchar_t *);
-    virtual unsigned int Tick(float, ELevelTick);
-    virtual EGotoState GotoState(FName, unsigned int, unsigned int);
-    virtual void ProcessState(float);
-    virtual void DebugLogInternal(const wchar_t *);
+    HG_VIRTUAL unsigned int Tick(float, ELevelTick);
+    HG_VIRTUAL EGotoState GotoState(FName, unsigned int, unsigned int);
+    HG_VIRTUAL void ProcessState(float);
+    HG_VIRTUAL void DebugLogInternal(const wchar_t *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AGameAIController();
+public:
+    #endif
     typedef AGwNavAIController Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int AGameAIControllerData[0xE];
 };
 
@@ -3718,18 +3907,18 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void SetDesiredPosition(AActor *);
-    virtual void ActuallySetDesiredPosition(FVector);
-    virtual void CalcAccuracyAngles(AActor *);
-    virtual void TakePossession();
-    virtual void SetState(const FString &);
-    virtual void RemoveState(const FString &);
-    virtual void SetInitialCover(AActor *);
-    virtual void TriggerEvent(const FString &);
-    virtual void DisableBrain(unsigned int);
-    virtual void UpdateOnlyPawnRotation();
-    virtual void DrawHUD(GripHUDRenderer *, int &);
-    virtual unsigned char GetTeamNum();
+    HG_VIRTUAL void SetDesiredPosition(AActor *);
+    HG_VIRTUAL void ActuallySetDesiredPosition(FVector);
+    HG_VIRTUAL void CalcAccuracyAngles(AActor *);
+    HG_VIRTUAL void TakePossession();
+    HG_VIRTUAL void SetState(const FString &);
+    HG_VIRTUAL void RemoveState(const FString &);
+    HG_VIRTUAL void SetInitialCover(AActor *);
+    HG_VIRTUAL void TriggerEvent(const FString &);
+    HG_VIRTUAL void DisableBrain(unsigned int);
+    HG_VIRTUAL void UpdateOnlyPawnRotation();
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
+    HG_VIRTUAL unsigned char GetTeamNum();
     void execSetDesiredPosition(FFrame &, void *const);
     void execActuallySetDesiredPosition(FFrame &, void *const);
     void execCalcAccuracyAngles(FFrame &, void *const);
@@ -3750,31 +3939,37 @@ public:
     unsigned int eventStartFireBurst(APawn *);
     unsigned int eventCanFireAt(AActor *);
     void eventNotifyAIMoveToActorCompleted();
-private:
+HG_PRIVATE:
     ACCSController &operator=(const ACCSController &);
 public:
     static UClass *GetPrivateStaticClassACCSController(const wchar_t *);
     static void InitializePrivateStaticClassACCSController();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~ACCSController();
-public:
     static void InternalConstructor(void *);
-    virtual unsigned int Tick(float, ELevelTick);
-    virtual void BeginDestroy();
-    virtual void PostScriptDestroyed();
-    virtual void UpdatePawnRotation();
-    virtual void AdjustFromWall(FVector, AActor *);
-    virtual void ShowSelf();
-    virtual void HearNoise(AActor *, float, FName);
-private:
+    HG_VIRTUAL unsigned int Tick(float, ELevelTick);
+    HG_VIRTUAL void BeginDestroy();
+    HG_VIRTUAL void PostScriptDestroyed();
+    HG_VIRTUAL void UpdatePawnRotation();
+    HG_VIRTUAL void AdjustFromWall(FVector, AActor *);
+    HG_VIRTUAL void ShowSelf();
+    HG_VIRTUAL void HearNoise(AActor *, float, FName);
+HG_PRIVATE:
     void DestroyBrain();
 public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~ACCSController();
+public:
+    #endif
     typedef AGameAIController Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int ACCSControllerData[0x42];
 };
 
@@ -3785,21 +3980,21 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual unsigned int IsUsableAnchorFor(APawn *);
-    virtual unsigned int CanTeleport(AActor *);
-    virtual UClass *GetReachSpecClass(ANavigationPoint *, UClass *);
-    virtual void ClearPaths();
-    virtual unsigned int ShouldBeBased();
-    virtual void Validate();
-    virtual void TogglePathRendering(unsigned int);
-    virtual void InitForPathFinding();
-    virtual void ClearForPathFinding();
-    virtual APickupFactory *GetAPickupFactory();
-    virtual unsigned int GetUpDir(FVector &);
-    virtual void AddToNavigationOctree();
-    virtual void RemoveFromNavigationOctree();
-    virtual unsigned int PlaceScout(AScout *);
-    virtual void GetBoundingCylinder(float &, float &) const;
+    HG_VIRTUAL unsigned int IsUsableAnchorFor(APawn *);
+    HG_VIRTUAL unsigned int CanTeleport(AActor *);
+    HG_VIRTUAL UClass *GetReachSpecClass(ANavigationPoint *, UClass *);
+    HG_VIRTUAL void ClearPaths();
+    HG_VIRTUAL unsigned int ShouldBeBased();
+    HG_VIRTUAL void Validate();
+    HG_VIRTUAL void TogglePathRendering(unsigned int);
+    HG_VIRTUAL void InitForPathFinding();
+    HG_VIRTUAL void ClearForPathFinding();
+    HG_VIRTUAL APickupFactory *GetAPickupFactory();
+    HG_VIRTUAL unsigned int GetUpDir(FVector &);
+    HG_VIRTUAL void AddToNavigationOctree();
+    HG_VIRTUAL void RemoveFromNavigationOctree();
+    HG_VIRTUAL unsigned int PlaceScout(AScout *);
+    HG_VIRTUAL void GetBoundingCylinder(float &, float &) const;
     UReachSpec *GetReachSpecTo(ANavigationPoint *, UClass *);
     unsigned int GetAllNavInRadius(AActor *, FVector, float, TArray<ANavigationPoint *,FDefaultAllocator> &, unsigned int, int, FCylinder);
     unsigned int IsOnDifferentNetwork(ANavigationPoint *);
@@ -3813,42 +4008,48 @@ public:
     float eventDetourWeight(APawn *, float);
     unsigned int eventAccept(AActor *, AActor *);
     int eventSpecialCost(APawn *, UReachSpec *);
-private:
+HG_PRIVATE:
     ANavigationPoint &operator=(const ANavigationPoint &);
 public:
     static UClass *GetPrivateStaticClassANavigationPoint(const wchar_t *);
     static void InitializePrivateStaticClassANavigationPoint();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~ANavigationPoint();
-public:
     static void InternalConstructor(void *);
-    virtual void FindBase();
-    virtual void PostScriptDestroyed();
-protected:
-    virtual void UpdateComponentsInternal(unsigned int);
+    HG_VIRTUAL void FindBase();
+    HG_VIRTUAL void PostScriptDestroyed();
+HG_PROTECTED:
+    HG_VIRTUAL void UpdateComponentsInternal(unsigned int);
 public:
-    virtual void PostEditMove(unsigned int);
-    virtual void Spawned();
+    HG_VIRTUAL void PostEditMove(unsigned int);
+    HG_VIRTUAL void Spawned();
     void UpdateMaxPathSize();
     unsigned int FindAlternatePath(UReachSpec *, int);
     unsigned int CanReach(ANavigationPoint *, float, unsigned int, unsigned int);
-    virtual void SetVolumes();
-    virtual void SetVolumes(const TArray<AVolume *,FDefaultAllocator> &);
-    virtual unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
-    virtual unsigned int TouchReachSucceeded(APawn *, const FVector &);
-    virtual FVector GetDestination(AController *);
+    HG_VIRTUAL void SetVolumes();
+    HG_VIRTUAL void SetVolumes(const TArray<AVolume *,FDefaultAllocator> &);
+    HG_VIRTUAL unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
+    HG_VIRTUAL unsigned int TouchReachSucceeded(APawn *, const FVector &);
+    HG_VIRTUAL FVector GetDestination(AController *);
     void SortPathList();
-    virtual void GetActorReferences(TArray<FActorReference *,FDefaultAllocator> &, unsigned int);
-    virtual void ClearCrossLevelReferences();
-    virtual FGuid *GetGuid();
-    virtual ANavigationPoint *SpecifyEndAnchor(APawn *);
-    virtual void MarkComponentsAsPendingKill(unsigned int);
+    HG_VIRTUAL void GetActorReferences(TArray<FActorReference *,FDefaultAllocator> &, unsigned int);
+    HG_VIRTUAL void ClearCrossLevelReferences();
+    HG_VIRTUAL FGuid *GetGuid();
+    HG_VIRTUAL ANavigationPoint *SpecifyEndAnchor(APawn *);
+    HG_VIRTUAL void MarkComponentsAsPendingKill(unsigned int);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~ANavigationPoint();
+public:
+    #endif
     typedef AActor Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int ANavigationPointData[0x30];
 };
 
@@ -3859,11 +4060,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<APawn *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     APawn *const *GetTypedData() const;
     APawn **GetTypedData();
     APawn *const *GetData() const;
@@ -3913,21 +4109,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     APawn *const &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<APawn *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<APawn *> : public TArray<APawn *,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<APawn *> &operator=(const TArray<APawn *,FDefaultAllocator> &);
     TArrayNoInit<APawn *> &operator=(const TArrayNoInit<APawn *> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 template <> class TArray<FCoverSlot,FDefaultAllocator>  // size 0xC, opaque
@@ -3937,11 +4143,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<FCoverSlot,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     const FCoverSlot *GetTypedData() const;
     FCoverSlot *GetTypedData();
     const FCoverSlot *GetData() const;
@@ -3991,21 +4192,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     const FCoverSlot &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<FCoverSlot,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<FCoverSlot> : public TArray<FCoverSlot,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<FCoverSlot> &operator=(const TArray<FCoverSlot,FDefaultAllocator> &);
     TArrayNoInit<FCoverSlot> &operator=(const TArrayNoInit<FCoverSlot> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 template <> class TArray<FDynamicLinkInfo,FDefaultAllocator>  // size 0xC, opaque
@@ -4015,11 +4226,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     const FDynamicLinkInfo *GetTypedData() const;
     FDynamicLinkInfo *GetTypedData();
     const FDynamicLinkInfo *GetData() const;
@@ -4069,21 +4275,31 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     const FDynamicLinkInfo &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 template <> class TArrayNoInit<FDynamicLinkInfo> : public TArray<FDynamicLinkInfo,FDefaultAllocator>  // size 0xC, opaque
 {
 public:
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     TArrayNoInit<FDynamicLinkInfo> &operator=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
     TArrayNoInit<FDynamicLinkInfo> &operator=(const TArrayNoInit<FDynamicLinkInfo> &);
+    #ifndef HAGGAR_HOST
+    TArrayNoInit(EForceInit);
+    TArrayNoInit();
+    #endif
 };
 
 class ACoverLink : public ANavigationPoint  // size 0x328
@@ -4094,16 +4310,16 @@ public:
         IsIntrinsic = 0,
     };
     struct FFireLinkInfo;
-    virtual unsigned int GetFireLinkTargetCoverInfo(int, int, FCoverInfo &, unsigned char);
-    virtual unsigned int GetSwatTurnTarget(int, int, FCoverInfo &);
-    virtual void BuildSlotInfo(int, unsigned int, AScout *);
-    virtual void BuildSlotInfoInternal(AScout *, int, unsigned int);
-    virtual unsigned int GetFireLinkTo(int, const FCoverInfo &, unsigned char, unsigned char, int &, TArray<int,FDefaultAllocator> &);
-    virtual unsigned int HasFireLinkTo(int, const FCoverInfo &, unsigned int);
-    virtual unsigned int IsFireLinkValid(int, int, unsigned char);
-    virtual unsigned int LinkCoverSlotToNavigationMesh(int, UNavigationMeshBase *);
-    virtual int FindCoverReference(ACoverLink *, int, unsigned int);
-    virtual unsigned int GetCachedCoverInfo(int, FCoverInfo &);
+    HG_VIRTUAL unsigned int GetFireLinkTargetCoverInfo(int, int, FCoverInfo &, unsigned char);
+    HG_VIRTUAL unsigned int GetSwatTurnTarget(int, int, FCoverInfo &);
+    HG_VIRTUAL void BuildSlotInfo(int, unsigned int, AScout *);
+    HG_VIRTUAL void BuildSlotInfoInternal(AScout *, int, unsigned int);
+    HG_VIRTUAL unsigned int GetFireLinkTo(int, const FCoverInfo &, unsigned char, unsigned char, int &, TArray<int,FDefaultAllocator> &);
+    HG_VIRTUAL unsigned int HasFireLinkTo(int, const FCoverInfo &, unsigned int);
+    HG_VIRTUAL unsigned int IsFireLinkValid(int, int, unsigned char);
+    HG_VIRTUAL unsigned int LinkCoverSlotToNavigationMesh(int, UNavigationMeshBase *);
+    HG_VIRTUAL int FindCoverReference(ACoverLink *, int, unsigned int);
+    HG_VIRTUAL unsigned int GetCachedCoverInfo(int, FCoverInfo &);
     unsigned char PackFireLinkInteractionInfo(unsigned char, unsigned char, unsigned char, unsigned char);
     void UnPackFireLinkInteractionInfo(const unsigned char, unsigned char &, unsigned char &, unsigned char &, unsigned char &);
     FVector GetSlotLocation(int, unsigned int);
@@ -4158,21 +4374,16 @@ public:
     unsigned int eventUnClaim(APawn *, int, unsigned int);
     unsigned int eventClaim(APawn *, int);
     void eventSetInvalidUntil(int, float);
-private:
+HG_PRIVATE:
     ACoverLink &operator=(const ACoverLink &);
 public:
     static UClass *GetPrivateStaticClassACoverLink(const wchar_t *);
     static void InitializePrivateStaticClassACoverLink();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~ACoverLink();
-public:
     static void InternalConstructor(void *);
     static const wchar_t *StaticConfigName();
-    virtual void BeginDestroy();
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void BeginDestroy();
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
     void SortSlots(FCoverSlot **);
     void BuildFireLinks(AScout *);
     void BuildOtherLinks(AScout *);
@@ -4180,7 +4391,7 @@ public:
     unsigned int CanFireLinkHit(const FVector &, const FVector &, unsigned int);
     unsigned int GetExposedInfo(ACoverLink *, int, ACoverLink *, int, float &);
     float GetSlotHeight(int);
-    virtual void GetActorReferences(TArray<FActorReference *,FDefaultAllocator> &, unsigned int);
+    HG_VIRTUAL void GetActorReferences(TArray<FActorReference *,FDefaultAllocator> &, unsigned int);
     unsigned int IsOverlapSlotClaimed(APawn *, int, unsigned int);
     static FCoverSlot *CoverInfoToSlotPtr(FCoverInfo &);
     static FCoverSlot *CoverRefToSlotPtr(FCoverReference &);
@@ -4196,7 +4407,16 @@ public:
     static unsigned char FireLinkInteraction_UnpackSrcAction(const unsigned char);
     static unsigned char FireLinkInteraction_UnpackDestType(const unsigned char);
     static unsigned char FireLinkInteraction_UnpackDestAction(const unsigned char);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~ACoverLink();
+public:
+    #endif
     typedef ANavigationPoint Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
     unsigned long GLOBAL_bUseSlotMarkers : 1;  // 0x294
     unsigned long bDisabled : 1;
     unsigned long bClaimAllSlots : 1;
@@ -4233,21 +4453,49 @@ public:
     float DangerScale;  // 0x31C
     ACoverLink *NextCoverLink;  // 0x320
     unsigned char LocationDescription;  // 0x324
-private:
-    static UClass *PrivateStaticClass;
-public:
     char _pad0[0x3];
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::be<unsigned int> _bits294;  // 0x294, from GLOBAL_bUseSlotMarkers
+    hg::gptr<AActor> DestructibleCoverActor;
+    hg::gptr<ACoverLink> NextDestructibleCoverLink;
+    hg::be<float> LeanTraceDist;
+    TArrayNoInit<FCoverSlot> Slots;
+    TArrayNoInit<FDynamicLinkInfo> DynamicLinkInfos;
+    TArrayNoInit<APawn *> Claims;
+    hg::be<float> InvalidateDistance;
+    hg::be<float> MaxFireLinkDist;
+    FVector CircularOrigin;
+    hg::be<float> CircularRadius;
+    hg::be<float> AlignDist;
+    hg::be<float> AutoCoverSlotInterval;
+    hg::be<float> StandHeight;
+    hg::be<float> MidHeight;
+    FVector StandingLeanOffset;
+    FVector CrouchLeanOffset;
+    FVector PopupOffset;
+    hg::be<float> SlipDist;
+    hg::be<float> TurnDist;
+    hg::be<float> DangerScale;
+    hg::gptr<ACoverLink> NextCoverLink;
+    unsigned char LocationDescription;
+    char _pad0[0x3];
+    #endif
 };
 
 class IInterface_Speaker  // size 0x4, opaque
 {
-protected:
-    virtual ~IInterface_Speaker();
+    HG_VFPTR
+HG_PROTECTED:
+    HG_XDK(HG_VIRTUAL ~IInterface_Speaker();)
 public:
-    virtual UObject *GetUObjectInterfaceInterface_Speaker() = 0;
-    virtual void eventSpeak(USoundCue *) = 0;
-protected:
+    HG_VIRTUAL UObject *GetUObjectInterfaceInterface_Speaker() HG_PURE;
+    HG_VIRTUAL void eventSpeak(USoundCue *) HG_PURE;
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
     IInterface_Speaker();
+public:
+    #endif
 };
 
 class APawn : public AActor, public IInterface_Speaker  // size 0x47C, opaque
@@ -4257,91 +4505,91 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void CacheAnimNodes();
-    virtual void MAT_BeginAnimControl(UInterpGroup *);
-    virtual void MAT_FinishAnimControl(UInterpGroup *);
-    virtual void MAT_SetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int);
-    virtual void MAT_SetAnimWeights(const TArray<FAnimSlotInfo,FDefaultAllocator> &);
-    virtual void MAT_SetMorphWeight(FName, float);
-    virtual void MAT_SetSkelControlScale(FName, float);
-    virtual void MAT_SetSkelControlStrength(FName, float);
-    virtual unsigned int IsAliveAndWell() const;
-    virtual FVector AdjustDestination(AActor *, FVector);
-    virtual unsigned int SuggestJumpVelocity(FVector &, FVector, FVector, unsigned int);
-    virtual float GetFallDuration();
-    virtual unsigned int IsValidEnemyTargetFor(const APlayerReplicationInfo *, unsigned int);
-    virtual void SetAnchor(ANavigationPoint *);
-    virtual ANavigationPoint *GetBestAnchor(AActor *, FVector, unsigned int, unsigned int, float &);
-    virtual unsigned int ReachedDestination(AActor *);
-    virtual unsigned int ReachedDestination(const FVector &, const FVector &, AActor *, unsigned int);
-    virtual unsigned int ReachedPoint(FVector, AActor *);
-    virtual void ForceCrouch();
-    virtual void SetPushesRigidBodies(unsigned int);
-    virtual unsigned int ReachedDesiredRotation();
-    virtual unsigned int InitRagdoll();
-    virtual unsigned int TermRagdoll();
-    virtual FRotator GetViewRotation();
-    virtual AVehicle *GetVehicleBase();
-    virtual void ClearConstraints();
-    virtual void AddPathConstraint(UPathConstraint *);
-    virtual void AddGoalEvaluator(UPathGoalEvaluator *);
-    virtual void IncrementPathStep(int, UCanvas *);
-    virtual void IncrementPathChild(int, UCanvas *);
-    virtual void DrawPathStep(UCanvas *);
-    virtual void ClearPathStep();
-    virtual void SetRootMotionInterpCurrentTime(float, float, unsigned int);
-    virtual void SmoothCorrection(const FVector &);
-    virtual USkeletalMeshComponent *GetMeshForSkelControlLimbTransform(const USkeletalMeshComponent *);
-    virtual void CheckNoiseHearing(AActor *, float, FName);
-    virtual float DampenNoise(AActor *, float, FName);
-    virtual void setMoveTimer(FVector);
-    virtual unsigned int moveToward(const FVector &, AActor *);
-    virtual unsigned int IsGlider();
-    virtual void rotateToward(FVector);
-    virtual unsigned int SharingVehicleWith(APawn *);
-    virtual void HandleSerpentineMovement(FVector &, float, const FVector &);
-    virtual int pointReachable(FVector, int);
-    virtual int actorReachable(AActor *, unsigned int, unsigned int);
-    virtual int Reachable(FVector, AActor *);
-    virtual unsigned int TryJumpUp(FVector, FVector, unsigned long, unsigned int);
-    virtual unsigned int ReachThresholdTest(const FVector &, const FVector &, AActor *, float, float, float);
-    virtual unsigned int SetHighJumpFlag();
-    virtual ETestMoveResult FindBestJump(FVector, FVector &);
-    virtual ETestMoveResult FindJumpUp(FVector, FVector &);
-    virtual unsigned int HurtByDamageType(UClass *);
-    virtual void SetMaxLandingVelocity(float);
-    virtual ANavigationPoint *CheckDetour(ANavigationPoint *, ANavigationPoint *, unsigned int);
-    virtual int calcMoveFlags();
-    virtual void MarkEndPoints(ANavigationPoint *, AActor *, const FVector &);
-    virtual float SecondRouteAttempt(ANavigationPoint *, ANavigationPoint *, float (*)(ANavigationPoint *, APawn *, float), float, AActor *, const FVector &, float, float, int, int);
-    virtual int ModifyCostForReachSpec(UReachSpec *, int);
-    virtual void InitForPathfinding(AActor *, ANavigationPoint *);
-    virtual unsigned int IsValidAnchor(ANavigationPoint *);
-    virtual void PostProcessPhysics(float, const FVector &);
-    virtual unsigned int ShouldBypassSimulatedClientPhysics();
-    virtual FVector CheckForLedges(FVector, FVector, FVector, int &, int &);
-    virtual void physFlying(float, int);
-    virtual void physSwimming(float, int);
-    virtual void physSpider(float, int);
-    virtual void physLadder(float, int);
-    virtual void startNewPhysics(float, int);
-    virtual void StartFalling(int, float, float, const FVector &, const FVector &);
-    virtual unsigned int ShouldCatchAir(const FVector &, const FVector &);
-    virtual void SetPostLandedPhysics(AActor *, FVector);
-    virtual void Crouch(int);
-    virtual void UnCrouch(int);
-    virtual FVector NewFallVelocity(FVector, FVector, float);
-    virtual float MaxSpeedModifier();
-    virtual float GetMaxAccel(float);
-    virtual FVector CalculateSlopeSlide(const FVector &, const FCheckResult &);
-    virtual void ProcessPushNotify(const FRigidBodyCollisionInfo &, const TArray<FRigidBodyContactInfo,FDefaultAllocator> &);
-    virtual unsigned int HasAudibleAmbientSound(const FVector &);
-    virtual unsigned int HasReached(ANavigationPoint *, unsigned int &);
-    virtual FVector GetIdealCameraOrigin();
-    virtual void BuildAnimSetList();
-protected:
-    virtual void ApplyVelocityBraking(float, float);
-    virtual void CalcVelocity(FVector &, float, float, float, int, int, int);
+    HG_VIRTUAL void CacheAnimNodes();
+    HG_VIRTUAL void MAT_BeginAnimControl(UInterpGroup *);
+    HG_VIRTUAL void MAT_FinishAnimControl(UInterpGroup *);
+    HG_VIRTUAL void MAT_SetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int);
+    HG_VIRTUAL void MAT_SetAnimWeights(const TArray<FAnimSlotInfo,FDefaultAllocator> &);
+    HG_VIRTUAL void MAT_SetMorphWeight(FName, float);
+    HG_VIRTUAL void MAT_SetSkelControlScale(FName, float);
+    HG_VIRTUAL void MAT_SetSkelControlStrength(FName, float);
+    HG_VIRTUAL unsigned int IsAliveAndWell() const;
+    HG_VIRTUAL FVector AdjustDestination(AActor *, FVector);
+    HG_VIRTUAL unsigned int SuggestJumpVelocity(FVector &, FVector, FVector, unsigned int);
+    HG_VIRTUAL float GetFallDuration();
+    HG_VIRTUAL unsigned int IsValidEnemyTargetFor(const APlayerReplicationInfo *, unsigned int);
+    HG_VIRTUAL void SetAnchor(ANavigationPoint *);
+    HG_VIRTUAL ANavigationPoint *GetBestAnchor(AActor *, FVector, unsigned int, unsigned int, float &);
+    HG_VIRTUAL unsigned int ReachedDestination(AActor *);
+    HG_VIRTUAL unsigned int ReachedDestination(const FVector &, const FVector &, AActor *, unsigned int);
+    HG_VIRTUAL unsigned int ReachedPoint(FVector, AActor *);
+    HG_VIRTUAL void ForceCrouch();
+    HG_VIRTUAL void SetPushesRigidBodies(unsigned int);
+    HG_VIRTUAL unsigned int ReachedDesiredRotation();
+    HG_VIRTUAL unsigned int InitRagdoll();
+    HG_VIRTUAL unsigned int TermRagdoll();
+    HG_VIRTUAL FRotator GetViewRotation();
+    HG_VIRTUAL AVehicle *GetVehicleBase();
+    HG_VIRTUAL void ClearConstraints();
+    HG_VIRTUAL void AddPathConstraint(UPathConstraint *);
+    HG_VIRTUAL void AddGoalEvaluator(UPathGoalEvaluator *);
+    HG_VIRTUAL void IncrementPathStep(int, UCanvas *);
+    HG_VIRTUAL void IncrementPathChild(int, UCanvas *);
+    HG_VIRTUAL void DrawPathStep(UCanvas *);
+    HG_VIRTUAL void ClearPathStep();
+    HG_VIRTUAL void SetRootMotionInterpCurrentTime(float, float, unsigned int);
+    HG_VIRTUAL void SmoothCorrection(const FVector &);
+    HG_VIRTUAL USkeletalMeshComponent *GetMeshForSkelControlLimbTransform(const USkeletalMeshComponent *);
+    HG_VIRTUAL void CheckNoiseHearing(AActor *, float, FName);
+    HG_VIRTUAL float DampenNoise(AActor *, float, FName);
+    HG_VIRTUAL void setMoveTimer(FVector);
+    HG_VIRTUAL unsigned int moveToward(const FVector &, AActor *);
+    HG_VIRTUAL unsigned int IsGlider();
+    HG_VIRTUAL void rotateToward(FVector);
+    HG_VIRTUAL unsigned int SharingVehicleWith(APawn *);
+    HG_VIRTUAL void HandleSerpentineMovement(FVector &, float, const FVector &);
+    HG_VIRTUAL int pointReachable(FVector, int);
+    HG_VIRTUAL int actorReachable(AActor *, unsigned int, unsigned int);
+    HG_VIRTUAL int Reachable(FVector, AActor *);
+    HG_VIRTUAL unsigned int TryJumpUp(FVector, FVector, unsigned long, unsigned int);
+    HG_VIRTUAL unsigned int ReachThresholdTest(const FVector &, const FVector &, AActor *, float, float, float);
+    HG_VIRTUAL unsigned int SetHighJumpFlag();
+    HG_VIRTUAL ETestMoveResult FindBestJump(FVector, FVector &);
+    HG_VIRTUAL ETestMoveResult FindJumpUp(FVector, FVector &);
+    HG_VIRTUAL unsigned int HurtByDamageType(UClass *);
+    HG_VIRTUAL void SetMaxLandingVelocity(float);
+    HG_VIRTUAL ANavigationPoint *CheckDetour(ANavigationPoint *, ANavigationPoint *, unsigned int);
+    HG_VIRTUAL int calcMoveFlags();
+    HG_VIRTUAL void MarkEndPoints(ANavigationPoint *, AActor *, const FVector &);
+    HG_VIRTUAL float SecondRouteAttempt(ANavigationPoint *, ANavigationPoint *, float (*)(ANavigationPoint *, APawn *, float), float, AActor *, const FVector &, float, float, int, int);
+    HG_VIRTUAL int ModifyCostForReachSpec(UReachSpec *, int);
+    HG_VIRTUAL void InitForPathfinding(AActor *, ANavigationPoint *);
+    HG_VIRTUAL unsigned int IsValidAnchor(ANavigationPoint *);
+    HG_VIRTUAL void PostProcessPhysics(float, const FVector &);
+    HG_VIRTUAL unsigned int ShouldBypassSimulatedClientPhysics();
+    HG_VIRTUAL FVector CheckForLedges(FVector, FVector, FVector, int &, int &);
+    HG_VIRTUAL void physFlying(float, int);
+    HG_VIRTUAL void physSwimming(float, int);
+    HG_VIRTUAL void physSpider(float, int);
+    HG_VIRTUAL void physLadder(float, int);
+    HG_VIRTUAL void startNewPhysics(float, int);
+    HG_VIRTUAL void StartFalling(int, float, float, const FVector &, const FVector &);
+    HG_VIRTUAL unsigned int ShouldCatchAir(const FVector &, const FVector &);
+    HG_VIRTUAL void SetPostLandedPhysics(AActor *, FVector);
+    HG_VIRTUAL void Crouch(int);
+    HG_VIRTUAL void UnCrouch(int);
+    HG_VIRTUAL FVector NewFallVelocity(FVector, FVector, float);
+    HG_VIRTUAL float MaxSpeedModifier();
+    HG_VIRTUAL float GetMaxAccel(float);
+    HG_VIRTUAL FVector CalculateSlopeSlide(const FVector &, const FCheckResult &);
+    HG_VIRTUAL void ProcessPushNotify(const FRigidBodyCollisionInfo &, const TArray<FRigidBodyContactInfo,FDefaultAllocator> &);
+    HG_VIRTUAL unsigned int HasAudibleAmbientSound(const FVector &);
+    HG_VIRTUAL unsigned int HasReached(ANavigationPoint *, unsigned int &);
+    HG_VIRTUAL FVector GetIdealCameraOrigin();
+    HG_VIRTUAL void BuildAnimSetList();
+HG_PROTECTED:
+    HG_VIRTUAL void ApplyVelocityBraking(float, float);
+    HG_VIRTUAL void CalcVelocity(FVector &, float, float, float, int, int, int);
 public:
     unsigned int PickWallAdjust(FVector, AActor *);
     unsigned int SetDesiredRotation(FRotator, unsigned int, unsigned int, float, unsigned int);
@@ -4353,14 +4601,14 @@ public:
     void UpdateAnimSetList();
     void AddAnimSets(const TArray<UAnimSet *,FDefaultAllocator> &);
     unsigned int ValidAnchor();
-    virtual unsigned int IsInvisible();
+    HG_VIRTUAL unsigned int IsInvisible();
     void SetRemoteViewPitch(int);
-    virtual void GetBoundingCylinder(float &, float &) const;
+    HG_VIRTUAL void GetBoundingCylinder(float &, float &) const;
     unsigned int IsHumanControlled(AController *);
     unsigned int IsLocallyControlled();
-    virtual unsigned int IsPlayerPawn() const;
-    virtual FVector GetPawnViewLocation();
-    virtual unsigned char GetTeamNum();
+    HG_VIRTUAL unsigned int IsPlayerPawn() const;
+    HG_VIRTUAL FVector GetPawnViewLocation();
+    HG_VIRTUAL unsigned char GetTeamNum();
     void SetScalarParameterInterp(const FScalarParameterInterpStruct &);
     void execPickWallAdjust(FFrame &, void *const);
     void execSetDesiredRotation(FFrame &, void *const);
@@ -4411,7 +4659,7 @@ public:
     void execSetScalarParameterInterp(FFrame &, void *const);
     void eventOnRootMotionCollision(FVector);
     void eventNotifyGrenadeStuck();
-    virtual void eventSpeak(USoundCue *);
+    HG_VIRTUAL void eventSpeak(USoundCue *);
     void eventSoakPause();
     void eventMessagePlayer(const FString &);
     AInventory *eventCreateInventory(UClass *, unsigned int);
@@ -4441,40 +4689,35 @@ public:
     void eventAnimSetListUpdated();
     void eventBuildScriptAnimSetList();
     void eventCacheAnimNodes();
-private:
+HG_PRIVATE:
     APawn &operator=(const APawn &);
 public:
     static UClass *GetPrivateStaticClassAPawn(const wchar_t *);
     static void InitializePrivateStaticClassAPawn();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~APawn();
-public:
     static void InternalConstructor(void *);
     static const wchar_t *StaticConfigName();
-    virtual UObject *GetUObjectInterfaceInterface_Speaker();
-    virtual void PostBeginPlay();
-    virtual void PostScriptDestroyed();
-    virtual APawn *GetPlayerPawn() const;
-    virtual float GetNetPriority(const FVector &, const FVector &, APlayerController *, UActorChannel *, float, unsigned int);
-    virtual int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
-    virtual void NotifyBump(AActor *, UPrimitiveComponent *, const FVector &);
-    virtual void TickSimulated(float);
-    virtual void TickSpecial(float);
-    virtual unsigned int PlayerControlled();
-    virtual void SetBase(AActor *, FVector, int, USkeletalMeshComponent *, FName);
-    virtual unsigned int IsNetRelevantFor(APlayerController *, AActor *, const FVector &);
+    HG_VIRTUAL UObject *GetUObjectInterfaceInterface_Speaker();
+    HG_VIRTUAL void PostBeginPlay();
+    HG_VIRTUAL void PostScriptDestroyed();
+    HG_VIRTUAL APawn *GetPlayerPawn() const;
+    HG_VIRTUAL float GetNetPriority(const FVector &, const FVector &, APlayerController *, UActorChannel *, float, unsigned int);
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL void NotifyBump(AActor *, UPrimitiveComponent *, const FVector &);
+    HG_VIRTUAL void TickSimulated(float);
+    HG_VIRTUAL void TickSpecial(float);
+    HG_VIRTUAL unsigned int PlayerControlled();
+    HG_VIRTUAL void SetBase(AActor *, FVector, int, USkeletalMeshComponent *, FName);
+    HG_VIRTUAL unsigned int IsNetRelevantFor(APlayerController *, AActor *, const FVector &);
     unsigned int CacheNetRelevancy(unsigned int, APlayerController *, AActor *);
-    virtual unsigned int ShouldTrace(UPrimitiveComponent *, AActor *, unsigned long);
-    virtual void PreNetReceive();
-    virtual void PostNetReceiveLocation();
-    virtual const APawn *GetAPawn() const;
-    virtual APawn *GetAPawn();
-    virtual void SetHardAttach(unsigned int);
-    virtual unsigned int CanCauseFractureOnTouch();
-    virtual void SetZone(unsigned int, unsigned int);
+    HG_VIRTUAL unsigned int ShouldTrace(UPrimitiveComponent *, AActor *, unsigned long);
+    HG_VIRTUAL void PreNetReceive();
+    HG_VIRTUAL void PostNetReceiveLocation();
+    HG_VIRTUAL const APawn *GetAPawn() const;
+    HG_VIRTUAL APawn *GetAPawn();
+    HG_VIRTUAL void SetHardAttach(unsigned int);
+    HG_VIRTUAL unsigned int CanCauseFractureOnTouch();
+    HG_VIRTUAL void SetZone(unsigned int, unsigned int);
     float GetMaxSpeed();
     void StartNewSerpentine(const FVector &, const FVector &);
     void ClearSerpentine();
@@ -4485,7 +4728,7 @@ public:
     int ladderReachable(const FVector &, const FVector &, int, AActor *);
     int spiderReachable(const FVector &, const FVector &, int, AActor *);
     FVector GetGravityDirection();
-    virtual unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
+    HG_VIRTUAL unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
     void TestMove(const FVector &, FVector &, FCheckResult &, const FVector &);
     FVector GetDefaultCollisionSize();
     FVector GetCrouchSize();
@@ -4499,48 +4742,48 @@ public:
     ANavigationPoint *BestPathTo(float (*)(ANavigationPoint *, APawn *, float), ANavigationPoint *, float *, unsigned int, int, int);
     float GetAIMaxFallSpeed();
     ANavigationPoint *FindAnchor(AActor *, const FVector &, unsigned int, unsigned int, float &);
-    virtual ANavigationPoint *SpecifyEndAnchor(APawn *);
-    virtual unsigned int AnchorNeedNotBeReachable();
-    virtual void NotifyAnchorFindingResult(ANavigationPoint *, APawn *);
-    virtual void setPhysics(unsigned char, AActor *, FVector);
-    virtual void performPhysics(float);
-    virtual void physWalking(float, int);
-    virtual void physNavMeshWalking(float);
-    virtual void physFalling(float, int);
-    virtual void GetNetBuoyancy(float &, float &);
+    HG_VIRTUAL ANavigationPoint *SpecifyEndAnchor(APawn *);
+    HG_VIRTUAL unsigned int AnchorNeedNotBeReachable();
+    HG_VIRTUAL void NotifyAnchorFindingResult(ANavigationPoint *, APawn *);
+    HG_VIRTUAL void setPhysics(unsigned char, AActor *, FVector);
+    HG_VIRTUAL void performPhysics(float);
+    HG_VIRTUAL void physWalking(float, int);
+    HG_VIRTUAL void physNavMeshWalking(float);
+    HG_VIRTUAL void physFalling(float, int);
+    HG_VIRTUAL void GetNetBuoyancy(float &, float &);
     void startSwimming(FVector, FVector, float, float, int);
-    virtual void physicsRotation(float, FVector);
-    virtual void processLanded(const FVector &, AActor *, float, int);
-    virtual void processHitWall(const FCheckResult &, float);
-    virtual void SmoothHitWall(const FVector &, AActor *);
-    virtual void stepUp(const FVector &, const FVector &, const FVector &, FCheckResult &);
-    virtual unsigned int IgnoreBlockingBy(const AActor *) const;
-    virtual void PushedBy(AActor *);
-    virtual void UpdateBasedRotation(FRotator &, const FRotator &);
-    virtual void ReverseBasedRotation();
-    virtual void InitRBPhys();
-    virtual void TermRBPhys(FRBPhysScene *);
-    virtual void UpdatePushBody();
-    virtual unsigned int Tick(float, ELevelTick);
+    HG_VIRTUAL void physicsRotation(float, FVector);
+    HG_VIRTUAL void processLanded(const FVector &, AActor *, float, int);
+    HG_VIRTUAL void processHitWall(const FCheckResult &, float);
+    HG_VIRTUAL void SmoothHitWall(const FVector &, AActor *);
+    HG_VIRTUAL void stepUp(const FVector &, const FVector &, const FVector &, FCheckResult &);
+    HG_VIRTUAL unsigned int IgnoreBlockingBy(const AActor *) const;
+    HG_VIRTUAL void PushedBy(AActor *);
+    HG_VIRTUAL void UpdateBasedRotation(FRotator &, const FRotator &);
+    HG_VIRTUAL void ReverseBasedRotation();
+    HG_VIRTUAL void InitRBPhys();
+    HG_VIRTUAL void TermRBPhys(FRBPhysScene *);
+    HG_VIRTUAL void UpdatePushBody();
+    HG_VIRTUAL unsigned int Tick(float, ELevelTick);
     void RestoreAnimSetsToDefault();
-    virtual void GetAnimControlSlotDesc(TArray<FAnimSlotDesc,FDefaultAllocator> &);
-    virtual void PreviewBeginAnimControl(UInterpGroup *);
-    virtual void PreviewSetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int, float);
-    virtual void PreviewSetAnimWeights(TArray<FAnimSlotInfo,FDefaultAllocator> &);
-    virtual void PreviewFinishAnimControl(UInterpGroup *);
-    virtual void PreviewUpdateFaceFX(unsigned int, const FString &, const FString &, float);
-    virtual void PreviewActorPlayFaceFX(const FString &, const FString &, UAkBaseSoundObject *);
-    virtual void PreviewActorStopFaceFX();
-    virtual UAudioComponent *PreviewGetFaceFXAudioComponent();
-    virtual UFaceFXAsset *PreviewGetActorFaceFXAsset();
-    virtual void PreviewSetMorphWeight(FName, float);
-    virtual void PreviewSetSkelControlScale(FName, float);
-    virtual void SetSkelControlStrength(FName, float);
-    virtual void SetAnimWeights(const TArray<FAnimSlotInfo,FDefaultAllocator> &);
-    virtual void AdjustInterpTrackMove(FVector &, FRotator &, float, unsigned int);
-    virtual unsigned int FindInterpMoveTrack(UInterpTrackMove **, UInterpTrackInstMove **, USeqAct_Interp **);
+    HG_VIRTUAL void GetAnimControlSlotDesc(TArray<FAnimSlotDesc,FDefaultAllocator> &);
+    HG_VIRTUAL void PreviewBeginAnimControl(UInterpGroup *);
+    HG_VIRTUAL void PreviewSetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int, float);
+    HG_VIRTUAL void PreviewSetAnimWeights(TArray<FAnimSlotInfo,FDefaultAllocator> &);
+    HG_VIRTUAL void PreviewFinishAnimControl(UInterpGroup *);
+    HG_VIRTUAL void PreviewUpdateFaceFX(unsigned int, const FString &, const FString &, float);
+    HG_VIRTUAL void PreviewActorPlayFaceFX(const FString &, const FString &, UAkBaseSoundObject *);
+    HG_VIRTUAL void PreviewActorStopFaceFX();
+    HG_VIRTUAL UAudioComponent *PreviewGetFaceFXAudioComponent();
+    HG_VIRTUAL UFaceFXAsset *PreviewGetActorFaceFXAsset();
+    HG_VIRTUAL void PreviewSetMorphWeight(FName, float);
+    HG_VIRTUAL void PreviewSetSkelControlScale(FName, float);
+    HG_VIRTUAL void SetSkelControlStrength(FName, float);
+    HG_VIRTUAL void SetAnimWeights(const TArray<FAnimSlotInfo,FDefaultAllocator> &);
+    HG_VIRTUAL void AdjustInterpTrackMove(FVector &, FRotator &, float, unsigned int);
+    HG_VIRTUAL unsigned int FindInterpMoveTrack(UInterpTrackMove **, UInterpTrackInstMove **, USeqAct_Interp **);
     void UpdateScalarParameterInterp(float);
-private:
+HG_PRIVATE:
     unsigned int Pick3DWallAdjust(FVector, AActor *);
     float Swim(FVector, FCheckResult &);
     FVector findWaterLine(FVector, FVector);
@@ -4548,9 +4791,20 @@ private:
     int findNewFloor(FVector, float, float, int);
     int checkFloor(FVector, FCheckResult &);
 public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~APawn();
+public:
+    #endif
     typedef AActor Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int APawnData[0xA9];
 };
 
@@ -4561,49 +4815,55 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual float GetMaxRiseForce();
-    virtual unsigned int HasRelevantDriver();
-    virtual unsigned int IsStuck();
-    virtual unsigned int AdjustFlight(float, unsigned int, float, AActor *);
-    virtual void SteerVehicle(FVector);
-    virtual void AdjustThrottle(float);
-    virtual unsigned int JumpOutCheck(AActor *, float, float);
-    virtual void moveTowardGwNav(const FVector &);
-    virtual FVector GetTargetLocation(AActor *, unsigned int) const;
+    HG_VIRTUAL float GetMaxRiseForce();
+    HG_VIRTUAL unsigned int HasRelevantDriver();
+    HG_VIRTUAL unsigned int IsStuck();
+    HG_VIRTUAL unsigned int AdjustFlight(float, unsigned int, float, AActor *);
+    HG_VIRTUAL void SteerVehicle(FVector);
+    HG_VIRTUAL void AdjustThrottle(float);
+    HG_VIRTUAL unsigned int JumpOutCheck(AActor *, float, float);
+    HG_VIRTUAL void moveTowardGwNav(const FVector &);
+    HG_VIRTUAL FVector GetTargetLocation(AActor *, unsigned int) const;
     void execGetMaxRiseForce(FFrame &, void *const);
     unsigned int eventGwNavBotExitVehicle(APawn *);
     unsigned int eventGwNavBotEnterVehicle(APawn *);
     FVector eventGetEntryLocation();
     unsigned int eventDriverLeave(unsigned int);
     unsigned int eventContinueOnFoot();
-private:
+HG_PRIVATE:
     AVehicle &operator=(const AVehicle &);
 public:
     static UClass *GetPrivateStaticClassAVehicle(const wchar_t *);
     static void InitializePrivateStaticClassAVehicle();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL unsigned int IsNetRelevantFor(APlayerController *, AActor *, const FVector &);
+    HG_VIRTUAL unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
+    HG_VIRTUAL ANavigationPoint *CheckDetour(ANavigationPoint *, ANavigationPoint *, unsigned int);
+    HG_VIRTUAL void performPhysics(float);
+    HG_VIRTUAL AVehicle *GetAVehicle();
+    HG_VIRTUAL unsigned int IsRelevancyOwnerFor(AActor *, AActor *, AActor *);
+    HG_VIRTUAL void setMoveTimer(FVector);
+    HG_VIRTUAL unsigned int moveToward(const FVector &, AActor *);
+    HG_VIRTUAL void rotateToward(FVector);
+    HG_VIRTUAL void MarkEndPoints(ANavigationPoint *, AActor *, const FVector &);
+    HG_VIRTUAL float SecondRouteAttempt(ANavigationPoint *, ANavigationPoint *, float (*)(ANavigationPoint *, APawn *, float), float, AActor *, const FVector &, float, float, int, int);
+    HG_VIRTUAL unsigned int IsGlider();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AVehicle();
+HG_PROTECTED:
+    HG_VIRTUAL ~AVehicle();
 public:
-    static void InternalConstructor(void *);
-    virtual int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
-    virtual unsigned int IsNetRelevantFor(APlayerController *, AActor *, const FVector &);
-    virtual unsigned int ReachedBy(APawn *, const FVector &, const FVector &);
-    virtual ANavigationPoint *CheckDetour(ANavigationPoint *, ANavigationPoint *, unsigned int);
-    virtual void performPhysics(float);
-    virtual AVehicle *GetAVehicle();
-    virtual unsigned int IsRelevancyOwnerFor(AActor *, AActor *, AActor *);
-    virtual void setMoveTimer(FVector);
-    virtual unsigned int moveToward(const FVector &, AActor *);
-    virtual void rotateToward(FVector);
-    virtual void MarkEndPoints(ANavigationPoint *, AActor *, const FVector &);
-    virtual float SecondRouteAttempt(ANavigationPoint *, ANavigationPoint *, float (*)(ANavigationPoint *, APawn *, float), float, AActor *, const FVector &, float, float, int, int);
-    virtual unsigned int IsGlider();
+    #endif
     typedef APawn Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int AVehicleData[0x1D];
 };
 
@@ -4614,17 +4874,17 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void AddForce(FVector);
-    virtual void AddImpulse(FVector);
-    virtual void AddTorque(FVector);
-    virtual unsigned int IsSleeping();
-    virtual void InitVehicleRagdoll(USkeletalMesh *, UPhysicsAsset *, FVector, unsigned int);
-    virtual unsigned int HasWheelsOnGround();
-    virtual void VehiclePackRBState();
-    virtual void VehicleUnpackRBState();
-    virtual FVector GetDampingForce(const FVector &);
-    virtual void UpdateVehicle(ASVehicle *, float);
-    virtual void SetWheelEffectParams(USVehicleWheel *, float);
+    HG_VIRTUAL void AddForce(FVector);
+    HG_VIRTUAL void AddImpulse(FVector);
+    HG_VIRTUAL void AddTorque(FVector);
+    HG_VIRTUAL unsigned int IsSleeping();
+    HG_VIRTUAL void InitVehicleRagdoll(USkeletalMesh *, UPhysicsAsset *, FVector, unsigned int);
+    HG_VIRTUAL unsigned int HasWheelsOnGround();
+    HG_VIRTUAL void VehiclePackRBState();
+    HG_VIRTUAL void VehicleUnpackRBState();
+    HG_VIRTUAL FVector GetDampingForce(const FVector &);
+    HG_VIRTUAL void UpdateVehicle(ASVehicle *, float);
+    HG_VIRTUAL void SetWheelEffectParams(USVehicleWheel *, float);
     void SetWheelCollision(int, unsigned int);
     void execAddForce(FFrame &, void *const);
     void execAddImpulse(FFrame &, void *const);
@@ -4634,33 +4894,39 @@ public:
     void execInitVehicleRagdoll(FFrame &, void *const);
     void execHasWheelsOnGround(FFrame &, void *const);
     void eventSuspensionHeavyShift(float);
-private:
+HG_PRIVATE:
     ASVehicle &operator=(const ASVehicle &);
 public:
     static UClass *GetPrivateStaticClassASVehicle(const wchar_t *);
     static void InitializePrivateStaticClassASVehicle();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void physRigidBody(float);
+    HG_VIRTUAL void TickSimulated(float);
+    HG_VIRTUAL void TickAuthoritative(float);
+    HG_VIRTUAL void setPhysics(unsigned char, AActor *, FVector);
+    HG_VIRTUAL void PostNetReceiveLocation();
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL void OnRigidBodyCollision(const FRigidBodyCollisionInfo &, const FRigidBodyCollisionInfo &, const FCollisionImpactData &);
+    HG_VIRTUAL void ModifyNxActorDesc(NxActorDesc &, UPrimitiveComponent *, const NxGroupsMask &, unsigned int);
+    HG_VIRTUAL void PostInitRigidBody(NxActor *, NxActorDesc &, UPrimitiveComponent *);
+    HG_VIRTUAL void PreTermRigidBody(NxActor *);
+    HG_VIRTUAL void TermRBPhys(FRBPhysScene *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~ASVehicle();
+HG_PROTECTED:
+    HG_VIRTUAL ~ASVehicle();
 public:
-    static void InternalConstructor(void *);
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
-    virtual void physRigidBody(float);
-    virtual void TickSimulated(float);
-    virtual void TickAuthoritative(float);
-    virtual void setPhysics(unsigned char, AActor *, FVector);
-    virtual void PostNetReceiveLocation();
-    virtual int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
-    virtual void OnRigidBodyCollision(const FRigidBodyCollisionInfo &, const FRigidBodyCollisionInfo &, const FCollisionImpactData &);
-    virtual void ModifyNxActorDesc(NxActorDesc &, UPrimitiveComponent *, const NxGroupsMask &, unsigned int);
-    virtual void PostInitRigidBody(NxActor *, NxActorDesc &, UPrimitiveComponent *);
-    virtual void PreTermRigidBody(NxActor *);
-    virtual void TermRBPhys(FRBPhysScene *);
+    #endif
     typedef AVehicle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int ASVehicleData[0x4C];
 };
 
@@ -4671,31 +4937,37 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void MoveToPosition(FVector);
-    virtual unsigned int IsArrived();
-    virtual void IntializeNavigationBot(UGwNavNavdataFamily *, unsigned int, unsigned int, int);
+    HG_VIRTUAL void MoveToPosition(FVector);
+    HG_VIRTUAL unsigned int IsArrived();
+    HG_VIRTUAL void IntializeNavigationBot(UGwNavNavdataFamily *, unsigned int, unsigned int, int);
     void execMoveToPosition(FFrame &, void *const);
     void execIsArrived(FFrame &, void *const);
     void execIntializeNavigationBot(FFrame &, void *const);
     void eventExecuteVehicleCommand(unsigned char);
-private:
+HG_PRIVATE:
     AGwNavVehicle &operator=(const AGwNavVehicle &);
 public:
     static UClass *GetPrivateStaticClassAGwNavVehicle(const wchar_t *);
     static void InitializePrivateStaticClassAGwNavVehicle();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AGwNavVehicle();
-public:
     static void InternalConstructor(void *);
     static const wchar_t *StaticConfigName();
-    virtual void PostBeginPlay();
-    virtual void PostScriptDestroyed();
+    HG_VIRTUAL void PostBeginPlay();
+    HG_VIRTUAL void PostScriptDestroyed();
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AGwNavVehicle();
+public:
+    #endif
     typedef ASVehicle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int AGwNavVehicleData[0x4];
 };
 
@@ -4706,24 +4978,30 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     AKAsset &operator=(const AKAsset &);
 public:
     static UClass *GetPrivateStaticClassAKAsset(const wchar_t *);
     static void InitializePrivateStaticClassAKAsset();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL unsigned int ShouldTrace(UPrimitiveComponent *, AActor *, unsigned long);
+    HG_VIRTUAL unsigned int IgnoreBlockingBy(const AActor *) const;
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AKAsset();
+HG_PROTECTED:
+    HG_VIRTUAL ~AKAsset();
 public:
-    static void InternalConstructor(void *);
-    virtual int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
-    virtual unsigned int ShouldTrace(UPrimitiveComponent *, AActor *, unsigned long);
-    virtual unsigned int IgnoreBlockingBy(const AActor *) const;
+    #endif
     typedef AActor Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int AKAssetData[0x4];
 };
 
@@ -4734,31 +5012,37 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void AddCoverLink(ACoverLink *);
-    virtual void RemoveCoverLink(ACoverLink *);
-    virtual void KillCoverLinks();
-    virtual FVector GetPawnViewLocation();
+    HG_VIRTUAL void AddCoverLink(ACoverLink *);
+    HG_VIRTUAL void RemoveCoverLink(ACoverLink *);
+    HG_VIRTUAL void KillCoverLinks();
+    HG_VIRTUAL FVector GetPawnViewLocation();
     void execAddCoverLink(FFrame &, void *const);
     void execRemoveCoverLink(FFrame &, void *const);
     void execKillCoverLinks(FFrame &, void *const);
-private:
+HG_PRIVATE:
     AUDKCover &operator=(const AUDKCover &);
 public:
     static UClass *GetPrivateStaticClassAUDKCover(const wchar_t *);
     static void InitializePrivateStaticClassAUDKCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void BeginDestroy();
+    HG_VIRTUAL void PreBeginPlay();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AUDKCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~AUDKCover();
 public:
-    static void InternalConstructor(void *);
-    virtual void BeginDestroy();
-    virtual void PreBeginPlay();
+    #endif
     typedef AKAsset Super;
-    ACoverLink *FirstCoverLink;  // 0x1E4
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    ACoverLink *FirstCoverLink;  // 0x1E4
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<ACoverLink> FirstCoverLink;
+    #endif
 };
 
 class AUSSController : public ACCSController  // size 0x4B0, opaque
@@ -4768,59 +5052,68 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     AUSSController &operator=(const AUSSController &);
 public:
     static UClass *GetPrivateStaticClassAUSSController(const wchar_t *);
     static void InitializePrivateStaticClassAUSSController();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+HG_PROTECTED:
+    HG_VIRTUAL void PostPollMove();
+public:
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AUSSController();
+HG_PROTECTED:
+    HG_VIRTUAL ~AUSSController();
 public:
-    static void InternalConstructor(void *);
-protected:
-    virtual void PostPollMove();
-public:
-    virtual void DrawHUD(GripHUDRenderer *, int &);
+    #endif
     typedef ACCSController Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class ICCSPawn  // size 0x4, opaque
 {
-protected:
-    virtual ~ICCSPawn();
+    HG_VFPTR
+HG_PROTECTED:
+    HG_XDK(HG_VIRTUAL ~ICCSPawn();)
 public:
-    virtual UObject *GetUObjectInterfaceCCSPawn() = 0;
-    virtual unsigned char GetMovementType() = 0;
-    virtual void SetMovementType(unsigned char) = 0;
-    virtual void SetMovementTypeDefault() = 0;
-    virtual unsigned char GetAlertness() = 0;
-    virtual void SetAlertness(unsigned char) = 0;
-    virtual void SetAlertnessDefault() = 0;
-    virtual unsigned char GetSpeed() = 0;
-    virtual void SetSpeed(unsigned char) = 0;
-    virtual void SetMovementSpeedDefault() = 0;
-    virtual unsigned int IsCrouched() = 0;
-    virtual void SetCrouched(unsigned int) = 0;
-    virtual void SetPostureDefault() = 0;
-    virtual unsigned int PostureTransitionOver() = 0;
-    virtual unsigned int CanAim(FRotator) = 0;
-    virtual void SetCoverPose(unsigned char, float) = 0;
-    virtual void SetNoCoverPose() = 0;
-    virtual unsigned int CoverPoseTransitionOver() = 0;
-    virtual void MoveToInCover(FVector) = 0;
-    virtual unsigned int IsInCover() = 0;
-    virtual unsigned int GetIsPanicking() = 0;
-    virtual void SetIsPanicking(unsigned int) = 0;
-    virtual float GetYellingDistance() = 0;
-    virtual UCCSBTTree *GetDefaultBehaviorTree() = 0;
-    virtual void SetDefaultBehaviorTree(UCCSBTTree *) = 0;
-protected:
+    HG_VIRTUAL UObject *GetUObjectInterfaceCCSPawn() HG_PURE;
+    HG_VIRTUAL unsigned char GetMovementType() HG_PURE;
+    HG_VIRTUAL void SetMovementType(unsigned char) HG_PURE;
+    HG_VIRTUAL void SetMovementTypeDefault() HG_PURE;
+    HG_VIRTUAL unsigned char GetAlertness() HG_PURE;
+    HG_VIRTUAL void SetAlertness(unsigned char) HG_PURE;
+    HG_VIRTUAL void SetAlertnessDefault() HG_PURE;
+    HG_VIRTUAL unsigned char GetSpeed() HG_PURE;
+    HG_VIRTUAL void SetSpeed(unsigned char) HG_PURE;
+    HG_VIRTUAL void SetMovementSpeedDefault() HG_PURE;
+    HG_VIRTUAL unsigned int IsCrouched() HG_PURE;
+    HG_VIRTUAL void SetCrouched(unsigned int) HG_PURE;
+    HG_VIRTUAL void SetPostureDefault() HG_PURE;
+    HG_VIRTUAL unsigned int PostureTransitionOver() HG_PURE;
+    HG_VIRTUAL unsigned int CanAim(FRotator) HG_PURE;
+    HG_VIRTUAL void SetCoverPose(unsigned char, float) HG_PURE;
+    HG_VIRTUAL void SetNoCoverPose() HG_PURE;
+    HG_VIRTUAL unsigned int CoverPoseTransitionOver() HG_PURE;
+    HG_VIRTUAL void MoveToInCover(FVector) HG_PURE;
+    HG_VIRTUAL unsigned int IsInCover() HG_PURE;
+    HG_VIRTUAL unsigned int GetIsPanicking() HG_PURE;
+    HG_VIRTUAL void SetIsPanicking(unsigned int) HG_PURE;
+    HG_VIRTUAL float GetYellingDistance() HG_PURE;
+    HG_VIRTUAL UCCSBTTree *GetDefaultBehaviorTree() HG_PURE;
+    HG_VIRTUAL void SetDefaultBehaviorTree(UCCSBTTree *) HG_PURE;
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
     ICCSPawn();
+public:
+    #endif
 };
 
 class AUSSPawn : public APawn, public ICCSPawn  // size 0x4CC, opaque
@@ -4830,30 +5123,30 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual unsigned char GetMovementType();
-    virtual void SetMovementType(unsigned char);
-    virtual void SetMovementTypeDefault();
-    virtual unsigned char GetAlertness();
-    virtual void SetAlertness(unsigned char);
-    virtual void SetAlertnessDefault();
-    virtual unsigned char GetSpeed();
-    virtual void SetSpeed(unsigned char);
-    virtual void SetMovementSpeedDefault();
-    virtual unsigned int IsCrouched();
-    virtual void SetCrouched(unsigned int);
-    virtual void SetPostureDefault();
-    virtual unsigned int PostureTransitionOver();
-    virtual unsigned int CanAim(FRotator);
-    virtual void SetCoverPose(unsigned char, float);
-    virtual void SetNoCoverPose();
-    virtual unsigned int CoverPoseTransitionOver();
-    virtual void MoveToInCover(FVector);
-    virtual unsigned int IsInCover();
-    virtual void SetIsPanicking(unsigned int);
-    virtual unsigned int GetIsPanicking();
-    virtual UCCSBTTree *GetDefaultBehaviorTree();
-    virtual void SetDefaultBehaviorTree(UCCSBTTree *);
-    virtual float GetYellingDistance();
+    HG_VIRTUAL unsigned char GetMovementType();
+    HG_VIRTUAL void SetMovementType(unsigned char);
+    HG_VIRTUAL void SetMovementTypeDefault();
+    HG_VIRTUAL unsigned char GetAlertness();
+    HG_VIRTUAL void SetAlertness(unsigned char);
+    HG_VIRTUAL void SetAlertnessDefault();
+    HG_VIRTUAL unsigned char GetSpeed();
+    HG_VIRTUAL void SetSpeed(unsigned char);
+    HG_VIRTUAL void SetMovementSpeedDefault();
+    HG_VIRTUAL unsigned int IsCrouched();
+    HG_VIRTUAL void SetCrouched(unsigned int);
+    HG_VIRTUAL void SetPostureDefault();
+    HG_VIRTUAL unsigned int PostureTransitionOver();
+    HG_VIRTUAL unsigned int CanAim(FRotator);
+    HG_VIRTUAL void SetCoverPose(unsigned char, float);
+    HG_VIRTUAL void SetNoCoverPose();
+    HG_VIRTUAL unsigned int CoverPoseTransitionOver();
+    HG_VIRTUAL void MoveToInCover(FVector);
+    HG_VIRTUAL unsigned int IsInCover();
+    HG_VIRTUAL void SetIsPanicking(unsigned int);
+    HG_VIRTUAL unsigned int GetIsPanicking();
+    HG_VIRTUAL UCCSBTTree *GetDefaultBehaviorTree();
+    HG_VIRTUAL void SetDefaultBehaviorTree(UCCSBTTree *);
+    HG_VIRTUAL float GetYellingDistance();
     void execGetMovementType(FFrame &, void *const);
     void execSetMovementType(FFrame &, void *const);
     void execSetMovementTypeDefault(FFrame &, void *const);
@@ -4878,31 +5171,39 @@ public:
     void execGetDefaultBehaviorTree(FFrame &, void *const);
     void execSetDefaultBehaviorTree(FFrame &, void *const);
     void execGetYellingDistance(FFrame &, void *const);
-private:
+HG_PRIVATE:
     AUSSPawn &operator=(const AUSSPawn &);
 public:
     static UClass *GetPrivateStaticClassAUSSPawn(const wchar_t *);
     static void InitializePrivateStaticClassAUSSPawn();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL UObject *GetUObjectInterfaceCCSPawn();
+    HG_VIRTUAL void TickSpecial(float);
+    HG_VIRTUAL float MaxSpeedModifier();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~AUSSPawn();
+HG_PROTECTED:
+    HG_VIRTUAL ~AUSSPawn();
 public:
-    static void InternalConstructor(void *);
-    virtual UObject *GetUObjectInterfaceCCSPawn();
-    virtual void TickSpecial(float);
-    virtual float MaxSpeedModifier();
+    #endif
     typedef APawn Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int AUSSPawnData[0x13];
 };
 
 class GripVHeapObject  // size 0x4, opaque
 {
+    HG_VFPTR
 public:
-    virtual ~GripVHeapObject();
+    HG_XDK(HG_VIRTUAL ~GripVHeapObject();)
+    #ifndef HAGGAR_HOST
     static void *operator new(unsigned int, void *);
     static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
     static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
@@ -4926,6 +5227,7 @@ public:
     static void operator delete(void *, int, const char *, int);
     static void operator delete(void *, const char *, int);
     static void operator delete(void *);
+    #endif
 };
 
 class GripAFAction : public GripVHeapObject  // size 0x1C, opaque
@@ -4938,231 +5240,286 @@ public:
         AS_INPROGRESS = 2,
         AS_QUEUED = 3,
     };
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float) = 0;
-    virtual const char *GetName();
-    GripAFAction();
-    virtual ~GripAFAction();
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float) HG_PURE;
+    HG_VIRTUAL const char *GetName();
     GripAFAction::EGripAFActionStatus GetStatus();
     Grip_ArrayPOD<GripAFModifier *,2> &GetModifiers();
-private:
+    #ifndef HAGGAR_HOST
+    GripAFAction();
+    HG_VIRTUAL ~GripAFAction();
+    #endif
+HG_PRIVATE:
     unsigned int GripAFActionData[0x6];
 };
 
 class CCSAFAction : public GripAFAction  // size 0x20, opaque
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSAFAction();
-private:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFActionData[0x1];
 };
 
 class CCSAFEncircleTarget : public CCSAFAction  // size 0x5C, opaque
 {
-protected:
-    CCSAFEncircleTarget();
+HG_PROTECTED:
     void SetObjective(const CCSAOEncircleTarget &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
     void UpdateGoal();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFEncircleTarget();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFEncircleTargetData[0xF];
 };
 
 class CCSAFEnterCover : public CCSAFAction  // size 0x58, opaque
 {
-protected:
-    CCSAFEnterCover();
+HG_PROTECTED:
     void SetObjective(const CCSAOEnterCover &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFEnterCover();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFEnterCoverData[0xE];
 };
 
 class CCSAFExitCover : public CCSAFAction  // size 0x24, opaque
 {
-protected:
+public:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    void SetObjective(const CCSAOExitCover &);
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
     CCSAFExitCover();
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    void SetObjective(const CCSAOExitCover &);
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFExitCoverData[0x1];
 };
 
 class CCSAFFireBurst : public CCSAFAction  // size 0x44, opaque
 {
-protected:
-    CCSAFFireBurst();
+HG_PROTECTED:
     void SetObjective(const CCSAOFireBurst &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFFireBurst();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFFireBurstData[0x9];
 };
 
 class CCSAFFlee : public CCSAFAction  // size 0x58, opaque
 {
-protected:
-    CCSAFFlee();
+HG_PROTECTED:
     void SetObjective(const CCSAOFlee &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+HG_PRIVATE:
     void UpdateMoveTarget();
+public:
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFFlee();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFFleeData[0xE];
 };
 
 class CCSAFGetInCover : public CCSAFAction  // size 0x58, opaque
 {
-protected:
-    CCSAFGetInCover();
+HG_PROTECTED:
     void SetObjective(const CCSAOGetInCover &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFGetInCover();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFGetInCoverData[0xE];
 };
 
 class CCSAFGetOutCover : public CCSAFAction  // size 0x58, opaque
 {
-protected:
-    CCSAFGetOutCover();
+HG_PROTECTED:
     void SetObjective(const CCSAOGetOutCover &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFGetOutCover();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFGetOutCoverData[0xE];
 };
 
 class CCSAFIdle : public CCSAFAction  // size 0x28, opaque
 {
-protected:
+public:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void Tick(float);
+    void SetObjective(const CCSAOIdle &);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
     CCSAFIdle();
 public:
-    virtual void PostCreate();
-    virtual void Tick(float);
-    void SetObjective(const CCSAOIdle &);
-    virtual const char *GetName();
-private:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFIdleData[0x2];
 };
 
 class CCSAFMoveTo : public CCSAFAction  // size 0x38, opaque
 {
-protected:
-    CCSAFMoveTo();
+HG_PROTECTED:
     void SetObjective(const CCSAOMoveTo &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFMoveTo();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFMoveToData[0x6];
 };
 
 class CCSAFMoveToActor : public CCSAFAction  // size 0x5C, opaque
 {
-protected:
-    CCSAFMoveToActor();
+HG_PROTECTED:
     void SetObjective(const CCSAOMoveToActor &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFMoveToActor();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFMoveToActorData[0xF];
 };
 
 class CCSAFOrientToward : public CCSAFAction  // size 0x38, opaque
 {
-protected:
-    CCSAFOrientToward();
+HG_PROTECTED:
     void SetObjective(const CCSAOOrientToward &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFOrientToward();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFOrientTowardData[0x6];
 };
 
 class CCSAFStrafeTarget : public CCSAFAction  // size 0x5C, opaque
 {
-protected:
-    CCSAFStrafeTarget();
+HG_PROTECTED:
     void SetObjective(const CCSAOStrafeTarget &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
     bool UpdateGoal();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFStrafeTarget();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFStrafeTargetData[0xF];
 };
 
 class CCSAFStrafeTo : public CCSAFAction  // size 0x38, opaque
 {
-protected:
-    CCSAFStrafeTo();
+HG_PROTECTED:
     void SetObjective(const CCSAOStrafeTo &);
 public:
-    virtual void PostCreate();
-    virtual void OnActivate();
-    virtual bool TransitionTo(GripAFAction *);
-    virtual void Tick(float);
-    virtual const char *GetName();
-private:
+    HG_VIRTUAL void PostCreate();
+    HG_VIRTUAL void OnActivate();
+    HG_VIRTUAL bool TransitionTo(GripAFAction *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL const char *GetName();
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    CCSAFStrafeTo();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int CCSAFStrafeToData[0x6];
 };
 
 class GripBlackboard : public GripVHeapObject  // size 0x8C, opaque
 {
 public:
-    virtual void Reset();
-    virtual void RegisterMembers();
-    virtual GripBBVisualization *GetVisualizer() = 0;
-    virtual void DrawHUD(GripHUDRenderer *, int &);
-    GripBlackboard();
+    HG_VIRTUAL void Reset();
+    HG_VIRTUAL void RegisterMembers();
+    HG_VIRTUAL GripBBVisualization *GetVisualizer() HG_PURE;
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
     void Initialize();
     void GetUsedPerceptionSystems(GripBTSystemFlags &, GripBTSystemFlags &);
     void AddMember(GripBBMember &);
@@ -5180,7 +5537,10 @@ public:
     bool IsDirty() const;
     void SetDirty();
     void ClearDirty();
-private:
+    #ifndef HAGGAR_HOST
+    GripBlackboard();
+    #endif
+HG_PRIVATE:
     unsigned int GripBlackboardData[0x22];
 };
 
@@ -5192,10 +5552,9 @@ public:
         MOVE_CMD_NONE = 0,
         MOVE_CMD_POS = 1,
     };
-    CCSBlackboard();
-    virtual void Reset();
-    virtual void RegisterMembers();
-    virtual GripBBVisualization *GetVisualizer();
+    HG_VIRTUAL void Reset();
+    HG_VIRTUAL void RegisterMembers();
+    HG_VIRTUAL GripBBVisualization *GetVisualizer();
     void ClearMoveCommand();
     void SetMoveCommand(Grip_Vector);
     CCSBlackboard::EMoveCmd GetMoveCommand() const;
@@ -5249,96 +5608,162 @@ public:
     bool GetHasBecomeAware();
     void SetHasBecomeAware(bool);
     void FlagHasBecomeAware();
-private:
+HG_PRIVATE:
     void UpdateTargetPointers();
 public:
     CCSTarget *GetSpecificTarget(FString);
     FVector GetCurrentTether();
-private:
+    #ifndef HAGGAR_HOST
+    CCSBlackboard();
+    #endif
+HG_PRIVATE:
     unsigned int CCSBlackboardData[0x17C];
 };
 
 struct CCSController_eventActionStopFiring_Parms  // size 0x1
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventActionStopFiring_Parms(EEventParm);
+    #endif
 };
 
 struct CCSController_eventAimAt_Parms  // size 0x4
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventAimAt_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     AActor *newFocus;  // 0x0
+    #else
+    hg::gptr<AActor> newFocus;
+    #endif
 };
 
 struct CCSController_eventCanFireAt_Parms  // size 0x8
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventCanFireAt_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     AActor *Target;  // 0x0
     unsigned int ReturnValue;  // 0x4
+    #else
+    hg::gptr<AActor> Target;
+    hg::be<unsigned int> ReturnValue;
+    #endif
 };
 
 struct CCSController_eventCreateDebugVizComponent_Parms  // size 0x1
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventCreateDebugVizComponent_Parms(EEventParm);
+    #endif
 };
 
 struct CCSController_eventFindNavMeshDistance_Parms  // size 0x14
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventFindNavMeshDistance_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     FVector targetPos;  // 0x0
     float Distance;  // 0xC
     unsigned int ReturnValue;  // 0x10
+    #else
+    FVector targetPos;
+    hg::be<float> Distance;
+    hg::be<unsigned int> ReturnValue;
+    #endif
 };
 
 struct CCSController_eventFindNavMeshPath_Parms  // size 0x10
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventFindNavMeshPath_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     FVector targetPos;  // 0x0
     unsigned int ReturnValue;  // 0xC
+    #else
+    FVector targetPos;
+    hg::be<unsigned int> ReturnValue;
+    #endif
 };
 
 struct CCSController_eventFireWeapon_Parms  // size 0x10
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventFireWeapon_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     unsigned int charge;  // 0x0
     unsigned int lastShot;  // 0x4
     unsigned int alwaysFire;  // 0x8
     unsigned int ReturnValue;  // 0xC
+    #else
+    hg::be<unsigned int> charge;
+    hg::be<unsigned int> lastShot;
+    hg::be<unsigned int> alwaysFire;
+    hg::be<unsigned int> ReturnValue;
+    #endif
 };
 
 struct CCSController_eventNotifyAIMoveToActorCompleted_Parms  // size 0x1
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventNotifyAIMoveToActorCompleted_Parms(EEventParm);
+    #endif
 };
 
 struct CCSController_eventStartFireBurstObj_Parms  // size 0x8
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventStartFireBurstObj_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     AActor *Target;  // 0x0
     unsigned int ReturnValue;  // 0x4
+    #else
+    hg::gptr<AActor> Target;
+    hg::be<unsigned int> ReturnValue;
+    #endif
 };
 
 struct CCSController_eventStartFireBurst_Parms  // size 0x8
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventStartFireBurst_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     APawn *Target;  // 0x0
     unsigned int ReturnValue;  // 0x4
+    #else
+    hg::gptr<APawn> Target;
+    hg::be<unsigned int> ReturnValue;
+    #endif
 };
 
 struct CCSController_eventStopFireBurst_Parms  // size 0x4
 {
 public:
+    #ifndef HAGGAR_HOST
     CCSController_eventStopFireBurst_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     unsigned int ReturnValue;  // 0x0
+    #else
+    hg::be<unsigned int> ReturnValue;
+    #endif
 };
 
 template <> class TArray<ActorWrapper *,FDefaultAllocator>  // size 0xC, opaque
@@ -5348,11 +5773,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<ActorWrapper *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     ActorWrapper *const *GetTypedData() const;
     ActorWrapper **GetTypedData();
     ActorWrapper *const *GetData() const;
@@ -5402,11 +5822,19 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     ActorWrapper *const &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<ActorWrapper *,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
@@ -5417,11 +5845,6 @@ public:
     {
         AllocatorNeedsElementType = 0,
     };
-    TArray(const TArray<CCSGameCover,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
     const CCSGameCover *GetTypedData() const;
     CCSGameCover *GetTypedData();
     const CCSGameCover *GetData() const;
@@ -5471,18 +5894,24 @@ public:
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
-private:
+HG_PRIVATE:
     const CCSGameCover &DebugGet(int) const;
-protected:
+HG_PROTECTED:
     void DestructItems(int, int);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    TArray(const TArray<CCSGameCover,FDefaultAllocator> &);
+    TArray(int);
+    TArray(ENoInit);
+    TArray();
+    ~TArray();
+    #endif
+HG_PRIVATE:
     unsigned int TArrayData[0x3];
 };
 
 class CCSNorman  // size 0x2C
 {
-private:
-    CCSNorman();
 public:
     void reset();
     static CCSNorman *getInstance();
@@ -5498,9 +5927,13 @@ public:
     void CountBrainlessCover(AUDKPawn *);
     void VacateAllBrainlessCover(AUDKPawn *);
     bool IsAlertedEnemyInRange(AActor *, float);
-private:
-    static CCSNorman *instance;
+    #ifndef HAGGAR_HOST
+HG_PRIVATE:
+    CCSNorman();
 public:
+    #endif
+    #ifndef HAGGAR_HOST
+    static CCSNorman *instance;
     CCSPSTargetAwareness *pFirstTargeter;  // 0x0
     TArray<ActorWrapper *,FDefaultAllocator> m_ThreatTargetsMasterList;  // 0x4
     CCSPSCover *pFirstCoverSeeker;  // 0x10
@@ -5508,6 +5941,16 @@ public:
     int m_ThreatTargetsMasterListRefCount;  // 0x20
     int m_CoverMasterListRefCount;  // 0x24
     ACoverLink *FirstCoverLink;  // 0x28
+    #else
+    static hg::gptr<CCSNorman> (&instance);
+    hg::gptr<CCSPSTargetAwareness> pFirstTargeter;
+    TArray<ActorWrapper *,FDefaultAllocator> m_ThreatTargetsMasterList;
+    hg::gptr<CCSPSCover> pFirstCoverSeeker;
+    TArray<CCSGameCover,FDefaultAllocator> m_CoverMasterList;
+    hg::be<int> m_ThreatTargetsMasterListRefCount;
+    hg::be<int> m_CoverMasterListRefCount;
+    hg::gptr<ACoverLink> FirstCoverLink;
+    #endif
 };
 
 class GripBrainSystem : public GripVHeapObject  // size 0xC, opaque
@@ -5519,24 +5962,26 @@ public:
         AS_INACTIVE = 1,
         AS_DEACTIVATING = 2,
     };
-    virtual void Initialize(const GripSystemConfig *);
-    virtual void Finalize();
-    virtual void FlagAsUsed();
-    virtual void Activate();
-    virtual void Deactivate();
-    virtual void Tick(float) = 0;
-    virtual bool TickBudget(float, int &);
-    virtual int GetId() const;
-    virtual int GetFamily() const;
-    virtual void DrawHUD(GripHUDRenderer *, int &);
-    virtual void DrawScene(IGripSceneRenderer *);
-    GripBrainSystem();
-    virtual ~GripBrainSystem();
+    HG_VIRTUAL void Initialize(const GripSystemConfig *);
+    HG_VIRTUAL void Finalize();
+    HG_VIRTUAL void FlagAsUsed();
+    HG_VIRTUAL void Activate();
+    HG_VIRTUAL void Deactivate();
+    HG_VIRTUAL void Tick(float) HG_PURE;
+    HG_VIRTUAL bool TickBudget(float, int &);
+    HG_VIRTUAL int GetId() const;
+    HG_VIRTUAL int GetFamily() const;
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
+    HG_VIRTUAL void DrawScene(IGripSceneRenderer *);
     GripBrainSystem::EActivationState GetState() const;
     bool IsInStasis() const;
     bool IsUsed() const;
     void OnTickCycleCompleted();
-private:
+    #ifndef HAGGAR_HOST
+    GripBrainSystem();
+    HG_VIRTUAL ~GripBrainSystem();
+    #endif
+HG_PRIVATE:
     unsigned int GripBrainSystemData[0x2];
 };
 
@@ -5550,13 +5995,15 @@ public:
         SST_COVER = 2,
         SST_NUM_OF = 3,
     };
-    CCSSensorSystem(CCSBrain *);
-    virtual void Initialize(const GripSystemConfig *);
+    HG_VIRTUAL void Initialize(const GripSystemConfig *);
     static int SGetFamily();
-    virtual int GetFamily() const;
+    HG_VIRTUAL int GetFamily() const;
     void BecomeAware(bool);
     void AlertFriends();
-private:
+    #ifndef HAGGAR_HOST
+    CCSSensorSystem(CCSBrain *);
+    #endif
+HG_PRIVATE:
     unsigned int CCSSensorSystemData[0x1];
 };
 
@@ -5566,26 +6013,24 @@ struct GripSystemConfig : public GripVHeapObject  // size 0x4, opaque
 
 struct CCSSystemsConfig : public GripSystemConfig  // size 0x34, opaque
 {
-private:
+HG_PRIVATE:
     unsigned int CCSSystemsConfigData[0xC];
 };
 
 class CCSPSCover : public CCSSensorSystem  // size 0x50
 {
 public:
-    CCSPSCover(CCSBrain *);
-    virtual ~CCSPSCover();
-    virtual void Initialize(const GripSystemConfig *);
-    virtual void Finalize();
+    HG_VIRTUAL void Initialize(const GripSystemConfig *);
+    HG_VIRTUAL void Finalize();
     void AddCover(ACoverLink *);
     void AddCover(CCSGameCover &);
     void RemoveCover(ACoverLink *);
     void RemoveCover(CCSGameCover &);
-    virtual void Tick(float);
-    virtual bool TickBudget(float, int &);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL bool TickBudget(float, int &);
     static int SGetId();
-    virtual int GetId() const;
-private:
+    HG_VIRTUAL int GetId() const;
+HG_PRIVATE:
     void LowCostPerception();
     void ResetCoverForLowCostPerception();
     void ComputeDistanceToTarget();
@@ -5601,18 +6046,26 @@ private:
     bool HasValidAttackAngle(ICCSMeatPuppet *, const CCSCover &, const Grip_Rotation &, const CCSTarget *);
     float GetCurrentTargetDistance(const CCSCover &);
 public:
+    #ifndef HAGGAR_HOST
+    CCSPSCover(CCSBrain *);
+    HG_VIRTUAL ~CCSPSCover();
+    #endif
+    #ifndef HAGGAR_HOST
     CCSPSCover *pNextCoverSeeker;  // 0x10
     int m_coverIdx;  // 0x14
     CCSSystemsConfig m_config;  // 0x18
     CCSCoverRenderingComponent *m_pDebugComponent;  // 0x4C
+    #else
+    hg::gptr<CCSPSCover> pNextCoverSeeker;
+    hg::be<int> m_coverIdx;
+    CCSSystemsConfig m_config;
+    hg::gptr<CCSCoverRenderingComponent> m_pDebugComponent;
+    #endif
 };
 
 template <> class Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > : public GripVHeapObject  // size 0x10, opaque
 {
 public:
-    Grip_Array(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
-    Grip_Array(const int);
-    virtual ~Grip_Array();
     Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &operator=(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
     void Clone(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
     void Empty();
@@ -5630,14 +6083,23 @@ public:
     void RemoveItem(int);
     void RemoveItemItem(const CCSCharacter &);
     CCSCharacter *GetData();
-protected:
+HG_PROTECTED:
     void CloneContainer(CCSCharacter *, int, int);
     void DestructItems(int, int);
     void ResizeTo(int);
     void DeleteContainerContent();
 public:
+    #ifndef HAGGAR_HOST
+    Grip_Array(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
+    Grip_Array(const int);
+    HG_VIRTUAL ~Grip_Array();
+    #endif
+    #ifndef HAGGAR_HOST
     static const int increment;
-private:
+    #else
+    static const hg::be<int> (&increment);
+    #endif
+HG_PRIVATE:
     unsigned int Grip_ArrayData[0x3];
 };
 
@@ -5647,20 +6109,21 @@ public:
     struct Config  // size 0x28, opaque
     {
     public:
+        #ifndef HAGGAR_HOST
         Config();
-    private:
+        #endif
+    HG_PRIVATE:
         unsigned int ConfigData[0xA];
     };
-    CCSPSTargetAwareness(CCSBrain *);
-    virtual void Initialize(const GripSystemConfig *);
-    virtual void Finalize();
-    virtual void Tick(float);
-    virtual bool TickBudget(float, int &);
+    HG_VIRTUAL void Initialize(const GripSystemConfig *);
+    HG_VIRTUAL void Finalize();
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL bool TickBudget(float, int &);
     static int SGetId();
-    virtual int GetId() const;
+    HG_VIRTUAL int GetId() const;
     void AddThreatTarget(AActor *);
     void RemoveThreatTarget(AActor *);
-private:
+HG_PRIVATE:
     void UpdateTargetList();
     void UpdateTargetListsByRange();
     void ComputeLowCostAwareness(float);
@@ -5679,6 +6142,10 @@ private:
     void UpdateCurrentTarget();
     void AlertFriends();
 public:
+    #ifndef HAGGAR_HOST
+    CCSPSTargetAwareness(CCSBrain *);
+    #endif
+    #ifndef HAGGAR_HOST
     CCSPSTargetAwareness *pNextTargeter;  // 0x10
     int m_targetIdx;  // 0x14
     int m_vehicleIdx;  // 0x18
@@ -5687,6 +6154,16 @@ public:
     CCSPSTargetAwareness::Config m_config;  // 0x20
     Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > m_vehicles;  // 0x48
     CCSTargetRenderingComponent *m_pDebugComponent;  // 0x58
+    #else
+    hg::gptr<CCSPSTargetAwareness> pNextTargeter;
+    hg::be<int> m_targetIdx;
+    hg::be<int> m_vehicleIdx;
+    bool m_curTargetIsCamoed;
+    char _pad0[0x3];
+    CCSPSTargetAwareness::Config m_config;
+    Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > m_vehicles;
+    hg::gptr<CCSTargetRenderingComponent> m_pDebugComponent;
+    #endif
 };
 
 class GripRBTNode : public GripVHeapObject  // size 0x64, opaque
@@ -5714,26 +6191,24 @@ public:
         ER_NOT_READY = 6,
         ER_MAX = 7,
     };
-    virtual void GripBTInitialize();
-    virtual void Delete();
-    virtual bool TestPreCondition(IGripBTInterface *);
-protected:
-    virtual GripRBTNode::EBTEvaluationResult EvaluateInternal(IGripBTInterface *, GripBTStack *);
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual void GameEventRegistration(GripGameEventHandler &);
+    HG_VIRTUAL void GripBTInitialize();
+    HG_VIRTUAL void Delete();
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTEvaluationResult EvaluateInternal(IGripBTInterface *, GripBTStack *);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL void GameEventRegistration(GripGameEventHandler &);
 public:
-    virtual void SurveyUsedBBMembers(GripBlackboard *);
-    virtual void GetUsedControlSystems(GripBTSystemFlags &);
-    virtual GripRBTNode::EBTEvaluationResult Evaluate(IGripBTInterface *, GripBTStack *);
-    virtual GripRBTNode::EBTExecutionResult Execute(IGripBTInterface *, GripBTStack *, bool);
-    virtual EGripBTNodeType GetType();
-    virtual EGripBTNodeFamily GetFamily();
-    virtual float GetWeight(IGripBTInterface *);
-    GripRBTNode();
-    virtual ~GripRBTNode();
+    HG_VIRTUAL void SurveyUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL void GetUsedControlSystems(GripBTSystemFlags &);
+    HG_VIRTUAL GripRBTNode::EBTEvaluationResult Evaluate(IGripBTInterface *, GripBTStack *);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult Execute(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL EGripBTNodeFamily GetFamily();
+    HG_VIRTUAL float GetWeight(IGripBTInterface *);
     void InitiateGameEventRegistration(GripGameEventHandler &);
     int GetChildCount() const;
     bool AddChild(GripRBTNode *);
@@ -5746,10 +6221,8 @@ public:
     int GetCardinality() const;
     void SetAsContextSwitch(bool);
     bool IsContextSwitch() const;
-    static void *operator new(unsigned int);
-    static void operator delete(void *);
     void Serialize(GripSerializer *);
-private:
+HG_PRIVATE:
     Grip::String GetNodeTypeLabel();
 public:
     GripRBTNode::EBTExecutionResult GetExecutionResultVisualization() const;
@@ -5757,24 +6230,34 @@ public:
     int GetNodeID() const;
     void SetName(Grip::String);
     Grip::String GetJSONRepresentation();
-protected:
+    #ifndef HAGGAR_HOST
+    GripRBTNode();
+    HG_VIRTUAL ~GripRBTNode();
+    static void *operator new(unsigned int);
+    static void operator delete(void *);
+    #endif
+    #ifndef HAGGAR_HOST
     static int ms_IDCounter;
     static GripRBTAllocator *ms_pAllocator;
-private:
+    #else
+    static hg::be<int> (&ms_IDCounter);
+    static hg::gptr<GripRBTAllocator> (&ms_pAllocator);
+    #endif
+HG_PRIVATE:
     unsigned int GripRBTNodeData[0x18];
 };
 
 class GripRBTBehavior : public GripRBTNode  // size 0x64, opaque
 {
 public:
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
-    virtual bool TestPreCondition(IGripBTInterface *);
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
-    virtual EGripBTNodeType GetType();
-    virtual EGripBTNodeFamily GetFamily();
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL EGripBTNodeFamily GetFamily();
 };
 
 class CCSRBTEncircleTarget : public GripRBTBehavior  // size 0x84, opaque
@@ -5787,20 +6270,22 @@ public:
         EBTEncircleTargetShootState_Delay = 2,
         EBTEncircleTargetShootState_Done = 3,
     };
-    CCSRBTEncircleTarget();
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
 public:
     void SetFireChance(float);
     void SetFireBurstPerShot(int);
     void SetDelayBetweenBursts(float);
     void SetDirectionFlags(bool, bool);
     void SetForceFire(bool);
-private:
+    #ifndef HAGGAR_HOST
+    CCSRBTEncircleTarget();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTEncircleTargetData[0x8];
 };
 
@@ -5817,67 +6302,85 @@ public:
         GREATER_THAN_OR_EQUAL_TO = 5,
         BTConditionOperator_MAX = 6,
     };
-    virtual EGripBTNodeType GetType();
-    virtual EGripBTNodeFamily GetFamily();
-protected:
-    virtual GripRBTNode::EBTEvaluationResult EvaluateInternal(IGripBTInterface *, GripBTStack *);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL EGripBTNodeFamily GetFamily();
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTEvaluationResult EvaluateInternal(IGripBTInterface *, GripBTStack *);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
 };
 
 class GripRBTBooleanCondition : public GripRBTCondition  // size 0x68, opaque
 {
 public:
-    GripRBTBooleanCondition();
     void SetNegate(bool);
-private:
+    #ifndef HAGGAR_HOST
+    GripRBTBooleanCondition();
+    #endif
+HG_PRIVATE:
     unsigned int GripRBTBooleanConditionData[0x1];
 };
 
 class CCSRBTEnemyAware : public GripRBTBooleanCondition  // size 0x68, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 template <> class GripRBTNumericCondition<int> : public GripRBTCondition  // size 0x70
 {
 public:
-    GripRBTNumericCondition();
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
     void SetOperator(GripRBTCondition::EOperator);
     void SetThreshold(int);
     void SetValue(int);
+    #ifndef HAGGAR_HOST
+    GripRBTNumericCondition();
+    #endif
+    #ifndef HAGGAR_HOST
     GripRBTCondition::EOperator m_operator;  // 0x64
     int m_threshold;  // 0x68
     int m_value;  // 0x6C
+    #else
+    hg::be<GripRBTCondition::EOperator> m_operator;
+    hg::be<int> m_threshold;
+    hg::be<int> m_value;
+    #endif
 };
 
 class CCSRBTEnemyClosestRange : public GripRBTNumericCondition<int>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 template <> class GripRBTNumericCondition<float> : public GripRBTCondition  // size 0x70
 {
 public:
-    GripRBTNumericCondition();
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
     void SetOperator(GripRBTCondition::EOperator);
     void SetThreshold(float);
     void SetValue(float);
+    #ifndef HAGGAR_HOST
+    GripRBTNumericCondition();
+    #endif
+    #ifndef HAGGAR_HOST
     GripRBTCondition::EOperator m_operator;  // 0x64
     float m_threshold;  // 0x68
     float m_value;  // 0x6C
+    #else
+    hg::be<GripRBTCondition::EOperator> m_operator;
+    hg::be<float> m_threshold;
+    hg::be<float> m_value;
+    #endif
 };
 
 class CCSRBTEnemyLowestLKPAge : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTMoveTo : public GripRBTBehavior  // size 0xA4, opaque
@@ -5890,12 +6393,11 @@ public:
         EBTMoveToShootState_Delay = 2,
         EBTMoveToShootState_Done = 3,
     };
-    CCSRBTMoveTo();
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
 public:
     void SetSpeed(CCS::EMovementSpeed);
     void SetAlertness(CCS::EAlertnessState);
@@ -5910,8 +6412,13 @@ public:
     void SetPlayerTargetWeight(float);
     void SetReactiveTargetWeight(float);
     void SetObjectiveTargetWeight(float);
-private:
+HG_PRIVATE:
     CCSTarget *GetSecondaryTarget(IGripBTInterface *);
+public:
+    #ifndef HAGGAR_HOST
+    CCSRBTMoveTo();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTMoveToData[0x10];
 };
 
@@ -5925,68 +6432,76 @@ public:
         MoveToCover_TakingCover = 2,
         MoveToCover_ExitingCover = 3,
     };
-protected:
-    virtual CCSCover FindBestCover(IGripBTInterface *) const;
-public:
-    CCSRBTMoveToCover();
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL CCSCover FindBestCover(IGripBTInterface *) const;
     GripRBTNode::EBTExecutionResult StartMoveToCover(IGripBTInterface *);
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
     bool MovingToCover(CCSBlackboard *);
     void EnterCover(CCSBlackboard *, CCSAFFactory *, GripAFScheduler *);
     void ExitCover(CCSAFFactory *, GripAFScheduler *);
-private:
+public:
+    #ifndef HAGGAR_HOST
+    CCSRBTMoveToCover();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTMoveToCoverData[0xC];
 };
 
 class CCSRBTMoveToBestCover : public CCSRBTMoveToCover  // size 0xDC, opaque
 {
 public:
-    CCSRBTMoveToBestCover();
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-protected:
-    virtual CCSCover FindBestCover(IGripBTInterface *) const;
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+HG_PROTECTED:
+    HG_VIRTUAL CCSCover FindBestCover(IGripBTInterface *) const;
 public:
     void SetIdealShootingDistance(float);
     void SetExcludeCurrentCover(bool);
-private:
+    #ifndef HAGGAR_HOST
+    CCSRBTMoveToBestCover();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTMoveToBestCoverData[0x2];
 };
 
 class CCSRBTMoveToClosestCover : public CCSRBTMoveToCover  // size 0xD4, opaque
 {
+HG_PROTECTED:
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL CCSCover FindBestCover(IGripBTInterface *) const;
 public:
+    #ifndef HAGGAR_HOST
     CCSRBTMoveToClosestCover();
-protected:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual CCSCover FindBestCover(IGripBTInterface *) const;
+    #endif
 };
 
 class CCSRBTMoveToInitialCover : public CCSRBTMoveToCover  // size 0xD4, opaque
 {
-protected:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual CCSCover FindBestCover(IGripBTInterface *) const;
+HG_PROTECTED:
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL CCSCover FindBestCover(IGripBTInterface *) const;
 };
 
 class CCSRBTMoveToTether : public CCSRBTMoveTo  // size 0xE0, opaque
 {
 public:
-    CCSRBTMoveToTether();
-    virtual bool TestPreCondition(IGripBTInterface *);
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
     void StartMoveToSeat(IGripBTInterface *);
     void UpdateTetherTarget(AActor *);
     bool TetherIsInVehicle();
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
-private:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
+public:
+    #ifndef HAGGAR_HOST
+    CCSRBTMoveToTether();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTMoveToTetherData[0xF];
 };
 
@@ -5998,16 +6513,20 @@ public:
         Search_MovingToLKP = 0,
         Search_MovingToRandomLocation = 1,
     };
-    CCSRBTSearch();
-    virtual bool TestPreCondition(IGripBTInterface *);
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-private:
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+HG_PRIVATE:
     void MoveToLKP(IGripBTInterface *);
     void MoveToRandomLocation(IGripBTInterface *);
     void FindNavigationPoints();
+public:
+    #ifndef HAGGAR_HOST
+    CCSRBTSearch();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTSearchData[0xB];
 };
 
@@ -6024,15 +6543,17 @@ public:
         Algorithm_Closest_Entry_Vehicle = 5,
         Algorithm_None = 6,
     };
-    CCSRBTSelectTarget();
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
 public:
     void SetSelectionAlgo(CCSRBTSelectTarget::EAlgorithm);
     void SetTargetName(FString);
-private:
+    #ifndef HAGGAR_HOST
+    CCSRBTSelectTarget();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTSelectTargetData[0x4];
 };
 
@@ -6045,17 +6566,19 @@ public:
         BTShootState_Shooting = 1,
         BTShootState_Delay = 2,
     };
-    CCSRBTShoot();
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
 public:
     void SetFireBurstPerShot(int);
     void SetDelayBetweenBursts(float);
     void SetChargedShotChance(float);
-private:
+    #ifndef HAGGAR_HOST
+    CCSRBTShoot();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTShootData[0x7];
 };
 
@@ -6072,21 +6595,25 @@ public:
         BTCoverShootState_ReturningToCover = 5,
         BTCoverShootState_ExitingCover = 6,
     };
-    CCSRBTShootFromCover();
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
 public:
     void SetFireBurstPerShot(int);
     void SetDelayBetweenBursts(float);
-private:
+HG_PRIVATE:
     int GetInCover(CCSTarget *, CCSCover *, CCSAFFactory *, GripAFScheduler *);
     int GetOutCover(CCSTarget *, CCSCover *, CCSAFFactory *, GripAFScheduler *);
     int ExitCover(CCSAFFactory *, GripAFScheduler *);
     int FireBurst(CCSAOFireBurst &, CCSAFFactory *, GripAFScheduler *);
+public:
+    #ifndef HAGGAR_HOST
+    CCSRBTShootFromCover();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTShootFromCoverData[0x8];
 };
 
@@ -6100,13 +6627,12 @@ public:
         EBTStrafeTargetShootState_Delay = 2,
         EBTStrafeTargetShootState_Done = 3,
     };
-    CCSRBTStrafeTarget();
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-    virtual void ExecutePostInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+    HG_VIRTUAL void ExecutePostInternal(IGripBTInterface *, bool);
 public:
     void SetFireChance(float);
     void SetChargedShotChance(float);
@@ -6114,168 +6640,180 @@ public:
     void SetDelayBetweenBursts(float);
     void SetDirectionFlags(bool, bool, bool, bool);
     CCSTarget *GetSecondaryTarget(IGripBTInterface *);
-private:
+    #ifndef HAGGAR_HOST
+    CCSRBTStrafeTarget();
+    #endif
+HG_PRIVATE:
     unsigned int CCSRBTStrafeTargetData[0x9];
 };
 
 class CCSRBTTargetAngle : public GripRBTBooleanCondition  // size 0x6C, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
     void SetActiveZones(bool, bool, bool, bool);
-private:
+HG_PRIVATE:
     unsigned int CCSRBTTargetAngleData[0x1];
 };
 
 class CCSRBTTargetClear : public GripRBTBooleanCondition  // size 0x68, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTargetInCover : public GripRBTBooleanCondition  // size 0x68, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTargetKnockedDown : public GripRBTBooleanCondition  // size 0x68, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTargetRange : public GripRBTNumericCondition<int>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTargetShootable : public GripRBTBooleanCondition  // size 0x68, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTargetVisible : public GripRBTBooleanCondition  // size 0x68, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceAimedAt : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceBecameAware : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceDamage : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceEvent : public GripRBTNumericCondition<float>  // size 0x7C, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
     void SetEventType(EEventType);
     void SetActorClass(UClass *);
     void SetMaxDistance(float);
-private:
+HG_PRIVATE:
     unsigned int CCSRBTTimeSinceEventData[0x3];
 };
 
 class CCSRBTTimeSinceGrenadeStuck : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceStaggered : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceSuccessfulAttack : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceTargetCamoed : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceThreatChanged : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTTimeSinceThreatened : public GripRBTNumericCondition<float>  // size 0x70, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTVisibleToPlayerCamera : public GripRBTBooleanCondition  // size 0x68, opaque
 {
 public:
-    virtual void FlagUsedBBMembers(GripBlackboard *);
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL void FlagUsedBBMembers(GripBlackboard *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
 class CCSRBTWaitInCover : public GripRBTBehavior  // size 0x64, opaque
 {
 public:
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+public:
+    #ifndef HAGGAR_HOST
     CCSRBTWaitInCover();
-    virtual bool TestPreCondition(IGripBTInterface *);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, bool);
+    #endif
 };
 
 struct CoverLink_eventSetDisabled_Parms  // size 0x4
 {
 public:
+    #ifndef HAGGAR_HOST
     CoverLink_eventSetDisabled_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     unsigned int bNewDisabled;  // 0x0
+    #else
+    hg::be<unsigned int> bNewDisabled;
+    #endif
 };
 
 class FOutputDevice  // size 0x10, opaque
 {
+    HG_VFPTR
 public:
-    virtual ~FOutputDevice();
-    virtual void Serialize(const wchar_t *, EName);
-    virtual void Flush();
-    virtual void TearDown();
-    FOutputDevice(unsigned int);
+    HG_XDK(HG_VIRTUAL ~FOutputDevice();)
+    HG_VIRTUAL void Serialize(const wchar_t *, EName);
+    HG_VIRTUAL void Flush();
+    HG_VIRTUAL void TearDown();
     void SetSuppressEventTag(unsigned int);
     unsigned int GetSuppressEventTag();
     void SetAutoEmitLineTerminator(unsigned int);
@@ -6288,18 +6826,18 @@ public:
     void Logf__VA(const wchar_t *, ...);
     void Logf(EName, const wchar_t *);
     void Logf(const wchar_t *);
-private:
+    #ifndef HAGGAR_HOST
+    FOutputDevice(unsigned int);
+    #endif
+HG_PRIVATE:
     unsigned int FOutputDeviceData[0x3];
 };
 
 struct FFrame : public FOutputDevice  // size 0x28
 {
 public:
-    FFrame(UObject *, UStruct *, int, void *, FFrame *);
-    FFrame(UObject *);
-    virtual ~FFrame();
     void Step(UObject *, void *const);
-    virtual void Serialize(const wchar_t *, EName);
+    HG_VIRTUAL void Serialize(const wchar_t *, EName);
     int ReadInt();
     float ReadFloat();
     FName ReadName();
@@ -6308,12 +6846,26 @@ public:
     unsigned short ReadCodeSkipCount();
     unsigned short ReadVariableSize(UField **);
     FString GetStackTrace() const;
+    #ifndef HAGGAR_HOST
+    FFrame(UObject *, UStruct *, int, void *, FFrame *);
+    FFrame(UObject *);
+    HG_VIRTUAL ~FFrame();
+    #endif
+    #ifndef HAGGAR_HOST
     UStruct *Node;  // 0x10
     UObject *Object;  // 0x14
     unsigned char *Code;  // 0x18
     unsigned char *Locals;  // 0x1C
     FFrame *PreviousFrame;  // 0x20
     FOutParmRec *OutParms;  // 0x24
+    #else
+    hg::gptr<UStruct> Node;
+    hg::gptr<UObject> Object;
+    hg::gptr<unsigned char> Code;
+    hg::gptr<unsigned char> Locals;
+    hg::gptr<FFrame> PreviousFrame;
+    hg::gptr<FOutParmRec> OutParms;
+    #endif
 };
 
 namespace Grip {
@@ -6325,7 +6877,7 @@ public:
     void InsertNodeAfter(Grip::MemoryHeap *);
     void InsertNodeBefore(Grip::MemoryHeap *);
     void Alloc_MoveTo(Grip::ListNode<Grip::MemoryHeap> *);
-private:
+HG_PRIVATE:
     unsigned int ListNodeData[0x2];
 };
 }
@@ -6355,7 +6907,11 @@ public:
     static void Free(void *);
     static Grip::MemoryHeap *GetHeapByAddress(const void *);
     static bool DetectMemoryLeaks();
+    #ifndef HAGGAR_HOST
     static Grip::MemoryHeap *pGlobalHeap;
+    #else
+    static hg::gptr<Grip::MemoryHeap> (&pGlobalHeap);
+    #endif
 };
 }
 
@@ -6393,45 +6949,44 @@ public:
     struct LimitHandler;
     struct HeapTracer;
     struct RootStats;
-protected:
-    virtual ~MemoryHeap();
+HG_PROTECTED:
+    HG_XDK(HG_VIRTUAL ~MemoryHeap();)
 public:
-    virtual void CreateArena(unsigned int, Grip::SysAllocPaged *) = 0;
-    virtual void DestroyArena(unsigned int) = 0;
-    virtual bool ArenaIsEmpty(unsigned int) = 0;
-    virtual Grip::MemoryHeap *CreateHeap(const char *, const Grip::MemoryHeap::HeapDesc &) = 0;
-    virtual void SetLimitHandler(Grip::MemoryHeap::LimitHandler *) = 0;
-    virtual void SetLimit(unsigned int) = 0;
-    virtual void AddRef() = 0;
-    virtual void Release() = 0;
-    virtual void *Alloc(unsigned int, const Grip::AllocInfo *) = 0;
-    virtual void *Alloc(unsigned int, unsigned int, const Grip::AllocInfo *) = 0;
-    virtual void *Realloc(void *, unsigned int) = 0;
-    virtual void Free(void *) = 0;
-    virtual void *AllocAutoHeap(const void *, unsigned int, const Grip::AllocInfo *) = 0;
-    virtual void *AllocAutoHeap(const void *, unsigned int, unsigned int, const Grip::AllocInfo *) = 0;
-    virtual Grip::MemoryHeap *GetAllocHeap(const void *) = 0;
-    virtual unsigned int GetUsableSize(const void *) = 0;
-    virtual void *AllocSysDirect(unsigned int) = 0;
-    virtual void FreeSysDirect(void *, unsigned int) = 0;
-    virtual bool GetStats(Grip::StatBag *) = 0;
-    virtual unsigned int GetFootprint() const = 0;
-    virtual unsigned int GetTotalFootprint() const = 0;
-    virtual unsigned int GetUsedSpace() const = 0;
-    virtual unsigned int GetTotalUsedSpace() const = 0;
-    virtual void GetRootStats(Grip::MemoryHeap::RootStats *) = 0;
-    virtual void VisitMem(Grip::Heap::MemVisitor *, unsigned int) = 0;
-    virtual void VisitRootSegments(Grip::Heap::SegVisitor *) = 0;
-    virtual void VisitHeapSegments(Grip::Heap::SegVisitor *) const = 0;
-    virtual void SetTracer(Grip::MemoryHeap::HeapTracer *) = 0;
-protected:
-    virtual void destroyItself() = 0;
-    virtual void ultimateCheck() = 0;
-    virtual void releaseCachedMem() = 0;
-    virtual bool dumpMemoryLeaks() = 0;
-    virtual void checkIntegrity() const = 0;
-    virtual void getUserDebugStats(Grip::MemoryHeap::RootStats *) const = 0;
-    MemoryHeap();
+    HG_VIRTUAL void CreateArena(unsigned int, Grip::SysAllocPaged *) HG_PURE;
+    HG_VIRTUAL void DestroyArena(unsigned int) HG_PURE;
+    HG_VIRTUAL bool ArenaIsEmpty(unsigned int) HG_PURE;
+    HG_VIRTUAL Grip::MemoryHeap *CreateHeap(const char *, const Grip::MemoryHeap::HeapDesc &) HG_PURE;
+    HG_VIRTUAL void SetLimitHandler(Grip::MemoryHeap::LimitHandler *) HG_PURE;
+    HG_VIRTUAL void SetLimit(unsigned int) HG_PURE;
+    HG_VIRTUAL void AddRef() HG_PURE;
+    HG_VIRTUAL void Release() HG_PURE;
+    HG_VIRTUAL void *Alloc(unsigned int, const Grip::AllocInfo *) HG_PURE;
+    HG_VIRTUAL void *Alloc(unsigned int, unsigned int, const Grip::AllocInfo *) HG_PURE;
+    HG_VIRTUAL void *Realloc(void *, unsigned int) HG_PURE;
+    HG_VIRTUAL void Free(void *) HG_PURE;
+    HG_VIRTUAL void *AllocAutoHeap(const void *, unsigned int, const Grip::AllocInfo *) HG_PURE;
+    HG_VIRTUAL void *AllocAutoHeap(const void *, unsigned int, unsigned int, const Grip::AllocInfo *) HG_PURE;
+    HG_VIRTUAL Grip::MemoryHeap *GetAllocHeap(const void *) HG_PURE;
+    HG_VIRTUAL unsigned int GetUsableSize(const void *) HG_PURE;
+    HG_VIRTUAL void *AllocSysDirect(unsigned int) HG_PURE;
+    HG_VIRTUAL void FreeSysDirect(void *, unsigned int) HG_PURE;
+    HG_VIRTUAL bool GetStats(Grip::StatBag *) HG_PURE;
+    HG_VIRTUAL unsigned int GetFootprint() const HG_PURE;
+    HG_VIRTUAL unsigned int GetTotalFootprint() const HG_PURE;
+    HG_VIRTUAL unsigned int GetUsedSpace() const HG_PURE;
+    HG_VIRTUAL unsigned int GetTotalUsedSpace() const HG_PURE;
+    HG_VIRTUAL void GetRootStats(Grip::MemoryHeap::RootStats *) HG_PURE;
+    HG_VIRTUAL void VisitMem(Grip::Heap::MemVisitor *, unsigned int) HG_PURE;
+    HG_VIRTUAL void VisitRootSegments(Grip::Heap::SegVisitor *) HG_PURE;
+    HG_VIRTUAL void VisitHeapSegments(Grip::Heap::SegVisitor *) const HG_PURE;
+    HG_VIRTUAL void SetTracer(Grip::MemoryHeap::HeapTracer *) HG_PURE;
+HG_PROTECTED:
+    HG_VIRTUAL void destroyItself() HG_PURE;
+    HG_VIRTUAL void ultimateCheck() HG_PURE;
+    HG_VIRTUAL void releaseCachedMem() HG_PURE;
+    HG_VIRTUAL bool dumpMemoryLeaks() HG_PURE;
+    HG_VIRTUAL void checkIntegrity() const HG_PURE;
+    HG_VIRTUAL void getUserDebugStats(Grip::MemoryHeap::RootStats *) const HG_PURE;
 public:
     static void InitPT(Grip::SysAllocPaged *);
     static void InitMH(Grip::SysAlloc *);
@@ -6462,7 +7017,12 @@ public:
     void LockAndVisit(Grip::MemoryHeap::HeapVisitor *);
     void CheckIntegrity();
     void ReleaseCachedMem();
-private:
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    MemoryHeap();
+public:
+    #endif
+HG_PRIVATE:
     unsigned int MemoryHeapData[0x18];
 };
 }
@@ -6470,44 +7030,66 @@ private:
 struct GripBTScriptNodeCache_eventCacheAllConditions_Parms  // size 0x4
 {
 public:
+    #ifndef HAGGAR_HOST
     GripBTScriptNodeCache_eventCacheAllConditions_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     UGripBTInterface *BTInterface;  // 0x0
+    #else
+    hg::gptr<UGripBTInterface> BTInterface;
+    #endif
 };
 
 struct GripBTScriptNodeCache_eventInitializeAllNodes_Parms  // size 0x1
 {
 public:
+    #ifndef HAGGAR_HOST
     GripBTScriptNodeCache_eventInitializeAllNodes_Parms(EEventParm);
+    #endif
 };
 
 struct GripBTScriptNodeCache_eventSurveyUsedBBMembers_Parms  // size 0x4
 {
 public:
+    #ifndef HAGGAR_HOST
     GripBTScriptNodeCache_eventSurveyUsedBBMembers_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     UGripBlackboard *Blackboard;  // 0x0
+    #else
+    hg::gptr<UGripBlackboard> Blackboard;
+    #endif
 };
 
 class GripRBTAllocator : public GripVHeapObject  // size 0x10, opaque
 {
 public:
-    virtual void *AllocateAlign(unsigned int);
-    GripRBTAllocator();
-    virtual ~GripRBTAllocator();
+    HG_VIRTUAL void *AllocateAlign(unsigned int);
     bool Reserve(unsigned int);
-private:
+HG_PRIVATE:
     void DeleteMemoryBlock();
 public:
     unsigned int GetAlignedSize(unsigned int);
     void DeallocateAlign(void *);
-private:
+    #ifndef HAGGAR_HOST
+    GripRBTAllocator();
+    HG_VIRTUAL ~GripRBTAllocator();
+    #endif
+HG_PRIVATE:
     unsigned int GripRBTAllocatorData[0x3];
 };
 
 struct GwNavVehicle_eventExecuteVehicleCommand_Parms  // size 0x1
 {
 public:
+    #ifndef HAGGAR_HOST
     GwNavVehicle_eventExecuteVehicleCommand_Parms(EEventParm);
+    #endif
+    #ifndef HAGGAR_HOST
     unsigned char HVC;  // 0x0
+    #else
+    unsigned char HVC;
+    #endif
 };
 
 class HaloRBTKamikaze : public CCSRBTMoveTo  // size 0xD0, opaque
@@ -6520,16 +7102,19 @@ public:
         Chasing = 2,
         Detonating = 3,
     };
-    HaloRBTKamikaze();
-    virtual bool TestPreCondition(IGripBTInterface *);
+    HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
     void SetDetonationDistance(float);
     void SetArmKamikazeAnimName(FName);
     void SetDetonateKamikazeAnimName(FName);
     void SetBlendTimes(float, float);
-protected:
-    virtual GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
-    virtual GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
-private:
+HG_PROTECTED:
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecutePreInternal(IGripBTInterface *, bool);
+    HG_VIRTUAL GripRBTNode::EBTExecutionResult ExecuteInternal(IGripBTInterface *, GripBTStack *, bool);
+public:
+    #ifndef HAGGAR_HOST
+    HaloRBTKamikaze();
+    #endif
+HG_PRIVATE:
     unsigned int HaloRBTKamikazeData[0xB];
 };
 
@@ -6540,30 +7125,36 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual unsigned int AreNativePropertiesIdenticalTo(UComponent *) const;
-private:
+    HG_VIRTUAL unsigned int AreNativePropertiesIdenticalTo(UComponent *) const;
+HG_PRIVATE:
     UComponent &operator=(const UComponent &);
 public:
     static UClass *GetPrivateStaticClassUComponent(const wchar_t *);
     static void InitializePrivateStaticClassUComponent();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UComponent();
-public:
     static void InternalConstructor(void *);
     void LinkToSourceDefaultObject(UComponent *, UClass *, FName);
     void PreSerialize(FArchive &);
     UComponent *ResolveSourceDefaultObject();
     FName GetInstanceMapName() const;
     unsigned int IsInstanced() const;
-    virtual unsigned int GetNativePropertyValues(TMap<FString,FString,FDefaultSetAllocator> &, unsigned long) const;
-    virtual unsigned int IsPendingKill() const;
-    virtual unsigned int IsAComponent() const;
+    HG_VIRTUAL unsigned int GetNativePropertyValues(TMap<FString,FString,FDefaultSetAllocator> &, unsigned long) const;
+    HG_VIRTUAL unsigned int IsPendingKill() const;
+    HG_VIRTUAL unsigned int IsAComponent() const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UComponent();
+public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UComponentData[0x3];
 };
 
@@ -6574,32 +7165,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-protected:
-    virtual void SetParentToWorld(const FMatrix &);
-    virtual void Attach();
-    virtual void UpdateTransform();
-    virtual void Detach(unsigned int);
-    virtual void BeginPlay();
-    virtual void Tick(float);
-    virtual void UpdateChildComponents();
+HG_PROTECTED:
+    HG_VIRTUAL void SetParentToWorld(const FMatrix &);
+    HG_VIRTUAL void Attach();
+    HG_VIRTUAL void UpdateTransform();
+    HG_VIRTUAL void Detach(unsigned int);
+    HG_VIRTUAL void BeginPlay();
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL void UpdateChildComponents();
 public:
-    virtual unsigned int IsValidComponent() const;
-    virtual void InvalidateLightingCache();
-    virtual void InitComponentRBPhys(unsigned int);
-    virtual void SetComponentRBFixed(unsigned int);
-    virtual void TermComponentRBPhys(FRBPhysScene *);
-    virtual unsigned int AllowBeingMarkedPendingKill();
-private:
+    HG_VIRTUAL unsigned int IsValidComponent() const;
+    HG_VIRTUAL void InvalidateLightingCache();
+    HG_VIRTUAL void InitComponentRBPhys(unsigned int);
+    HG_VIRTUAL void SetComponentRBFixed(unsigned int);
+    HG_VIRTUAL void TermComponentRBPhys(FRBPhysScene *);
+    HG_VIRTUAL unsigned int AllowBeingMarkedPendingKill();
+HG_PRIVATE:
     UActorComponent &operator=(const UActorComponent &);
 public:
     static UClass *GetPrivateStaticClassUActorComponent(const wchar_t *);
     static void InitializePrivateStaticClassUActorComponent();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UActorComponent();
-public:
     static void InternalConstructor(void *);
     void ConditionalAttach(FSceneInterface *, AActor *, const FMatrix &);
     void ConditionalUpdateTransform();
@@ -6620,19 +7206,30 @@ public:
     unsigned int IsAttached() const;
     unsigned int NeedsReattach() const;
     unsigned int NeedsUpdateTransform() const;
-    virtual void BeginDestroy();
-    virtual unsigned int NeedsLoadForClient() const;
-    virtual unsigned int NeedsLoadForServer() const;
-    virtual void PreEditChange(UProperty *);
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void BeginDestroy();
+    HG_VIRTUAL unsigned int NeedsLoadForClient() const;
+    HG_VIRTUAL unsigned int NeedsLoadForServer() const;
+    HG_VIRTUAL void PreEditChange(UProperty *);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
     void execSetComponentRBFixed(FFrame &, void *const);
     void execSetTickGroup(FFrame &, void *const);
     void SetTickGroup(unsigned char);
     void execForceUpdate(FFrame &, void *const);
     void execDetachFromAny(FFrame &, void *const);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UActorComponent();
+public:
+    #endif
     typedef UComponent Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UActorComponentData[0x4];
 };
 
@@ -6643,32 +7240,38 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
-    virtual unsigned int CanCreateActor(FString &, unsigned int);
-    virtual void AutoFillFields(USelection *);
-    virtual void ClearFields();
-    virtual FString GetMenuName();
-    virtual AActor *GetDefaultActor();
+    HG_VIRTUAL AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
+    HG_VIRTUAL unsigned int CanCreateActor(FString &, unsigned int);
+    HG_VIRTUAL void AutoFillFields(USelection *);
+    HG_VIRTUAL void ClearFields();
+    HG_VIRTUAL FString GetMenuName();
+    HG_VIRTUAL AActor *GetDefaultActor();
     void eventPostCreateActor(AActor *, const USeqAct_ActorFactory *);
-private:
+HG_PRIVATE:
     UActorFactory &operator=(const UActorFactory &);
 public:
     static UClass *GetPrivateStaticClassUActorFactory(const wchar_t *);
     static void InitializePrivateStaticClassUActorFactory();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UActorFactory();
-public:
     static void InternalConstructor(void *);
     static const wchar_t *StaticConfigName();
-protected:
+HG_PROTECTED:
     unsigned int IsEnoughRoomToSpawnPawn(const FVector *const, const USeqAct_ActorFactory *const) const;
 public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UActorFactory();
+public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UActorFactoryData[0xB];
 };
 
@@ -6679,24 +7282,30 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UActorFactoryAI &operator=(const UActorFactoryAI &);
 public:
     static UClass *GetPrivateStaticClassUActorFactoryAI(const wchar_t *);
     static void InitializePrivateStaticClassUActorFactoryAI();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
+    HG_VIRTUAL unsigned int CanCreateActor(FString &, unsigned int);
+    HG_VIRTUAL AActor *GetDefaultActor();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UActorFactoryAI();
+HG_PROTECTED:
+    HG_VIRTUAL ~UActorFactoryAI();
 public:
-    static void InternalConstructor(void *);
-    virtual AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
-    virtual unsigned int CanCreateActor(FString &, unsigned int);
-    virtual AActor *GetDefaultActor();
+    #endif
     typedef UActorFactory Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UActorFactoryAIData[0xB];
 };
 
@@ -6707,26 +7316,32 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual UAnimNode *GetAnimNode();
-    virtual UMorphNodeBase *GetMorphNodeBase();
-    virtual USkelControlBase *GetSkelControlBase();
-    virtual void DrawNode(FCanvas *, const TArray<UAnimObject *,FDefaultAllocator> &, unsigned int);
-    virtual void OnPaste();
-private:
+    HG_VIRTUAL UAnimNode *GetAnimNode();
+    HG_VIRTUAL UMorphNodeBase *GetMorphNodeBase();
+    HG_VIRTUAL USkelControlBase *GetSkelControlBase();
+    HG_VIRTUAL void DrawNode(FCanvas *, const TArray<UAnimObject *,FDefaultAllocator> &, unsigned int);
+    HG_VIRTUAL void OnPaste();
+HG_PRIVATE:
     UAnimObject &operator=(const UAnimObject &);
 public:
     static UClass *GetPrivateStaticClassUAnimObject(const wchar_t *);
     static void InitializePrivateStaticClassUAnimObject();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UAnimObject();
+HG_PROTECTED:
+    HG_VIRTUAL ~UAnimObject();
 public:
-    static void InternalConstructor(void *);
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UAnimObjectData[0x1];
 };
 
@@ -6737,42 +7352,42 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void PlayAnim(unsigned int, float, float);
-    virtual void StopAnim();
-    virtual void ReplayAnim();
-    virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
-    virtual void DeferredInitAnim();
-    virtual void CallDeferredInitAnim();
-    virtual void AnimSetsUpdated();
-    virtual void PostAnimNodeInstance(UAnimNode *, TMap<UAnimNode *,UAnimNode *,FDefaultSetAllocator> &);
-    virtual void ResetAnimNodeToSource(UAnimNode *);
-    virtual void TickAnim(float);
-    virtual unsigned int CanBlendOutFrom();
-    virtual unsigned int CanBlendTo();
-    virtual void BuildParentNodesArray();
-    virtual void BuildTickArray(TArray<UAnimNode *,FDefaultAllocator> &);
-    virtual void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-    virtual unsigned int GetCachedResults(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &, int);
-    virtual unsigned int ShouldSaveCachedResults();
-    virtual unsigned int ShouldKeepCachedResult();
-    virtual void ClearCachedResult();
-    virtual void OnBecomeRelevant();
-    virtual void OnCeaseRelevant();
-    virtual UAnimTree *GetAnimTree();
-    virtual void SetAnim(FName);
-    virtual void SetPosition(float, unsigned int);
-    virtual void DrawAnimNode(FCanvas *, const TArray<UAnimObject *,FDefaultAllocator> &, unsigned int);
-    virtual FString GetNodeTitle();
-    virtual FIntPoint GetConnectionLocation(int, int);
-    virtual int GetNumSliders() const;
-    virtual ESliderType GetSliderType(int) const;
-    virtual float GetSliderPosition(int, int);
-    virtual void HandleSliderMove(int, int, float);
-    virtual FString GetSliderDrawValue(int);
-    virtual void GetNodesInternal(TArray<UAnimNode *,FDefaultAllocator> &);
-    virtual UAnimNodeSlot *GetAnimNodeSlot();
-    virtual UAnimNodeAimOffset *GetAnimNodeAimOffset();
-    virtual UAnimNodeSequence *GetAnimNodeSequence();
+    HG_VIRTUAL void PlayAnim(unsigned int, float, float);
+    HG_VIRTUAL void StopAnim();
+    HG_VIRTUAL void ReplayAnim();
+    HG_VIRTUAL void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
+    HG_VIRTUAL void DeferredInitAnim();
+    HG_VIRTUAL void CallDeferredInitAnim();
+    HG_VIRTUAL void AnimSetsUpdated();
+    HG_VIRTUAL void PostAnimNodeInstance(UAnimNode *, TMap<UAnimNode *,UAnimNode *,FDefaultSetAllocator> &);
+    HG_VIRTUAL void ResetAnimNodeToSource(UAnimNode *);
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL unsigned int CanBlendOutFrom();
+    HG_VIRTUAL unsigned int CanBlendTo();
+    HG_VIRTUAL void BuildParentNodesArray();
+    HG_VIRTUAL void BuildTickArray(TArray<UAnimNode *,FDefaultAllocator> &);
+    HG_VIRTUAL void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
+    HG_VIRTUAL unsigned int GetCachedResults(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &, int);
+    HG_VIRTUAL unsigned int ShouldSaveCachedResults();
+    HG_VIRTUAL unsigned int ShouldKeepCachedResult();
+    HG_VIRTUAL void ClearCachedResult();
+    HG_VIRTUAL void OnBecomeRelevant();
+    HG_VIRTUAL void OnCeaseRelevant();
+    HG_VIRTUAL UAnimTree *GetAnimTree();
+    HG_VIRTUAL void SetAnim(FName);
+    HG_VIRTUAL void SetPosition(float, unsigned int);
+    HG_VIRTUAL void DrawAnimNode(FCanvas *, const TArray<UAnimObject *,FDefaultAllocator> &, unsigned int);
+    HG_VIRTUAL FString GetNodeTitle();
+    HG_VIRTUAL FIntPoint GetConnectionLocation(int, int);
+    HG_VIRTUAL int GetNumSliders() const;
+    HG_VIRTUAL ESliderType GetSliderType(int) const;
+    HG_VIRTUAL float GetSliderPosition(int, int);
+    HG_VIRTUAL void HandleSliderMove(int, int, float);
+    HG_VIRTUAL FString GetSliderDrawValue(int);
+    HG_VIRTUAL void GetNodesInternal(TArray<UAnimNode *,FDefaultAllocator> &);
+    HG_VIRTUAL UAnimNodeSlot *GetAnimNodeSlot();
+    HG_VIRTUAL UAnimNodeAimOffset *GetAnimNodeAimOffset();
+    HG_VIRTUAL UAnimNodeSequence *GetAnimNodeSequence();
     UAnimNode *FindAnimNode(FName);
     void execFindAnimNode(FFrame &, void *const);
     void execPlayAnim(FFrame &, void *const);
@@ -6781,19 +7396,14 @@ public:
     void eventOnCeaseRelevant();
     void eventOnBecomeRelevant();
     void eventOnInit();
-private:
+HG_PRIVATE:
     UAnimNode &operator=(const UAnimNode &);
 public:
     static UClass *GetPrivateStaticClassUAnimNode(const wchar_t *);
     static void InitializePrivateStaticClassUAnimNode();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UAnimNode();
-public:
     static void InternalConstructor(void *);
-    virtual UAnimNode *GetAnimNode();
+    HG_VIRTUAL UAnimNode *GetAnimNode();
     void GetNodes(TArray<UAnimNode *,FDefaultAllocator> &, bool);
     void GetNodesByClass(TArray<UAnimNode *,FDefaultAllocator> &, UClass *);
     void GetAnimSeqNodes(TArray<UAnimNodeSequence *,FDefaultAllocator> &, FName);
@@ -6801,21 +7411,33 @@ public:
     unsigned int WereAllParentsTicked() const;
     unsigned int IsChildOf(UAnimNode *);
     unsigned int IsChildOf_Internal(UAnimNode *);
-    virtual unsigned int NeedsLoadForClient() const;
-    virtual unsigned int NeedsLoadForServer() const;
-    virtual void DrawNode(FCanvas *, const TArray<UAnimObject *,FDefaultAllocator> &, unsigned int);
-    virtual void OnPaste();
+    HG_VIRTUAL unsigned int NeedsLoadForClient() const;
+    HG_VIRTUAL unsigned int NeedsLoadForServer() const;
+    HG_VIRTUAL void DrawNode(FCanvas *, const TArray<UAnimObject *,FDefaultAllocator> &, unsigned int);
+    HG_VIRTUAL void OnPaste();
     static void FillWithRefPose(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, const TArray<FMeshBone,FDefaultAllocator> &);
     static void FillWithRefPose(TArray<FBoneAtom,FDefaultAllocator> &, const TArray<unsigned char,FDefaultAllocator> &, const TArray<FMeshBone,FDefaultAllocator> &);
     static void EnsureParentsPresent(TArray<unsigned char,FDefaultAllocator> &, USkeletalMesh *);
-    typedef UAnimObject Super;
-private:
-    static UClass *PrivateStaticClass;
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UAnimNode();
 public:
+    #endif
+    typedef UAnimObject Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
     static unsigned int bNodeSearching;
     static int CurrentSearchTag;
     static TArray<UAnimNode *,FDefaultAllocator> NodesRequiringCacheClear;
-private:
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    static hg::be<unsigned int> (&bNodeSearching);
+    static hg::be<int> (&CurrentSearchTag);
+    static TArray<UAnimNode *,FDefaultAllocator> (&NodesRequiringCacheClear);
+    #endif
+HG_PRIVATE:
     unsigned int UAnimNodeData[0x20];
 };
 
@@ -6826,49 +7448,55 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void GetChildBoneAtoms(int, TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-    virtual int Extend2DSlider(FCanvas *, const FIntPoint &, int, unsigned int, int);
-    virtual void OnChildAnimEnd(UAnimNodeSequence *, float, float);
-    virtual void OnAddChild(int);
-    virtual void OnRemoveChild(int);
-    virtual void OnChildAnimChange(int);
-    virtual void RenameChildConnectors();
-    virtual int BlendCurveWeights(const TArray<TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> >,TMemStackAllocator<GMainThreadMemStack,8> > &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-protected:
-    virtual void UpdateChildWeight(int);
+    HG_VIRTUAL void GetChildBoneAtoms(int, TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
+    HG_VIRTUAL int Extend2DSlider(FCanvas *, const FIntPoint &, int, unsigned int, int);
+    HG_VIRTUAL void OnChildAnimEnd(UAnimNodeSequence *, float, float);
+    HG_VIRTUAL void OnAddChild(int);
+    HG_VIRTUAL void OnRemoveChild(int);
+    HG_VIRTUAL void OnChildAnimChange(int);
+    HG_VIRTUAL void RenameChildConnectors();
+    HG_VIRTUAL int BlendCurveWeights(const TArray<TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> >,TMemStackAllocator<GMainThreadMemStack,8> > &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
+HG_PROTECTED:
+    HG_VIRTUAL void UpdateChildWeight(int);
 public:
-    virtual void PlayAnim(unsigned int, float, float);
-    virtual void StopAnim();
-    virtual void ReplayAnim();
-private:
+    HG_VIRTUAL void PlayAnim(unsigned int, float, float);
+    HG_VIRTUAL void StopAnim();
+    HG_VIRTUAL void ReplayAnim();
+HG_PRIVATE:
     UAnimNodeBlendBase &operator=(const UAnimNodeBlendBase &);
 public:
     static UClass *GetPrivateStaticClassUAnimNodeBlendBase(const wchar_t *);
     static void InitializePrivateStaticClassUAnimNodeBlendBase();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UAnimNodeBlendBase();
-public:
     static void InternalConstructor(void *);
-    virtual void CallDeferredInitAnim();
-    virtual void TickAnim(float);
-    virtual void BuildParentNodesArray();
-    virtual void BuildTickArray(TArray<UAnimNode *,FDefaultAllocator> &);
+    HG_VIRTUAL void CallDeferredInitAnim();
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL void BuildParentNodesArray();
+    HG_VIRTUAL void BuildTickArray(TArray<UAnimNode *,FDefaultAllocator> &);
     float GetBlendWeight(float);
     void SetBlendTypeWeights();
-    virtual void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
+    HG_VIRTUAL void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
     void GetMirroredBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, int, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-    virtual void DrawAnimNode(FCanvas *, const TArray<UAnimObject *,FDefaultAllocator> &, unsigned int);
-    virtual FString GetNodeTitle();
-    virtual FIntPoint GetConnectionLocation(int, int);
+    HG_VIRTUAL void DrawAnimNode(FCanvas *, const TArray<UAnimObject *,FDefaultAllocator> &, unsigned int);
+    HG_VIRTUAL FString GetNodeTitle();
+    HG_VIRTUAL FIntPoint GetConnectionLocation(int, int);
     float GetChildWeightTotal();
-    virtual void GetNodesInternal(TArray<UAnimNode *,FDefaultAllocator> &);
-    virtual void OnPaste();
+    HG_VIRTUAL void GetNodesInternal(TArray<UAnimNode *,FDefaultAllocator> &);
+    HG_VIRTUAL void OnPaste();
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UAnimNodeBlendBase();
+public:
+    #endif
     typedef UAnimNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UAnimNodeBlendBaseData[0x8];
 };
 
@@ -6879,34 +7507,40 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void SetActiveChild(int, float);
+    HG_VIRTUAL void SetActiveChild(int, float);
     void execSetActiveChild(FFrame &, void *const);
-private:
+HG_PRIVATE:
     UAnimNodeBlendList &operator=(const UAnimNodeBlendList &);
 public:
     static UClass *GetPrivateStaticClassUAnimNodeBlendList(const wchar_t *);
     static void InitializePrivateStaticClassUAnimNodeBlendList();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
+    HG_VIRTUAL void ResetAnimNodeToSource(UAnimNode *);
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL int GetNumSliders() const;
+    HG_VIRTUAL float GetSliderPosition(int, int);
+    HG_VIRTUAL void HandleSliderMove(int, int, float);
+    HG_VIRTUAL FString GetSliderDrawValue(int);
+    HG_VIRTUAL void OnAddChild(int);
+    HG_VIRTUAL void OnRemoveChild(int);
+    HG_VIRTUAL void OnPaste();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UAnimNodeBlendList();
+HG_PROTECTED:
+    HG_VIRTUAL ~UAnimNodeBlendList();
 public:
-    static void InternalConstructor(void *);
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
-    virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
-    virtual void ResetAnimNodeToSource(UAnimNode *);
-    virtual void TickAnim(float);
-    virtual int GetNumSliders() const;
-    virtual float GetSliderPosition(int, int);
-    virtual void HandleSliderMove(int, int, float);
-    virtual FString GetSliderDrawValue(int);
-    virtual void OnAddChild(int);
-    virtual void OnRemoveChild(int);
-    virtual void OnPaste();
+    #endif
     typedef UAnimNodeBlendBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UAnimNodeBlendListData[0x8];
 };
 
@@ -6917,9 +7551,9 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void MAT_SetAnimPosition(int, FName, float, unsigned int, unsigned int, unsigned int);
-    virtual void MAT_SetAnimWeights(const FAnimSlotInfo &);
-    virtual void SelectedActiveSequence(UAnimNodeSequence *);
+    HG_VIRTUAL void MAT_SetAnimPosition(int, FName, float, unsigned int, unsigned int, unsigned int);
+    HG_VIRTUAL void MAT_SetAnimWeights(const FAnimSlotInfo &);
+    HG_VIRTUAL void SelectedActiveSequence(UAnimNodeSequence *);
     float PlayCustomAnim(FName, float, float, float, unsigned int, unsigned int, float, float);
     unsigned int PlayCustomAnimByDuration(FName, float, float, float, unsigned int, unsigned int);
     FName GetPlayedAnimation();
@@ -6942,43 +7576,49 @@ public:
     void execSetRootBoneAxisOption(FFrame &, void *const);
     void execSetRootBoneRotationOption(FFrame &, void *const);
     void execTickChildWeights(FFrame &, void *const);
-private:
+HG_PRIVATE:
     UAnimNodeSlot &operator=(const UAnimNodeSlot &);
 public:
     static UClass *GetPrivateStaticClassUAnimNodeSlot(const wchar_t *);
     static void InitializePrivateStaticClassUAnimNodeSlot();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UAnimNodeSlot();
-public:
     static void InternalConstructor(void *);
-    virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
-    virtual void RenameChildConnectors();
-    virtual void TickAnim(float);
-    virtual void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
-    virtual void OnAddChild(int);
-    virtual void OnRemoveChild(int);
-    virtual void OnChildAnimChange(int);
-    virtual void OnChildAnimEnd(UAnimNodeSequence *, float, float);
-    virtual int GetNumSliders() const;
+    HG_VIRTUAL void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
+    HG_VIRTUAL void RenameChildConnectors();
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
+    HG_VIRTUAL void OnAddChild(int);
+    HG_VIRTUAL void OnRemoveChild(int);
+    HG_VIRTUAL void OnChildAnimChange(int);
+    HG_VIRTUAL void OnChildAnimEnd(UAnimNodeSequence *, float, float);
+    HG_VIRTUAL int GetNumSliders() const;
     int FindBestChildToPlayAnim(FName, unsigned int);
     void SetActiveChild(int, float);
     void UpdateWeightsForAdditiveAnimations();
-    virtual void OnPaste();
-    virtual UAnimNodeSlot *GetAnimNodeSlot();
+    HG_VIRTUAL void OnPaste();
+    HG_VIRTUAL UAnimNodeSlot *GetAnimNodeSlot();
     static void CleanUpSlotNodeSequencePool();
     static void FlushReleasedSequenceNodes(const USkeletalMeshComponent *);
     static void ReleaseSequenceNodes(const USkeletalMeshComponent *);
     static void PrintSlotNodeSequencePool();
-protected:
-    virtual void UpdateChildWeight(int);
+HG_PROTECTED:
+    HG_VIRTUAL void UpdateChildWeight(int);
     void EnsureChildExists(int, unsigned int);
 public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UAnimNodeSlot();
+public:
+    #endif
     typedef UAnimNodeBlendBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UAnimNodeSlotData[0x8];
 };
 
@@ -6989,22 +7629,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual int CreateAction(GripAFFactory *);
-private:
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+HG_PRIVATE:
     UGripAFActionHandle &operator=(const UGripAFActionHandle &);
 public:
     static UClass *GetPrivateStaticClassUGripAFActionHandle(const wchar_t *);
     static void InitializePrivateStaticClassUGripAFActionHandle();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripAFActionHandle();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripAFActionHandle();
 public:
-    static void InternalConstructor(void *);
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripAFActionHandleData[0x1];
 };
 
@@ -7015,22 +7661,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFEncircleTarget &operator=(const UCCSAFEncircleTarget &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFEncircleTarget(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFEncircleTarget();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFEncircleTarget();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFEncircleTarget();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFEncircleTargetData[0x1];
 };
 
@@ -7041,22 +7693,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFEnterCover &operator=(const UCCSAFEnterCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFEnterCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFEnterCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFEnterCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFEnterCover();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFEnterCoverData[0x2];
 };
 
@@ -7067,22 +7725,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFExitCover &operator=(const UCCSAFExitCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFExitCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFExitCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFExitCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFExitCover();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSAFFireBurst : public UGripAFActionHandle  // size 0x44, opaque
@@ -7092,22 +7755,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFFireBurst &operator=(const UCCSAFFireBurst &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFFireBurst(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFFireBurst();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFFireBurst();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFFireBurst();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFFireBurstData[0x1];
 };
 
@@ -7118,22 +7787,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFFlee &operator=(const UCCSAFFlee &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFFlee(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFFlee();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFFlee();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFFlee();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFFleeData[0x1];
 };
 
@@ -7144,22 +7819,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFGetInCover &operator=(const UCCSAFGetInCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFGetInCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFGetInCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFGetInCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFGetInCover();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFGetInCoverData[0x2];
 };
 
@@ -7170,22 +7851,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFGetOutCover &operator=(const UCCSAFGetOutCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFGetOutCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFGetOutCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFGetOutCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFGetOutCover();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFGetOutCoverData[0x2];
 };
 
@@ -7196,22 +7883,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFIdle &operator=(const UCCSAFIdle &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFIdle(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFIdle();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFIdle();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFIdle();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFIdleData[0x1];
 };
 
@@ -7222,22 +7915,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFMoveTo &operator=(const UCCSAFMoveTo &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFMoveTo(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFMoveTo();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFMoveTo();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFMoveTo();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFMoveToData[0x4];
 };
 
@@ -7248,22 +7947,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFMoveToActor &operator=(const UCCSAFMoveToActor &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFMoveToActor(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFMoveToActor();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFMoveToActor();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFMoveToActor();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFMoveToActorData[0x2];
 };
 
@@ -7274,22 +7979,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFOrientToward &operator=(const UCCSAFOrientToward &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFOrientToward(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFOrientToward();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFOrientToward();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFOrientToward();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFOrientTowardData[0x4];
 };
 
@@ -7300,22 +8011,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFStrafeTarget &operator=(const UCCSAFStrafeTarget &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFStrafeTarget(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFStrafeTarget();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFStrafeTarget();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFStrafeTarget();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFStrafeTargetData[0x1];
 };
 
@@ -7326,22 +8043,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSAFStrafeTo &operator=(const UCCSAFStrafeTo &);
 public:
     static UClass *GetPrivateStaticClassUCCSAFStrafeTo(const wchar_t *);
     static void InitializePrivateStaticClassUCCSAFStrafeTo();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL int CreateAction(GripAFFactory *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSAFStrafeTo();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSAFStrafeTo();
 public:
-    static void InternalConstructor(void *);
-    virtual int CreateAction(GripAFFactory *);
+    #endif
     typedef UGripAFActionHandle Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSAFStrafeToData[0x5];
 };
 
@@ -7352,27 +8075,30 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void ActivateChild(int, float);
+    HG_VIRTUAL void ActivateChild(int, float);
     void execActivateChild(FFrame &, void *const);
     float eventActivateInput(FName, float, float, float, unsigned int, unsigned int, float);
-private:
+HG_PRIVATE:
     UCCSATAnimNodeSlot &operator=(const UCCSATAnimNodeSlot &);
 public:
     static UClass *GetPrivateStaticClassUCCSATAnimNodeSlot(const wchar_t *);
     static void InitializePrivateStaticClassUCCSATAnimNodeSlot();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSATAnimNodeSlot();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSATAnimNodeSlot();
     UCCSATAnimNodeSlot();
 public:
+    #endif
     typedef UAnimNodeSlot Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSATBlendListBase : public UAnimNodeBlendList  // size 0x110, opaque
@@ -7382,24 +8108,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSATBlendListBase &operator=(const UCCSATBlendListBase &);
 public:
     static UClass *GetPrivateStaticClassUCCSATBlendListBase(const wchar_t *);
     static void InitializePrivateStaticClassUCCSATBlendListBase();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSATBlendListBase();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSATBlendListBase();
     UCCSATBlendListBase();
 public:
+    #endif
     typedef UAnimNodeBlendList Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSATBlendListBaseData[0x4];
 };
 
@@ -7410,22 +8140,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UGwNavActorFactoryAI &operator=(const UGwNavActorFactoryAI &);
 public:
     static UClass *GetPrivateStaticClassUGwNavActorFactoryAI(const wchar_t *);
     static void InitializePrivateStaticClassUGwNavActorFactoryAI();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGwNavActorFactoryAI();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGwNavActorFactoryAI();
 public:
-    static void InternalConstructor(void *);
-    virtual AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
+    #endif
     typedef UActorFactoryAI Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGwNavActorFactoryAIData[0x3];
 };
 
@@ -7436,24 +8172,30 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSActorFactory &operator=(const UCCSActorFactory &);
 public:
     static UClass *GetPrivateStaticClassUCCSActorFactory(const wchar_t *);
     static void InitializePrivateStaticClassUCCSActorFactory();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
+    HG_VIRTUAL unsigned int CanCreateActor(FString &, unsigned int);
+    HG_VIRTUAL AActor *GetDefaultActor();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSActorFactory();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSActorFactory();
 public:
-    static void InternalConstructor(void *);
-    virtual AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
-    virtual unsigned int CanCreateActor(FString &, unsigned int);
-    virtual AActor *GetDefaultActor();
+    #endif
     typedef UGwNavActorFactoryAI Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSActorFactoryData[0xE];
 };
 
@@ -7464,23 +8206,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual UGripBTNode *GetNode();
-    virtual void DrawNode(FCanvas *, unsigned int, unsigned int, unsigned int);
-private:
+    HG_VIRTUAL UGripBTNode *GetNode();
+    HG_VIRTUAL void DrawNode(FCanvas *, unsigned int, unsigned int, unsigned int);
+HG_PRIVATE:
     UGripBTObject &operator=(const UGripBTObject &);
 public:
     static UClass *GetPrivateStaticClassUGripBTObject(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTObject();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTObject();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTObject();
 public:
-    static void InternalConstructor(void *);
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTObjectData[0x2];
 };
 
@@ -7491,31 +8239,37 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
-    virtual FString GetNodeTitle();
-private:
-    virtual void GetNodesInternal(TArray<UGripBTNode *,FDefaultAllocator> &);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    HG_VIRTUAL FString GetNodeTitle();
+HG_PRIVATE:
+    HG_VIRTUAL void GetNodesInternal(TArray<UGripBTNode *,FDefaultAllocator> &);
     UGripBTNode &operator=(const UGripBTNode &);
 public:
     static UClass *GetPrivateStaticClassUGripBTNode(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTNode();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTNode();
-public:
     static void InternalConstructor(void *);
-    virtual UGripBTNode *GetNode();
+    HG_VIRTUAL UGripBTNode *GetNode();
     void GetNodes(TArray<UGripBTNode *,FDefaultAllocator> &);
     UGripBTNode *GetGripBTChild(const int) const;
     unsigned int IsChildOf(UGripBTNode *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTNode();
+public:
+    #endif
     typedef UGripBTObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTNodeData[0x11];
 };
 
@@ -7526,25 +8280,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTEncircleTarget &operator=(const UCCSBTEncircleTarget &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTEncircleTarget(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTEncircleTarget();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTEncircleTarget();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTEncircleTarget();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTEncircleTargetData[0x4];
 };
 
@@ -7555,25 +8315,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UGripBTBooleanCondition &operator=(const UGripBTBooleanCondition &);
 public:
     static UClass *GetPrivateStaticClassUGripBTBooleanCondition(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTBooleanCondition();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    HG_VIRTUAL FString GetNodeTitle();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTBooleanCondition();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTBooleanCondition();
 public:
-    static void InternalConstructor(void *);
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
-    virtual FString GetNodeTitle();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTBooleanConditionData[0x1];
 };
 
@@ -7584,23 +8350,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTEnemyAware &operator=(const UCCSBTEnemyAware &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTEnemyAware(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTEnemyAware();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTEnemyAware();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTEnemyAware();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTBooleanCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UGripBTNumericCondition : public UGripBTNode  // size 0x94, opaque
@@ -7610,26 +8381,32 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UGripBTNumericCondition &operator=(const UGripBTNumericCondition &);
 public:
     static UClass *GetPrivateStaticClassUGripBTNumericCondition(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTNumericCondition();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    HG_VIRTUAL FString GetNodeTitle();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTNumericCondition();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTNumericCondition();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
-    virtual FString GetNodeTitle();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTNumericConditionData[0x3];
 };
 
@@ -7640,23 +8417,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTEnemyClosestRange &operator=(const UCCSBTEnemyClosestRange &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTEnemyClosestRange(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTEnemyClosestRange();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTEnemyClosestRange();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTEnemyClosestRange();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNumericCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UGripBTFloatCondition : public UGripBTNode  // size 0x94, opaque
@@ -7666,26 +8448,32 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UGripBTFloatCondition &operator=(const UGripBTFloatCondition &);
 public:
     static UClass *GetPrivateStaticClassUGripBTFloatCondition(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTFloatCondition();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    HG_VIRTUAL FString GetNodeTitle();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTFloatCondition();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTFloatCondition();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
-    virtual FString GetNodeTitle();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTFloatConditionData[0x3];
 };
 
@@ -7696,23 +8484,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTEnemyLowestLKPAge &operator=(const UCCSBTEnemyLowestLKPAge &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTEnemyLowestLKPAge(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTEnemyLowestLKPAge();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTEnemyLowestLKPAge();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTEnemyLowestLKPAge();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTFlee : public UGripBTNode  // size 0x88, opaque
@@ -7722,24 +8515,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTFlee &operator=(const UCCSBTFlee &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTFlee(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTFlee();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTFlee();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTFlee();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTIdle : public UGripBTNode  // size 0x8C, opaque
@@ -7749,25 +8547,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTIdle &operator=(const UCCSBTIdle &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTIdle(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTIdle();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTIdle();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTIdle();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTIdleData[0x1];
 };
 
@@ -7778,24 +8582,30 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveTo &operator=(const UCCSBTMoveTo &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveTo(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveTo();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveTo();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveTo();
 public:
-    static void InternalConstructor(void *);
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTMoveToData[0xC];
 };
 
@@ -7806,24 +8616,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveIntoCover &operator=(const UCCSBTMoveIntoCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveIntoCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveIntoCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveIntoCover();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveIntoCover();
     UCCSBTMoveIntoCover();
 public:
+    #endif
     typedef UCCSBTMoveTo Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTMoveIntoBestCover : public UCCSBTMoveIntoCover  // size 0xC0, opaque
@@ -7833,25 +8646,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveIntoBestCover &operator=(const UCCSBTMoveIntoBestCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveIntoBestCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveIntoBestCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveIntoBestCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveIntoBestCover();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveIntoCover Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTMoveIntoBestCoverData[0x2];
 };
 
@@ -7862,23 +8681,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveIntoClosestCover &operator=(const UCCSBTMoveIntoClosestCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveIntoClosestCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveIntoClosestCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveIntoClosestCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveIntoClosestCover();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveIntoCover Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTMoveIntoInitialCover : public UCCSBTMoveIntoCover  // size 0xB8, opaque
@@ -7888,24 +8712,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveIntoInitialCover &operator=(const UCCSBTMoveIntoInitialCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveIntoInitialCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveIntoInitialCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveIntoInitialCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveIntoInitialCover();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveIntoCover Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTMoveToActor : public UCCSBTMoveTo  // size 0xB8, opaque
@@ -7915,24 +8744,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveToActor &operator=(const UCCSBTMoveToActor &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveToActor(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveToActor();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveToActor();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveToActor();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveTo Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTMoveToTarget : public UCCSBTMoveTo  // size 0xB8, opaque
@@ -7942,24 +8776,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveToTarget &operator=(const UCCSBTMoveToTarget &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveToTarget(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveToTarget();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveToTarget();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveToTarget();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveTo Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTMoveToTether : public UCCSBTMoveTo  // size 0xB8, opaque
@@ -7969,24 +8808,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveToTether &operator=(const UCCSBTMoveToTether &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveToTether(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveToTether();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveToTether();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveToTether();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveTo Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTMoveToVehicle : public UCCSBTMoveToTarget  // size 0xB8, opaque
@@ -7996,24 +8840,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTMoveToVehicle &operator=(const UCCSBTMoveToVehicle &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTMoveToVehicle(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTMoveToVehicle();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTMoveToVehicle();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTMoveToVehicle();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveToTarget Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTOrientTowardTarget : public UGripBTNode  // size 0x8C, opaque
@@ -8023,25 +8872,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTOrientTowardTarget &operator=(const UCCSBTOrientTowardTarget &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTOrientTowardTarget(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTOrientTowardTarget();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTOrientTowardTarget();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTOrientTowardTarget();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTOrientTowardTargetData[0x1];
 };
 
@@ -8054,23 +8909,29 @@ public:
     };
     unsigned char eventExecutePass(UGripBTInterface *, unsigned int, unsigned int);
     FString eventGetNodeTitle();
-private:
+HG_PRIVATE:
     UGripBTScriptNode &operator=(const UGripBTScriptNode &);
 public:
     static UClass *GetPrivateStaticClassUGripBTScriptNode(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTScriptNode();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL FString GetNodeTitle();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTScriptNode();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTScriptNode();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual FString GetNodeTitle();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTScriptNodeData[0x3];
 };
 
@@ -8081,24 +8942,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UGripBTScriptBehavior &operator=(const UGripBTScriptBehavior &);
 public:
     static UClass *GetPrivateStaticClassUGripBTScriptBehavior(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTScriptBehavior();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTScriptBehavior();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTScriptBehavior();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTScriptNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTScriptBehavior : public UGripBTScriptBehavior  // size 0x98, opaque
@@ -8108,24 +8974,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTScriptBehavior &operator=(const UCCSBTScriptBehavior &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTScriptBehavior(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTScriptBehavior();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTScriptBehavior();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTScriptBehavior();
     UCCSBTScriptBehavior();
 public:
+    #endif
     typedef UGripBTScriptBehavior Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTScriptBehaviorData[0x1];
 };
 
@@ -8136,24 +9006,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UGripBTScriptCondition &operator=(const UGripBTScriptCondition &);
 public:
     static UClass *GetPrivateStaticClassUGripBTScriptCondition(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTScriptCondition();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTScriptCondition();
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTScriptCondition();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTScriptNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTScriptCondition : public UGripBTScriptCondition  // size 0x98, opaque
@@ -8163,24 +9038,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTScriptCondition &operator=(const UCCSBTScriptCondition &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTScriptCondition(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTScriptCondition();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTScriptCondition();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTScriptCondition();
     UCCSBTScriptCondition();
 public:
+    #endif
     typedef UGripBTScriptCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTScriptConditionData[0x1];
 };
 
@@ -8191,22 +9070,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTScriptCover &operator=(const UCCSBTScriptCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTScriptCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTScriptCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTScriptCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTScriptCover();
 public:
-    static void InternalConstructor(void *);
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTScriptBehavior Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTScriptCoverData[0xD];
 };
 
@@ -8217,23 +9102,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTSearch &operator=(const UCCSBTSearch &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTSearch(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTSearch();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTSearch();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTSearch();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveTo Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTSelectTarget : public UGripBTNode  // size 0x98, opaque
@@ -8243,26 +9133,32 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTSelectTarget &operator=(const UCCSBTSelectTarget &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTSelectTarget(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTSelectTarget();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    HG_VIRTUAL FString GetNodeTitle();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTSelectTarget();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTSelectTarget();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
-    virtual FString GetNodeTitle();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTSelectTargetData[0x4];
 };
 
@@ -8273,25 +9169,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTShoot &operator=(const UCCSBTShoot &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTShoot(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTShoot();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTShoot();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTShoot();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTShootData[0x3];
 };
 
@@ -8302,25 +9204,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTShootFromCover &operator=(const UCCSBTShootFromCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTShootFromCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTShootFromCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTShootFromCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTShootFromCover();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTShootFromCoverData[0x2];
 };
 
@@ -8331,25 +9239,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTStrafeTarget &operator=(const UCCSBTStrafeTarget &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTStrafeTarget(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTStrafeTarget();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTStrafeTarget();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTStrafeTarget();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTStrafeTargetData[0x5];
 };
 
@@ -8360,24 +9274,30 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTargetAngle &operator=(const UCCSBTTargetAngle &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTargetAngle(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTargetAngle();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTargetAngle();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTargetAngle();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTBooleanCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTTargetAngleData[0x1];
 };
 
@@ -8388,23 +9308,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTargetClear &operator=(const UCCSBTTargetClear &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTargetClear(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTargetClear();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTargetClear();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTargetClear();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTBooleanCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTargetInCover : public UGripBTBooleanCondition  // size 0x8C, opaque
@@ -8414,23 +9339,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTargetInCover &operator=(const UCCSBTTargetInCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTargetInCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTargetInCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTargetInCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTargetInCover();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTBooleanCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTargetKnockedDown : public UGripBTBooleanCondition  // size 0x8C, opaque
@@ -8440,23 +9370,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTargetKnockedDown &operator=(const UCCSBTTargetKnockedDown &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTargetKnockedDown(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTargetKnockedDown();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTargetKnockedDown();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTargetKnockedDown();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTBooleanCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTargetRange : public UGripBTNumericCondition  // size 0x94, opaque
@@ -8466,23 +9401,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTargetRange &operator=(const UCCSBTTargetRange &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTargetRange(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTargetRange();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTargetRange();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTargetRange();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNumericCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTargetShootable : public UGripBTBooleanCondition  // size 0x8C, opaque
@@ -8492,23 +9432,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTargetShootable &operator=(const UCCSBTTargetShootable &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTargetShootable(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTargetShootable();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTargetShootable();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTargetShootable();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTBooleanCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTargetVisible : public UGripBTBooleanCondition  // size 0x8C, opaque
@@ -8518,23 +9463,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTargetVisible &operator=(const UCCSBTTargetVisible &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTargetVisible(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTargetVisible();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTargetVisible();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTargetVisible();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTBooleanCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceAimedAt : public UGripBTFloatCondition  // size 0x94, opaque
@@ -8544,23 +9494,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceAimedAt &operator=(const UCCSBTTimeSinceAimedAt &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceAimedAt(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceAimedAt();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceAimedAt();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceAimedAt();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceBecameAware : public UGripBTFloatCondition  // size 0x94, opaque
@@ -8570,23 +9525,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceBecameAware &operator=(const UCCSBTTimeSinceBecameAware &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceBecameAware(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceBecameAware();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceBecameAware();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceBecameAware();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceDamage : public UGripBTFloatCondition  // size 0x94, opaque
@@ -8596,23 +9556,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceDamage &operator=(const UCCSBTTimeSinceDamage &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceDamage(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceDamage();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceDamage();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceDamage();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceEvent : public UGripBTFloatCondition  // size 0xA0, opaque
@@ -8622,25 +9587,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceEvent &operator=(const UCCSBTTimeSinceEvent &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceEvent(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceEvent();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL BTMenuType GetMenuType();
+    HG_VIRTUAL FString GetNodeTitle();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceEvent();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceEvent();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual BTMenuType GetMenuType();
-    virtual FString GetNodeTitle();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSBTTimeSinceEventData[0x3];
 };
 
@@ -8651,23 +9622,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceGrenadeStuck &operator=(const UCCSBTTimeSinceGrenadeStuck &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceGrenadeStuck(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceGrenadeStuck();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceGrenadeStuck();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceGrenadeStuck();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceStaggered : public UGripBTFloatCondition  // size 0x94, opaque
@@ -8677,23 +9653,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceStaggered &operator=(const UCCSBTTimeSinceStaggered &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceStaggered(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceStaggered();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceStaggered();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceStaggered();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceSuccessfulAttack : public UGripBTFloatCondition  // size 0x94, opaque
@@ -8703,23 +9684,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceSuccessfulAttack &operator=(const UCCSBTTimeSinceSuccessfulAttack &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceSuccessfulAttack(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceSuccessfulAttack();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceSuccessfulAttack();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceSuccessfulAttack();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceTargetCamoed : public UGripBTFloatCondition  // size 0x94, opaque
@@ -8729,23 +9715,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceTargetCamoed &operator=(const UCCSBTTimeSinceTargetCamoed &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceTargetCamoed(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceTargetCamoed();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceTargetCamoed();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceTargetCamoed();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceThreatChanged : public UGripBTFloatCondition  // size 0x94, opaque
@@ -8755,23 +9746,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceThreatChanged &operator=(const UCCSBTTimeSinceThreatChanged &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceThreatChanged(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceThreatChanged();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceThreatChanged();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceThreatChanged();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTTimeSinceThreatened : public UGripBTFloatCondition  // size 0x94, opaque
@@ -8781,23 +9777,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTTimeSinceThreatened &operator=(const UCCSBTTimeSinceThreatened &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTTimeSinceThreatened(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTTimeSinceThreatened();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTTimeSinceThreatened();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTTimeSinceThreatened();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTFloatCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTVisibleToPlayerCamera : public UGripBTBooleanCondition  // size 0x8C, opaque
@@ -8807,23 +9808,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTVisibleToPlayerCamera &operator=(const UCCSBTVisibleToPlayerCamera &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTVisibleToPlayerCamera(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTVisibleToPlayerCamera();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTVisibleToPlayerCamera();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTVisibleToPlayerCamera();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTBooleanCondition Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSBTWaitInCover : public UGripBTNode  // size 0x88, opaque
@@ -8833,24 +9839,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSBTWaitInCover &operator=(const UCCSBTWaitInCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSBTWaitInCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBTWaitInCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBTWaitInCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBTWaitInCover();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UGripBTNode Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UGripBlackboard : public UObject  // size 0x40, opaque
@@ -8860,26 +9871,32 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual unsigned int ContainState(const FString &) const;
-    virtual void FlagStatesAsUsed();
+    HG_VIRTUAL unsigned int ContainState(const FString &) const;
+    HG_VIRTUAL void FlagStatesAsUsed();
     void execContainState(FFrame &, void *const);
     void execFlagStatesAsUsed(FFrame &, void *const);
-private:
+HG_PRIVATE:
     UGripBlackboard &operator=(const UGripBlackboard &);
 public:
     static UClass *GetPrivateStaticClassUGripBlackboard(const wchar_t *);
     static void InitializePrivateStaticClassUGripBlackboard();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBlackboard();
-public:
     static void InternalConstructor(void *);
     void Initialize(GripBlackboard *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBlackboard();
+public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBlackboardData[0x1];
 };
 
@@ -8890,29 +9907,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual int GetHealth() const;
-    virtual void SetHealth(int);
-    virtual void GetCovers(TArray<FCCSCoverData,FDefaultAllocator> &) const;
-    virtual FCCSTargetData GetCurrentTarget() const;
-    virtual void SetCurrentTether(AActor *);
-    virtual FVector GetCurrentTether() const;
-    virtual void GetTargets(TArray<FCCSTargetData,FDefaultAllocator> &) const;
-    virtual FCCSMoveCmdData GetMoveCommand() const;
-    virtual void ClearMoveCommand();
-    virtual void FlagThreatLocationAsUsed();
-    virtual void FlagThreatDirectionAsUsed();
-    virtual FVector GetThreatLocation();
-    virtual FVector GetThreatDirection();
-    virtual unsigned char GetThreatType();
-    virtual void SetHeatGenerated(float);
-    virtual float GetHeatGenerated() const;
-    virtual void FlagHeatGeneratedAsUsed();
-    virtual FCCSTargetData GetClosestVisibleEnemy() const;
-    virtual void FlagHealthAsUsed();
-    virtual void FlagCoversAsUsed();
-    virtual void FlagTargetsAsUsed();
-    virtual void FlagTetherAsUsed();
-    virtual void FlagClosestVisibleEnemyAsUsed();
+    HG_VIRTUAL int GetHealth() const;
+    HG_VIRTUAL void SetHealth(int);
+    HG_VIRTUAL void GetCovers(TArray<FCCSCoverData,FDefaultAllocator> &) const;
+    HG_VIRTUAL FCCSTargetData GetCurrentTarget() const;
+    HG_VIRTUAL void SetCurrentTether(AActor *);
+    HG_VIRTUAL FVector GetCurrentTether() const;
+    HG_VIRTUAL void GetTargets(TArray<FCCSTargetData,FDefaultAllocator> &) const;
+    HG_VIRTUAL FCCSMoveCmdData GetMoveCommand() const;
+    HG_VIRTUAL void ClearMoveCommand();
+    HG_VIRTUAL void FlagThreatLocationAsUsed();
+    HG_VIRTUAL void FlagThreatDirectionAsUsed();
+    HG_VIRTUAL FVector GetThreatLocation();
+    HG_VIRTUAL FVector GetThreatDirection();
+    HG_VIRTUAL unsigned char GetThreatType();
+    HG_VIRTUAL void SetHeatGenerated(float);
+    HG_VIRTUAL float GetHeatGenerated() const;
+    HG_VIRTUAL void FlagHeatGeneratedAsUsed();
+    HG_VIRTUAL FCCSTargetData GetClosestVisibleEnemy() const;
+    HG_VIRTUAL void FlagHealthAsUsed();
+    HG_VIRTUAL void FlagCoversAsUsed();
+    HG_VIRTUAL void FlagTargetsAsUsed();
+    HG_VIRTUAL void FlagTetherAsUsed();
+    HG_VIRTUAL void FlagClosestVisibleEnemyAsUsed();
     void execGetHealth(FFrame &, void *const);
     void execSetHealth(FFrame &, void *const);
     void execGetCovers(FFrame &, void *const);
@@ -8936,24 +9953,27 @@ public:
     void execFlagTargetsAsUsed(FFrame &, void *const);
     void execFlagTetherAsUsed(FFrame &, void *const);
     void execFlagClosestVisibleEnemyAsUsed(FFrame &, void *const);
-private:
+HG_PRIVATE:
     UCCSBlackboard &operator=(const UCCSBlackboard &);
 public:
     static UClass *GetPrivateStaticClassUCCSBlackboard(const wchar_t *);
     static void InitializePrivateStaticClassUCCSBlackboard();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSBlackboard();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSBlackboard();
     UCCSBlackboard();
 public:
+    #endif
     typedef UGripBlackboard Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSCover : public UObject  // size 0x3C, opaque
@@ -8963,24 +9983,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSCover &operator=(const UCCSCover &);
 public:
     static UClass *GetPrivateStaticClassUCCSCover(const wchar_t *);
     static void InitializePrivateStaticClassUCCSCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSCover();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSCover();
     UCCSCover();
 public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UInterface : public UObject  // size 0x3C, opaque
@@ -8990,24 +10013,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UInterface &operator=(const UInterface &);
 public:
     static UClass *GetPrivateStaticClassUInterface(const wchar_t *);
     static void InitializePrivateStaticClassUInterface();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UInterface();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UInterface();
     UInterface();
 public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSPawn : public UInterface  // size 0x3C, opaque
@@ -9017,24 +10043,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSPawn &operator=(const UCCSPawn &);
 public:
     static UClass *GetPrivateStaticClassUCCSPawn(const wchar_t *);
     static void InitializePrivateStaticClassUCCSPawn();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSPawn();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSPawn();
     UCCSPawn();
 public:
+    #endif
     typedef UInterface Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSSystemConfig : public UObject  // size 0x3C, opaque
@@ -9044,24 +10073,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSSystemConfig &operator=(const UCCSSystemConfig &);
 public:
     static UClass *GetPrivateStaticClassUCCSSystemConfig(const wchar_t *);
     static void InitializePrivateStaticClassUCCSSystemConfig();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSSystemConfig();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSSystemConfig();
     UCCSSystemConfig();
 public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UCCSTarget : public UObject  // size 0x3C, opaque
@@ -9071,24 +10103,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSTarget &operator=(const UCCSTarget &);
 public:
     static UClass *GetPrivateStaticClassUCCSTarget(const wchar_t *);
     static void InitializePrivateStaticClassUCCSTarget();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSTarget();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSTarget();
     UCCSTarget();
 public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UPrimitiveComponent : public UActorComponent  // size 0x1E0, opaque
@@ -9098,107 +10133,102 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void GenerateDecalRenderData(FDecalState *, TArray<FDecalRenderData *,FDefaultAllocator> &) const;
-    virtual unsigned int ShouldRenderSelected() const;
-    virtual unsigned int UsesOnlyUnlitMaterials() const;
-    virtual unsigned int GetLightMapResolution(int &, int &) const;
-    virtual int GetStaticLightMapResolution() const;
-    virtual void GetLightAndShadowMapMemoryUsage(int &, int &) const;
-    virtual void UpdateBounds();
-    virtual void GetStaticLightingInfo(FStaticLightingPrimitiveInfo &, const TArray<ULightComponent *,FDefaultAllocator> &, const FLightingBuildOptions &);
-    virtual ELightMapInteractionType GetStaticLightingType() const;
-    virtual void GetStaticTriangles(FPrimitiveTriangleDefinitionInterface *) const;
-    virtual void GetStreamingTextureInfo(TArray<FStreamingTexturePrimitiveInfo,FDefaultAllocator> &) const;
-    virtual unsigned char GetStaticDepthPriorityGroup() const;
-    virtual void GetUsedMaterials(TArray<UMaterialInterface *,FDefaultAllocator> &) const;
-    virtual unsigned int PointCheck(FCheckResult &, const FVector &, const FVector &, unsigned long);
-    virtual unsigned int LineCheck(FCheckResult &, const FVector &, const FVector &, const FVector &, unsigned long);
-    virtual unsigned int IsAlwaysStatic();
-    virtual URB_BodySetup *GetRBBodySetup();
-    virtual FKCachedConvexData *GetCachedPhysConvexData(const FVector &);
-    virtual FKCachedConvexData *GetBoneCachedPhysConvexData(const FVector &, const FName &);
-    virtual void AddImpulse(FVector, FVector, FName, unsigned int);
-    virtual void AddRadialImpulse(const FVector &, float, float, unsigned char, unsigned int);
-    virtual void AddRadialForce(const FVector &, float, float, unsigned char);
-    virtual void AddForceField(FForceApplicator *, const FBox &, unsigned int, unsigned int);
-    virtual void SetRBLinearVelocity(const FVector &, unsigned int);
-    virtual void SetRBAngularVelocity(const FVector &, unsigned int);
-    virtual void RetardRBLinearVelocity(const FVector &, float);
-    virtual void SetRBPosition(const FVector &, FName);
-    virtual void SetRBRotation(const FRotator &, FName);
-    virtual void WakeRigidBody(FName);
-    virtual void PutRigidBodyToSleep(FName);
-    virtual unsigned int RigidBodyIsAwake(FName);
-    virtual void SetBlockRigidBody(unsigned int);
-    virtual void SetNotifyRigidBodyCollision(unsigned int);
-    virtual void SetRBDominanceGroup(unsigned char);
-    virtual void SetPhysMaterialOverride(UPhysicalMaterial *);
-    virtual URB_BodyInstance *GetRootBodyInstance();
-    virtual void UpdateRBKinematicData();
-    virtual unsigned char ClosestPointOnComponentInternal(IGJKHelper *, FVector &, FVector &);
-    virtual unsigned char ClosestPointOnComponentToComponent(UPrimitiveComponent *&, FVector &, FVector &);
-    virtual void SetTransformedToWorld();
-    virtual unsigned int IsPrimitiveInstanced() const;
-    virtual int GetInstanceCount() const;
-    virtual const FMatrix GetInstanceLocalToWorld(int) const;
-    virtual void OverrideTraceFlagsForNonCollisionComponentChecks(unsigned long &);
-    virtual int GetNumElements() const;
-    virtual UMaterialInterface *GetElementMaterial(int) const;
-    virtual void SetElementMaterial(int, UMaterialInterface *);
-    virtual int GetActorMetrics(EActorMetricsType);
-    virtual NxActor *GetNxActor(FName);
-    virtual NxActor *GetIndexedNxActor(int);
-    virtual void GetAllNxActors(TArray<NxActor *,FDefaultAllocator> &);
-    virtual FPrimitiveSceneProxy *CreateSceneProxy();
-    virtual unsigned int ShouldRecreateProxyOnUpdateTransform() const;
-protected:
-    virtual unsigned int AllowDecalRemovalOnDetach() const;
-    virtual unsigned int AllowDecalAutomaticReAttach() const;
-    virtual void UpdatePhysicsToRBChannels();
+    HG_VIRTUAL void GenerateDecalRenderData(FDecalState *, TArray<FDecalRenderData *,FDefaultAllocator> &) const;
+    HG_VIRTUAL unsigned int ShouldRenderSelected() const;
+    HG_VIRTUAL unsigned int UsesOnlyUnlitMaterials() const;
+    HG_VIRTUAL unsigned int GetLightMapResolution(int &, int &) const;
+    HG_VIRTUAL int GetStaticLightMapResolution() const;
+    HG_VIRTUAL void GetLightAndShadowMapMemoryUsage(int &, int &) const;
+    HG_VIRTUAL void UpdateBounds();
+    HG_VIRTUAL void GetStaticLightingInfo(FStaticLightingPrimitiveInfo &, const TArray<ULightComponent *,FDefaultAllocator> &, const FLightingBuildOptions &);
+    HG_VIRTUAL ELightMapInteractionType GetStaticLightingType() const;
+    HG_VIRTUAL void GetStaticTriangles(FPrimitiveTriangleDefinitionInterface *) const;
+    HG_VIRTUAL void GetStreamingTextureInfo(TArray<FStreamingTexturePrimitiveInfo,FDefaultAllocator> &) const;
+    HG_VIRTUAL unsigned char GetStaticDepthPriorityGroup() const;
+    HG_VIRTUAL void GetUsedMaterials(TArray<UMaterialInterface *,FDefaultAllocator> &) const;
+    HG_VIRTUAL unsigned int PointCheck(FCheckResult &, const FVector &, const FVector &, unsigned long);
+    HG_VIRTUAL unsigned int LineCheck(FCheckResult &, const FVector &, const FVector &, const FVector &, unsigned long);
+    HG_VIRTUAL unsigned int IsAlwaysStatic();
+    HG_VIRTUAL URB_BodySetup *GetRBBodySetup();
+    HG_VIRTUAL FKCachedConvexData *GetCachedPhysConvexData(const FVector &);
+    HG_VIRTUAL FKCachedConvexData *GetBoneCachedPhysConvexData(const FVector &, const FName &);
+    HG_VIRTUAL void AddImpulse(FVector, FVector, FName, unsigned int);
+    HG_VIRTUAL void AddRadialImpulse(const FVector &, float, float, unsigned char, unsigned int);
+    HG_VIRTUAL void AddRadialForce(const FVector &, float, float, unsigned char);
+    HG_VIRTUAL void AddForceField(FForceApplicator *, const FBox &, unsigned int, unsigned int);
+    HG_VIRTUAL void SetRBLinearVelocity(const FVector &, unsigned int);
+    HG_VIRTUAL void SetRBAngularVelocity(const FVector &, unsigned int);
+    HG_VIRTUAL void RetardRBLinearVelocity(const FVector &, float);
+    HG_VIRTUAL void SetRBPosition(const FVector &, FName);
+    HG_VIRTUAL void SetRBRotation(const FRotator &, FName);
+    HG_VIRTUAL void WakeRigidBody(FName);
+    HG_VIRTUAL void PutRigidBodyToSleep(FName);
+    HG_VIRTUAL unsigned int RigidBodyIsAwake(FName);
+    HG_VIRTUAL void SetBlockRigidBody(unsigned int);
+    HG_VIRTUAL void SetNotifyRigidBodyCollision(unsigned int);
+    HG_VIRTUAL void SetRBDominanceGroup(unsigned char);
+    HG_VIRTUAL void SetPhysMaterialOverride(UPhysicalMaterial *);
+    HG_VIRTUAL URB_BodyInstance *GetRootBodyInstance();
+    HG_VIRTUAL void UpdateRBKinematicData();
+    HG_VIRTUAL unsigned char ClosestPointOnComponentInternal(IGJKHelper *, FVector &, FVector &);
+    HG_VIRTUAL unsigned char ClosestPointOnComponentToComponent(UPrimitiveComponent *&, FVector &, FVector &);
+    HG_VIRTUAL void SetTransformedToWorld();
+    HG_VIRTUAL unsigned int IsPrimitiveInstanced() const;
+    HG_VIRTUAL int GetInstanceCount() const;
+    HG_VIRTUAL const FMatrix GetInstanceLocalToWorld(int) const;
+    HG_VIRTUAL void OverrideTraceFlagsForNonCollisionComponentChecks(unsigned long &);
+    HG_VIRTUAL int GetNumElements() const;
+    HG_VIRTUAL UMaterialInterface *GetElementMaterial(int) const;
+    HG_VIRTUAL void SetElementMaterial(int, UMaterialInterface *);
+    HG_VIRTUAL int GetActorMetrics(EActorMetricsType);
+    HG_VIRTUAL NxActor *GetNxActor(FName);
+    HG_VIRTUAL NxActor *GetIndexedNxActor(int);
+    HG_VIRTUAL void GetAllNxActors(TArray<NxActor *,FDefaultAllocator> &);
+    HG_VIRTUAL FPrimitiveSceneProxy *CreateSceneProxy();
+    HG_VIRTUAL unsigned int ShouldRecreateProxyOnUpdateTransform() const;
+HG_PROTECTED:
+    HG_VIRTUAL unsigned int AllowDecalRemovalOnDetach() const;
+    HG_VIRTUAL unsigned int AllowDecalAutomaticReAttach() const;
+    HG_VIRTUAL void UpdatePhysicsToRBChannels();
 public:
-    virtual unsigned int SupportsDecalRendering() const;
-    virtual unsigned int HasMotionBlurVelocityMeshes() const;
-    virtual void SetOwnerNoSee(unsigned int);
-    virtual void SetOnlyOwnerSee(unsigned int);
-    virtual void SetIgnoreOwnerHidden(unsigned int);
-    virtual unsigned int ShouldComponentAddToScene() const;
-    virtual void SetHiddenGame(unsigned int);
-    virtual void SetHiddenEditor(unsigned int);
-    virtual void SetShadowParent(UPrimitiveComponent *);
-    virtual void SetLightEnvironment(ULightEnvironmentComponent *);
-    virtual void SetCullDistance(float);
-    virtual void SetLightingChannels(FLightingChannelContainer);
-    virtual void SetDepthPriorityGroup(ESceneDepthPriorityGroup);
-    virtual void SetViewOwnerDepthPriorityGroup(unsigned int, ESceneDepthPriorityGroup);
-    virtual float GetEmissiveBoost(int) const;
-    virtual float GetDiffuseBoost(int) const;
-    virtual float GetSpecularBoost(int) const;
-    virtual unsigned int GetShadowIndirectOnly() const;
-    virtual unsigned int SetupLightmapResolutionViewInfo(FPrimitiveSceneProxy &) const;
-private:
+    HG_VIRTUAL unsigned int SupportsDecalRendering() const;
+    HG_VIRTUAL unsigned int HasMotionBlurVelocityMeshes() const;
+    HG_VIRTUAL void SetOwnerNoSee(unsigned int);
+    HG_VIRTUAL void SetOnlyOwnerSee(unsigned int);
+    HG_VIRTUAL void SetIgnoreOwnerHidden(unsigned int);
+    HG_VIRTUAL unsigned int ShouldComponentAddToScene() const;
+    HG_VIRTUAL void SetHiddenGame(unsigned int);
+    HG_VIRTUAL void SetHiddenEditor(unsigned int);
+    HG_VIRTUAL void SetShadowParent(UPrimitiveComponent *);
+    HG_VIRTUAL void SetLightEnvironment(ULightEnvironmentComponent *);
+    HG_VIRTUAL void SetCullDistance(float);
+    HG_VIRTUAL void SetLightingChannels(FLightingChannelContainer);
+    HG_VIRTUAL void SetDepthPriorityGroup(ESceneDepthPriorityGroup);
+    HG_VIRTUAL void SetViewOwnerDepthPriorityGroup(unsigned int, ESceneDepthPriorityGroup);
+    HG_VIRTUAL float GetEmissiveBoost(int) const;
+    HG_VIRTUAL float GetDiffuseBoost(int) const;
+    HG_VIRTUAL float GetSpecularBoost(int) const;
+    HG_VIRTUAL unsigned int GetShadowIndirectOnly() const;
+    HG_VIRTUAL unsigned int SetupLightmapResolutionViewInfo(FPrimitiveSceneProxy &) const;
+HG_PRIVATE:
     UPrimitiveComponent &operator=(const UPrimitiveComponent &);
 public:
     static UClass *GetPrivateStaticClassUPrimitiveComponent(const wchar_t *);
     static void InitializePrivateStaticClassUPrimitiveComponent();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UPrimitiveComponent();
-public:
     static void InternalConstructor(void *);
     unsigned int ShouldCollide() const;
     void AttachDecal(UDecalComponent *, FDecalRenderData *, const FDecalState *);
     void DetachDecal(UDecalComponent *);
     unsigned int HasStaticShadowing() const;
     void ValidateLightingChannels();
-    virtual void InvalidateLightingCache();
+    HG_VIRTUAL void InvalidateLightingCache();
     void GetUsedTextures(TArray<UTexture *,FDefaultAllocator> &, EMaterialShaderQuality, unsigned int);
     FVector GetOrigin() const;
     void GetTransformAndScale(FMatrix &, FVector &);
-    virtual void InitComponentRBPhys(unsigned int);
-    virtual void SetComponentRBFixed(unsigned int);
-    virtual void TermComponentRBPhys(FRBPhysScene *);
+    HG_VIRTUAL void InitComponentRBPhys(unsigned int);
+    HG_VIRTUAL void SetComponentRBFixed(unsigned int);
+    HG_VIRTUAL void TermComponentRBPhys(FRBPhysScene *);
     URB_BodySetup *FindRBBodySetup();
     void AddForce(FVector, FVector, FName);
     void AddTorque(FVector, FName);
@@ -9250,31 +10280,41 @@ public:
     void execGetRotation(FFrame &, void *const);
     void execClosestPointOnComponentToPoint(FFrame &, void *const);
     void execClosestPointOnComponentToComponent(FFrame &, void *const);
-protected:
-    virtual void SetParentToWorld(const FMatrix &);
-    virtual void Attach();
-    virtual void UpdateTransform();
-    virtual void Detach(unsigned int);
+HG_PROTECTED:
+    HG_VIRTUAL void SetParentToWorld(const FMatrix &);
+    HG_VIRTUAL void Attach();
+    HG_VIRTUAL void UpdateTransform();
+    HG_VIRTUAL void Detach(unsigned int);
 public:
-    virtual void Serialize(FArchive &);
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
-    virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent &);
-    virtual void PostLoad();
-    virtual unsigned int IsReadyForFinishDestroy();
-    virtual unsigned int NeedsLoadForClient() const;
-    virtual unsigned int NeedsLoadForServer() const;
-    virtual void PostCrossLevelFixup();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
+    HG_VIRTUAL void PostEditChangeChainProperty(FPropertyChangedChainEvent &);
+    HG_VIRTUAL void PostLoad();
+    HG_VIRTUAL unsigned int IsReadyForFinishDestroy();
+    HG_VIRTUAL unsigned int NeedsLoadForClient() const;
+    HG_VIRTUAL unsigned int NeedsLoadForServer() const;
+    HG_VIRTUAL void PostCrossLevelFixup();
     void execShouldComponentAddToScene(FFrame &, void *const);
     void PushSelectionToProxy(const unsigned int);
     void PushHoveredToProxy(const unsigned int);
     void PushEditorVisibilityToProxy(unsigned __int64);
-    UPrimitiveComponent();
-    typedef UActorComponent Super;
-private:
-    static UClass *PrivateStaticClass;
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UPrimitiveComponent();
 public:
+    UPrimitiveComponent();
+    #endif
+    typedef UActorComponent Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
     static int CurrentTag;
-private:
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    static hg::be<int> (&CurrentTag);
+    #endif
+HG_PRIVATE:
     unsigned int UPrimitiveComponentData[0x62];
 };
 
@@ -9285,23 +10325,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UCCSVisualizationComponent &operator=(const UCCSVisualizationComponent &);
 public:
     static UClass *GetPrivateStaticClassUCCSVisualizationComponent(const wchar_t *);
     static void InitializePrivateStaticClassUCCSVisualizationComponent();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void UpdateBounds();
+    HG_VIRTUAL FPrimitiveSceneProxy *CreateSceneProxy();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UCCSVisualizationComponent();
+HG_PROTECTED:
+    HG_VIRTUAL ~UCCSVisualizationComponent();
 public:
-    static void InternalConstructor(void *);
-    virtual void UpdateBounds();
-    virtual FPrimitiveSceneProxy *CreateSceneProxy();
+    #endif
     typedef UPrimitiveComponent Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UCCSVisualizationComponentData[0x4];
 };
 
@@ -9312,35 +10358,41 @@ public:
     {
         IsIntrinsic = 1,
     };
-    virtual void AddCppProperty(UProperty *);
-    virtual unsigned int MergeBools();
-    virtual void Bind();
-private:
+    HG_VIRTUAL void AddCppProperty(UProperty *);
+    HG_VIRTUAL unsigned int MergeBools();
+    HG_VIRTUAL void Bind();
+HG_PRIVATE:
     UField &operator=(const UField &);
 public:
     static UClass *GetPrivateStaticClassUField(const wchar_t *);
     static void InitializePrivateStaticClassUField();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    void StaticConstructor();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL void PostLoad();
+    UClass *GetOwnerClass() const;
+    UStruct *GetOwnerStruct() const;
+HG_PRIVATE:
+    HG_VIRTUAL UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
+public:
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UField();
+HG_PROTECTED:
+    HG_VIRTUAL ~UField();
 public:
-    static void InternalConstructor(void *);
     UField();
     UField(EStaticConstructor, const wchar_t *, const wchar_t *, unsigned __int64);
     UField(ENativeConstructor, UClass *, const wchar_t *, const wchar_t *, unsigned __int64);
-    void StaticConstructor();
-    virtual void Serialize(FArchive &);
-    virtual void PostLoad();
-    UClass *GetOwnerClass() const;
-    UStruct *GetOwnerStruct() const;
-private:
-    virtual UObject *CreateArchetype(const wchar_t *, UObject *, UObject *, FObjectInstancingGraph *);
-public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UFieldData[0x1];
 };
 
@@ -9351,37 +10403,26 @@ public:
     {
         IsIntrinsic = 1,
     };
-    virtual UStruct *GetInheritanceSuper() const;
-    virtual void Link(FArchive &, unsigned int);
-    virtual void SerializeBin(FArchive &, unsigned char *, int) const;
-    virtual EExprToken SerializeExpr(int &, FArchive &);
-    virtual void PropagateStructDefaults();
-    virtual const wchar_t *GetPrefixCPP();
-private:
+    HG_VIRTUAL UStruct *GetInheritanceSuper() const;
+    HG_VIRTUAL void Link(FArchive &, unsigned int);
+    HG_VIRTUAL void SerializeBin(FArchive &, unsigned char *, int) const;
+    HG_VIRTUAL EExprToken SerializeExpr(int &, FArchive &);
+    HG_VIRTUAL void PropagateStructDefaults();
+    HG_VIRTUAL const wchar_t *GetPrefixCPP();
+HG_PRIVATE:
     UStruct &operator=(const UStruct &);
 public:
     static UClass *GetPrivateStaticClassUStruct(const wchar_t *);
     static void InitializePrivateStaticClassUStruct();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UStruct();
-public:
     static void InternalConstructor(void *);
-    UStruct(UStruct *);
-    UStruct(EStaticConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64);
-    UStruct(ENativeConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64, UStruct *);
-protected:
-    UStruct();
-public:
     void StaticConstructor();
-    virtual void Serialize(FArchive &);
-    virtual void PostLoad();
-    virtual void FinishDestroy();
-    virtual void Register();
-    virtual void StripData(UE3::EPlatformType, unsigned int);
-    virtual void AddCppProperty(UProperty *);
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL void PostLoad();
+    HG_VIRTUAL void FinishDestroy();
+    HG_VIRTUAL void Register();
+    HG_VIRTUAL void StripData(UE3::EPlatformType, unsigned int);
+    HG_VIRTUAL void AddCppProperty(UProperty *);
     void InstanceComponentTemplates(unsigned char *, unsigned char *, int, UObject *, FObjectInstancingGraph *);
     void InstanceSubobjectTemplates(unsigned char *, unsigned char *, int, UObject *, FObjectInstancingGraph *) const;
     void SerializeBinProperty(UProperty *, FArchive &, unsigned char *) const;
@@ -9393,9 +10434,26 @@ public:
     unsigned int IsChildOf(const UStruct *) const;
     UStruct *GetSuperStruct() const;
     unsigned int StructCompare(const void *, const void *, unsigned long);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UStruct();
+public:
+    UStruct(UStruct *);
+    UStruct(EStaticConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64);
+    UStruct(ENativeConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64, UStruct *);
+HG_PROTECTED:
+    UStruct();
+public:
+    #endif
     typedef UField Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UStructData[0xD];
 };
 
@@ -9406,32 +10464,38 @@ public:
     {
         IsIntrinsic = 1,
     };
-private:
+HG_PRIVATE:
     UState &operator=(const UState &);
 public:
     static UClass *GetPrivateStaticClassUState(const wchar_t *);
     static void InitializePrivateStaticClassUState();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    void StaticConstructor();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL unsigned int MergeBools();
+    HG_VIRTUAL UStruct *GetInheritanceSuper() const;
+    UState *GetSuperState() const;
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UState();
+HG_PROTECTED:
+    HG_VIRTUAL ~UState();
 public:
-    static void InternalConstructor(void *);
     UState(UState *);
     UState(EStaticConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64);
     UState(ENativeConstructor, int, const wchar_t *, const wchar_t *, unsigned __int64, UState *);
-protected:
+HG_PROTECTED:
     UState();
 public:
-    void StaticConstructor();
-    virtual void Serialize(FArchive &);
-    virtual unsigned int MergeBools();
-    virtual UStruct *GetInheritanceSuper() const;
-    UState *GetSuperState() const;
+    #endif
     typedef UStruct Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UStateData[0x12];
 };
 
@@ -9442,40 +10506,31 @@ public:
     {
         IsIntrinsic = 1,
     };
-private:
+HG_PRIVATE:
     UClass &operator=(const UClass &);
 public:
     static UClass *GetPrivateStaticClassUClass(const wchar_t *);
     static void InitializePrivateStaticClassUClass();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UClass();
-public:
     static void InternalConstructor(void *);
     UPackage *GetOuterUPackage() const;
-    UClass(EStaticConstructor, unsigned long, unsigned long, unsigned long, const wchar_t *, const wchar_t *, const wchar_t *, unsigned __int64, void (*)(void *), void (UObject::*)(), void (UObject::*)());
-    UClass(ENativeConstructor, unsigned long, unsigned long, unsigned long, UClass *, UClass *, const wchar_t *, const wchar_t *, const wchar_t *, unsigned __int64, void (*)(void *), void (UObject::*)(), void (UObject::*)());
-    UClass(UClass *);
-    UClass();
     void StaticConstructor();
-    virtual void Serialize(FArchive &);
-    virtual void PostLoad();
-    virtual void FinishDestroy();
-    virtual void Register();
-    virtual unsigned int Rename(const wchar_t *, UObject *, unsigned long);
-    virtual UComponent *FindComponent(FName, unsigned int);
-    virtual void AddReferencedObjects(TArray<UObject *,FDefaultAllocator> &);
-    virtual void Bind();
-    virtual void PropagateStructDefaults();
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL void PostLoad();
+    HG_VIRTUAL void FinishDestroy();
+    HG_VIRTUAL void Register();
+    HG_VIRTUAL unsigned int Rename(const wchar_t *, UObject *, unsigned long);
+    HG_VIRTUAL UComponent *FindComponent(FName, unsigned int);
+    HG_VIRTUAL void AddReferencedObjects(TArray<UObject *,FDefaultAllocator> &);
+    HG_VIRTUAL void Bind();
+    HG_VIRTUAL void PropagateStructDefaults();
     unsigned char *GetDefaults();
     int GetDefaultsCount();
-    virtual unsigned int MergeBools();
-    virtual UStruct *GetInheritanceSuper() const;
+    HG_VIRTUAL unsigned int MergeBools();
+    HG_VIRTUAL UStruct *GetInheritanceSuper() const;
     void ConditionalLink();
-    virtual void Link(FArchive &, unsigned int);
-    virtual const wchar_t *GetPrefixCPP();
+    HG_VIRTUAL void Link(FArchive &, unsigned int);
+    HG_VIRTUAL const wchar_t *GetPrefixCPP();
     const FString GetConfigName() const;
     UClass *GetSuperClass() const;
     UObject *GetDefaultObject(unsigned int);
@@ -9486,7 +10541,7 @@ public:
     unsigned int HasAllCastFlags(EClassCastFlag) const;
     unsigned int HasNativesToExport(UObject *);
     unsigned int IsMisaligned();
-    virtual FString GetDesc();
+    HG_VIRTUAL FString GetDesc();
     FString GetDescription() const;
     unsigned int ChangeParentClass(UClass *);
     void EmitObjectReference(int);
@@ -9498,12 +10553,27 @@ public:
     void AssembleReferenceTokenStream();
     unsigned int ImplementsInterface(const UClass *) const;
     void SerializeDefaultObject(UObject *, FArchive &);
-private:
+HG_PRIVATE:
     unsigned int IsA(UClass *) const;
 public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UClass();
+public:
+    UClass(EStaticConstructor, unsigned long, unsigned long, unsigned long, const wchar_t *, const wchar_t *, const wchar_t *, unsigned __int64, void (*)(void *), void (UObject::*)(), void (UObject::*)());
+    UClass(ENativeConstructor, unsigned long, unsigned long, unsigned long, UClass *, UClass *, const wchar_t *, const wchar_t *, const wchar_t *, unsigned __int64, void (*)(void *), void (UObject::*)(), void (UObject::*)());
+    UClass(UClass *);
+    UClass();
+    #endif
     typedef UState Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UClassData[0x26];
 };
 
@@ -9517,24 +10587,28 @@ public:
     void eventCacheAllConditions(UGripBTInterface *);
     void eventSurveyUsedBBMembers(UGripBlackboard *);
     void eventInitializeAllNodes();
-private:
+HG_PRIVATE:
     UGripBTScriptNodeCache &operator=(const UGripBTScriptNodeCache &);
 public:
     static UClass *GetPrivateStaticClassUGripBTScriptNodeCache(const wchar_t *);
     static void InitializePrivateStaticClassUGripBTScriptNodeCache();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UGripBTScriptNodeCache();
-public:
-    static void InternalConstructor(void *);
-protected:
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripBTScriptNodeCache();
     UGripBTScriptNodeCache();
 public:
+    #endif
     typedef UObject Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UGripBTScriptNodeCacheData[0x3];
 };
 
@@ -9550,23 +10624,29 @@ public:
     void execGetBlendTime(FFrame &, void *const);
     void execGetAnimDuration(FFrame &, void *const);
     void eventTickAnim(float);
-private:
+HG_PRIVATE:
     UUDKAnimBlendBase &operator=(const UUDKAnimBlendBase &);
 public:
     static UClass *GetPrivateStaticClassUUDKAnimBlendBase(const wchar_t *);
     static void InitializePrivateStaticClassUUDKAnimBlendBase();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL void HandleSliderMove(int, int, float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUDKAnimBlendBase();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUDKAnimBlendBase();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
-    virtual void HandleSliderMove(int, int, float);
+    #endif
     typedef UAnimNodeBlendList Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UUDKAnimBlendBaseData[0x8];
 };
 
@@ -9577,22 +10657,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UHaloAnimBlendByAimProfile &operator=(const UHaloAnimBlendByAimProfile &);
 public:
     static UClass *GetPrivateStaticClassUHaloAnimBlendByAimProfile(const wchar_t *);
     static void InitializePrivateStaticClassUHaloAnimBlendByAimProfile();
     static UClass *StaticClass();
-    static void *operator new(const unsigned int, EInternal *);
-    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UHaloAnimBlendByAimProfile();
-public:
     static void InternalConstructor(void *);
     void WeapTypeChanged(FName);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UHaloAnimBlendByAimProfile();
+public:
+    #endif
     typedef UUDKAnimBlendBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UHaloAnimBlendByForwardMomentum : public UUDKAnimBlendBase  // size 0x120, opaque
@@ -9602,28 +10687,33 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UHaloAnimBlendByForwardMomentum &operator=(const UHaloAnimBlendByForwardMomentum &);
 public:
     static UClass *GetPrivateStaticClassUHaloAnimBlendByForwardMomentum(const wchar_t *);
     static void InitializePrivateStaticClassUHaloAnimBlendByForwardMomentum();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL int GetNumSliders() const;
+    HG_VIRTUAL ESliderType GetSliderType(int) const;
+    HG_VIRTUAL float GetSliderPosition(int, int);
+    HG_VIRTUAL FString GetSliderDrawValue(int);
+    void UpdateChildWeights();
+    HG_VIRTUAL void HandleSliderMove(int, int, float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UHaloAnimBlendByForwardMomentum();
+HG_PROTECTED:
+    HG_VIRTUAL ~UHaloAnimBlendByForwardMomentum();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
-    virtual int GetNumSliders() const;
-    virtual ESliderType GetSliderType(int) const;
-    virtual float GetSliderPosition(int, int);
-    virtual FString GetSliderDrawValue(int);
-    void UpdateChildWeights();
-    virtual void HandleSliderMove(int, int, float);
+    #endif
     typedef UUDKAnimBlendBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UHaloAnimBlendByJumpType : public UUDKAnimBlendBase  // size 0x130, opaque
@@ -9633,26 +10723,32 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual void OnChangeJumpType(int, unsigned int);
+    HG_VIRTUAL void OnChangeJumpType(int, unsigned int);
     void execOnChangeJumpType(FFrame &, void *const);
-private:
+HG_PRIVATE:
     UHaloAnimBlendByJumpType &operator=(const UHaloAnimBlendByJumpType &);
 public:
     static UClass *GetPrivateStaticClassUHaloAnimBlendByJumpType(const wchar_t *);
     static void InitializePrivateStaticClassUHaloAnimBlendByJumpType();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL void SetActiveChild(int, float);
+    HG_VIRTUAL void OnBecomeRelevant();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UHaloAnimBlendByJumpType();
+HG_PROTECTED:
+    HG_VIRTUAL ~UHaloAnimBlendByJumpType();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
-    virtual void SetActiveChild(int, float);
-    virtual void OnBecomeRelevant();
+    #endif
     typedef UUDKAnimBlendBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UHaloAnimBlendByJumpTypeData[0x4];
 };
 
@@ -9663,22 +10759,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UUDKAnimBlendByPhysics &operator=(const UUDKAnimBlendByPhysics &);
 public:
     static UClass *GetPrivateStaticClassUUDKAnimBlendByPhysics(const wchar_t *);
     static void InitializePrivateStaticClassUUDKAnimBlendByPhysics();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUDKAnimBlendByPhysics();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUDKAnimBlendByPhysics();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
+    #endif
     typedef UUDKAnimBlendBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UUDKAnimBlendByPhysicsData[0x14];
 };
 
@@ -9689,22 +10791,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UHaloAnimBlendByPhysics &operator=(const UHaloAnimBlendByPhysics &);
 public:
     static UClass *GetPrivateStaticClassUHaloAnimBlendByPhysics(const wchar_t *);
     static void InitializePrivateStaticClassUHaloAnimBlendByPhysics();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void SetActiveChild(int, float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UHaloAnimBlendByPhysics();
+HG_PROTECTED:
+    HG_VIRTUAL ~UHaloAnimBlendByPhysics();
 public:
-    static void InternalConstructor(void *);
-    virtual void SetActiveChild(int, float);
+    #endif
     typedef UUDKAnimBlendByPhysics Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UHaloAnimBlendByPhysicsData[0x4];
 };
 
@@ -9715,23 +10823,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UUDKAnimBlendByTurnInPlace &operator=(const UUDKAnimBlendByTurnInPlace &);
 public:
     static UClass *GetPrivateStaticClassUUDKAnimBlendByTurnInPlace(const wchar_t *);
     static void InitializePrivateStaticClassUUDKAnimBlendByTurnInPlace();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
+    HG_VIRTUAL void TickAnim(float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUDKAnimBlendByTurnInPlace();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUDKAnimBlendByTurnInPlace();
 public:
-    static void InternalConstructor(void *);
-    virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
-    virtual void TickAnim(float);
+    #endif
     typedef UUDKAnimBlendBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UUDKAnimBlendByTurnInPlaceData[0x4];
 };
 
@@ -9742,22 +10856,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UHaloAnimBlendByTurnInPlace &operator=(const UHaloAnimBlendByTurnInPlace &);
 public:
     static UClass *GetPrivateStaticClassUHaloAnimBlendByTurnInPlace(const wchar_t *);
     static void InitializePrivateStaticClassUHaloAnimBlendByTurnInPlace();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UHaloAnimBlendByTurnInPlace();
+HG_PROTECTED:
+    HG_VIRTUAL ~UHaloAnimBlendByTurnInPlace();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
+    #endif
     typedef UUDKAnimBlendByTurnInPlace Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UUDKAnimNodeCopyBoneTranslation : public UAnimNodeBlendBase  // size 0x140, opaque
@@ -9767,26 +10886,32 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UUDKAnimNodeCopyBoneTranslation &operator=(const UUDKAnimNodeCopyBoneTranslation &);
 public:
     static UClass *GetPrivateStaticClassUUDKAnimNodeCopyBoneTranslation(const wchar_t *);
     static void InitializePrivateStaticClassUUDKAnimNodeCopyBoneTranslation();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void PostEditChangeProperty(FPropertyChangedEvent &);
+    void UpdateListOfRequiredBones(FName);
+    HG_VIRTUAL void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUDKAnimNodeCopyBoneTranslation();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUDKAnimNodeCopyBoneTranslation();
 public:
-    static void InternalConstructor(void *);
-    virtual void PostEditChangeProperty(FPropertyChangedEvent &);
-    void UpdateListOfRequiredBones(FName);
-    virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
-    virtual void TickAnim(float);
-    virtual void GetBoneAtoms(TArray<FBoneAtom,TMemStackAllocator<GMainThreadMemStack,8> > &, const TArray<unsigned char,FDefaultAllocator> &, FBoneAtom &, int &, TArray<FCurveKey,TMemStackAllocator<GMainThreadMemStack,8> > &);
+    #endif
     typedef UAnimNodeBlendBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UUDKAnimNodeCopyBoneTranslationData[0x18];
 };
 
@@ -9797,23 +10922,29 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UHaloAnimNodeCopyBoneTranslation &operator=(const UHaloAnimNodeCopyBoneTranslation &);
 public:
     static UClass *GetPrivateStaticClassUHaloAnimNodeCopyBoneTranslation(const wchar_t *);
     static void InitializePrivateStaticClassUHaloAnimNodeCopyBoneTranslation();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
+    HG_VIRTUAL void TickAnim(float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UHaloAnimNodeCopyBoneTranslation();
+HG_PROTECTED:
+    HG_VIRTUAL ~UHaloAnimNodeCopyBoneTranslation();
 public:
-    static void InternalConstructor(void *);
-    virtual void InitAnim(USkeletalMeshComponent *, UAnimNodeBlendBase *);
-    virtual void TickAnim(float);
+    #endif
     typedef UUDKAnimNodeCopyBoneTranslation Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UHaloAnimNodeCopyBoneTranslationData[0x4];
 };
 
@@ -9824,25 +10955,31 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UHaloBTKamikaze &operator=(const UHaloBTKamikaze &);
 public:
     static UClass *GetPrivateStaticClassUHaloBTKamikaze(const wchar_t *);
     static void InitializePrivateStaticClassUHaloBTKamikaze();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL GripRBTNode *CreateRuntime();
+    HG_VIRTUAL void InitializeRuntime(GripRBTNode *);
+    HG_VIRTUAL EGripBTNodeType GetType();
+    HG_VIRTUAL BTMenuType GetMenuType();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UHaloBTKamikaze();
+HG_PROTECTED:
+    HG_VIRTUAL ~UHaloBTKamikaze();
 public:
-    static void InternalConstructor(void *);
-    virtual GripRBTNode *CreateRuntime();
-    virtual void InitializeRuntime(GripRBTNode *);
-    virtual EGripBTNodeType GetType();
-    virtual BTMenuType GetMenuType();
+    #endif
     typedef UCCSBTMoveTo Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
     unsigned int UHaloBTKamikazeData[0x7];
 };
 
@@ -9855,23 +10992,27 @@ public:
     };
     void BeginDeath();
     void execBeginDeath(FFrame &, void *const);
-private:
+HG_PRIVATE:
     UUDKTargetableComponent &operator=(const UUDKTargetableComponent &);
 public:
     static UClass *GetPrivateStaticClassUUDKTargetableComponent(const wchar_t *);
     static void InitializePrivateStaticClassUUDKTargetableComponent();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL void BeginPlay();
+    HG_VIRTUAL void BeginDestroy();
+    AActor *GetOwner();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUDKTargetableComponent();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUDKTargetableComponent();
 public:
-    static void InternalConstructor(void *);
-    virtual void Tick(float);
-    virtual void BeginPlay();
-    virtual void BeginDestroy();
-    AActor *GetOwner();
+    #endif
     typedef UActorComponent Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
     int BaseThreatVal;  // 0x58
     float MaxAIHeat;  // 0x5C
     float CurAIHeat;  // 0x60
@@ -9885,8 +11026,21 @@ public:
     unsigned long bAITargetable : 1;  // 0x7C
     unsigned long bIsVehicle : 1;
     AActor *myOwner;  // 0x80
-private:
-    static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::be<int> BaseThreatVal;
+    hg::be<float> MaxAIHeat;
+    hg::be<float> CurAIHeat;
+    hg::be<float> ReduceHeatPerSecond;
+    hg::be<float> InnerThreatRadius;
+    hg::be<float> OutterThreatRadius;
+    hg::be<float> ModifiableThreatPct;
+    hg::be<float> fAITargetHeight;
+    unsigned char AITargetType;
+    char _pad0[0x3];
+    hg::be<unsigned int> _bits7C;  // 0x7C, from bAITargetable
+    hg::gptr<AActor> myOwner;
+    #endif
 };
 
 class UUSSATBlendByAlertness : public UCCSATBlendListBase  // size 0x110, opaque
@@ -9896,22 +11050,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UUSSATBlendByAlertness &operator=(const UUSSATBlendByAlertness &);
 public:
     static UClass *GetPrivateStaticClassUUSSATBlendByAlertness(const wchar_t *);
     static void InitializePrivateStaticClassUUSSATBlendByAlertness();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUSSATBlendByAlertness();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUSSATBlendByAlertness();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
+    #endif
     typedef UCCSATBlendListBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UUSSATBlendByCover : public UCCSATBlendListBase  // size 0x110, opaque
@@ -9921,22 +11080,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UUSSATBlendByCover &operator=(const UUSSATBlendByCover &);
 public:
     static UClass *GetPrivateStaticClassUUSSATBlendByCover(const wchar_t *);
     static void InitializePrivateStaticClassUUSSATBlendByCover();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUSSATBlendByCover();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUSSATBlendByCover();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
+    #endif
     typedef UCCSATBlendListBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UUSSATBlendByCoverPose : public UCCSATBlendListBase  // size 0x110, opaque
@@ -9946,23 +11110,28 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UUSSATBlendByCoverPose &operator=(const UUSSATBlendByCoverPose &);
 public:
     static UClass *GetPrivateStaticClassUUSSATBlendByCoverPose(const wchar_t *);
     static void InitializePrivateStaticClassUUSSATBlendByCoverPose();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    HG_VIRTUAL void OnCeaseRelevant();
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUSSATBlendByCoverPose();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUSSATBlendByCoverPose();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
-    virtual void OnCeaseRelevant();
+    #endif
     typedef UCCSATBlendListBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UUSSATBlendByMove : public UCCSATBlendListBase  // size 0x110, opaque
@@ -9972,22 +11141,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UUSSATBlendByMove &operator=(const UUSSATBlendByMove &);
 public:
     static UClass *GetPrivateStaticClassUUSSATBlendByMove(const wchar_t *);
     static void InitializePrivateStaticClassUUSSATBlendByMove();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUSSATBlendByMove();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUSSATBlendByMove();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
+    #endif
     typedef UCCSATBlendListBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 class UUSSATBlendByPosture : public UCCSATBlendListBase  // size 0x110, opaque
@@ -9997,22 +11171,27 @@ public:
     {
         IsIntrinsic = 0,
     };
-private:
+HG_PRIVATE:
     UUSSATBlendByPosture &operator=(const UUSSATBlendByPosture &);
 public:
     static UClass *GetPrivateStaticClassUUSSATBlendByPosture(const wchar_t *);
     static void InitializePrivateStaticClassUUSSATBlendByPosture();
     static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickAnim(float);
+    #ifndef HAGGAR_HOST
     static void *operator new(const unsigned int, EInternal *);
     static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
-protected:
-    virtual ~UUSSATBlendByPosture();
+HG_PROTECTED:
+    HG_VIRTUAL ~UUSSATBlendByPosture();
 public:
-    static void InternalConstructor(void *);
-    virtual void TickAnim(float);
+    #endif
     typedef UCCSATBlendListBase Super;
-private:
+    #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
 };
 
 #include "Core/Inc/UnObjBas.h"

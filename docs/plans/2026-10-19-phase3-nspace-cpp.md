@@ -160,16 +160,16 @@ Five objects hold the `nspace` rows. Work them smallest first:
 The 962 already include whatever Task 2 matched.
 
 For each object:
-- [ ] **Claim it** on issue #1.
-- [ ] **List its remaining `todo` functions,** from `config/functions.csv`
+- [x] **Claim it** on issue #1.
+- [x] **List its remaining `todo` functions,** from `config/functions.csv`
   and `config/status.csv`, grouped by source file (the `source` column).
-- [ ] **Write each source file:** `src/<Package>/Src/<File>.cpp`, with
+- [x] **Write each source file:** `src/<Package>/Src/<File>.cpp`, with
   `// @object` and `// @retail` markers. Use headers from Task 1. Work
   smallest functions first within a file, and define the functions of a
   unity object together so that inlining matches retail.
-- [ ] **Run `check.py`** on the file. Iterate within the matching bar, and
+- [x] **Run `check.py`** on the file. Iterate within the matching bar, and
   mark the leftovers `near` with a comment.
-- [ ] **Commit and push** once the object is done, and at least every 50
+- [x] **Commit and push** once the object is done, and at least every 50
   functions. Then post a one-line status on issue #1: matched, near, todo.
 
 Done for the task: every `nspace` row is `matched`, `near`, or `todo` with a
@@ -186,9 +186,9 @@ The question: can one source file build for both the XDK (to match) and the
 host (as a `REX_HOOK` in place of the recompiled function), without two
 copies of the code?
 
-- [ ] **Pick 3 matched functions:** a leaf that only reads and writes
+- [x] **Pick 3 matched functions:** a leaf that only reads and writes
   members, one that calls another game function, and a virtual call.
-- [ ] **Find a host-mode header form,** for example a macro or template layer
+- [x] **Find a host-mode header form,** for example a macro or template layer
   in which, when building for the host:
   - members become big-endian guest-memory accessors at the PDB's offsets;
   - pointers become 32-bit guest pointers;
@@ -196,15 +196,15 @@ copies of the code?
 
   When building with the XDK, the same headers expand to plain members, and
   the 3 functions must still match.
-- [ ] **Hook the 3 functions** into `haggar.exe` with `REX_HOOK`.
+- [x] **Hook the 3 functions** into `haggar.exe` with `REX_HOOK`.
   - Test: the game reaches the jungle level (M5) with the hooks in place.
   - For the leaf, a log comparison shows the same member writes as with the
     recompiled version, for the same input.
-- [ ] **Write `docs/specs/phase3-port-swap.md`:** the chosen form, what it
+- [x] **Write `docs/specs/phase3-port-swap.md`:** the chosen form, what it
   costs per function, and a recommendation. The options are to adopt it for
   all matched code, to adopt it only for code worth modding, or to keep the
   port fully recompiled.
-- [ ] **Commit, then push.** If the time-box runs out, write up what was
+- [x] **Commit, then push.** If the time-box runs out, write up what was
   learned instead.
 
 ### Task 5: scripts (time-box: about a day)

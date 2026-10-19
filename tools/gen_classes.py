@@ -251,7 +251,7 @@ class Classes:
         decl = self.header.method_decl(cls, m)
         if decl is None or member.startswith('operator'):
             return None
-        decl = re.sub(r'^(virtual |static )', '', decl).rstrip(';').replace(' = 0', '')
+        decl = re.sub(r'^(HG_VIRTUAL |static )', '', decl).rstrip(';').replace(' HG_PURE', '')
         decl = decl.replace(f'{member}(', f'{cls}::{member}(', 1)
         ret = self.signature(m['type'])[0]
         what, value = shape

@@ -39,6 +39,7 @@ void EmitKamikazeSetters(HaloRBTKamikaze *k, FName a, FName b)
 // @retail 0x8331ED58
 // HaloRBTKamikaze::SetBlendTimes (inline, in the header)
 
+#ifndef HAGGAR_HOST  // constructors stay recompiled in the port
 // @retail 0x83333A10
 HaloRBTKamikaze::HaloRBTKamikaze()
     : m_actionHandle(-1)
@@ -50,6 +51,7 @@ HaloRBTKamikaze::HaloRBTKamikaze()
     , kamikazeTarget(0)
 {
 }
+#endif
 
 // @retail 0x83333B58
 GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecutePreInternal(IGripBTInterface *pInterface, bool bFirstTime)
