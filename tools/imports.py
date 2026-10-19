@@ -14,6 +14,7 @@ import csv
 import re
 import struct
 import sys
+from collections import Counter
 from dataclasses import dataclass
 
 import paths
@@ -51,10 +52,10 @@ def _names(library):
 
 def _libraries(data, h):
     off = h.optional[IMPORT_LIBRARIES]
-    _size, str_size, str_count = struct.unpack_from('>III', data, off)
+    total, str_size, str_count = struct.unpack_from('>III', data, off)
     strings = data[off + 12:off + 12 + str_size].split(b'\0')
     names = [s.decode() for s in strings if s][:str_count]
-    p, end = off + 12 + str_size, off + _size
+    p, end = off + 12 + str_size, off + total
     while p < end:
         size, = struct.unpack_from('>I', data, p)
         name_index, count = struct.unpack_from('>HH', data, p + 0x24)
@@ -96,9 +97,7 @@ def main(argv=None):
         w.writerow(['library', 'ordinal', 'name', 'thunk', 'kind'])
         for i in found:
             w.writerow([i.library, i.ordinal, i.name, f'0x{i.thunk:08X}', i.kind])
-    by_lib = {}
-    for i in found:
-        by_lib[i.library] = by_lib.get(i.library, 0) + 1
+    by_lib = Counter(i.library for i in found)
     print(f'{len(found)} imports: ' + ', '.join(f'{k} {v}' for k, v in by_lib.items())
           + f'; {sum(1 for i in found if not i.name)} unnamed')
 

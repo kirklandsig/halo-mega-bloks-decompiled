@@ -12,12 +12,12 @@ emits lis; slwi; addi; lwzx). The entry count is K + 1, and every label must
 lie inside the function. Anything else is a pointer call or tail call.
 """
 import argparse
-import csv
 import struct
 import sys
 from collections import Counter
 from dataclasses import dataclass
 
+import inventory
 import paths
 
 BASE = 0x82000000
@@ -26,6 +26,8 @@ WINDOW = 512  # instructions to look back from a bctr
 
 # X-form (opcode 31) extended opcodes whose target is rA, not rD
 _XO_WRITES_RA = {28, 60, 124, 284, 316, 412, 444, 476, 24, 536, 792, 824, 26, 954, 922, 986, 27, 539, 794, 58}
+# ... and those that write no GPR: mtspr, mtcrf, stores, compares, cache ops
+_XO_WRITES_NONE = {467, 144, 151, 183, 215, 247, 407, 439, 150, 662, 918, 0, 32, 86, 54, 278, 246, 1014, 470, 982}
 _LOADS_D = {32, 33, 34, 35, 40, 41, 42, 43, 58}  # lwz lwzu lbz lbzu lhz lhzu lha lhau ld
 _LOADS_X = {23, 55, 87, 119, 279, 311, 343, 375, 21, 53}  # lwzx lwzux lbzx lbzux lhzx lhzux lhax lhaux ldx ldux
 
@@ -42,6 +44,12 @@ def _fields(w):
     return w >> 26, (w >> 21) & 31, (w >> 16) & 31, (w >> 11) & 31, (w >> 1) & 0x3FF
 
 
+def _simm(w):
+    """The low 16 bits of `w`, sign-extended."""
+    v = w & 0xFFFF
+    return v - 0x10000 if v & 0x8000 else v
+
+
 def _writes(w):
     """The GPR an instruction writes, or None (only the forms that matter here)."""
     op, d, a, _b, xo = _fields(w)
@@ -52,17 +60,8 @@ def _writes(w):
     if op == 31:
         if xo in _XO_WRITES_RA:
             return a
-        if xo in (339, 467, 144):  # mfspr writes rD; mtspr/mtcrf write none
-            return d if xo == 339 else None
-        if xo in (151, 183, 215, 247, 407, 439, 150, 662, 918, 0, 32, 86, 54, 278, 246, 1014, 470, 982):
-            return None  # stores, compares, cache ops
-        return d
+        return None if xo in _XO_WRITES_NONE else d
     return None
-
-
-def _is_branch(w):
-    op = w >> 26
-    return op in (16, 18) or (op == 19 and ((w >> 1) & 0x3FF) in (16, 528))
 
 
 class _Code:
@@ -89,15 +88,15 @@ def _const(code, reg, before, stop):
     if w is None:
         return None
     op, d, a, _b, _xo = _fields(w)
-    simm = w & 0xFFFF
+    imm = w & 0xFFFF
     if op == 15 and a == 0:
-        return (simm << 16) & 0xFFFFFFFF
+        return (imm << 16) & 0xFFFFFFFF
     if op == 14 and a != 0:
         hi = _const(code, a, p, stop)
-        return None if hi is None else (hi + (simm - 0x10000 if simm & 0x8000 else simm)) & 0xFFFFFFFF
+        return None if hi is None else (hi + _simm(w)) & 0xFFFFFFFF
     if op == 24:  # ori rA, rS, imm
         hi = _const(code, d, p, stop)
-        return None if hi is None else hi | simm
+        return None if hi is None else hi | imm
     return None
 
 
@@ -126,24 +125,22 @@ def _bound(code, reg, before, stop):
     `clrlwi` mask, through `mr` copies and `addi` offsets."""
     p = before - 4
     bgt = None
-    regs, offset = {reg}, 0
+    offset = 0
     while p >= stop:
         w = code.word(p)
         op, rs, ra, rb, xo = _fields(w)
         if bgt is None and (w >> 21) & 31 == 12 and (w >> 16) & 3 == 1 and (op == 16 or (op == 19 and xo == 16)):
-            rel = w & 0xFFFC
-            target = p + (rel - 0x10000 if rel & 0x8000 else rel) if op == 16 else 0
+            target = p + _simm(w & 0xFFFC) if op == 16 else 0
             bgt = ((w >> 18) & 7, target)
         elif op == 10 and bgt and (w >> 23) & 7 == bgt[0] and (  # cmplwi or cmpldi
-                ra in regs or any(_copy_of(code, r, p, stop) == ra for r in regs)):
+                ra == reg or _copy_of(code, reg, p, stop) == ra):
             return offset, (w & 0xFFFF) + offset, bgt[1]
-        elif _writes(w) in regs:
+        elif _writes(w) == reg:
             if op == 31 and xo == 444 and rs == rb:      # mr
-                regs = {rs}
+                reg = rs
             elif op == 14 and ra:                         # addi reg, rA, k
-                k = w & 0xFFFF
-                offset += k - 0x10000 if k & 0x8000 else k
-                regs = {ra}
+                offset += _simm(w)
+                reg = ra
             elif op == 21 and rb == 0 and (w >> 1) & 31 == 31 and bgt is None:  # clrlwi
                 return offset, (1 << (32 - ((w >> 6) & 31))) - 1 + offset, 0
             else:
@@ -153,7 +150,7 @@ def _bound(code, reg, before, stop):
 
 
 def classify(code, bctr):
-    """('table', Switch) or ('pointer', None) or ('unexplained', reason)."""
+    """('table', Switch), ('pointer', None), or ('unexplained' or 'rejected', reason)."""
     stop = max(code.lo, bctr - 4 * WINDOW)
     p = bctr - 4
     while p >= stop:
@@ -192,39 +189,38 @@ def classify(code, bctr):
     return 'pointer', None  # an array of function pointers at a computed address
 
 
-def _bctrs(code):
-    for p in range(code.lo, code.hi, 4):
-        if code.word(p) == BCTR:
-            yield p
+def _bctrs(image, funcs):
+    """(function VA, its code, VA) of every bctr in `funcs`."""
+    for va, size in funcs:
+        code = _Code(image, va, va + size)
+        for p in range(code.lo, code.hi, 4):
+            if code.word(p) == BCTR:
+                yield va, code, p
 
 
 def find(image, funcs):
     """Every jump table in `funcs` ((VA, size) pairs) of the image at BASE."""
     out = []
-    for va, size in funcs:
-        code = _Code(image, va, va + size)
-        for p in _bctrs(code):
-            kind, s = classify(code, p)
-            if kind == 'table':
-                out.append(s)
+    for _va, code, p in _bctrs(image, funcs):
+        kind, s = classify(code, p)
+        if kind == 'table':
+            out.append(s)
     return out
 
 
 def survey(image, funcs, verbose=False):
     counts = Counter()
-    for va, size in funcs:
-        code = _Code(image, va, va + size)
-        for p in _bctrs(code):
-            kind, why = classify(code, p)
-            counts[kind] += 1
-            if verbose and kind in ('unexplained', 'rejected'):
-                print(f'{kind} 0x{p:08X} in 0x{va:08X}: {why}')
+    for va, code, p in _bctrs(image, funcs):
+        kind, why = classify(code, p)
+        counts[kind] += 1
+        if verbose and kind in ('unexplained', 'rejected'):
+            print(f'{kind} 0x{p:08X} in 0x{va:08X}: {why}')
     return counts
 
 
 def functions():
-    with open(paths.CONFIG / 'functions.csv', newline='') as f:
-        return sorted({(int(r['address'], 16), int(r['size'])) for r in csv.DictReader(f) if int(r['size'])})
+    rows = inventory.read_csv(paths.CONFIG / 'functions.csv')
+    return sorted({(int(r['address'], 16), int(r['size'])) for r in rows if int(r['size'])})
 
 
 def render(switches):
