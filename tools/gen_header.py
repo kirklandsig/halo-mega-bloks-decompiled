@@ -27,6 +27,19 @@ LF_METHODLIST = 0x1206
 COMPGEN = 0x100
 ACCESS = {1: 'HG_PRIVATE', 2: 'HG_PROTECTED', 3: 'public'}  # the host build makes them public
 BUILTIN = {'__vector4'}
+# Types written by hand in include/Core/Inc (Core.h, Array.h, ScriptInterface.h), which every
+# generated header includes: classes, class templates, enums.
+PROVIDED_RECORDS = {'FHeapAllocator', 'FDefaultAllocator', 'FScriptInterface'}
+PROVIDED_TEMPLATES = {'TArray', 'TArrayNoInit', 'TScriptInterface'}
+PROVIDED_ENUMS = {'ENoInit'}
+PROVIDED_INCLUDES = ['Core/Inc/Array.h', 'Core/Inc/ScriptInterface.h']
+
+
+def provided(name):
+    """Whether a record is written by hand (a provided class, a class
+    nested in one, or an instance of a provided template)."""
+    top = split_scope(name)[0]
+    return top in PROVIDED_RECORDS or template_args(top)[0] in PROVIDED_TEMPLATES
 
 
 def split_scope(name):
@@ -130,6 +143,13 @@ class Header:
         name = self._rname(ti)
         if name in BUILTIN:
             return
+        if provided(name):
+            self._note_name(name)
+            # an array by value destroys its elements: they must be complete
+            for arg in template_args(split_scope(name)[0])[1] or []:
+                if self._is_record_name(arg):
+                    self._need_class(self.t.find(arg), dep)
+            return
         if dep and self._stack:
             self.deps[self._stack[-1]].add(name)
         if name in self.classes:
@@ -183,7 +203,7 @@ class Header:
             ti = self.t._resolve(ti)
             p = self.t.record(ti)[1]
             name = cstr_at(d, p + 12)
-            if name not in self.enums:
+            if name not in self.enums and name not in PROVIDED_ENUMS:
                 self.enums[name] = ti
                 self._note_name(name)
                 outer = self._scope_of(name)
@@ -193,7 +213,9 @@ class Header:
             name = self._rname(ti)
             if name in BUILTIN:
                 return
-            if complete:
+            if provided(name) and not complete:
+                self._note_name(name)
+            elif complete:
                 self._need_class(ti)
             elif self._scope_of(name):
                 self._need_class(self.t.find(self._scope_of(name)), dep=True)
@@ -204,12 +226,13 @@ class Header:
 
     def _note_name(self, name):
         """Declare the templates a name uses, and the types in its arguments."""
-        for part in split_scope(name):
+        for i, part in enumerate(split_scope(name)):
             base, args = template_args(part)
             if args is None:
                 continue
             kinds = ['int' if re.fullmatch(r'-?\d+', a) else 'class' for a in args]
-            self.templates.setdefault(base if base in self.templates else self._qualify(name, part, base), kinds)
+            if not (i == 0 and base in PROVIDED_TEMPLATES):
+                self.templates.setdefault(base if base in self.templates else self._qualify(name, part, base), kinds)
             for a in args:
                 arg = re.sub(r'^(?:const |enum |class |struct |union )+', '', a.rstrip(' *&')).strip()
                 if re.fullmatch(r'-?\d+', a):
@@ -584,7 +607,7 @@ class Header:
         return text, (None if outer else parts[:-1])
 
     def render(self):
-        out = ['#pragma once', '#include "Core/Inc/HostGuest.h"', '']
+        out = ['#pragma once', '#include "Core/Inc/HostGuest.h"'] + [f'#include "{i}"' for i in PROVIDED_INCLUDES] + ['']
         scoped = {}  # namespace tuple -> lines
 
         def put(ns, text):

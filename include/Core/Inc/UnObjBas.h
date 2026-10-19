@@ -1,27 +1,13 @@
-// The little of UE3's Core that n-Space's generated code expands to:
-// check(), the global operator new, and UObject's inline members. Written
+// UObject's inline members, as n-Space's generated code expands them
+// (check() and the memory functions are in Core.h). Written
 // from the disassembly; include it after a generated header declares
 // UObject and UClass.
 #pragma once
 
-void *appMalloc(unsigned long Count, unsigned long Alignment = 8);
-void appFailAssertFunc(const char *Expr, const char *File, int Line, const wchar_t *Format = L"", ...);
-void appFailAssertFuncDebug(const char *Expr, const char *File, int Line, const wchar_t *Format = L"", ...);
+#include "Core/Inc/Core.h"
+
 void InitializePrivateStaticClass(UClass *TClass_Super_StaticClass, UClass *TClass_PrivateStaticClass,
                                   UClass *TClass_WithinClass_StaticClass);
-
-inline void *operator new(unsigned int Size) { return appMalloc(Size); }
-
-#define appDebugBreak() (*((int *)3) = 13)
-#define check(expr)                                                   \
-    {                                                                 \
-        if (!(expr))                                                  \
-        {                                                             \
-            appFailAssertFuncDebug(#expr, __FILE__, __LINE__, L"");   \
-            appDebugBreak();                                          \
-            appFailAssertFunc(#expr, __FILE__, __LINE__, L"");        \
-        }                                                             \
-    }
 
 // The first bit of a bitfield word, where script stores a bool (big-endian)
 #define FIRST_BITFIELD 0x80000000
@@ -52,3 +38,7 @@ unsigned char GRegisterNative(int iNative, const Native &Func);
 
 // Cast<T>: retail calls its out-of-line copy
 template <class T> T *Cast(UObject *Src);
+
+#ifndef HAGGAR_HOST  // constructors stay recompiled in the port
+inline FName::FName() {}
+#endif

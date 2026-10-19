@@ -185,10 +185,8 @@ extern void (*const EmitUUSSATBlendByPostureInternalConstructor)(void *) = &UUSS
 // ACCSController::ACCSController (in the header)
 // @retail 0x83361C70
 // ACCSController::~ACCSController (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x83361D08
 // ACCSController::`scalar deleting destructor' (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x83367DB0
 // ACCSController::InternalConstructor (in the header)
 // @retail 0x8336A6C8
@@ -283,10 +281,8 @@ void AUSSController::InitializePrivateStaticClassAUSSController()
 //   not matched yet: the vtable pointers of its interfaces, which the opaque layout leaves out
 // @retail 0x8335BDE8
 // AUSSPawn::~AUSSPawn (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x8335BE78
 // AUSSPawn::`scalar deleting destructor' (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x83361F30
 // AUSSPawn::InternalConstructor (in the header)
 //   not matched yet: the vtable pointers of its interfaces, which the opaque layout leaves out
@@ -1519,10 +1515,8 @@ void UCCSBTSearch::InitializePrivateStaticClassUCCSBTSearch()
 // UCCSBTSelectTarget::UCCSBTSelectTarget (in the header)
 // @retail 0x83352D18
 // UCCSBTSelectTarget::~UCCSBTSelectTarget (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x83352D80
 // UCCSBTSelectTarget::`scalar deleting destructor' (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x8335B758
 // UCCSBTSelectTarget::InternalConstructor (in the header)
 

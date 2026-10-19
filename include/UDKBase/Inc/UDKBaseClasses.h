@@ -1,56 +1,59 @@
 // Generated from the PDB by: python tools/gen_classes.py UDKBase
 #pragma once
+#include <vectorintrinsics.h>
 #include "Core/Inc/HostGuest.h"
+#include "Core/Inc/Array.h"
+#include "Core/Inc/ScriptInterface.h"
 
-namespace Grip {
-template <class T0, int T1> struct AllocatorGH;
-template <class T0> struct ListNode;
-struct AllocInfo;
-struct MemAddressStub;
-struct MemItem;
-class Memory;
-class MemoryHeap;
-class StatBag;
-class String;
-class StringBuffer;
-class SysAlloc;
-class SysAllocPaged;
-}
-
+template <class T0, int T1> struct DefaultKeyFuncs;
 template <class T0> class GripRBTNumericCondition;
 template <class T0, class T1> class Grip_Array;
 template <class T0, int T1> class Grip_ArrayPOD;
-template <class T0, class T1> class TArray;
-template <class T0> class TArrayNoInit;
 template <class T0, class T1> class TIndirectArray;
 template <class T0, class T1, class T2> class TMap;
 template <class T0, int T1> class TMemStackAllocator;
+template <class T0, class T1, class T2> class TSet;
 class AAIController;
 class AActor;
+class ABrush;
 class ACCSController;
 class AController;
 class ACoverLink;
+class AFileLog;
 class AFluidSurfaceActor;
 class AGameAIController;
+class AGameCrowdAgent;
+class AGameInfo;
+class AGamePawn;
+class AGamePlayerController;
 class AGwNavAIController;
+class AGwNavPawn;
 class AGwNavVehicle;
+class AInterpActor;
 class AInventory;
+class AInventoryManager;
 class AKAsset;
+class ALadderVolume;
 class ANavigationPoint;
 class APawn;
 class APhysicsVolume;
 class APickupFactory;
 class APlayerController;
 class APlayerReplicationInfo;
+class APlayerStart;
 class APortalTeleporter;
 class APrefabInstance;
 class AProjectile;
 class ASVehicle;
 class AScout;
+class AUDKBot;
+class AUDKCarriedObject;
 class AUDKCover;
 class AUDKPawn;
+class AUDKPlayerController;
 class AUSSController;
 class AUSSPawn;
+class AUSSWeaponAttachment;
 class AVehicle;
 class AVolume;
 class AWeapon;
@@ -86,6 +89,7 @@ struct CCSAOStrafeTarget;
 struct CCSAOStrafeTo;
 class CCSBlackboard;
 class CCSBrain;
+class CCSCSInterface;
 struct CCSCharacter;
 struct CCSController_eventActionStopFiring_Parms;
 struct CCSController_eventAimAt_Parms;
@@ -100,7 +104,10 @@ struct CCSController_eventStartFireBurst_Parms;
 struct CCSController_eventStopFireBurst_Parms;
 struct CCSCover;
 class CCSCoverRenderingComponent;
+struct CCSGameCharacter;
 struct CCSGameCover;
+class CCSGlobalBlackboard;
+class CCSMeatPuppet;
 class CCSNorman;
 class CCSPSCover;
 class CCSPSTargetAwareness;
@@ -143,16 +150,21 @@ struct CCSSystemsConfig;
 struct CCSTarget;
 class CCSTargetRenderingComponent;
 struct CoverLink_eventSetDisabled_Parms;
+struct FAICmdHistoryItem;
 struct FActorReference;
+struct FAnimBlendChild;
 struct FAnimSlotDesc;
 struct FAnimSlotInfo;
 class FArchive;
 struct FAsyncPackage;
 struct FBasedPosition;
 class FBoneAtom;
+struct FBoneCopyInfo;
 class FBox;
+struct FBoxSphereBounds;
 struct FCCSCoverData;
 struct FCCSMoveCmdData;
+struct FCCSSystemConfigData;
 struct FCCSTargetData;
 class FCanvas;
 struct FCheckResult;
@@ -163,34 +175,44 @@ struct FCoverReference;
 struct FCoverSlot;
 struct FCurveKey;
 struct FCylinder;
+class FDecalInteraction;
 class FDecalRenderData;
 class FDecalState;
-class FDefaultAllocator;
 class FDefaultSetAllocator;
 struct FDynamicLinkInfo;
 class FEditPropertyChain;
+struct FEnemyThreatInfo;
 class FExportObjectInnerContext;
 class FFeedbackContext;
+struct FFireLink;
 class FForceApplicator;
 struct FFrame;
 class FGuid;
+class FInBunch;
 struct FIntPoint;
 class FKCachedConvexData;
 class FLightingBuildOptions;
 struct FLightingChannelContainer;
 struct FLinearColor;
 class FMatrix;
+class FMemStack;
 struct FMeshBone;
 class FName;
 struct FNameEntry;
 struct FNavMeshEdgeBase;
 struct FNavMeshMantleEdge;
 struct FNavMeshPathParams;
+class FNetworkNotify;
+struct FNodeChild;
 struct FObjectDuplicationParameters;
 struct FObjectInstancingGraph;
+class FOctreeNode;
 struct FOutParmRec;
 class FOutputDevice;
+class FPackageInfo;
 class FPlane;
+struct FPostProcessSettings;
+class FPrimitiveSceneInfo;
 class FPrimitiveSceneProxy;
 class FPrimitiveTriangleDefinitionInterface;
 struct FPropertyChangedChainEvent;
@@ -205,22 +227,32 @@ class FRenderCommandFence;
 struct FRigidBodyCollisionInfo;
 struct FRigidBodyContactInfo;
 struct FRigidBodyState;
+struct FRootMotionCurve;
 class FRotator;
 struct FScalarParameterInterpStruct;
 class FSceneInterface;
+class FSceneViewFamily;
 struct FScriptDelegate;
+struct FSlotMoveRef;
+class FSphere;
 struct FStateFrame;
 struct FStaticLightingPrimitiveInfo;
 struct FStreamingTexturePrimitiveInfo;
 class FString;
+struct FStringNoInit;
 struct FTimerData;
 struct FTraceHitInfo;
+struct FURL;
+struct FUniqueNetId;
 class FVector;
 struct FVector2D;
 class FVector4;
+struct FViewTargetTransitionParams;
+struct FVisiblePortalInfo;
 class GMainThreadMemStack;
 class GripAFAction;
 class GripAFFactory;
+class GripAFFramework;
 class GripAFModifier;
 class GripAFScheduler;
 class GripBBMember;
@@ -231,15 +263,20 @@ struct GripBTScriptNodeCache_eventSurveyUsedBBMembers_Parms;
 class GripBTStack;
 class GripBTSystemFlags;
 class GripBlackboard;
+class GripBrain;
+class GripBrainSnapshotSerializer;
 class GripBrainSystem;
+class GripBrainSystemContainer;
 struct GripEvent;
 class GripGameEventHandler;
 class GripHUDRenderer;
+class GripHeapObject;
 class GripRBTAllocator;
 class GripRBTBehavior;
 class GripRBTBooleanCondition;
 class GripRBTCondition;
 class GripRBTNode;
+class GripRBTTree;
 class GripSerializer;
 struct GripSystemConfig;
 class GripVHeapObject;
@@ -251,12 +288,19 @@ class ICCSMeatPuppet;
 class ICCSPawn;
 class IGJKHelper;
 class IGripBTInterface;
+class IGripBrainListener;
+class IGripMeatPuppetQuery;
+class IGripRBTTreeListener;
+class IGripSRComponent;
+class IGripSRProxy;
 class IGripSceneRenderer;
+class IGripWorldQuery;
 class IInterface_NavigationHandle;
 class IInterface_Speaker;
 class NxActor;
 class NxActorDesc;
 class NxGroupsMask;
+class ScalarRegister;
 class UActorChannel;
 class UActorComponent;
 class UActorFactory;
@@ -271,6 +315,7 @@ class UAnimNodeSequence;
 class UAnimNodeSlot;
 class UAnimNotify_ForceField;
 class UAnimNotify_PlayParticleEffect;
+class UAnimNotify_Rumble;
 class UAnimNotify_Trails;
 class UAnimObject;
 class UAnimSet;
@@ -343,13 +388,20 @@ class UCCSPawn;
 class UCCSSystemConfig;
 class UCCSTarget;
 class UCCSVisualizationComponent;
+class UCameraAnim;
 class UCanvas;
+class UChannel;
+class UChildConnection;
 class UClass;
 class UComponent;
+class UCylinderComponent;
 class UDecalComponent;
 class UFaceFXAnimSet;
 class UFaceFXAsset;
 class UField;
+class UFogVolumeDensityComponent;
+class UFont;
+class UForceFeedbackWaveform;
 class UFunction;
 class UGameAICommand;
 class UGripAFActionHandle;
@@ -376,17 +428,23 @@ class UHaloBTKamikaze;
 class UInterface;
 class UInterpGroup;
 class UInterpGroupInst;
+class UInterpTrackInstDirector;
 class UInterpTrackInstMove;
 class UInterpTrackMove;
 class ULevel;
+class ULevelStreaming;
 class ULightComponent;
 class ULightEnvironmentComponent;
 class ULinkerLoad;
 class ULinkerSave;
+class UMaterialInstanceConstant;
 class UMaterialInterface;
+class UModel;
 class UMorphNodeBase;
 class UNavigationHandle;
 class UNavigationMeshBase;
+class UNetConnection;
+class UNetDriver;
 class UObject;
 class UPackage;
 class UPackageMap;
@@ -395,6 +453,7 @@ class UPathConstraint;
 class UPathGoalEvaluator;
 class UPhysicalMaterial;
 class UPhysicsAsset;
+class UPlayer;
 class UPrimitiveComponent;
 class UProperty;
 class URB_BodyInstance;
@@ -405,8 +464,10 @@ class UReachSpec;
 class USVehicleWheel;
 class USelection;
 class USeqAct_ActorFactory;
+class USeqAct_CameraLookAt;
 class USeqAct_Interp;
 class USeqAct_Latent;
+class USequence;
 class USequenceEvent;
 class USequenceObject;
 class USequenceOp;
@@ -422,13 +483,17 @@ class UTexture;
 class UUDKAnimBlendBase;
 class UUDKAnimBlendByPhysics;
 class UUDKAnimBlendByTurnInPlace;
+class UUDKAnimBlendByWeapType;
 class UUDKAnimNodeCopyBoneTranslation;
+class UUDKAnimNodeSeqWeap;
 class UUDKTargetableComponent;
 class UUSSATBlendByAlertness;
 class UUSSATBlendByCover;
 class UUSSATBlendByCoverPose;
 class UUSSATBlendByMove;
 class UUSSATBlendByPosture;
+class UWorld;
+struct _XMMATRIX;
 enum BTMenuType
 {
     MT_BEHAVIOR = 0,
@@ -439,6 +504,12 @@ enum BTMenuType
     MT_HIDDEN = 5,
     MT_NUMOF = 6,
     MT_MAX = 7,
+};
+enum EAcceptConnection
+{
+    ACCEPTC_Reject = 0,
+    ACCEPTC_Accept = 1,
+    ACCEPTC_Ignore = 2,
 };
 enum EActorMetricsType
 {
@@ -1209,9 +1280,33 @@ enum ENativeConstructor
 {
     EC_NativeConstructor = 0,
 };
-enum ENoInit
+enum ENetMode
 {
-    E_NoInit = 0,
+    NM_Standalone = 0,
+    NM_DedicatedServer = 1,
+    NM_ListenServer = 2,
+    NM_Client = 3,
+    NM_MAX = 4,
+};
+enum ENetRole
+{
+    ROLE_None = 0,
+    ROLE_SimulatedProxy = 1,
+    ROLE_AutonomousProxy = 2,
+    ROLE_Authority = 3,
+    ROLE_MAX = 4,
+};
+enum EProgressMessageType
+{
+    PMT_Clear = 0,
+    PMT_Information = 1,
+    PMT_AdminMessage = 2,
+    PMT_DownloadProgress = 3,
+    PMT_ConnectionFailure = 4,
+    PMT_PeerConnectionFailure = 5,
+    PMT_PeerHostMigrationFailure = 6,
+    PMT_SocketFailure = 7,
+    PMT_MAX = 8,
 };
 enum ERBCollisionChannel
 {
@@ -1265,6 +1360,21 @@ enum EThreatType
 {
 };
 
+namespace Grip {
+template <class T0, int T1> struct AllocatorGH;
+template <class T0> struct ListNode;
+struct AllocInfo;
+struct MemAddressStub;
+struct MemItem;
+class Memory;
+class MemoryHeap;
+class StatBag;
+class String;
+class StringBuffer;
+class SysAlloc;
+class SysAllocPaged;
+}
+
 namespace Grip { namespace Heap {
 class MemVisitor;
 class SegVisitor;
@@ -1276,6 +1386,20 @@ enum EAlertnessState
     AlertnessState_Relax = 0,
     AlertnessState_Alert = 1,
     AlertnessState_MAX = 2,
+};
+enum ECoverShootConfig
+{
+    CoverShootConfig_None = 0,
+    CoverShootConfig_All = 1,
+    CoverShootConfig_Left = 2,
+    CoverShootConfig_Right = 3,
+    CoverShootConfig_LeftOrRight = 4,
+};
+enum ECoverType
+{
+    CoverType_None = 0,
+    CoverType_Stand = 1,
+    CoverType_Crouch = 2,
 };
 enum EMovementSpeed
 {
@@ -1386,7 +1510,7 @@ HG_PRIVATE:
     unsigned int FNameData[0x2];
 };
 
-class FRenderCommandFence  // size 0x4, opaque
+class FRenderCommandFence  // size 0x4
 {
 public:
     void BeginFence();
@@ -1395,8 +1519,11 @@ public:
     #ifndef HAGGAR_HOST
     FRenderCommandFence();
     #endif
-HG_PRIVATE:
-    unsigned int FRenderCommandFenceData[0x1];
+    #ifndef HAGGAR_HOST
+    volatile unsigned int NumPendingFences;  // 0x0
+    #else
+    hg::be<unsigned int> NumPendingFences;
+    #endif
 };
 
 class FRotator  // size 0xC, opaque
@@ -1441,6 +1568,16 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int FRotatorData[0x3];
+};
+
+struct FTimerData  // size 0x1C, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FTimerData(EEventParm);
+    #endif
+HG_PRIVATE:
+    unsigned int FTimerDataData[0x7];
 };
 
 class FVector  // size 0xC
@@ -1526,504 +1663,6 @@ public:
     hg::be<float> X;
     hg::be<float> Y;
     hg::be<float> Z;
-    #endif
-};
-
-template <> class TArray<AActor *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    AActor *const *GetTypedData() const;
-    AActor **GetTypedData();
-    AActor *const *GetData() const;
-    AActor **GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    AActor *const &operator()(int) const;
-    AActor *&operator()(int);
-    AActor *Pop();
-    void Push(AActor *const &);
-    AActor *const &Top() const;
-    AActor *&Top();
-    AActor *const &Last(int) const;
-    AActor *&Last(int);
-    void Shrink();
-    unsigned int FindItem(AActor *const &, int &) const;
-    int FindItemIndex(AActor *const &) const;
-    unsigned int ContainsItem(AActor *const &) const;
-    unsigned int operator==(const TArray<AActor *,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<AActor *,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(AActor *const &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<AActor *,FDefaultAllocator> &);
-    TArray<AActor *,FDefaultAllocator> &operator+=(const TArray<AActor *,FDefaultAllocator> &);
-    TArray<AActor *,FDefaultAllocator> &operator=(const TArray<AActor *,FDefaultAllocator> &);
-    int AddItem(AActor *const &);
-    int AddZeroed(int);
-    int AddUniqueItem(AActor *const &);
-    void Reserve(int);
-    void Init(AActor *const &, int);
-    void Init(int);
-    int RemoveSingleItem(AActor *const &);
-    int RemoveItem(AActor *const &);
-    int RemoveSingleItemSwap(AActor *const &);
-    int RemoveItemSwap(AActor *const &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    AActor *const &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
-    #ifndef HAGGAR_HOST
-    TArray(const TArray<AActor *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArrayNoInit<AActor *> : public TArray<AActor *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit<AActor *> &operator=(const TArray<AActor *,FDefaultAllocator> &);
-    TArrayNoInit<AActor *> &operator=(const TArrayNoInit<AActor *> &);
-    #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
-    #endif
-};
-
-template <> class TArray<FTimerData,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    const FTimerData *GetTypedData() const;
-    FTimerData *GetTypedData();
-    const FTimerData *GetData() const;
-    FTimerData *GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    const FTimerData &operator()(int) const;
-    FTimerData &operator()(int);
-    FTimerData Pop();
-    void Push(const FTimerData &);
-    const FTimerData &Top() const;
-    FTimerData &Top();
-    const FTimerData &Last(int) const;
-    FTimerData &Last(int);
-    void Shrink();
-    unsigned int FindItem(const FTimerData &, int &) const;
-    int FindItemIndex(const FTimerData &) const;
-    unsigned int ContainsItem(const FTimerData &) const;
-    unsigned int operator==(const TArray<FTimerData,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<FTimerData,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(const FTimerData &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<FTimerData,FDefaultAllocator> &);
-    TArray<FTimerData,FDefaultAllocator> &operator+=(const TArray<FTimerData,FDefaultAllocator> &);
-    TArray<FTimerData,FDefaultAllocator> &operator=(const TArray<FTimerData,FDefaultAllocator> &);
-    int AddItem(const FTimerData &);
-    int AddZeroed(int);
-    int AddUniqueItem(const FTimerData &);
-    void Reserve(int);
-    void Init(const FTimerData &, int);
-    void Init(int);
-    int RemoveSingleItem(const FTimerData &);
-    int RemoveItem(const FTimerData &);
-    int RemoveSingleItemSwap(const FTimerData &);
-    int RemoveItemSwap(const FTimerData &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    const FTimerData &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
-    #ifndef HAGGAR_HOST
-    TArray(const TArray<FTimerData,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArrayNoInit<FTimerData> : public TArray<FTimerData,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit<FTimerData> &operator=(const TArray<FTimerData,FDefaultAllocator> &);
-    TArrayNoInit<FTimerData> &operator=(const TArrayNoInit<FTimerData> &);
-    #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
-    #endif
-};
-
-template <> class TArray<UActorComponent *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    UActorComponent *const *GetTypedData() const;
-    UActorComponent **GetTypedData();
-    UActorComponent *const *GetData() const;
-    UActorComponent **GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    UActorComponent *const &operator()(int) const;
-    UActorComponent *&operator()(int);
-    UActorComponent *Pop();
-    void Push(UActorComponent *const &);
-    UActorComponent *const &Top() const;
-    UActorComponent *&Top();
-    UActorComponent *const &Last(int) const;
-    UActorComponent *&Last(int);
-    void Shrink();
-    unsigned int FindItem(UActorComponent *const &, int &) const;
-    int FindItemIndex(UActorComponent *const &) const;
-    unsigned int ContainsItem(UActorComponent *const &) const;
-    unsigned int operator==(const TArray<UActorComponent *,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<UActorComponent *,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(UActorComponent *const &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<UActorComponent *,FDefaultAllocator> &);
-    TArray<UActorComponent *,FDefaultAllocator> &operator+=(const TArray<UActorComponent *,FDefaultAllocator> &);
-    TArray<UActorComponent *,FDefaultAllocator> &operator=(const TArray<UActorComponent *,FDefaultAllocator> &);
-    int AddItem(UActorComponent *const &);
-    int AddZeroed(int);
-    int AddUniqueItem(UActorComponent *const &);
-    void Reserve(int);
-    void Init(UActorComponent *const &, int);
-    void Init(int);
-    int RemoveSingleItem(UActorComponent *const &);
-    int RemoveItem(UActorComponent *const &);
-    int RemoveSingleItemSwap(UActorComponent *const &);
-    int RemoveItemSwap(UActorComponent *const &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    UActorComponent *const &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
-    #ifndef HAGGAR_HOST
-    TArray(const TArray<UActorComponent *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArrayNoInit<UActorComponent *> : public TArray<UActorComponent *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit<UActorComponent *> &operator=(const TArray<UActorComponent *,FDefaultAllocator> &);
-    TArrayNoInit<UActorComponent *> &operator=(const TArrayNoInit<UActorComponent *> &);
-    #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
-    #endif
-};
-
-template <> class TArray<UClass *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    UClass *const *GetTypedData() const;
-    UClass **GetTypedData();
-    UClass *const *GetData() const;
-    UClass **GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    UClass *const &operator()(int) const;
-    UClass *&operator()(int);
-    UClass *Pop();
-    void Push(UClass *const &);
-    UClass *const &Top() const;
-    UClass *&Top();
-    UClass *const &Last(int) const;
-    UClass *&Last(int);
-    void Shrink();
-    unsigned int FindItem(UClass *const &, int &) const;
-    int FindItemIndex(UClass *const &) const;
-    unsigned int ContainsItem(UClass *const &) const;
-    unsigned int operator==(const TArray<UClass *,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<UClass *,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(UClass *const &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<UClass *,FDefaultAllocator> &);
-    TArray<UClass *,FDefaultAllocator> &operator+=(const TArray<UClass *,FDefaultAllocator> &);
-    TArray<UClass *,FDefaultAllocator> &operator=(const TArray<UClass *,FDefaultAllocator> &);
-    int AddItem(UClass *const &);
-    int AddZeroed(int);
-    int AddUniqueItem(UClass *const &);
-    void Reserve(int);
-    void Init(UClass *const &, int);
-    void Init(int);
-    int RemoveSingleItem(UClass *const &);
-    int RemoveItem(UClass *const &);
-    int RemoveSingleItemSwap(UClass *const &);
-    int RemoveItemSwap(UClass *const &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    UClass *const &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
-    #ifndef HAGGAR_HOST
-    TArray(const TArray<UClass *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArrayNoInit<UClass *> : public TArray<UClass *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit<UClass *> &operator=(const TArray<UClass *,FDefaultAllocator> &);
-    TArrayNoInit<UClass *> &operator=(const TArrayNoInit<UClass *> &);
-    #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
-    #endif
-};
-
-template <> class TArray<USeqAct_Latent *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    USeqAct_Latent *const *GetTypedData() const;
-    USeqAct_Latent **GetTypedData();
-    USeqAct_Latent *const *GetData() const;
-    USeqAct_Latent **GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    USeqAct_Latent *const &operator()(int) const;
-    USeqAct_Latent *&operator()(int);
-    USeqAct_Latent *Pop();
-    void Push(USeqAct_Latent *const &);
-    USeqAct_Latent *const &Top() const;
-    USeqAct_Latent *&Top();
-    USeqAct_Latent *const &Last(int) const;
-    USeqAct_Latent *&Last(int);
-    void Shrink();
-    unsigned int FindItem(USeqAct_Latent *const &, int &) const;
-    int FindItemIndex(USeqAct_Latent *const &) const;
-    unsigned int ContainsItem(USeqAct_Latent *const &) const;
-    unsigned int operator==(const TArray<USeqAct_Latent *,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<USeqAct_Latent *,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(USeqAct_Latent *const &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
-    TArray<USeqAct_Latent *,FDefaultAllocator> &operator+=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
-    TArray<USeqAct_Latent *,FDefaultAllocator> &operator=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
-    int AddItem(USeqAct_Latent *const &);
-    int AddZeroed(int);
-    int AddUniqueItem(USeqAct_Latent *const &);
-    void Reserve(int);
-    void Init(USeqAct_Latent *const &, int);
-    void Init(int);
-    int RemoveSingleItem(USeqAct_Latent *const &);
-    int RemoveItem(USeqAct_Latent *const &);
-    int RemoveSingleItemSwap(USeqAct_Latent *const &);
-    int RemoveItemSwap(USeqAct_Latent *const &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    USeqAct_Latent *const &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
-    #ifndef HAGGAR_HOST
-    TArray(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArrayNoInit<USeqAct_Latent *> : public TArray<USeqAct_Latent *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit<USeqAct_Latent *> &operator=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
-    TArrayNoInit<USeqAct_Latent *> &operator=(const TArrayNoInit<USeqAct_Latent *> &);
-    #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
-    #endif
-};
-
-template <> class TArray<USequenceEvent *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    USequenceEvent *const *GetTypedData() const;
-    USequenceEvent **GetTypedData();
-    USequenceEvent *const *GetData() const;
-    USequenceEvent **GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    USequenceEvent *const &operator()(int) const;
-    USequenceEvent *&operator()(int);
-    USequenceEvent *Pop();
-    void Push(USequenceEvent *const &);
-    USequenceEvent *const &Top() const;
-    USequenceEvent *&Top();
-    USequenceEvent *const &Last(int) const;
-    USequenceEvent *&Last(int);
-    void Shrink();
-    unsigned int FindItem(USequenceEvent *const &, int &) const;
-    int FindItemIndex(USequenceEvent *const &) const;
-    unsigned int ContainsItem(USequenceEvent *const &) const;
-    unsigned int operator==(const TArray<USequenceEvent *,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<USequenceEvent *,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(USequenceEvent *const &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<USequenceEvent *,FDefaultAllocator> &);
-    TArray<USequenceEvent *,FDefaultAllocator> &operator+=(const TArray<USequenceEvent *,FDefaultAllocator> &);
-    TArray<USequenceEvent *,FDefaultAllocator> &operator=(const TArray<USequenceEvent *,FDefaultAllocator> &);
-    int AddItem(USequenceEvent *const &);
-    int AddZeroed(int);
-    int AddUniqueItem(USequenceEvent *const &);
-    void Reserve(int);
-    void Init(USequenceEvent *const &, int);
-    void Init(int);
-    int RemoveSingleItem(USequenceEvent *const &);
-    int RemoveItem(USequenceEvent *const &);
-    int RemoveSingleItemSwap(USequenceEvent *const &);
-    int RemoveItemSwap(USequenceEvent *const &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    USequenceEvent *const &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
-    #ifndef HAGGAR_HOST
-    TArray(const TArray<USequenceEvent *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArrayNoInit<USequenceEvent *> : public TArray<USequenceEvent *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit<USequenceEvent *> &operator=(const TArray<USequenceEvent *,FDefaultAllocator> &);
-    TArrayNoInit<USequenceEvent *> &operator=(const TArrayNoInit<USequenceEvent *> &);
-    #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
     #endif
 };
 
@@ -3550,6 +3189,34 @@ public:
     #endif
 };
 
+struct FBasedPosition  // size 0x34, opaque
+{
+public:
+    FVector operator*();
+    void Set(AActor *, FVector &);
+    void Clear();
+    #ifndef HAGGAR_HOST
+    FBasedPosition(AActor *, FVector &);
+    FBasedPosition(EEventParm);
+    FBasedPosition();
+    #endif
+HG_PRIVATE:
+    unsigned int FBasedPositionData[0xD];
+};
+
+struct FVisiblePortalInfo  // size 0x8, opaque
+{
+public:
+    unsigned int operator==(const FVisiblePortalInfo &);
+    #ifndef HAGGAR_HOST
+    FVisiblePortalInfo(AActor *, AActor *);
+    FVisiblePortalInfo(EEventParm);
+    FVisiblePortalInfo();
+    #endif
+HG_PRIVATE:
+    unsigned int FVisiblePortalInfoData[0x2];
+};
+
 class IInterface_NavigationHandle  // size 0x4, opaque
 {
     HG_VFPTR
@@ -3567,7 +3234,7 @@ public:
     HG_VIRTUAL void DebugLogInternal(const wchar_t *);
 };
 
-class AController : public AActor, public IInterface_NavigationHandle  // size 0x358, opaque
+class AController : public AActor, public IInterface_NavigationHandle  // size 0x358
 {
 public:
     enum
@@ -3766,11 +3433,118 @@ public:
     typedef AActor Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    APawn *Pawn;  // 0x1D8
+    APlayerReplicationInfo *PlayerReplicationInfo;  // 0x1DC
+    int PlayerNum;  // 0x1E0
+    AController *NextController;  // 0x1E4
+    unsigned long bIsPlayer : 1;  // 0x1E8
+    unsigned long bGodMode : 1;
+    unsigned long bSoaking : 1;
+    unsigned long bSlowerZAcquire : 1;
+    unsigned long bNotifyPostLanded : 1;
+    unsigned long bNotifyApex : 1;
+    unsigned long bOverrideSearchStart : 1;
+    unsigned long bAdvancedTactics : 1;
+    unsigned long bCanDoSpecial : 1;
+    unsigned long bAdjusting : 1;
+    unsigned long bPreparingMove : 1;
+    unsigned long bForceStrafe : 1;
+    unsigned long bLOSflag : 1;
+    unsigned long bSkipExtraLOSChecks : 1;
+    unsigned long bNotifyFallingHitWall : 1;
+    unsigned long bEarlyOutOfSighTestsForSameType : 1;
+    unsigned long bForceMaxMoveTowardPawnTargetTime : 1;
+    unsigned long bPreciseDestination : 1;
+    unsigned long bSeeFriendly : 1;
+    unsigned long bUsingPathLanes : 1;
+    unsigned char bFire;  // 0x1EC
+    unsigned char bAltFire;  // 0x1ED
+    char _pad0[0x2];
+    float MinHitWall;  // 0x1F0
+    UClass *NavigationHandleClass;  // 0x1F4
+    UNavigationHandle *NavigationHandle;  // 0x1F8
+    FVector OverrideSearchStart;  // 0x1FC
+    float MoveTimer;  // 0x208
+    AActor *MoveTarget;  // 0x20C
+    FBasedPosition DestinationPosition;  // 0x210
+    FBasedPosition FocalPosition;  // 0x244
+    AActor *Focus;  // 0x278
+    AActor *GoalList[4];  // 0x27C
+    FBasedPosition AdjustPosition;  // 0x28C
+    ANavigationPoint *StartSpot;  // 0x2C0
+    TArrayNoInit<ANavigationPoint *> RouteCache;  // 0x2C4
+    UReachSpec *CurrentPath;  // 0x2D0
+    UReachSpec *NextRoutePath;  // 0x2D4
+    FVector CurrentPathDir;  // 0x2D8
+    AActor *RouteGoal;  // 0x2E4
+    float RouteDist;  // 0x2E8
+    float LastRouteFind;  // 0x2EC
+    AInterpActor *PendingMover;  // 0x2F0
+    AActor *FailedMoveTarget;  // 0x2F4
+    int MoveFailureCount;  // 0x2F8
+    float GroundPitchTime;  // 0x2FC
+    APawn *ShotTarget;  // 0x300
+    AActor *LastFailedReach;  // 0x304
+    float FailedReachTime;  // 0x308
+    FVector FailedReachLocation;  // 0x30C
+    float SightCounter;  // 0x318
+    float SightCounterInterval;  // 0x31C
+    float InUseNodeCostMultiplier;  // 0x320
+    int HighJumpNodeCostModifier;  // 0x324
+    float MaxMoveTowardPawnTargetTime;  // 0x328
+    APawn *Enemy;  // 0x32C
+    TArrayNoInit<FVisiblePortalInfo> VisiblePortals;  // 0x330
+    float LaneOffset;  // 0x33C
+    FRotator OldBasedRotation;  // 0x340
+    FVector NavMeshPath_SearchExtent_Modifier;  // 0x34C
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<APawn> Pawn;
+    hg::gptr<APlayerReplicationInfo> PlayerReplicationInfo;
+    hg::be<int> PlayerNum;
+    hg::gptr<AController> NextController;
+    hg::be<unsigned int> _bits1E8;  // 0x1E8, from bIsPlayer
+    unsigned char bFire;
+    unsigned char bAltFire;
+    char _pad0[0x2];
+    hg::be<float> MinHitWall;
+    hg::gptr<UClass> NavigationHandleClass;
+    hg::gptr<UNavigationHandle> NavigationHandle;
+    FVector OverrideSearchStart;
+    hg::be<float> MoveTimer;
+    hg::gptr<AActor> MoveTarget;
+    FBasedPosition DestinationPosition;
+    FBasedPosition FocalPosition;
+    hg::gptr<AActor> Focus;
+    hg::gptr<AActor> GoalList[4];
+    FBasedPosition AdjustPosition;
+    hg::gptr<ANavigationPoint> StartSpot;
+    TArrayNoInit<ANavigationPoint *> RouteCache;
+    hg::gptr<UReachSpec> CurrentPath;
+    hg::gptr<UReachSpec> NextRoutePath;
+    FVector CurrentPathDir;
+    hg::gptr<AActor> RouteGoal;
+    hg::be<float> RouteDist;
+    hg::be<float> LastRouteFind;
+    hg::gptr<AInterpActor> PendingMover;
+    hg::gptr<AActor> FailedMoveTarget;
+    hg::be<int> MoveFailureCount;
+    hg::be<float> GroundPitchTime;
+    hg::gptr<APawn> ShotTarget;
+    hg::gptr<AActor> LastFailedReach;
+    hg::be<float> FailedReachTime;
+    FVector FailedReachLocation;
+    hg::be<float> SightCounter;
+    hg::be<float> SightCounterInterval;
+    hg::be<float> InUseNodeCostMultiplier;
+    hg::be<int> HighJumpNodeCostModifier;
+    hg::be<float> MaxMoveTowardPawnTargetTime;
+    hg::gptr<APawn> Enemy;
+    TArrayNoInit<FVisiblePortalInfo> VisiblePortals;
+    hg::be<float> LaneOffset;
+    FRotator OldBasedRotation;
+    FVector NavMeshPath_SearchExtent_Modifier;
     #endif
-HG_PRIVATE:
-    unsigned int AControllerData[0x60];
 };
 
 class AAIController : public AController  // size 0x370, opaque
@@ -3840,7 +3614,115 @@ public:
     #endif
 };
 
-class AGameAIController : public AGwNavAIController  // size 0x3A8, opaque
+struct FAICmdHistoryItem  // size 0x14, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FAICmdHistoryItem(EEventParm);
+    FAICmdHistoryItem();
+    #endif
+HG_PRIVATE:
+    unsigned int FAICmdHistoryItemData[0x5];
+};
+
+class FString : public TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    FString &operator=(const FString &);
+    FString &operator=(const wchar_t *);
+    const wchar_t &operator[](int) const;
+    wchar_t &operator[](int);
+    void CheckInvariants() const;
+    void Empty(int);
+    unsigned int IsEmpty() const;
+    void Shrink();
+    void TrimToNullTerminator();
+    FString operator*(const FString &) const;
+    FString operator*(const wchar_t *) const;
+    const wchar_t *operator*() const;
+    const TArray<wchar_t,FDefaultAllocator> &GetCharArray() const;
+    TArray<wchar_t,FDefaultAllocator> &GetCharArray();
+    FString &operator+=(const FString &);
+    FString &operator+=(const wchar_t);
+    FString &operator+=(const char *);
+    FString &operator+=(const wchar_t *);
+    FString &AppendChar(const wchar_t);
+    FString operator+(const FString &) const;
+    FString operator+(const wchar_t *) const;
+    FString operator+(const wchar_t) const;
+    FString &operator*=(const FString &);
+    FString &operator*=(const wchar_t *);
+    unsigned int operator<=(const FString &) const;
+    unsigned int operator<=(const wchar_t *) const;
+    unsigned int operator<(const FString &) const;
+    unsigned int operator<(const wchar_t *) const;
+    unsigned int operator>=(const FString &) const;
+    unsigned int operator>=(const wchar_t *) const;
+    unsigned int operator>(const FString &) const;
+    unsigned int operator>(const wchar_t *) const;
+    unsigned int operator==(const FString &) const;
+    unsigned int operator==(const wchar_t *) const;
+    unsigned int operator!=(const FString &) const;
+    unsigned int operator!=(const wchar_t *) const;
+    int Len() const;
+    FString Left(int) const;
+    FString LeftChop(int) const;
+    FString Right(int) const;
+    FString RightChop(int) const;
+    FString Mid(int, int) const;
+    int InStr(const FString &, unsigned int, unsigned int, int) const;
+    int InStr(const wchar_t *, unsigned int, unsigned int, int) const;
+    unsigned int Split(const FString &, FString *, FString *, unsigned int) const;
+    FString ToUpper() const;
+    FString ToLower() const;
+    unsigned int ToUBOOL() const;
+    FString LeftPad(int) const;
+    FString RightPad(int) const;
+    unsigned int IsNumeric() const;
+    static FString Printf__VA(const wchar_t *, ...);
+    static FString Printf(const wchar_t *);
+    static FString Chr(wchar_t);
+    unsigned int StartsWith(const FString &) const;
+    unsigned int EndsWith(const FString &) const;
+    FString Trim();
+    FString TrimTrailing();
+    FString TrimQuotes(unsigned int *) const;
+    int ParseIntoArray(TArray<FString,FDefaultAllocator> *, const wchar_t *, unsigned int) const;
+    int ParseIntoArrayWS(TArray<FString,FDefaultAllocator> *, const wchar_t *) const;
+    static int CullArray(TArray<FString,FDefaultAllocator> *);
+    FString Reverse() const;
+    void ReverseString();
+    FString Replace(const wchar_t *, const wchar_t *, unsigned int) const;
+    int ReplaceInline(const wchar_t *, const wchar_t *);
+    FString ReplaceQuotesWithEscapedQuotes() const;
+    FString ReplaceCharWithEscapedChar(const TArray<wchar_t,FDefaultAllocator> *) const;
+    FString ReplaceEscapedCharWithChar(const TArray<wchar_t,FDefaultAllocator> *) const;
+    FString ConvertTabsToSpaces(const int);
+    static FString FormatAsNumber(int);
+    void Reserve(const unsigned int);
+    #ifndef HAGGAR_HOST
+    FString(ENoInit);
+    FString(const char *);
+    FString(int, const wchar_t *);
+    FString(const wchar_t *);
+    FString(const FString &, int);
+    FString(const FString &);
+    FString();
+    #endif
+};
+
+struct FStringNoInit : public FString  // size 0xC, opaque
+{
+public:
+    FStringNoInit &operator=(const FString &);
+    FStringNoInit &operator=(const wchar_t *);
+    #ifndef HAGGAR_HOST
+    FStringNoInit(EForceInit);
+    FStringNoInit();
+    #endif
+};
+
+class AGameAIController : public AGwNavAIController  // size 0x3A8
 {
 public:
     enum
@@ -3893,14 +3775,94 @@ public:
     typedef AGwNavAIController Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    UGameAICommand *CommandList;  // 0x370
+    unsigned long bHasRunawayCommandList : 1;  // 0x374
+    unsigned long bAILogging : 1;
+    unsigned long bAILogToWindow : 1;
+    unsigned long bFlushAILogEachLine : 1;
+    unsigned long bMapBasedLogName : 1;
+    unsigned long bAIDrawDebug : 1;
+    unsigned long bAIBroken : 1;
+    AFileLog *AILogFile;  // 0x378
+    float DebugTextMaxLen;  // 0x37C
+    TArrayNoInit<FAICmdHistoryItem> CommandHistory;  // 0x380
+    int CommandHistoryNum;  // 0x38C
+    TArrayNoInit<FName> AILogFilter;  // 0x390
+    FStringNoInit DemoActionString;  // 0x39C
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<UGameAICommand> CommandList;
+    hg::be<unsigned int> _bits374;  // 0x374, from bHasRunawayCommandList
+    hg::gptr<AFileLog> AILogFile;
+    hg::be<float> DebugTextMaxLen;
+    TArrayNoInit<FAICmdHistoryItem> CommandHistory;
+    hg::be<int> CommandHistoryNum;
+    TArrayNoInit<FName> AILogFilter;
+    FStringNoInit DemoActionString;
     #endif
-HG_PRIVATE:
-    unsigned int AGameAIControllerData[0xE];
 };
 
-class ACCSController : public AGameAIController  // size 0x4B0, opaque
+struct FCCSSystemConfigData  // size 0x2C, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FCCSSystemConfigData(EEventParm);
+    FCCSSystemConfigData();
+    #endif
+HG_PRIVATE:
+    unsigned int FCCSSystemConfigDataData[0xB];
+};
+
+struct FEnemyThreatInfo  // size 0xC, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FEnemyThreatInfo(EEventParm);
+    FEnemyThreatInfo();
+    #endif
+HG_PRIVATE:
+    unsigned int FEnemyThreatInfoData[0x3];
+};
+
+class ICCSPawn  // size 0x4, opaque
+{
+    HG_VFPTR
+HG_PROTECTED:
+    HG_XDK(HG_VIRTUAL ~ICCSPawn();)
+public:
+    HG_VIRTUAL UObject *GetUObjectInterfaceCCSPawn() HG_PURE;
+    HG_VIRTUAL unsigned char GetMovementType() HG_PURE;
+    HG_VIRTUAL void SetMovementType(unsigned char) HG_PURE;
+    HG_VIRTUAL void SetMovementTypeDefault() HG_PURE;
+    HG_VIRTUAL unsigned char GetAlertness() HG_PURE;
+    HG_VIRTUAL void SetAlertness(unsigned char) HG_PURE;
+    HG_VIRTUAL void SetAlertnessDefault() HG_PURE;
+    HG_VIRTUAL unsigned char GetSpeed() HG_PURE;
+    HG_VIRTUAL void SetSpeed(unsigned char) HG_PURE;
+    HG_VIRTUAL void SetMovementSpeedDefault() HG_PURE;
+    HG_VIRTUAL unsigned int IsCrouched() HG_PURE;
+    HG_VIRTUAL void SetCrouched(unsigned int) HG_PURE;
+    HG_VIRTUAL void SetPostureDefault() HG_PURE;
+    HG_VIRTUAL unsigned int PostureTransitionOver() HG_PURE;
+    HG_VIRTUAL unsigned int CanAim(FRotator) HG_PURE;
+    HG_VIRTUAL void SetCoverPose(unsigned char, float) HG_PURE;
+    HG_VIRTUAL void SetNoCoverPose() HG_PURE;
+    HG_VIRTUAL unsigned int CoverPoseTransitionOver() HG_PURE;
+    HG_VIRTUAL void MoveToInCover(FVector) HG_PURE;
+    HG_VIRTUAL unsigned int IsInCover() HG_PURE;
+    HG_VIRTUAL unsigned int GetIsPanicking() HG_PURE;
+    HG_VIRTUAL void SetIsPanicking(unsigned int) HG_PURE;
+    HG_VIRTUAL float GetYellingDistance() HG_PURE;
+    HG_VIRTUAL UCCSBTTree *GetDefaultBehaviorTree() HG_PURE;
+    HG_VIRTUAL void SetDefaultBehaviorTree(UCCSBTTree *) HG_PURE;
+    #ifndef HAGGAR_HOST
+HG_PROTECTED:
+    ICCSPawn();
+public:
+    #endif
+};
+
+class ACCSController : public AGameAIController  // size 0x4B0
 {
 public:
     enum
@@ -3966,11 +3928,103 @@ public:
     typedef AGameAIController Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    UCCSBTTree *BehaviorTreeTemplate;  // 0x3A8
+    UGripBTScriptNodeCache *ScriptNodeCache;  // 0x3AC
+    UGripBTInterface *BTInterface;  // 0x3B0
+    CCSBrain *Brain;  // 0x3B4
+    CCSMeatPuppet *MeatPuppet;  // 0x3B8
+    FCCSSystemConfigData SystemConfig;  // 0x3BC
+    TScriptInterface<ICCSPawn> CCSPawn;  // 0x3E8
+    AActor *TargetObj;  // 0x3F0
+    UNavigationHandle *SecondaryNavigationHandle;  // 0x3F4
+    int FireBurstCount;  // 0x3F8
+    AActor *AimingFocus;  // 0x3FC
+    FRotator AimingRot;  // 0x400
+    FRotator DesiredRot;  // 0x40C
+    unsigned char CCSTeam;  // 0x418
+    unsigned char ThreatType;  // 0x419
+    unsigned char EventType;  // 0x41A
+    char _pad0[0x1];
+    UCCSVisualizationComponent *DebugVizComponent;  // 0x41C
+    TArrayNoInit<AActor *> NoiseMakers;  // 0x420
+    unsigned long HasHeardNoise : 1;  // 0x42C
+    unsigned long AimedAt : 1;
+    unsigned long NewThreat : 1;
+    unsigned long GrenadeStuck : 1;
+    unsigned long Staggered : 1;
+    unsigned long SuccessfulAttack : 1;
+    unsigned long NewEvent : 1;
+    float HasHeardNoiseTimer;  // 0x430
+    FVector ThreatLocation;  // 0x434
+    FVector ThreatDirection;  // 0x440
+    int AIHeatValue;  // 0x44C
+    float AccurateChance;  // 0x450
+    float HorizontalInaccuracy;  // 0x454
+    float VerticalInaccuracy;  // 0x458
+    float HorizontalAccurateZone;  // 0x45C
+    float VerticalAccurateZone;  // 0x460
+    float AccuracyYaw;  // 0x464
+    float AccuracyPitch;  // 0x468
+    float DeadZoneYaw;  // 0x46C
+    float DeadZonePitch;  // 0x470
+    float RandomYaw;  // 0x474
+    float RandomPitch;  // 0x478
+    int BurstsBeforeRecalc;  // 0x47C
+    int AccuracyRecalcBurstCount;  // 0x480
+    FVector EventLocation;  // 0x484
+    UClass *EventClass;  // 0x490
+    TArrayNoInit<FEnemyThreatInfo> TotalEnemyThreat;  // 0x494
+    float ThreatDecayTime;  // 0x4A0
+    int ThreatDecayAmount;  // 0x4A4
+    float ThreatOverpowerPct;  // 0x4A8
+    float LeadingTimeScalar;  // 0x4AC
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<UCCSBTTree> BehaviorTreeTemplate;
+    hg::gptr<UGripBTScriptNodeCache> ScriptNodeCache;
+    hg::gptr<UGripBTInterface> BTInterface;
+    hg::gptr<CCSBrain> Brain;
+    hg::gptr<CCSMeatPuppet> MeatPuppet;
+    FCCSSystemConfigData SystemConfig;
+    TScriptInterface<ICCSPawn> CCSPawn;
+    hg::gptr<AActor> TargetObj;
+    hg::gptr<UNavigationHandle> SecondaryNavigationHandle;
+    hg::be<int> FireBurstCount;
+    hg::gptr<AActor> AimingFocus;
+    FRotator AimingRot;
+    FRotator DesiredRot;
+    unsigned char CCSTeam;
+    unsigned char ThreatType;
+    unsigned char EventType;
+    char _pad0[0x1];
+    hg::gptr<UCCSVisualizationComponent> DebugVizComponent;
+    TArrayNoInit<AActor *> NoiseMakers;
+    hg::be<unsigned int> _bits42C;  // 0x42C, from HasHeardNoise
+    hg::be<float> HasHeardNoiseTimer;
+    FVector ThreatLocation;
+    FVector ThreatDirection;
+    hg::be<int> AIHeatValue;
+    hg::be<float> AccurateChance;
+    hg::be<float> HorizontalInaccuracy;
+    hg::be<float> VerticalInaccuracy;
+    hg::be<float> HorizontalAccurateZone;
+    hg::be<float> VerticalAccurateZone;
+    hg::be<float> AccuracyYaw;
+    hg::be<float> AccuracyPitch;
+    hg::be<float> DeadZoneYaw;
+    hg::be<float> DeadZonePitch;
+    hg::be<float> RandomYaw;
+    hg::be<float> RandomPitch;
+    hg::be<int> BurstsBeforeRecalc;
+    hg::be<int> AccuracyRecalcBurstCount;
+    FVector EventLocation;
+    hg::gptr<UClass> EventClass;
+    TArrayNoInit<FEnemyThreatInfo> TotalEnemyThreat;
+    hg::be<float> ThreatDecayTime;
+    hg::be<int> ThreatDecayAmount;
+    hg::be<float> ThreatOverpowerPct;
+    hg::be<float> LeadingTimeScalar;
     #endif
-HG_PRIVATE:
-    unsigned int ACCSControllerData[0x42];
 };
 
 class ANavigationPoint : public AActor  // size 0x294, opaque
@@ -4053,253 +4107,134 @@ HG_PRIVATE:
     unsigned int ANavigationPointData[0x30];
 };
 
-template <> class TArray<APawn *,FDefaultAllocator>  // size 0xC, opaque
+struct FCoverInfo  // size 0x8
 {
 public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    APawn *const *GetTypedData() const;
-    APawn **GetTypedData();
-    APawn *const *GetData() const;
-    APawn **GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    APawn *const &operator()(int) const;
-    APawn *&operator()(int);
-    APawn *Pop();
-    void Push(APawn *const &);
-    APawn *const &Top() const;
-    APawn *&Top();
-    APawn *const &Last(int) const;
-    APawn *&Last(int);
-    void Shrink();
-    unsigned int FindItem(APawn *const &, int &) const;
-    int FindItemIndex(APawn *const &) const;
-    unsigned int ContainsItem(APawn *const &) const;
-    unsigned int operator==(const TArray<APawn *,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<APawn *,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(APawn *const &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<APawn *,FDefaultAllocator> &);
-    TArray<APawn *,FDefaultAllocator> &operator+=(const TArray<APawn *,FDefaultAllocator> &);
-    TArray<APawn *,FDefaultAllocator> &operator=(const TArray<APawn *,FDefaultAllocator> &);
-    int AddItem(APawn *const &);
-    int AddZeroed(int);
-    int AddUniqueItem(APawn *const &);
-    void Reserve(int);
-    void Init(APawn *const &, int);
-    void Init(int);
-    int RemoveSingleItem(APawn *const &);
-    int RemoveItem(APawn *const &);
-    int RemoveSingleItemSwap(APawn *const &);
-    int RemoveItemSwap(APawn *const &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    APawn *const &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
+    unsigned int operator==(const FCoverInfo &) const;
+    FString ToString() const;
     #ifndef HAGGAR_HOST
-    TArray(const TArray<APawn *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
+    FCoverInfo(ACoverLink *, int);
+    FCoverInfo(EEventParm);
+    FCoverInfo();
     #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArrayNoInit<APawn *> : public TArray<APawn *,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit<APawn *> &operator=(const TArray<APawn *,FDefaultAllocator> &);
-    TArrayNoInit<APawn *> &operator=(const TArrayNoInit<APawn *> &);
     #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
+    ACoverLink *Link;  // 0x0
+    int SlotIdx;  // 0x4
+    #else
+    hg::gptr<ACoverLink> Link;
+    hg::be<int> SlotIdx;
     #endif
 };
 
-template <> class TArray<FCoverSlot,FDefaultAllocator>  // size 0xC, opaque
+struct FFireLink  // size 0x14, opaque
 {
 public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    const FCoverSlot *GetTypedData() const;
-    FCoverSlot *GetTypedData();
-    const FCoverSlot *GetData() const;
-    FCoverSlot *GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    const FCoverSlot &operator()(int) const;
-    FCoverSlot &operator()(int);
-    FCoverSlot Pop();
-    void Push(const FCoverSlot &);
-    const FCoverSlot &Top() const;
-    FCoverSlot &Top();
-    const FCoverSlot &Last(int) const;
-    FCoverSlot &Last(int);
-    void Shrink();
-    unsigned int FindItem(const FCoverSlot &, int &) const;
-    int FindItemIndex(const FCoverSlot &) const;
-    unsigned int ContainsItem(const FCoverSlot &) const;
-    unsigned int operator==(const TArray<FCoverSlot,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<FCoverSlot,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(const FCoverSlot &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<FCoverSlot,FDefaultAllocator> &);
-    TArray<FCoverSlot,FDefaultAllocator> &operator+=(const TArray<FCoverSlot,FDefaultAllocator> &);
-    TArray<FCoverSlot,FDefaultAllocator> &operator=(const TArray<FCoverSlot,FDefaultAllocator> &);
-    int AddItem(const FCoverSlot &);
-    int AddZeroed(int);
-    int AddUniqueItem(const FCoverSlot &);
-    void Reserve(int);
-    void Init(const FCoverSlot &, int);
-    void Init(int);
-    int RemoveSingleItem(const FCoverSlot &);
-    int RemoveItem(const FCoverSlot &);
-    int RemoveSingleItemSwap(const FCoverSlot &);
-    int RemoveItemSwap(const FCoverSlot &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
+    void UpdateDynamicLinkInfoFor(ACoverLink *, ACoverLink *, int, const FVector &);
+    FVector GetLastTargetLocation(ACoverLink *);
+    FVector GetLastSrcLocation(ACoverLink *);
+    void SetFallbackLink(unsigned int);
+    unsigned int IsFallbackLink();
+    void SetDynamicIndexInited(unsigned int);
+    unsigned int IsDynamicIndexInited();
+    void SetCoverRefIdx(int);
+    unsigned long GetCoverRefIdx();
+    void SetDynamicLinkInfoIndex(int);
+    unsigned long GetDynamicLinkInfoIndex();
 HG_PRIVATE:
-    const FCoverSlot &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
-    #ifndef HAGGAR_HOST
-    TArray(const TArray<FCoverSlot,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
+    unsigned int FFireLinkData[0x5];
 };
 
-template <> class TArrayNoInit<FCoverSlot> : public TArray<FCoverSlot,FDefaultAllocator>  // size 0xC, opaque
+struct FSlotMoveRef  // size 0x54, opaque
 {
 public:
-    TArrayNoInit<FCoverSlot> &operator=(const TArray<FCoverSlot,FDefaultAllocator> &);
-    TArrayNoInit<FCoverSlot> &operator=(const TArrayNoInit<FCoverSlot> &);
+    void Clear();
+HG_PRIVATE:
+    unsigned int FSlotMoveRefData[0x15];
+};
+
+struct FCoverSlot  // size 0x78
+{
+public:
+    void SetExposedCoverRefIdx(int, int);
+    unsigned long GetExposedCoverRefIdx(int);
+    void SetExposedScale(int, int);
+    unsigned char GetExposedScale(int);
+    void SetLeftTurnTargetCoverRefIdx(int);
+    unsigned long GetLeftTurnTargetCoverRefIdx();
+    void SetRightTurnTargetCoverRefIdx(int);
+    unsigned long GetRightTurnTargetCoverRefIdx();
+    FFireLink &GetFireLinkRef(int, unsigned char);
     #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
+    APawn *SlotOwner;  // 0x0
+    APawn *SlotOccupier;  // 0x4
+    float SlotValidAfterTime;  // 0x8
+    unsigned char ForceCoverType;  // 0xC
+    unsigned char CoverType;  // 0xD
+    unsigned char LocationDescription;  // 0xE
+    char _pad0[0x1];
+    FVector LocationOffset;  // 0x10
+    FRotator RotationOffset;  // 0x1C
+    TArrayNoInit<unsigned char> Actions;  // 0x28
+    TArrayNoInit<FFireLink> FireLinks;  // 0x34
+    TArrayNoInit<FFireLink> RejectedFireLinks;  // 0x40
+    TArrayNoInit<int> ExposedCoverPackedProperties;  // 0x4C
+    int TurnTargetPackedProperties;  // 0x58
+    TArrayNoInit<FSlotMoveRef> SlipRefs;  // 0x5C
+    TArrayNoInit<FCoverInfo> OverlapClaimsList;  // 0x68
+    unsigned long bLeanLeft : 1;  // 0x74
+    unsigned long bLeanRight : 1;
+    unsigned long bForceCanPopUp : 1;
+    unsigned long bCanPopUp : 1;
+    unsigned long bCanMantle : 1;
+    unsigned long bCanClimbUp : 1;
+    unsigned long bForceCanCoverSlip_Left : 1;
+    unsigned long bForceCanCoverSlip_Right : 1;
+    unsigned long bCanCoverSlip_Left : 1;
+    unsigned long bCanCoverSlip_Right : 1;
+    unsigned long bCanSwatTurn_Left : 1;
+    unsigned long bCanSwatTurn_Right : 1;
+    unsigned long bEnabled : 1;
+    unsigned long bAllowPopup : 1;
+    unsigned long bAllowMantle : 1;
+    unsigned long bAllowCoverSlip : 1;
+    unsigned long bAllowClimbUp : 1;
+    unsigned long bAllowSwatTurn : 1;
+    unsigned long bForceNoGroundAdjust : 1;
+    unsigned long bPlayerOnly : 1;
+    unsigned long bPreferLeanOverPopup : 1;
+    unsigned long bDestructible : 1;
+    unsigned long bSelected : 1;
+    unsigned long bFailedToFindSurface : 1;
+    #else
+    hg::gptr<APawn> SlotOwner;
+    hg::gptr<APawn> SlotOccupier;
+    hg::be<float> SlotValidAfterTime;
+    unsigned char ForceCoverType;
+    unsigned char CoverType;
+    unsigned char LocationDescription;
+    char _pad0[0x1];
+    FVector LocationOffset;
+    FRotator RotationOffset;
+    TArrayNoInit<unsigned char> Actions;
+    TArrayNoInit<FFireLink> FireLinks;
+    TArrayNoInit<FFireLink> RejectedFireLinks;
+    TArrayNoInit<int> ExposedCoverPackedProperties;
+    hg::be<int> TurnTargetPackedProperties;
+    TArrayNoInit<FSlotMoveRef> SlipRefs;
+    TArrayNoInit<FCoverInfo> OverlapClaimsList;
+    hg::be<unsigned int> _bits74;  // 0x74, from bLeanLeft
     #endif
 };
 
-template <> class TArray<FDynamicLinkInfo,FDefaultAllocator>  // size 0xC, opaque
+struct FDynamicLinkInfo  // size 0x18, opaque
 {
 public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    const FDynamicLinkInfo *GetTypedData() const;
-    FDynamicLinkInfo *GetTypedData();
-    const FDynamicLinkInfo *GetData() const;
-    FDynamicLinkInfo *GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    const FDynamicLinkInfo &operator()(int) const;
-    FDynamicLinkInfo &operator()(int);
-    FDynamicLinkInfo Pop();
-    void Push(const FDynamicLinkInfo &);
-    const FDynamicLinkInfo &Top() const;
-    FDynamicLinkInfo &Top();
-    const FDynamicLinkInfo &Last(int) const;
-    FDynamicLinkInfo &Last(int);
-    void Shrink();
-    unsigned int FindItem(const FDynamicLinkInfo &, int &) const;
-    int FindItemIndex(const FDynamicLinkInfo &) const;
-    unsigned int ContainsItem(const FDynamicLinkInfo &) const;
-    unsigned int operator==(const TArray<FDynamicLinkInfo,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(const FDynamicLinkInfo &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
-    TArray<FDynamicLinkInfo,FDefaultAllocator> &operator+=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
-    TArray<FDynamicLinkInfo,FDefaultAllocator> &operator=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
-    int AddItem(const FDynamicLinkInfo &);
-    int AddZeroed(int);
-    int AddUniqueItem(const FDynamicLinkInfo &);
-    void Reserve(int);
-    void Init(const FDynamicLinkInfo &, int);
-    void Init(int);
-    int RemoveSingleItem(const FDynamicLinkInfo &);
-    int RemoveItem(const FDynamicLinkInfo &);
-    int RemoveSingleItemSwap(const FDynamicLinkInfo &);
-    int RemoveItemSwap(const FDynamicLinkInfo &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    const FDynamicLinkInfo &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
     #ifndef HAGGAR_HOST
-    TArray(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
+    FDynamicLinkInfo(EEventParm);
+    FDynamicLinkInfo();
     #endif
 HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArrayNoInit<FDynamicLinkInfo> : public TArray<FDynamicLinkInfo,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    TArrayNoInit<FDynamicLinkInfo> &operator=(const TArray<FDynamicLinkInfo,FDefaultAllocator> &);
-    TArrayNoInit<FDynamicLinkInfo> &operator=(const TArrayNoInit<FDynamicLinkInfo> &);
-    #ifndef HAGGAR_HOST
-    TArrayNoInit(EForceInit);
-    TArrayNoInit();
-    #endif
+    unsigned int FDynamicLinkInfoData[0x6];
 };
 
 class ACoverLink : public ANavigationPoint  // size 0x328
@@ -4483,6 +4418,28 @@ public:
     #endif
 };
 
+struct FRootMotionCurve  // size 0x1C, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FRootMotionCurve(EEventParm);
+    FRootMotionCurve();
+    #endif
+HG_PRIVATE:
+    unsigned int FRootMotionCurveData[0x7];
+};
+
+struct FScalarParameterInterpStruct  // size 0x14, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FScalarParameterInterpStruct(EEventParm);
+    FScalarParameterInterpStruct();
+    #endif
+HG_PRIVATE:
+    unsigned int FScalarParameterInterpStructData[0x5];
+};
+
 class IInterface_Speaker  // size 0x4, opaque
 {
     HG_VFPTR
@@ -4498,7 +4455,7 @@ public:
     #endif
 };
 
-class APawn : public AActor, public IInterface_Speaker  // size 0x47C, opaque
+class APawn : public AActor, public IInterface_Speaker  // size 0x47C
 {
 public:
     enum
@@ -4801,11 +4758,681 @@ public:
     typedef AActor Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    float MaxStepHeight;  // 0x1D8
+    float MaxJumpHeight;  // 0x1DC
+    float WalkableFloorZ;  // 0x1E0
+    float LedgeCheckThreshold;  // 0x1E4
+    FVector PartialLedgeMoveDir;  // 0x1E8
+    AController *Controller;  // 0x1F4
+    APawn *NextPawn;  // 0x1F8
+    float NetRelevancyTime;  // 0x1FC
+    APlayerController *LastRealViewer;  // 0x200
+    AActor *LastViewer;  // 0x204
+    unsigned long bScriptTickSpecial : 1;  // 0x208
+    unsigned long bUpAndOut : 1;
+    unsigned long bIsWalking : 1;
+    unsigned long bWantsToCrouch : 1;
+    unsigned long bIsCrouched : 1;
+    unsigned long bTryToUncrouch : 1;
+    unsigned long bCanCrouch : 1;
+    unsigned long bCrawler : 1;
+    unsigned long bReducedSpeed : 1;
+    unsigned long bJumpCapable : 1;
+    unsigned long bCanJump : 1;
+    unsigned long bCanWalk : 1;
+    unsigned long bCanSwim : 1;
+    unsigned long bCanFly : 1;
+    unsigned long bCanClimbLadders : 1;
+    unsigned long bCanStrafe : 1;
+    unsigned long bAvoidLedges : 1;
+    unsigned long bStopAtLedges : 1;
+    unsigned long bAllowLedgeOverhang : 1;
+    unsigned long bPartiallyOverLedge : 1;
+    unsigned long bSimulateGravity : 1;
+    unsigned long bIgnoreForces : 1;
+    unsigned long bCanWalkOffLedges : 1;
+    unsigned long bCanBeBaseForPawns : 1;
+    unsigned long bSimGravityDisabled : 1;
+    unsigned long bDirectHitWall : 1;
+    unsigned long bPushesRigidBodies : 1;
+    unsigned long bForceFloorCheck : 1;
+    unsigned long bForceKeepAnchor : 1;
+    unsigned long bCanMantle : 1;
+    unsigned long bCanClimbUp : 1;
+    unsigned long bCanClimbCeilings : 1;
+    unsigned long bCanSwatTurn : 1;  // 0x20C
+    unsigned long bCanLeap : 1;
+    unsigned long bCanCoverSlip : 1;
+    unsigned long bDisplayPathErrors : 1;
+    unsigned long bCanPickupInventory : 1;
+    unsigned long bAmbientCreature : 1;
+    unsigned long bLOSHearing : 1;
+    unsigned long bMuffledHearing : 1;
+    unsigned long bDontPossess : 1;
+    unsigned long bRollToDesired : 1;
+    unsigned long bStationary : 1;
+    unsigned long bCachedRelevant : 1;
+    unsigned long bNoWeaponFiring : 1;
+    unsigned long bModifyReachSpecCost : 1;
+    unsigned long bModifyNavPointDest : 1;
+    unsigned long bPathfindsAsVehicle : 1;
+    unsigned long bPrevBypassSimulatedClientPhysics : 1;
+    unsigned long bRunPhysicsWithNoController : 1;
+    unsigned long bForceMaxAccel : 1;
+    unsigned long bLimitFallAccel : 1;
+    unsigned long bReplicateHealthToAll : 1;
+    unsigned long bForceRMVelocity : 1;
+    unsigned long bForceRegularVelocity : 1;
+    unsigned long bPlayedDeath : 1;
+    unsigned long bDesiredRotationSet : 1;
+    unsigned long bLockDesiredRotation : 1;
+    unsigned long bUnlockWhenReached : 1;
+    unsigned long bNeedsBaseTickedFirst : 1;
+    unsigned long bUsedByMatinee : 1;
+    unsigned long bRootMotionFromInterpCurve : 1;
+    unsigned long bDebugShowCameraLocation : 1;
+    unsigned long bFastAttachedMove : 1;
+    unsigned long bIgnoreKillZ : 1;  // 0x210
+    unsigned char WalkingPhysics;  // 0x214
+    unsigned char PathSearchType;  // 0x215
+    unsigned char RemoteViewPitch;  // 0x216
+    unsigned char FlashCount;  // 0x217
+    unsigned char FiringMode;  // 0x218
+    char _pad0[0x3];
+    float UncrouchTime;  // 0x21C
+    float CrouchHeight;  // 0x220
+    float CrouchRadius;  // 0x224
+    int FullHeight;  // 0x228
+    float NonPreferredVehiclePathMultiplier;  // 0x22C
+    UPathConstraint *PathConstraintList;  // 0x230
+    UPathGoalEvaluator *PathGoalList;  // 0x234
+    float DesiredSpeed;  // 0x238
+    float MaxDesiredSpeed;  // 0x23C
+    float HearingThreshold;  // 0x240
+    float Alertness;  // 0x244
+    float AwareRadius;  // 0x248
+    float SightRadius;  // 0x24C
+    float PeripheralVision;  // 0x250
+    float AvgPhysicsTime;  // 0x254
+    float Mass;  // 0x258
+    float Buoyancy;  // 0x25C
+    float MeleeRange;  // 0x260
+    ANavigationPoint *Anchor;  // 0x264
+    int AnchorItem;  // 0x268
+    ANavigationPoint *LastAnchor;  // 0x26C
+    float FindAnchorFailedTime;  // 0x270
+    float LastValidAnchorTime;  // 0x274
+    float DestinationOffset;  // 0x278
+    float NextPathRadius;  // 0x27C
+    FVector SerpentineDir;  // 0x280
+    float SerpentineDist;  // 0x28C
+    float SerpentineTime;  // 0x290
+    float SpawnTime;  // 0x294
+    int MaxPitchLimit;  // 0x298
+    float GroundSpeed;  // 0x29C
+    float WaterSpeed;  // 0x2A0
+    float AirSpeed;  // 0x2A4
+    float LadderSpeed;  // 0x2A8
+    float AccelRate;  // 0x2AC
+    float JumpZ;  // 0x2B0
+    float OutofWaterZ;  // 0x2B4
+    float MaxOutOfWaterStepHeight;  // 0x2B8
+    float AirControl;  // 0x2BC
+    float WalkingPct;  // 0x2C0
+    float MovementSpeedModifier;  // 0x2C4
+    float CrouchedPct;  // 0x2C8
+    float MaxFallSpeed;  // 0x2CC
+    float AIMaxFallSpeedFactor;  // 0x2D0
+    float BaseEyeHeight;  // 0x2D4
+    float EyeHeight;  // 0x2D8
+    FVector Floor;  // 0x2DC
+    float SplashTime;  // 0x2E8
+    APhysicsVolume *HeadVolume;  // 0x2EC
+    int Health;  // 0x2F0
+    int HealthMax;  // 0x2F4
+    float BreathTime;  // 0x2F8
+    float UnderWaterTime;  // 0x2FC
+    float LastPainTime;  // 0x300
+    float KismetDeathDelayTime;  // 0x304
+    FVector RMVelocity;  // 0x308
+    FVector noise1spot;  // 0x314
+    float noise1time;  // 0x320
+    APawn *noise1other;  // 0x324
+    float noise1loudness;  // 0x328
+    FVector noise2spot;  // 0x32C
+    float noise2time;  // 0x338
+    APawn *noise2other;  // 0x33C
+    float noise2loudness;  // 0x340
+    float SoundDampening;  // 0x344
+    float DamageScaling;  // 0x348
+    FStringNoInit MenuName;  // 0x34C
+    UClass *ControllerClass;  // 0x358
+    APlayerReplicationInfo *PlayerReplicationInfo;  // 0x35C
+    ALadderVolume *OnLadder;  // 0x360
+    FName LandMovementState;  // 0x364
+    FName WaterMovementState;  // 0x36C
+    APlayerStart *LastStartSpot;  // 0x374
+    float LastStartTime;  // 0x378
+    FVector TakeHitLocation;  // 0x37C
+    UClass *HitDamageType;  // 0x388
+    FVector TearOffMomentum;  // 0x38C
+    int DeathTick;  // 0x398
+    USkeletalMeshComponent *Mesh;  // 0x39C
+    UCylinderComponent *CylinderComponent;  // 0x3A0
+    float RBPushRadius;  // 0x3A4
+    float RBPushStrength;  // 0x3A8
+    AVehicle *DrivenVehicle;  // 0x3AC
+    float AlwaysRelevantDistanceSquared;  // 0x3B0
+    float VehicleCheckRadius;  // 0x3B4
+    AController *LastHitBy;  // 0x3B8
+    float ViewPitchMin;  // 0x3BC
+    float ViewPitchMax;  // 0x3C0
+    int AllowedYawError;  // 0x3C4
+    FRotator DesiredRotation;  // 0x3C8
+    UClass *InventoryManagerClass;  // 0x3D4
+    AInventoryManager *InvManager;  // 0x3D8
+    AWeapon *Weapon;  // 0x3DC
+    FVector FlashLocation;  // 0x3E0
+    FVector LastFiringFlashLocation;  // 0x3EC
+    int ShotCount;  // 0x3F8
+    UPrimitiveComponent *PreRagdollCollisionComponent;  // 0x3FC
+    URB_BodyInstance *PhysicsPushBody;  // 0x400
+    int FailedLandingCount;  // 0x404
+    TArrayNoInit<UAnimNodeSlot *> SlotNodes;  // 0x408
+    TArrayNoInit<UInterpGroup *> InterpGroupList;  // 0x414
+    UAudioComponent *FacialAudioComp;  // 0x420
+    UMaterialInstanceConstant *MIC_PawnMat;  // 0x424
+    UMaterialInstanceConstant *MIC_PawnHair;  // 0x428
+    TArrayNoInit<FScalarParameterInterpStruct> ScalarParameterInterpArray;  // 0x42C
+    FRootMotionCurve RootMotionInterpCurve;  // 0x438
+    float RootMotionInterpRate;  // 0x454
+    float RootMotionInterpCurrentTime;  // 0x458
+    FVector RootMotionInterpCurveLastValue;  // 0x45C
+    float PassiveObjectiveWeight;  // 0x468
+    float PassiveSecondaryWeight;  // 0x46C
+    float AggressiveMobileWeight;  // 0x470
+    float AggressiveStationaryWeight;  // 0x474
+    float ChanceToFireAtTargetsBehindCover;  // 0x478
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::be<float> MaxStepHeight;
+    hg::be<float> MaxJumpHeight;
+    hg::be<float> WalkableFloorZ;
+    hg::be<float> LedgeCheckThreshold;
+    FVector PartialLedgeMoveDir;
+    hg::gptr<AController> Controller;
+    hg::gptr<APawn> NextPawn;
+    hg::be<float> NetRelevancyTime;
+    hg::gptr<APlayerController> LastRealViewer;
+    hg::gptr<AActor> LastViewer;
+    hg::be<unsigned int> _bits208;  // 0x208, from bScriptTickSpecial
+    hg::be<unsigned int> _bits20C;  // 0x20C, from bCanSwatTurn
+    hg::be<unsigned int> _bits210;  // 0x210, from bIgnoreKillZ
+    unsigned char WalkingPhysics;
+    unsigned char PathSearchType;
+    unsigned char RemoteViewPitch;
+    unsigned char FlashCount;
+    unsigned char FiringMode;
+    char _pad0[0x3];
+    hg::be<float> UncrouchTime;
+    hg::be<float> CrouchHeight;
+    hg::be<float> CrouchRadius;
+    hg::be<int> FullHeight;
+    hg::be<float> NonPreferredVehiclePathMultiplier;
+    hg::gptr<UPathConstraint> PathConstraintList;
+    hg::gptr<UPathGoalEvaluator> PathGoalList;
+    hg::be<float> DesiredSpeed;
+    hg::be<float> MaxDesiredSpeed;
+    hg::be<float> HearingThreshold;
+    hg::be<float> Alertness;
+    hg::be<float> AwareRadius;
+    hg::be<float> SightRadius;
+    hg::be<float> PeripheralVision;
+    hg::be<float> AvgPhysicsTime;
+    hg::be<float> Mass;
+    hg::be<float> Buoyancy;
+    hg::be<float> MeleeRange;
+    hg::gptr<ANavigationPoint> Anchor;
+    hg::be<int> AnchorItem;
+    hg::gptr<ANavigationPoint> LastAnchor;
+    hg::be<float> FindAnchorFailedTime;
+    hg::be<float> LastValidAnchorTime;
+    hg::be<float> DestinationOffset;
+    hg::be<float> NextPathRadius;
+    FVector SerpentineDir;
+    hg::be<float> SerpentineDist;
+    hg::be<float> SerpentineTime;
+    hg::be<float> SpawnTime;
+    hg::be<int> MaxPitchLimit;
+    hg::be<float> GroundSpeed;
+    hg::be<float> WaterSpeed;
+    hg::be<float> AirSpeed;
+    hg::be<float> LadderSpeed;
+    hg::be<float> AccelRate;
+    hg::be<float> JumpZ;
+    hg::be<float> OutofWaterZ;
+    hg::be<float> MaxOutOfWaterStepHeight;
+    hg::be<float> AirControl;
+    hg::be<float> WalkingPct;
+    hg::be<float> MovementSpeedModifier;
+    hg::be<float> CrouchedPct;
+    hg::be<float> MaxFallSpeed;
+    hg::be<float> AIMaxFallSpeedFactor;
+    hg::be<float> BaseEyeHeight;
+    hg::be<float> EyeHeight;
+    FVector Floor;
+    hg::be<float> SplashTime;
+    hg::gptr<APhysicsVolume> HeadVolume;
+    hg::be<int> Health;
+    hg::be<int> HealthMax;
+    hg::be<float> BreathTime;
+    hg::be<float> UnderWaterTime;
+    hg::be<float> LastPainTime;
+    hg::be<float> KismetDeathDelayTime;
+    FVector RMVelocity;
+    FVector noise1spot;
+    hg::be<float> noise1time;
+    hg::gptr<APawn> noise1other;
+    hg::be<float> noise1loudness;
+    FVector noise2spot;
+    hg::be<float> noise2time;
+    hg::gptr<APawn> noise2other;
+    hg::be<float> noise2loudness;
+    hg::be<float> SoundDampening;
+    hg::be<float> DamageScaling;
+    FStringNoInit MenuName;
+    hg::gptr<UClass> ControllerClass;
+    hg::gptr<APlayerReplicationInfo> PlayerReplicationInfo;
+    hg::gptr<ALadderVolume> OnLadder;
+    FName LandMovementState;
+    FName WaterMovementState;
+    hg::gptr<APlayerStart> LastStartSpot;
+    hg::be<float> LastStartTime;
+    FVector TakeHitLocation;
+    hg::gptr<UClass> HitDamageType;
+    FVector TearOffMomentum;
+    hg::be<int> DeathTick;
+    hg::gptr<USkeletalMeshComponent> Mesh;
+    hg::gptr<UCylinderComponent> CylinderComponent;
+    hg::be<float> RBPushRadius;
+    hg::be<float> RBPushStrength;
+    hg::gptr<AVehicle> DrivenVehicle;
+    hg::be<float> AlwaysRelevantDistanceSquared;
+    hg::be<float> VehicleCheckRadius;
+    hg::gptr<AController> LastHitBy;
+    hg::be<float> ViewPitchMin;
+    hg::be<float> ViewPitchMax;
+    hg::be<int> AllowedYawError;
+    FRotator DesiredRotation;
+    hg::gptr<UClass> InventoryManagerClass;
+    hg::gptr<AInventoryManager> InvManager;
+    hg::gptr<AWeapon> Weapon;
+    FVector FlashLocation;
+    FVector LastFiringFlashLocation;
+    hg::be<int> ShotCount;
+    hg::gptr<UPrimitiveComponent> PreRagdollCollisionComponent;
+    hg::gptr<URB_BodyInstance> PhysicsPushBody;
+    hg::be<int> FailedLandingCount;
+    TArrayNoInit<UAnimNodeSlot *> SlotNodes;
+    TArrayNoInit<UInterpGroup *> InterpGroupList;
+    hg::gptr<UAudioComponent> FacialAudioComp;
+    hg::gptr<UMaterialInstanceConstant> MIC_PawnMat;
+    hg::gptr<UMaterialInstanceConstant> MIC_PawnHair;
+    TArrayNoInit<FScalarParameterInterpStruct> ScalarParameterInterpArray;
+    FRootMotionCurve RootMotionInterpCurve;
+    hg::be<float> RootMotionInterpRate;
+    hg::be<float> RootMotionInterpCurrentTime;
+    FVector RootMotionInterpCurveLastValue;
+    hg::be<float> PassiveObjectiveWeight;
+    hg::be<float> PassiveSecondaryWeight;
+    hg::be<float> AggressiveMobileWeight;
+    hg::be<float> AggressiveStationaryWeight;
+    hg::be<float> ChanceToFireAtTargetsBehindCover;
+    #endif
+};
+
+class AGwNavPawn : public APawn  // size 0x484, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL void MoveToPosition(FVector);
+    HG_VIRTUAL unsigned int IsArrived();
+    HG_VIRTUAL void IntializeNavigationBot(UGwNavNavdataFamily *, unsigned int, unsigned int, int);
+    void execMoveToPosition(FFrame &, void *const);
+    void execIsArrived(FFrame &, void *const);
+    void execIntializeNavigationBot(FFrame &, void *const);
+HG_PRIVATE:
+    AGwNavPawn &operator=(const AGwNavPawn &);
+public:
+    static UClass *GetPrivateStaticClassAGwNavPawn(const wchar_t *);
+    static void InitializePrivateStaticClassAGwNavPawn();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    static const wchar_t *StaticConfigName();
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AGwNavPawn();
+    AGwNavPawn();
+public:
+    #endif
+    typedef APawn Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
     #endif
 HG_PRIVATE:
-    unsigned int APawnData[0xA9];
+    unsigned int AGwNavPawnData[0x2];
+};
+
+class AGamePawn : public AGwNavPawn  // size 0x488, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    void eventUpdateShadowSettings(unsigned int);
+HG_PRIVATE:
+    AGamePawn &operator=(const AGamePawn &);
+public:
+    static UClass *GetPrivateStaticClassAGamePawn(const wchar_t *);
+    static void InitializePrivateStaticClassAGamePawn();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    static const wchar_t *StaticConfigName();
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AGamePawn();
+public:
+    #endif
+    typedef AGwNavPawn Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
+    unsigned int AGamePawnData[0x1];
+};
+
+class APlayerController : public AController  // size 0x590, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL void ClientTravel(const FString &, unsigned char, unsigned int, FGuid);
+    HG_VIRTUAL void CopyToClipboard(const FString &);
+    HG_VIRTUAL FString PasteFromClipboard();
+    HG_VIRTUAL void SetAllowMatureLanguage(unsigned int);
+    HG_VIRTUAL void SetAudioGroupVolume(FName, float);
+    HG_VIRTUAL void CleanUpAudioComponents();
+    HG_VIRTUAL void PeerTravelAsHost(float, const FString &);
+    HG_VIRTUAL void TellPeerToTravel(FUniqueNetId);
+    HG_VIRTUAL void TellPeerToTravelToSession(FUniqueNetId, FName, UClass *, unsigned char *, int);
+    HG_VIRTUAL unsigned int IsControllerTiltActive() const;
+    HG_VIRTUAL void SetControllerTiltActive(unsigned int);
+    HG_VIRTUAL void SetOnlyUseControllerTiltInput(unsigned int);
+    HG_VIRTUAL void SetUseTiltForwardAndBack(unsigned int);
+    HG_VIRTUAL unsigned int IsKeyboardAvailable() const;
+    HG_VIRTUAL unsigned int IsMouseAvailable() const;
+    HG_VIRTUAL UAudioComponent *GetPooledAudioComponent(USoundCue *, AActor *, unsigned int, unsigned int, FVector);
+    HG_VIRTUAL void WwiseClientHearSound(UAkEvent *, AActor *, FVector, unsigned int, unsigned int);
+    HG_VIRTUAL USoundCue *CreateTTSSoundCue(const FString &, APlayerReplicationInfo *);
+    HG_VIRTUAL void SetViewTarget(AActor *, FViewTargetTransitionParams);
+    HG_VIRTUAL void ClientUpdateLevelStreamingStatus(FName, unsigned int, unsigned int, unsigned int);
+    HG_VIRTUAL void SetShowSubtitles(unsigned int);
+    HG_VIRTUAL unsigned int IsShowingSubtitles();
+    HG_VIRTUAL unsigned int HasPeerConnection(const FUniqueNetId &) const;
+    HG_VIRTUAL void LogOutBugItGoToLogFile(const FString &, const FString &, const FString &);
+    HG_VIRTUAL void LogOutBugItAIGoToLogFile(const FString &, const FString &, const FString &);
+    HG_VIRTUAL void SmoothTargetViewRotation(APawn *, float);
+    HG_VIRTUAL void ModifyPostProcessSettings(FPostProcessSettings &) const;
+    HG_VIRTUAL unsigned int HearSound(UAkBaseSoundObject *, AActor *, const FVector &, unsigned int);
+    HG_VIRTUAL void NotifyActorChannelFailure(UActorChannel *);
+    HG_VIRTUAL void ForcePositionUpdate();
+    HG_VIRTUAL unsigned int CanIdleKick();
+    HG_VIRTUAL void UpdateHiddenActors(const FVector &);
+    HG_VIRTUAL void UpdateHiddenComponents(const FVector &, TSet<UPrimitiveComponent *,DefaultKeyFuncs<UPrimitiveComponent *,0>,FDefaultSetAllocator> &);
+    void SetNetSpeed(int);
+    FString GetPlayerNetworkAddress();
+    FString GetServerNetworkAddress();
+    HG_VIRTUAL FString ConsoleCommand(const FString &, unsigned int);
+    void UpdateURL(const FString &, const FString &, unsigned int);
+    FString GetDefaultURL(const FString &);
+    void ClientConvolve(const FString &, int);
+    void ServerProcessConvolve(const FString &, int);
+    unsigned int CheckSpeedHack(float);
+    int FindStairRotation(float);
+    void ServerNotifyLoadedWorld(FName);
+    unsigned int HasClientLoadedCurrentWorld();
+    void ForceSingleNetUpdateFor(AActor *);
+    HG_VIRTUAL unsigned int IsLocalPlayerController();
+    HG_VIRTUAL unsigned int IsLocalController();
+    HG_VIRTUAL AActor *GetViewTarget();
+    void ServerUpdateLevelVisibility(FName, unsigned int);
+    void ClientFlushLevelStreaming();
+    unsigned int IsPlayerMuted(const FUniqueNetId &);
+    APlayerController *GetPlayerControllerFromNetId(FUniqueNetId);
+    void ClientAddTextureStreamingLoc(FVector, float, unsigned int);
+    void execSetNetSpeed(FFrame &, void *const);
+    void execGetPlayerNetworkAddress(FFrame &, void *const);
+    void execGetServerNetworkAddress(FFrame &, void *const);
+    void execClientTravel(FFrame &, void *const);
+    void execUpdateURL(FFrame &, void *const);
+    void execGetDefaultURL(FFrame &, void *const);
+    void execCopyToClipboard(FFrame &, void *const);
+    void execPasteFromClipboard(FFrame &, void *const);
+    void execSetAllowMatureLanguage(FFrame &, void *const);
+    void execSetAudioGroupVolume(FFrame &, void *const);
+    void execClientConvolve(FFrame &, void *const);
+    void execServerProcessConvolve(FFrame &, void *const);
+    void execCheckSpeedHack(FFrame &, void *const);
+    void execFindStairRotation(FFrame &, void *const);
+    void execCleanUpAudioComponents(FFrame &, void *const);
+    void execPeerTravelAsHost(FFrame &, void *const);
+    void execTellPeerToTravel(FFrame &, void *const);
+    void execTellPeerToTravelToSession(FFrame &, void *const);
+    void execIsControllerTiltActive(FFrame &, void *const);
+    void execSetControllerTiltActive(FFrame &, void *const);
+    void execSetOnlyUseControllerTiltInput(FFrame &, void *const);
+    void execSetUseTiltForwardAndBack(FFrame &, void *const);
+    void execIsKeyboardAvailable(FFrame &, void *const);
+    void execIsMouseAvailable(FFrame &, void *const);
+    void execGetPooledAudioComponent(FFrame &, void *const);
+    void execWwiseClientHearSound(FFrame &, void *const);
+    void execCreateTTSSoundCue(FFrame &, void *const);
+    void execServerNotifyLoadedWorld(FFrame &, void *const);
+    void execHasClientLoadedCurrentWorld(FFrame &, void *const);
+    void execForceSingleNetUpdateFor(FFrame &, void *const);
+    void execSetViewTarget(FFrame &, void *const);
+    void execGetViewTarget(FFrame &, void *const);
+    void execClientUpdateLevelStreamingStatus(FFrame &, void *const);
+    void execServerUpdateLevelVisibility(FFrame &, void *const);
+    void execClientFlushLevelStreaming(FFrame &, void *const);
+    void execIsPlayerMuted(FFrame &, void *const);
+    void execGetPlayerControllerFromNetId(FFrame &, void *const);
+    void execSetShowSubtitles(FFrame &, void *const);
+    void execIsShowingSubtitles(FFrame &, void *const);
+    void execClientAddTextureStreamingLoc(FFrame &, void *const);
+    void execHasPeerConnection(FFrame &, void *const);
+    void execLogOutBugItGoToLogFile(FFrame &, void *const);
+    void execLogOutBugItAIGoToLogFile(FFrame &, void *const);
+    void eventSetMatineeConstantCameraAnim(unsigned int, unsigned char, float);
+    unsigned int eventNotifyDisconnect(const FString &);
+    void eventOnEngineInitialTick();
+    void eventBugItStringCreator(const FVector &, const FRotator &, FString &, FString &);
+    void eventBugItAI(const FString &);
+    void eventBugIt(const FString &);
+    void eventClientSpawnCameraLensEffect(UClass *);
+    void eventClientStopCameraAnim(UCameraAnim *, unsigned int);
+    void eventClientPlayCameraAnim(UCameraAnim *, float, float, float, float, unsigned int, unsigned int, unsigned char, FRotator);
+    void delegateInputMatchDelegate();
+    unsigned int eventGetAchievementProgression(int, float &, float &);
+    void eventClientAddTextureStreamingLoc(FVector, float, unsigned int);
+    void eventClientPrestreamTextures(AActor *, float, unsigned int, int);
+    void eventClientSetForceMipLevelsToBeResident(UMaterialInterface *, float, int);
+    void eventSoakPause(APawn *);
+    void eventRemoveAllDebugStrings();
+    void eventRemoveDebugText(AActor *);
+    void eventAddDebugText(const FString &, AActor *, float, FVector, FVector, FColor, unsigned int, unsigned int, unsigned int, UFont *);
+    void eventClientWasKicked();
+    void eventNotifyDirectorControl(unsigned int, USeqAct_Interp *);
+    void eventServerUnmutePlayer(FUniqueNetId);
+    void eventServerMutePlayer(FUniqueNetId);
+    void eventClientUnmutePlayer(FUniqueNetId);
+    void eventClientMutePlayer(FUniqueNetId);
+    void eventGetSeamlessTravelActorList(unsigned int, TArray<AActor *,FDefaultAllocator> &);
+    void eventClientSetBlockOnAsyncLoading();
+    void eventClientFlushLevelStreaming();
+    void eventClientCancelPendingMapChange();
+    void eventClientCommitMapChange();
+    void eventClientPrepareMapChange(FName, unsigned int, unsigned int);
+    void eventServerUpdateLevelVisibility(FName, unsigned int);
+    void eventLevelStreamingStatusChanged(ULevelStreaming *, unsigned int, unsigned int, unsigned int);
+    void eventClientForceGarbageCollection();
+    unsigned int eventIsLookInputIgnored();
+    unsigned int eventIsMoveInputIgnored();
+    void eventClientStopForceFeedbackWaveform(UForceFeedbackWaveform *);
+    void eventClientPlayForceFeedbackWaveform(UForceFeedbackWaveform *, AActor *);
+    void eventPlayRumble(const UAnimNotify_Rumble *);
+    void eventAdjustHUDRenderSize(int &, int &, int &, int &, const int, const int);
+    FRotator eventLimitViewRotation(FRotator, float, float);
+    void eventSpawnPlayerCamera();
+    void eventClientSetViewTarget(AActor *, FViewTargetTransitionParams);
+    float eventGetFOVAngle();
+    void eventCameraLookAtFinished(USeqAct_CameraLookAt *);
+    void eventPlayerTick(float);
+    void eventNotifyLoadedWorld(FName, unsigned int);
+    void eventServerNotifyLoadedWorld(FName);
+    void eventClientSetProgressMessage(unsigned char, const FString &, const FString &, unsigned int);
+    void eventConditionalPause(unsigned int);
+    unsigned int delegateCanUnpause();
+    void eventSendClientAdjustment();
+    void eventClientSetCameraFade(unsigned int, FColor, FVector2D, float, unsigned int);
+    void eventResetCameraMode();
+    void eventPreClientTravel(const FString &, unsigned char, unsigned int);
+    void eventClearOnlineDelegates();
+    void eventTeamMessage(APlayerReplicationInfo *, const FString &, FName, float);
+    void eventClientMessage(const FString &, FName, float);
+    void eventKismet_ClientStopSound(USoundCue *, AActor *, float);
+    void eventKismet_ClientPlaySound(USoundCue *, AActor *, float, float, float, unsigned int, unsigned int);
+    void eventWwiseClientHearSound(UAkEvent *, AActor *, FVector, unsigned int, unsigned int);
+    void eventClientHearSound(USoundCue *, AActor *, FVector, unsigned int, unsigned int);
+    void eventClientPlaySound(USoundCue *);
+    void eventReceiveLocalizedMessage(UClass *, int, APlayerReplicationInfo *, APlayerReplicationInfo *, UObject *);
+    void eventInitInputSystem();
+    void eventKickWarning();
+    void eventPreRender(UCanvas *);
+    void eventPeerReceivedMigratedSession(FUniqueNetId, FName, UClass *, unsigned char *);
+    void delegateOnMissingPeersUnregistered(FName, FUniqueNetId, unsigned int);
+    unsigned int eventMigrateNewHost();
+    void eventNotifyPeerDisconnectHost(FUniqueNetId);
+    void eventRemovePeer(FUniqueNetId);
+    void eventAddPeer(FUniqueNetId, unsigned char);
+    void eventReceivedPlayer();
+    void eventServerProcessConvolve(const FString &, int);
+    void eventClientConvolve(const FString &, int);
+    void eventClientTravel(const FString &, unsigned char, unsigned int, FGuid);
+HG_PRIVATE:
+    APlayerController &operator=(const APlayerController &);
+public:
+    static UClass *GetPrivateStaticClassAPlayerController(const wchar_t *);
+    static void InitializePrivateStaticClassAPlayerController();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    static const wchar_t *StaticConfigName();
+    void SetPlayer(UPlayer *);
+    void UpdateViewTarget(AActor *);
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL unsigned int Tick(float, ELevelTick);
+    HG_VIRTUAL unsigned int IsNetRelevantFor(APlayerController *, AActor *, const FVector &);
+    HG_VIRTUAL unsigned int WantsLedgeCheck();
+    HG_VIRTUAL unsigned int StopAtLedge();
+    HG_VIRTUAL APlayerController *GetAPlayerController();
+    HG_VIRTUAL unsigned int IgnoreBlockingBy(const AActor *) const;
+    void eventClientHearSoundHelper(UAkBaseSoundObject *, AActor *, FVector, unsigned int, unsigned int);
+    void ValidateSoundPlayer(AActor *&);
+    HG_VIRTUAL void PostScriptDestroyed();
+    HG_VIRTUAL float GetNetPriority(const FVector &, const FVector &, APlayerController *, UActorChannel *, float, unsigned int);
+    HG_VIRTUAL unsigned int ShouldCheckVisibilityOf(AController *);
+    HG_VIRTUAL void HearNoise(AActor *, float, FName);
+    void SetControllingDirector(UInterpTrackInstDirector *);
+    UInterpTrackInstDirector *GetControllingDirector();
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~APlayerController();
+public:
+    #endif
+    typedef AController Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
+    unsigned int APlayerControllerData[0x8E];
+};
+
+class AGamePlayerController : public APlayerController  // size 0x5A0, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL int GetUIPlayerIndex();
+    void ShowLoadingMovie(unsigned int, unsigned int, float, float, unsigned int);
+    void KeepPlayingLoadingMovie();
+    void ClientPlayMovie(const FString &, int, int, unsigned int, unsigned int, unsigned int);
+    void ClientStopMovie(float, unsigned int, unsigned int, unsigned int);
+    void GetCurrentMovie(FString &);
+    void execGetUIPlayerIndex(FFrame &, void *const);
+    void execShowLoadingMovie(FFrame &, void *const);
+    void execKeepPlayingLoadingMovie(FFrame &, void *const);
+    void execClientPlayMovie(FFrame &, void *const);
+    void execClientStopMovie(FFrame &, void *const);
+    void execGetCurrentMovie(FFrame &, void *const);
+    void eventWarmupPause(unsigned int);
+    void eventClientStopMovie(float, unsigned int, unsigned int, unsigned int);
+    void eventClientPlayMovie(const FString &, int, int, unsigned int, unsigned int, unsigned int);
+    void eventNotifyCrowdAgentInRadius(AGameCrowdAgent *);
+    void eventNotifyCrowdAgentRefresh();
+HG_PRIVATE:
+    AGamePlayerController &operator=(const AGamePlayerController &);
+public:
+    static UClass *GetPrivateStaticClassAGamePlayerController(const wchar_t *);
+    static void InitializePrivateStaticClassAGamePlayerController();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL void TickSpecial(float);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AGamePlayerController();
+public:
+    #endif
+    typedef APlayerController Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
+    unsigned int AGamePlayerControllerData[0x4];
 };
 
 class AVehicle : public APawn  // size 0x4F0, opaque
@@ -5045,6 +5672,181 @@ public:
     #endif
 };
 
+class AUDKPawn : public AGamePawn, public ICCSPawn  // size 0x694, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL void RestorePreRagdollCollisionComponent();
+    HG_VIRTUAL void EnsureOverlayComponentLast();
+    HG_VIRTUAL void UpdateEyeHeight(float);
+    HG_VIRTUAL void GetBoundingCylinder(float &, float &) const;
+    HG_VIRTUAL FVector GetTargetLocation(AActor *, unsigned int) const;
+    HG_VIRTUAL unsigned int IsInvisible();
+    HG_VIRTUAL unsigned int SuggestJumpVelocity(FVector &, FVector, FVector, unsigned int);
+    HG_VIRTUAL void SetHUDLocation(FVector);
+    HG_VIRTUAL void NativePostRenderFor(APlayerController *, UCanvas *, FVector, FVector);
+    HG_VIRTUAL unsigned char GetMovementType();
+    HG_VIRTUAL void SetMovementType(unsigned char);
+    HG_VIRTUAL void SetMovementTypeDefault();
+    HG_VIRTUAL unsigned char GetAlertness();
+    HG_VIRTUAL void SetAlertness(unsigned char);
+    HG_VIRTUAL void SetAlertnessDefault();
+    HG_VIRTUAL unsigned char GetSpeed();
+    HG_VIRTUAL void SetSpeed(unsigned char);
+    HG_VIRTUAL void SetMovementSpeedDefault();
+    HG_VIRTUAL unsigned int IsCrouched();
+    HG_VIRTUAL void SetCrouched(unsigned int);
+    HG_VIRTUAL void SetPostureDefault();
+    HG_VIRTUAL unsigned int PostureTransitionOver();
+    HG_VIRTUAL unsigned int CanAim(FRotator);
+    HG_VIRTUAL void SetCoverPose(unsigned char, float);
+    HG_VIRTUAL void SetNoCoverPose();
+    HG_VIRTUAL unsigned int CoverPoseTransitionOver();
+    HG_VIRTUAL void MoveToInCover(FVector);
+    HG_VIRTUAL unsigned int IsInCover();
+    HG_VIRTUAL void SetIsPanicking(unsigned int);
+    HG_VIRTUAL unsigned int GetIsPanicking();
+    HG_VIRTUAL float GetYellingDistance();
+    HG_VIRTUAL UCCSBTTree *GetDefaultBehaviorTree();
+    HG_VIRTUAL void SetDefaultBehaviorTree(UCCSBTTree *);
+    void execRestorePreRagdollCollisionComponent(FFrame &, void *const);
+    void execEnsureOverlayComponentLast(FFrame &, void *const);
+    void execGetMovementType(FFrame &, void *const);
+    void execSetMovementType(FFrame &, void *const);
+    void execSetMovementTypeDefault(FFrame &, void *const);
+    void execGetAlertness(FFrame &, void *const);
+    void execSetAlertness(FFrame &, void *const);
+    void execSetAlertnessDefault(FFrame &, void *const);
+    void execGetSpeed(FFrame &, void *const);
+    void execSetSpeed(FFrame &, void *const);
+    void execSetMovementSpeedDefault(FFrame &, void *const);
+    void execIsCrouched(FFrame &, void *const);
+    void execSetCrouched(FFrame &, void *const);
+    void execSetPostureDefault(FFrame &, void *const);
+    void execPostureTransitionOver(FFrame &, void *const);
+    void execCanAim(FFrame &, void *const);
+    void execSetCoverPose(FFrame &, void *const);
+    void execSetNoCoverPose(FFrame &, void *const);
+    void execCoverPoseTransitionOver(FFrame &, void *const);
+    void execMoveToInCover(FFrame &, void *const);
+    void execIsInCover(FFrame &, void *const);
+    void execSetIsPanicking(FFrame &, void *const);
+    void execGetIsPanicking(FFrame &, void *const);
+    void execGetYellingDistance(FFrame &, void *const);
+    void execGetDefaultBehaviorTree(FFrame &, void *const);
+    void execSetDefaultBehaviorTree(FFrame &, void *const);
+    void eventStuckFalling();
+    void eventUpdateEyeHeight(float);
+    void eventTakeHitBlendedOut();
+    void eventStartFeignDeathRecoveryAnim();
+    void eventStoppedFalling();
+    void eventHoldGameObject(AUDKCarriedObject *);
+HG_PRIVATE:
+    AUDKPawn &operator=(const AUDKPawn &);
+public:
+    static UClass *GetPrivateStaticClassAUDKPawn(const wchar_t *);
+    static void InitializePrivateStaticClassAUDKPawn();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL UObject *GetUObjectInterfaceCCSPawn();
+    HG_VIRTUAL unsigned int TryJumpUp(FVector, FVector, unsigned long, unsigned int);
+    HG_VIRTUAL ETestMoveResult FindJumpUp(FVector, FVector &);
+    HG_VIRTUAL int calcMoveFlags();
+    HG_VIRTUAL float DampenNoise(AActor *, float, FName);
+    void RequestTrackingFor(AUDKBot *);
+    HG_VIRTUAL void TickSpecial(float);
+    HG_VIRTUAL void TickSimulated(float);
+    HG_VIRTUAL unsigned int SetHighJumpFlag();
+    unsigned int UseFootPlacementThisTick();
+    void EnableFootPlacement(unsigned int);
+    void DoFootPlacement(float);
+    HG_VIRTUAL float GetGravityZ();
+    HG_VIRTUAL void setPhysics(unsigned char, AActor *, FVector);
+    HG_VIRTUAL FVector CalculateSlopeSlide(const FVector &, const FCheckResult &);
+    HG_VIRTUAL unsigned int ShouldTrace(UPrimitiveComponent *, AActor *, unsigned long);
+    HG_VIRTUAL unsigned int IgnoreBlockingBy(const AActor *) const;
+    HG_VIRTUAL void performPhysics(float);
+    HG_VIRTUAL void physFalling(float, int);
+    HG_VIRTUAL unsigned int HasAudibleAmbientSound(const FVector &);
+    HG_VIRTUAL int *GetOptimizedRepList(unsigned char *, FPropertyRetirement *, int *, UPackageMap *, UActorChannel *);
+    HG_VIRTUAL void physicsRotation(float, FVector);
+    HG_VIRTUAL void SmoothCorrection(const FVector &);
+HG_PROTECTED:
+    HG_VIRTUAL void CalcVelocity(FVector &, float, float, float, int, int, int);
+public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AUDKPawn();
+public:
+    #endif
+    typedef AGamePawn Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
+    unsigned int AUDKPawnData[0x82];
+};
+
+class AUDKPlayerController : public AGamePlayerController  // size 0x880, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL void SetGamma(float);
+    HG_VIRTUAL void SetHardwarePhysicsEnabled(unsigned int);
+    HG_VIRTUAL APawn *GetTargetAdhesionFrictionTarget(float, const FVector &, const FRotator &);
+    HG_VIRTUAL unsigned int IsAlertedEnemyInRange(float);
+    HG_VIRTUAL unsigned int FindPath(const FVector, TArray<FVector,FDefaultAllocator> &);
+    HG_VIRTUAL void BlendPostProcessSettings(FPostProcessSettings &, const FPostProcessSettings &, const FPostProcessSettings &, const float) const;
+    HG_VIRTUAL void AddPostProcessSettings(FPostProcessSettings &, const FPostProcessSettings &) const;
+    HG_VIRTUAL float ScoreTargetAdhesionFrictionTarget(const APawn *, float, const FVector &, const FRotator &) const;
+    HG_VIRTUAL unsigned int IsValidTargetAdhesionFrictionTarget(APawn *, float);
+    HG_VIRTUAL unsigned int IsKeyboardAvailable() const;
+    HG_VIRTUAL unsigned int IsMouseAvailable() const;
+    void execSetGamma(FFrame &, void *const);
+    void execSetHardwarePhysicsEnabled(FFrame &, void *const);
+    void execGetTargetAdhesionFrictionTarget(FFrame &, void *const);
+    void execIsAlertedEnemyInRange(FFrame &, void *const);
+    void execFindPath(FFrame &, void *const);
+HG_PRIVATE:
+    AUDKPlayerController &operator=(const AUDKPlayerController &);
+public:
+    static UClass *GetPrivateStaticClassAUDKPlayerController(const wchar_t *);
+    static void InitializePrivateStaticClassAUDKPlayerController();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    HG_VIRTUAL unsigned int Tick(float, ELevelTick);
+    HG_VIRTUAL unsigned int HearSound(UAkBaseSoundObject *, AActor *, const FVector &, unsigned int);
+    HG_VIRTUAL unsigned int MoveWithInterpMoveTrack(UInterpTrackMove *, UInterpTrackInstMove *, float, float);
+    HG_VIRTUAL void ModifyPostProcessSettings(FPostProcessSettings &) const;
+    HG_VIRTUAL void UpdateHiddenActors(const FVector &);
+    HG_VIRTUAL void PreSave();
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~AUDKPlayerController();
+public:
+    #endif
+    typedef AGamePlayerController Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
+    unsigned int AUDKPlayerControllerData[0xB8];
+};
+
 class AUSSController : public ACCSController  // size 0x4B0, opaque
 {
 public:
@@ -5078,45 +5880,58 @@ public:
     #endif
 };
 
-class ICCSPawn  // size 0x4, opaque
+struct FVector2D  // size 0x8, opaque
 {
-    HG_VFPTR
-HG_PROTECTED:
-    HG_XDK(HG_VIRTUAL ~ICCSPawn();)
 public:
-    HG_VIRTUAL UObject *GetUObjectInterfaceCCSPawn() HG_PURE;
-    HG_VIRTUAL unsigned char GetMovementType() HG_PURE;
-    HG_VIRTUAL void SetMovementType(unsigned char) HG_PURE;
-    HG_VIRTUAL void SetMovementTypeDefault() HG_PURE;
-    HG_VIRTUAL unsigned char GetAlertness() HG_PURE;
-    HG_VIRTUAL void SetAlertness(unsigned char) HG_PURE;
-    HG_VIRTUAL void SetAlertnessDefault() HG_PURE;
-    HG_VIRTUAL unsigned char GetSpeed() HG_PURE;
-    HG_VIRTUAL void SetSpeed(unsigned char) HG_PURE;
-    HG_VIRTUAL void SetMovementSpeedDefault() HG_PURE;
-    HG_VIRTUAL unsigned int IsCrouched() HG_PURE;
-    HG_VIRTUAL void SetCrouched(unsigned int) HG_PURE;
-    HG_VIRTUAL void SetPostureDefault() HG_PURE;
-    HG_VIRTUAL unsigned int PostureTransitionOver() HG_PURE;
-    HG_VIRTUAL unsigned int CanAim(FRotator) HG_PURE;
-    HG_VIRTUAL void SetCoverPose(unsigned char, float) HG_PURE;
-    HG_VIRTUAL void SetNoCoverPose() HG_PURE;
-    HG_VIRTUAL unsigned int CoverPoseTransitionOver() HG_PURE;
-    HG_VIRTUAL void MoveToInCover(FVector) HG_PURE;
-    HG_VIRTUAL unsigned int IsInCover() HG_PURE;
-    HG_VIRTUAL unsigned int GetIsPanicking() HG_PURE;
-    HG_VIRTUAL void SetIsPanicking(unsigned int) HG_PURE;
-    HG_VIRTUAL float GetYellingDistance() HG_PURE;
-    HG_VIRTUAL UCCSBTTree *GetDefaultBehaviorTree() HG_PURE;
-    HG_VIRTUAL void SetDefaultBehaviorTree(UCCSBTTree *) HG_PURE;
+    FVector2D operator+(const FVector2D &) const;
+    FVector2D operator-() const;
+    FVector2D operator-(const FVector2D &) const;
+    FVector2D operator*(const FVector2D &) const;
+    FVector2D operator*(float) const;
+    FVector2D operator/(float) const;
+    float operator|(const FVector2D &) const;
+    float operator^(const FVector2D &) const;
+    unsigned int operator==(const FVector2D &) const;
+    unsigned int operator!=(const FVector2D &) const;
+    unsigned int operator<(const FVector2D &) const;
+    unsigned int operator>(const FVector2D &) const;
+    unsigned int operator<=(const FVector2D &) const;
+    unsigned int operator>=(const FVector2D &) const;
+    unsigned int Equals(const FVector2D &, float) const;
+    FVector2D operator+=(const FVector2D &);
+    FVector2D operator-=(const FVector2D &);
+    FVector2D operator*=(const FVector2D &);
+    FVector2D operator*=(float);
+    FVector2D operator/=(const FVector2D &);
+    FVector2D operator/=(float);
+    float operator[](int) const;
+    float &operator[](int);
+    void Set(float, float);
+    float GetMax() const;
+    float GetAbsMax() const;
+    float GetMin() const;
+    float Size() const;
+    float SizeSquared() const;
+    FVector2D SafeNormal(float) const;
+    void Normalize(float);
+    int IsNearlyZero(float) const;
+    unsigned int IsZero() const;
+    float &Component(int);
+    FIntPoint IntPoint() const;
+    FString ToString() const;
+    unsigned int InitFromString(const FString &);
     #ifndef HAGGAR_HOST
-HG_PROTECTED:
-    ICCSPawn();
-public:
+    FVector2D(const FVector &);
+    FVector2D(EEventParm);
+    FVector2D(FIntPoint);
+    FVector2D(float, float);
+    FVector2D();
     #endif
+HG_PRIVATE:
+    unsigned int FVector2DData[0x2];
 };
 
-class AUSSPawn : public APawn, public ICCSPawn  // size 0x4CC, opaque
+class AUSSPawn : public APawn, public ICCSPawn  // size 0x4CC
 {
 public:
     enum
@@ -5191,11 +6006,61 @@ public:
     typedef APawn Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    unsigned char MovementType;  // 0x480
+    unsigned char AlertnessState;  // 0x481
+    unsigned char WantedCoverPose;  // 0x482
+    unsigned char CurrentCoverPose;  // 0x483
+    unsigned long bInCrouchedPosture : 1;  // 0x484
+    unsigned long bShouldCover : 1;
+    unsigned long bInCover : 1;
+    unsigned long bIsPanicking : 1;
+    float CoverPct;  // 0x488
+    float CoverPoseBlendTimeOverride;  // 0x48C
+    FVector2D AimCurrentSkel;  // 0x490
+    FVector2D AimPitchRange;  // 0x498
+    FVector2D AimYawRange;  // 0x4A0
+    float MaxPitchSpeed;  // 0x4A8
+    float MaxYawSpeed;  // 0x4AC
+    UClass *CurrentWeaponAttachmentClass;  // 0x4B0
+    AUSSWeaponAttachment *CurrentWeaponAttachment;  // 0x4B4
+    float WeaponHeight;  // 0x4B8
+    UParticleSystem *BloodParticleSystem;  // 0x4BC
+    TArrayNoInit<UAnimNodeAimOffset *> AimNodes;  // 0x4C0
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    unsigned char MovementType;
+    unsigned char AlertnessState;
+    unsigned char WantedCoverPose;
+    unsigned char CurrentCoverPose;
+    hg::be<unsigned int> _bits484;  // 0x484, from bInCrouchedPosture
+    hg::be<float> CoverPct;
+    hg::be<float> CoverPoseBlendTimeOverride;
+    FVector2D AimCurrentSkel;
+    FVector2D AimPitchRange;
+    FVector2D AimYawRange;
+    hg::be<float> MaxPitchSpeed;
+    hg::be<float> MaxYawSpeed;
+    hg::gptr<UClass> CurrentWeaponAttachmentClass;
+    hg::gptr<AUSSWeaponAttachment> CurrentWeaponAttachment;
+    hg::be<float> WeaponHeight;
+    hg::gptr<UParticleSystem> BloodParticleSystem;
+    TArrayNoInit<UAnimNodeAimOffset *> AimNodes;
     #endif
-HG_PRIVATE:
-    unsigned int AUSSPawnData[0x13];
+};
+
+struct ActorWrapper  // size 0x8
+{
+public:
+    #ifndef HAGGAR_HOST
+    ActorWrapper(AActor *);
+    #endif
+    #ifndef HAGGAR_HOST
+    AActor *myActor;  // 0x0
+    int myActorID;  // 0x4
+    #else
+    hg::gptr<AActor> myActor;
+    hg::be<int> myActorID;
+    #endif
 };
 
 class GripVHeapObject  // size 0x4, opaque
@@ -5620,6 +6485,292 @@ HG_PRIVATE:
     unsigned int CCSBlackboardData[0x17C];
 };
 
+struct GripSystemConfig : public GripVHeapObject  // size 0x4, opaque
+{
+};
+
+struct CCSSystemsConfig : public GripSystemConfig  // size 0x34, opaque
+{
+HG_PRIVATE:
+    unsigned int CCSSystemsConfigData[0xC];
+};
+
+class GripBTSystemFlags : public GripVHeapObject  // size 0x8, opaque
+{
+public:
+    void ClearFlag(int);
+    bool TestFlag(int) const;
+    void SetFlag(int);
+    void Reset();
+    GripBTSystemFlags &operator|=(const GripBTSystemFlags &);
+    #ifndef HAGGAR_HOST
+    GripBTSystemFlags();
+    #endif
+HG_PRIVATE:
+    unsigned int GripBTSystemFlagsData[0x1];
+};
+
+class IGripBTInterface  // size 0x4, opaque
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~IGripBTInterface();)
+    HG_VIRTUAL float GetDeltaTime() HG_PURE;
+    HG_VIRTUAL float GetTime() HG_PURE;
+    HG_VIRTUAL float GetRandomFloat() HG_PURE;
+    HG_VIRTUAL GripAFScheduler *GetActionScheduler() HG_PURE;
+    HG_VIRTUAL void BroadcastGameEvent(const Grip::String) HG_PURE;
+    HG_VIRTUAL void ConsumeGameEvent(const Grip::String) HG_PURE;
+HG_PROTECTED:
+    HG_VIRTUAL GripAFFactory *GetActionFactoryInternal() HG_PURE;
+    HG_VIRTUAL GripBlackboard *GetBlackboardInternal() HG_PURE;
+    HG_VIRTUAL IGripMeatPuppetQuery *GetMeatPuppetQueryInternal() HG_PURE;
+    HG_VIRTUAL IGripWorldQuery *GetWorldQueryInternal() HG_PURE;
+public:
+    template <class T0> T0 *GetBlackboard();
+};
+
+class IGripBrainListener  // size 0x4, opaque
+{
+public:
+    enum EEventType
+    {
+        SPAWNED = 0,
+        TRANSITION = 1,
+        DESTROYED = 2,
+        TREEBREAKPOINT = 3,
+        DISABLED = 4,
+        ENABLED = 5,
+    };
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~IGripBrainListener();)
+    HG_VIRTUAL void OnBrainEvent(GripBrain *, IGripBrainListener::EEventType) HG_PURE;
+};
+
+class IGripRBTTreeListener  // size 0x4, opaque
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~IGripRBTTreeListener();)
+    HG_VIRTUAL void OnTreeChanged(GripRBTTree *) HG_PURE;
+    HG_VIRTUAL void OnTreeBreakpoint(GripRBTTree *) HG_PURE;
+    HG_VIRTUAL void OnTreeEvaluated(GripRBTTree *) HG_PURE;
+};
+
+class GripBrain : public GripVHeapObject, public IGripBTInterface, public IGripRBTTreeListener  // size 0x9C, opaque
+{
+public:
+    HG_VIRTUAL void CompleteSetUp();
+    HG_VIRTUAL void FinalizeInternal();
+    HG_VIRTUAL void Tick(float);
+    HG_VIRTUAL void StasisTick();
+HG_PROTECTED:
+    HG_VIRTUAL void SchedulerRegistration();
+    HG_VIRTUAL void SchedulerUnregistration();
+    HG_VIRTUAL void TickBehaviorTree();
+    HG_VIRTUAL void TickSystems(float);
+public:
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
+    HG_VIRTUAL void DrawHUDBlackboard(GripHUDRenderer *, int &);
+    HG_VIRTUAL void DrawHUDEvents(GripHUDRenderer *, int &);
+    HG_VIRTUAL void CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *,2> &);
+    HG_VIRTUAL GripBrainSnapshotSerializer *GetSnapshotSerializer();
+    void Finalize();
+    HG_VIRTUAL float GetDeltaTime();
+    HG_VIRTUAL float GetTime();
+    HG_VIRTUAL void BroadcastGameEvent(const Grip::String);
+    HG_VIRTUAL void ConsumeGameEvent(const Grip::String);
+    HG_VIRTUAL void OnTreeChanged(GripRBTTree *);
+    HG_VIRTUAL void OnTreeBreakpoint(GripRBTTree *);
+    HG_VIRTUAL void OnTreeEvaluated(GripRBTTree *);
+    void Disable(bool);
+    Grip::String GetBehaviorTreeName() const;
+    int GetBrainID();
+    GripBrainSystemContainer &GetSystems();
+    GripGameEventHandler &GetGameEventHandler();
+    void NotifyBrainEvent(IGripBrainListener::EEventType);
+    void OnGameEvent(const GripEvent &);
+    void SetStepDebug(const bool);
+    void SetDebug(bool);
+    bool IsDebug();
+    GripBTStack &GetEvalStackDraw(bool &);
+    bool IsDisabled();
+    void DrawHUDBehaviorTree(GripHUDRenderer *, int &);
+    void AddDebugRenderer(IGripSRComponent *);
+    void RemoveDebugRenderer(IGripSRComponent *);
+    GripRBTTree *GetBehaviorTree();
+    #ifndef HAGGAR_HOST
+    GripBrain(GripRBTTree *);
+    HG_VIRTUAL ~GripBrain();
+    #endif
+    #ifndef HAGGAR_HOST
+    static int ms_brainCounter;
+    #else
+    static hg::be<int> (&ms_brainCounter);
+    #endif
+HG_PRIVATE:
+    unsigned int GripBrainData[0x24];
+};
+
+class CCSBrain : public GripBrain  // size 0xFC
+{
+HG_PRIVATE:
+    void SetUpBlackboard(GripBlackboard *);
+    void SetUpMeatPuppetQuery(IGripMeatPuppetQuery *);
+    void SetUpWorldQuery(IGripWorldQuery *);
+    void SetUpActionFramework(GripAFFramework *);
+    void SetUpControlSystemInterface(CCSCSInterface *);
+    void SetUpMeatPuppet(ICCSMeatPuppet *);
+    void SetUpGlobalBlackboard(CCSGlobalBlackboard *);
+    void SetUpSystemConfig(const CCSSystemsConfig &);
+    HG_VIRTUAL void CompleteSetUp();
+public:
+    HG_VIRTUAL float GetRandomFloat();
+    HG_VIRTUAL GripAFFactory *GetActionFactoryInternal();
+    HG_VIRTUAL GripAFScheduler *GetActionScheduler();
+    HG_VIRTUAL GripBlackboard *GetBlackboardInternal();
+    HG_VIRTUAL IGripMeatPuppetQuery *GetMeatPuppetQueryInternal();
+    HG_VIRTUAL IGripWorldQuery *GetWorldQueryInternal();
+    HG_VIRTUAL void Tick(float);
+HG_PROTECTED:
+    HG_VIRTUAL void SchedulerRegistration();
+    HG_VIRTUAL void SchedulerUnregistration();
+    HG_VIRTUAL void TickBehaviorTree();
+    HG_VIRTUAL void TickSystems(float);
+public:
+    ICCSMeatPuppet *GetMeatPuppet();
+    CCSGlobalBlackboard *GetGlobalBB();
+HG_PRIVATE:
+    void InitializeSystems();
+    void InitializePerceptionSystems(Grip_Array<GripBrainSystem *,Grip::AllocatorGH<GripBrainSystem *,2> > &, const CCSSystemsConfig &, const GripBTSystemFlags &);
+    void InitializeControlSystems(const CCSSystemsConfig &);
+public:
+    HG_VIRTUAL void DrawHUD(GripHUDRenderer *, int &);
+    HG_VIRTUAL void CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *,2> &);
+    #ifndef HAGGAR_HOST
+    HG_VIRTUAL ~CCSBrain();
+HG_PRIVATE:
+    CCSBrain(GripRBTTree *);
+public:
+    #endif
+    #ifndef HAGGAR_HOST
+    ICCSMeatPuppet *m_meatPuppet;  // 0x9C
+    GripBTSystemFlags m_ssFlags;  // 0xA0
+    GripBTSystemFlags m_asFlags;  // 0xA8
+    GripBlackboard *m_blackboard;  // 0xB0
+    CCSGlobalBlackboard *m_pGlobalBB;  // 0xB4
+    GripAFFramework *m_afFramework;  // 0xB8
+    CCSCSInterface *m_csInterface;  // 0xBC
+    CCSSystemsConfig m_systemsConfig;  // 0xC0
+    IGripMeatPuppetQuery *m_meatPuppetQuery;  // 0xF4
+    IGripWorldQuery *m_worldQuery;  // 0xF8
+    #else
+    hg::gptr<ICCSMeatPuppet> m_meatPuppet;
+    GripBTSystemFlags m_ssFlags;
+    GripBTSystemFlags m_asFlags;
+    hg::gptr<GripBlackboard> m_blackboard;
+    hg::gptr<CCSGlobalBlackboard> m_pGlobalBB;
+    hg::gptr<GripAFFramework> m_afFramework;
+    hg::gptr<CCSCSInterface> m_csInterface;
+    CCSSystemsConfig m_systemsConfig;
+    hg::gptr<IGripMeatPuppetQuery> m_meatPuppetQuery;
+    hg::gptr<IGripWorldQuery> m_worldQuery;
+    #endif
+};
+
+class GripHeapObject  // size 0x1, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Grip::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Grip::MemAddressStub *);
+    static void *operator new(unsigned int, Grip::MemoryHeap *, int);
+    static void *operator new(unsigned int, Grip::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Grip::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Grip::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Grip::MemAddressStub *, int);
+    static void operator delete(void *, Grip::MemAddressStub *);
+    static void operator delete(void *, Grip::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Grip::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Grip::MemoryHeap *, int);
+    static void operator delete(void *, Grip::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+
+struct CCSGameCharacter : public GripHeapObject  // size 0x14
+{
+public:
+    bool operator==(const CCSGameCharacter &) const;
+    void *GetActor() const;
+    UUDKTargetableComponent *GetTargetableComponent();
+    Grip_Vector GetEyesPosition() const;
+    float GetHeight() const;
+    Grip_Rotation GetOrientation() const;
+    Grip_Vector GetPosition() const;
+    float GetSize() const;
+    int GetTeam();
+    bool IsPlayer() const;
+    #ifndef HAGGAR_HOST
+    CCSGameCharacter();
+    #endif
+    #ifndef HAGGAR_HOST
+    static const CCSGameCharacter NONE;
+    APawn *m_pawn;  // 0x0
+    AActor *m_actor;  // 0x4
+    UUDKTargetableComponent *m_targetableComponent;  // 0x8
+    bool m_targetableComponentCheck;  // 0xC
+    char _pad0[0x3];
+    int m_cachedTeamNum;  // 0x10
+    #else
+    static const CCSGameCharacter (&NONE);
+    hg::gptr<APawn> m_pawn;
+    hg::gptr<AActor> m_actor;
+    hg::gptr<UUDKTargetableComponent> m_targetableComponent;
+    bool m_targetableComponentCheck;
+    char _pad0[0x3];
+    hg::be<int> m_cachedTeamNum;
+    #endif
+};
+
+struct CCSCharacter : public GripHeapObject  // size 0x14
+{
+public:
+    bool operator==(const CCSCharacter &) const;
+    bool operator!=(const CCSCharacter &) const;
+    void *GetActor() const;
+    CCSBrain *GetBrain() const;
+    UUDKTargetableComponent *GetTargetableComponent();
+    Grip_Vector GetEyesPosition() const;
+    float GetHeight() const;
+    Grip_Rotation GetOrientation() const;
+    Grip_Vector GetPosition() const;
+    float GetSize() const;
+    int GetTeam();
+    bool IsPlayer() const;
+    #ifndef HAGGAR_HOST
+    CCSCharacter();
+    #endif
+    #ifndef HAGGAR_HOST
+    static const CCSCharacter NONE;
+    CCSGameCharacter m_gameCharacter;  // 0x0
+    #else
+    static const CCSCharacter (&NONE);
+    CCSGameCharacter m_gameCharacter;
+    #endif
+};
+
 struct CCSController_eventActionStopFiring_Parms  // size 0x1
 {
 public:
@@ -5766,148 +6917,31 @@ public:
     #endif
 };
 
-template <> class TArray<ActorWrapper *,FDefaultAllocator>  // size 0xC, opaque
+struct CCSGameCover : public GripHeapObject  // size 0x8
 {
 public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    ActorWrapper *const *GetTypedData() const;
-    ActorWrapper **GetTypedData();
-    ActorWrapper *const *GetData() const;
-    ActorWrapper **GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    ActorWrapper *const &operator()(int) const;
-    ActorWrapper *&operator()(int);
-    ActorWrapper *Pop();
-    void Push(ActorWrapper *const &);
-    ActorWrapper *const &Top() const;
-    ActorWrapper *&Top();
-    ActorWrapper *const &Last(int) const;
-    ActorWrapper *&Last(int);
-    void Shrink();
-    unsigned int FindItem(ActorWrapper *const &, int &) const;
-    int FindItemIndex(ActorWrapper *const &) const;
-    unsigned int ContainsItem(ActorWrapper *const &) const;
-    unsigned int operator==(const TArray<ActorWrapper *,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<ActorWrapper *,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(ActorWrapper *const &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<ActorWrapper *,FDefaultAllocator> &);
-    TArray<ActorWrapper *,FDefaultAllocator> &operator+=(const TArray<ActorWrapper *,FDefaultAllocator> &);
-    TArray<ActorWrapper *,FDefaultAllocator> &operator=(const TArray<ActorWrapper *,FDefaultAllocator> &);
-    int AddItem(ActorWrapper *const &);
-    int AddZeroed(int);
-    int AddUniqueItem(ActorWrapper *const &);
-    void Reserve(int);
-    void Init(ActorWrapper *const &, int);
-    void Init(int);
-    int RemoveSingleItem(ActorWrapper *const &);
-    int RemoveItem(ActorWrapper *const &);
-    int RemoveSingleItemSwap(ActorWrapper *const &);
-    int RemoveItemSwap(ActorWrapper *const &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    ActorWrapper *const &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
+    bool IsEnabled() const;
+    bool IsLocked() const;
+    bool IsLockedBy(CCSCharacter) const;
+    bool LockCover(CCSCharacter);
+    bool UnlockCover(CCSCharacter);
+    bool IsOccupied() const;
+    bool IsOccupiedBy(CCSCharacter) const;
+    bool OccupyCover(CCSCharacter);
+    bool VacateCover(CCSCharacter);
+    Grip_Vector GetPosition() const;
+    Grip_Rotation GetOrientation() const;
+    CCS::ECoverShootConfig GetShootConfig() const;
+    CCS::ECoverType GetType() const;
+    Grip_Vector GetShootPosition(const CCS::ECoverShootConfig, const float) const;
+    bool operator==(const CCSGameCover &) const;
     #ifndef HAGGAR_HOST
-    TArray(const TArray<ActorWrapper *,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
+    static const CCSGameCover NONE;
+    FCoverInfo m_coverInfo;  // 0x0
+    #else
+    static const CCSGameCover (&NONE);
+    FCoverInfo m_coverInfo;
     #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
-};
-
-template <> class TArray<CCSGameCover,FDefaultAllocator>  // size 0xC, opaque
-{
-public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    const CCSGameCover *GetTypedData() const;
-    CCSGameCover *GetTypedData();
-    const CCSGameCover *GetData() const;
-    CCSGameCover *GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    const CCSGameCover &operator()(int) const;
-    CCSGameCover &operator()(int);
-    CCSGameCover Pop();
-    void Push(const CCSGameCover &);
-    const CCSGameCover &Top() const;
-    CCSGameCover &Top();
-    const CCSGameCover &Last(int) const;
-    CCSGameCover &Last(int);
-    void Shrink();
-    unsigned int FindItem(const CCSGameCover &, int &) const;
-    int FindItemIndex(const CCSGameCover &) const;
-    unsigned int ContainsItem(const CCSGameCover &) const;
-    unsigned int operator==(const TArray<CCSGameCover,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<CCSGameCover,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(const CCSGameCover &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<CCSGameCover,FDefaultAllocator> &);
-    TArray<CCSGameCover,FDefaultAllocator> &operator+=(const TArray<CCSGameCover,FDefaultAllocator> &);
-    TArray<CCSGameCover,FDefaultAllocator> &operator=(const TArray<CCSGameCover,FDefaultAllocator> &);
-    int AddItem(const CCSGameCover &);
-    int AddZeroed(int);
-    int AddUniqueItem(const CCSGameCover &);
-    void Reserve(int);
-    void Init(const CCSGameCover &, int);
-    void Init(int);
-    int RemoveSingleItem(const CCSGameCover &);
-    int RemoveItem(const CCSGameCover &);
-    int RemoveSingleItemSwap(const CCSGameCover &);
-    int RemoveItemSwap(const CCSGameCover &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
-HG_PRIVATE:
-    const CCSGameCover &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
-public:
-    #ifndef HAGGAR_HOST
-    TArray(const TArray<CCSGameCover,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
-    #endif
-HG_PRIVATE:
-    unsigned int TArrayData[0x3];
 };
 
 class CCSNorman  // size 0x2C
@@ -6005,16 +7039,6 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int CCSSensorSystemData[0x1];
-};
-
-struct GripSystemConfig : public GripVHeapObject  // size 0x4, opaque
-{
-};
-
-struct CCSSystemsConfig : public GripSystemConfig  // size 0x34, opaque
-{
-HG_PRIVATE:
-    unsigned int CCSSystemsConfigData[0xC];
 };
 
 class CCSPSCover : public CCSSensorSystem  // size 0x50
@@ -6806,6 +7830,179 @@ public:
     #endif
 };
 
+struct FAnimBlendChild  // size 0x18, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FAnimBlendChild(EEventParm);
+    FAnimBlendChild();
+    #endif
+HG_PRIVATE:
+    unsigned int FAnimBlendChildData[0x6];
+};
+
+class FBoneAtom  // size 0x20, opaque
+{
+public:
+    void DebugPrint() const;
+    FString ToString() const;
+    FBoneAtom &operator=(const FBoneAtom &);
+    FMatrix ToMatrix() const;
+    void To3x4MatrixTranspose(float *) const;
+    void Blend(const FBoneAtom &, const FBoneAtom &, float);
+    void BlendWith(const FBoneAtom &, float);
+    FBoneAtom operator-(const FBoneAtom &) const;
+    FBoneAtom operator+(const FBoneAtom &) const;
+    FBoneAtom &operator+=(const FBoneAtom &);
+    FBoneAtom operator*(const FQuat &) const;
+    FBoneAtom operator*(const FBoneAtom &) const;
+    FBoneAtom operator*(const ScalarRegister &) const;
+    void operator*=(const FQuat &);
+    void operator*=(const FBoneAtom &);
+    FBoneAtom &operator*=(const ScalarRegister &);
+    void ScaleTranslation(const FVector &);
+    void RemoveScaling(float);
+    float GetMaximumAxisScale() const;
+    FBoneAtom Inverse() const;
+    FBoneAtom InverseSafe() const;
+    FVector4 TransformFVector4(const FVector4 &) const;
+    FVector TransformFVector(const FVector &) const;
+    FVector InverseTransformFVector(const FVector &) const;
+    __vector4 TransformNormal(const __vector4 &) const;
+    FVector TransformNormal(const FVector &) const;
+    FVector InverseTransformNormal(const FVector &) const;
+    FBoneAtom ApplyScale(float) const;
+    FVector GetAxis(int) const;
+    void Mirror(unsigned char, unsigned char);
+    FVector GetOrigin() const;
+    void SetOrigin(const FVector &);
+    unsigned int ContainsNaN() const;
+    static void Multiply(FBoneAtom *, const FBoneAtom *, const FBoneAtom *);
+    static void Multiply(FBoneAtom &, const FBoneAtom &, float);
+    void SetComponents(const FQuat &, const FVector &, float);
+    void SetComponents(const FQuat &, const FVector &);
+    void SetIdentity();
+    void MultiplyScale(float);
+    void SetTranslation(const __vector4);
+    void SetTranslation(const FVector &);
+    void ConcatenateRotation(const __vector4 &);
+    void ConcatenateRotation(const FQuat &);
+    void AddToTranslation(const __vector4 &);
+    void AddToTranslation(const FVector &);
+    void SetRotation(const __vector4);
+    void SetRotation(const FQuat &);
+    void SetScale(const float);
+    void SetScale(const ScalarRegister &);
+    void SetTranslationAndScale(const FVector &, float);
+    void SetTranslationAndScale(const FVector &);
+    void FlipSignOfRotationW();
+    void AccumulateWithShortestRotation(const FBoneAtom &);
+    void AccumulateWithShortestRotation(const FBoneAtom &, const __vector4);
+    void Accumulate(const FBoneAtom &, const ScalarRegister &);
+    void Accumulate(const FBoneAtom &);
+    void LerpTranslationScale(const FBoneAtom &, const FBoneAtom &, const ScalarRegister &);
+    void AccumulateWithAdditiveScale(const FBoneAtom &);
+    void NormalizeRotation();
+    unsigned int IsRotationNormalized() const;
+    static void BlendFromIdentityAndAccumulate(FBoneAtom &, FBoneAtom &, const ScalarRegister &);
+    FQuat GetRotation() const;
+    FVector GetTranslation() const;
+    float GetScale() const;
+    __vector4 GetRotationV() const;
+    __vector4 GetTranslationV() const;
+    ScalarRegister GetScaleV() const;
+    void CopyRotationPart(const FBoneAtom &);
+    void CopyTranslationAndScale(const FBoneAtom &);
+    void SetMatrix(const FMatrix &);
+    void SetMatrixWithScale(const FMatrix &);
+HG_PRIVATE:
+    void ToMatrixInternal(__vector4 &, __vector4 &, __vector4 &) const;
+public:
+    #ifndef HAGGAR_HOST
+    FBoneAtom(const __vector4 &, const __vector4 &);
+    FBoneAtom(const FMatrix &);
+    FBoneAtom(const FBoneAtom &);
+    FBoneAtom(const FRotator &, const FVector &, float);
+    FBoneAtom(const FRotator &, const FVector &);
+    FBoneAtom(const FQuat &, const FVector &, float);
+    FBoneAtom(const FQuat &, const FVector &);
+    FBoneAtom();
+    #endif
+    #ifndef HAGGAR_HOST
+    static const FBoneAtom Identity;
+    static const __vector4 Ax_Ay_Bx_Bz;
+    static const __vector4 Az_By;
+    static const __vector4 Ax_Bx_Bw_Aw;
+    static const __vector4 Bz_Ay_By_Aw;
+    static const __vector4 Bx_By_Az_Aw;
+    static const __vector4 Ax_Ay_Bx_By;
+    static const __vector4 Az_Az_Bz_Bz;
+    static const __vector4 Ax_Az_Bx_By;
+    static const __vector4 Ay_Ay_Bz_Bz;
+    static const __vector4 Ax_Bz_By_Az;
+    static const __vector4 Bx_Ay_Bw_Aw;
+    static const __vector4 Bz_Bx_Ax_Az;
+    #else
+    static const FBoneAtom (&Identity);
+    static const __vector4 (&Ax_Ay_Bx_Bz);
+    static const __vector4 (&Az_By);
+    static const __vector4 (&Ax_Bx_Bw_Aw);
+    static const __vector4 (&Bz_Ay_By_Aw);
+    static const __vector4 (&Bx_By_Az_Aw);
+    static const __vector4 (&Ax_Ay_Bx_By);
+    static const __vector4 (&Az_Az_Bz_Bz);
+    static const __vector4 (&Ax_Az_Bx_By);
+    static const __vector4 (&Ay_Ay_Bz_Bz);
+    static const __vector4 (&Ax_Bz_By_Az);
+    static const __vector4 (&Bx_Ay_Bw_Aw);
+    static const __vector4 (&Bz_Bx_Ax_Az);
+    #endif
+HG_PRIVATE:
+    unsigned int FBoneAtomData[0x8];
+};
+
+struct FBoneCopyInfo  // size 0x18, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FBoneCopyInfo(EEventParm);
+    FBoneCopyInfo();
+    #endif
+HG_PRIVATE:
+    unsigned int FBoneCopyInfoData[0x6];
+};
+
+struct FBoxSphereBounds  // size 0x1C, opaque
+{
+public:
+    FVector GetBoxExtrema(unsigned int) const;
+    FBox GetBox() const;
+    FSphere GetSphere() const;
+    FBoxSphereBounds TransformBy(const FMatrix &) const;
+    FBoxSphereBounds operator+(const FBoxSphereBounds &) const;
+    float ComputeSquaredDistanceFromBoxToPoint(const FVector &) const;
+    #ifndef HAGGAR_HOST
+    FBoxSphereBounds(const FVector *, unsigned int);
+    FBoxSphereBounds(const FBox &);
+    FBoxSphereBounds(const FBox &, const FSphere &);
+    FBoxSphereBounds(const FVector &, const FVector &, float);
+    FBoxSphereBounds();
+    #endif
+HG_PRIVATE:
+    unsigned int FBoxSphereBoundsData[0x7];
+};
+
+struct FCurveKey  // size 0xC, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FCurveKey(FName, float);
+    FCurveKey();
+    #endif
+HG_PRIVATE:
+    unsigned int FCurveKeyData[0x3];
+};
+
 class FOutputDevice  // size 0x10, opaque
 {
     HG_VFPTR
@@ -6866,6 +8063,128 @@ public:
     hg::gptr<FFrame> PreviousFrame;
     hg::gptr<FOutParmRec> OutParms;
     #endif
+};
+
+struct FLightingChannelContainer  // size 0x4, opaque
+{
+public:
+    unsigned int OverlapsWith(const FLightingChannelContainer &) const;
+    void SetAllChannels();
+    void ClearAllChannels();
+    unsigned char GetDeferredShadingChannelMask() const;
+HG_PRIVATE:
+    unsigned int FLightingChannelContainerData[0x1];
+};
+
+class FMatrix  // size 0x40, opaque
+{
+public:
+    operator struct _XMMATRIX() const;
+    void SetIdentity();
+    FMatrix operator*(float) const;
+    FMatrix operator*(const FMatrix &) const;
+    void operator*=(float);
+    void operator*=(const FMatrix &);
+    FMatrix operator+(const FMatrix &) const;
+    void operator+=(const FMatrix &);
+    unsigned int operator==(const FMatrix &) const;
+    unsigned int Equals(const FMatrix &, float) const;
+    unsigned int operator!=(const FMatrix &) const;
+    FVector4 TransformFVector4(const FVector4 &) const;
+    FVector4 TransformFVector(const FVector &) const;
+    FVector InverseTransformFVector(const FVector &) const;
+    FVector InverseTransformFVectorNoScale(const FVector &) const;
+    FVector4 TransformNormal(const FVector &) const;
+    FVector InverseTransformNormal(const FVector &) const;
+    FVector InverseTransformNormalNoScale(const FVector &) const;
+    FMatrix Transpose() const;
+    float Determinant() const;
+    float RotDeterminant() const;
+    FMatrix Inverse() const;
+    FMatrix InverseSafe() const;
+    FMatrix InverseSlow() const;
+    FMatrix TransposeAdjoint() const;
+    void RemoveScaling(float);
+    FMatrix GetMatrixWithoutScale(float) const;
+    FVector ExtractScaling(float);
+    FVector GetScaleVector(float) const;
+    FMatrix RemoveTranslation() const;
+    FMatrix ConcatTranslation(const FVector &) const;
+    unsigned int ContainsNaN() const;
+    void ScaleTranslation(const FVector &);
+    float GetMaximumAxisScale() const;
+    FMatrix ApplyScale(float);
+    FVector GetOrigin() const;
+    FVector GetAxis(int) const;
+    void GetAxes(FVector &, FVector &, FVector &) const;
+    void SetAxis(int, const FVector &);
+    void SetOrigin(const FVector &);
+    void SetAxes(FVector *, FVector *, FVector *, FVector *);
+    FVector GetColumn(int) const;
+    FRotator Rotator() const;
+    FQuat ToQuat() const;
+    unsigned int GetFrustumNearPlane(FPlane &) const;
+    unsigned int GetFrustumFarPlane(FPlane &) const;
+    unsigned int GetFrustumLeftPlane(FPlane &) const;
+    unsigned int GetFrustumRightPlane(FPlane &) const;
+    unsigned int GetFrustumTopPlane(FPlane &) const;
+    unsigned int GetFrustumBottomPlane(FPlane &) const;
+    void Mirror(unsigned char, unsigned char);
+    FString ToString() const;
+    void DebugPrint() const;
+    #ifndef HAGGAR_HOST
+    FMatrix(const _XMMATRIX &);
+    FMatrix(const FVector &, const FVector &, const FVector &, const FVector &);
+    FMatrix(const FPlane &, const FPlane &, const FPlane &, const FPlane &);
+    FMatrix();
+    #endif
+    #ifndef HAGGAR_HOST
+    static const FMatrix Identity;
+    #else
+    static const FMatrix (&Identity);
+    #endif
+HG_PRIVATE:
+    unsigned int FMatrixData[0x10];
+};
+
+class FNetworkNotify  // size 0x4, opaque
+{
+    HG_VFPTR
+public:
+    HG_VIRTUAL EAcceptConnection NotifyAcceptingConnection();
+    HG_VIRTUAL void NotifyAcceptedConnection(UNetConnection *);
+    HG_VIRTUAL unsigned int NotifyAcceptingChannel(UChannel *);
+    HG_VIRTUAL UWorld *NotifyGetWorld();
+    HG_VIRTUAL void NotifyControlMessage(UNetConnection *, unsigned char, FInBunch &);
+    HG_VIRTUAL unsigned int NotifySendingFile(UNetConnection *, FGuid);
+    HG_VIRTUAL void NotifyReceivedFile(UNetConnection *, int, const wchar_t *, unsigned int);
+    HG_VIRTUAL void NotifyProgress(EProgressMessageType, const FString &, const FString &);
+    HG_VIRTUAL void NotifyPeerControlMessage(UNetConnection *, unsigned char, FInBunch &);
+    HG_VIRTUAL EAcceptConnection NotifyAcceptingPeerConnection();
+    HG_VIRTUAL void NotifyAcceptedPeerConnection(UNetConnection *);
+};
+
+struct FNodeChild  // size 0x14, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FNodeChild(EEventParm);
+    FNodeChild();
+    #endif
+HG_PRIVATE:
+    unsigned int FNodeChildData[0x5];
+};
+
+struct FRBCollisionChannelContainer  // size 0x4, opaque
+{
+public:
+    void SetChannel(ERBCollisionChannel, unsigned int);
+    #ifndef HAGGAR_HOST
+    FRBCollisionChannelContainer(int);
+    FRBCollisionChannelContainer();
+    #endif
+HG_PRIVATE:
+    unsigned int FRBCollisionChannelContainerData[0x1];
 };
 
 namespace Grip {
@@ -7079,6 +8398,53 @@ HG_PRIVATE:
     unsigned int GripRBTAllocatorData[0x3];
 };
 
+struct Grip_Vector : public GripHeapObject  // size 0xC
+{
+public:
+    operator class FVector() const;
+    Grip_Vector operator+(const Grip_Vector &) const;
+    Grip_Vector operator+=(const Grip_Vector &);
+    Grip_Vector operator-() const;
+    Grip_Vector operator-(const Grip_Vector &) const;
+    Grip_Vector operator-=(const Grip_Vector &);
+    Grip_Vector operator*(const Grip_Vector &);
+    Grip_Vector operator*(float) const;
+    Grip_Vector operator*=(float);
+    Grip_Vector operator/(float) const;
+    Grip_Vector operator/=(float);
+    bool operator==(const Grip_Vector &) const;
+    bool operator!=(const Grip_Vector &) const;
+    float operator|(const Grip_Vector &) const;
+    Grip_Vector operator^(const Grip_Vector &) const;
+    bool Equals(const Grip_Vector &, float) const;
+    void Set(float, float, float);
+    float Size() const;
+    float Size2D() const;
+    void Normalize();
+    Grip_Vector SafeNormal();
+    float SizeSquared() const;
+    Grip_Vector GetOrthogonal() const;
+    float SizeSquared2D() const;
+    int IsNearlyZero(float) const;
+    bool ContainsNaN() const;
+    Grip_Rotation Rotation() const;
+    #ifndef HAGGAR_HOST
+    Grip_Vector(float, float, float);
+    Grip_Vector(float);
+    Grip_Vector(const FVector &);
+    Grip_Vector();
+    #endif
+    #ifndef HAGGAR_HOST
+    float X;  // 0x0
+    float Y;  // 0x4
+    float Z;  // 0x8
+    #else
+    hg::be<float> X;
+    hg::be<float> Y;
+    hg::be<float> Z;
+    #endif
+};
+
 struct GwNavVehicle_eventExecuteVehicleCommand_Parms  // size 0x1
 {
 public:
@@ -7158,7 +8524,7 @@ HG_PRIVATE:
     unsigned int UComponentData[0x3];
 };
 
-class UActorComponent : public UComponent  // size 0x58, opaque
+class UActorComponent : public UComponent  // size 0x58
 {
 public:
     enum
@@ -7226,14 +8592,25 @@ public:
     typedef UComponent Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    FSceneInterface *Scene;  // 0x48
+    AActor *Owner;  // 0x4C
+    unsigned long bAttached : 1;  // 0x50
+    unsigned long bTickInEditor : 1;
+    unsigned long bNeedsReattach : 1;
+    unsigned long bNeedsUpdateTransform : 1;
+    unsigned char TickGroup;  // 0x54
+    char _pad0[0x3];
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<FSceneInterface> Scene;
+    hg::gptr<AActor> Owner;
+    hg::be<unsigned int> _bits50;  // 0x50, from bAttached
+    unsigned char TickGroup;
+    char _pad0[0x3];
     #endif
-HG_PRIVATE:
-    unsigned int UActorComponentData[0x4];
 };
 
-class UActorFactory : public UObject  // size 0x68, opaque
+class UActorFactory : public UObject  // size 0x68
 {
 public:
     enum
@@ -7268,14 +8645,27 @@ public:
     typedef UObject Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    UClass *GameplayActorClass;  // 0x3C
+    FStringNoInit MenuName;  // 0x40
+    int MenuPriority;  // 0x4C
+    int AlternateMenuPriority_DEPRECATED;  // 0x50
+    FStringNoInit NewActorClassName;  // 0x54
+    UClass *NewActorClass;  // 0x60
+    unsigned long bPlaceable : 1;  // 0x64
+    unsigned long bShowInEditorQuickMenu : 1;
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<UClass> GameplayActorClass;
+    FStringNoInit MenuName;
+    hg::be<int> MenuPriority;
+    hg::be<int> AlternateMenuPriority_DEPRECATED;
+    FStringNoInit NewActorClassName;
+    hg::gptr<UClass> NewActorClass;
+    hg::be<unsigned int> _bits64;  // 0x64, from bPlaceable
     #endif
-HG_PRIVATE:
-    unsigned int UActorFactoryData[0xB];
 };
 
-class UActorFactoryAI : public UActorFactory  // size 0x94, opaque
+class UActorFactoryAI : public UActorFactory  // size 0x94
 {
 public:
     enum
@@ -7302,11 +8692,23 @@ public:
     typedef UActorFactory Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    UClass *ControllerClass;  // 0x68
+    UClass *PawnClass;  // 0x6C
+    UClass *VehicleClass;  // 0x70
+    FStringNoInit PawnName;  // 0x74
+    unsigned long bGiveDefaultInventory : 1;  // 0x80
+    TArrayNoInit<UClass *> InventoryList;  // 0x84
+    int TeamIndex;  // 0x90
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<UClass> ControllerClass;
+    hg::gptr<UClass> PawnClass;
+    hg::gptr<UClass> VehicleClass;
+    FStringNoInit PawnName;
+    hg::be<unsigned int> _bits80;  // 0x80, from bGiveDefaultInventory
+    TArrayNoInit<UClass *> InventoryList;
+    hg::be<int> TeamIndex;
     #endif
-HG_PRIVATE:
-    unsigned int UActorFactoryAIData[0xB];
 };
 
 class UAnimObject : public UObject  // size 0x40, opaque
@@ -7345,7 +8747,7 @@ HG_PRIVATE:
     unsigned int UAnimObjectData[0x1];
 };
 
-class UAnimNode : public UAnimObject  // size 0xC0, opaque
+class UAnimNode : public UAnimObject  // size 0xC0
 {
 public:
     enum
@@ -7431,17 +8833,56 @@ public:
     static unsigned int bNodeSearching;
     static int CurrentSearchTag;
     static TArray<UAnimNode *,FDefaultAllocator> NodesRequiringCacheClear;
+    unsigned long bRelevant : 1;  // 0x40
+    unsigned long bJustBecameRelevant : 1;
+    unsigned long bTickDuringPausedAnims : 1;
+    unsigned long bEditorOnly : 1;
+    unsigned long bDisableCaching : 1;
+    unsigned long bCallScriptEventOnInit : 1;
+    unsigned long bCallScriptEventOnBecomeRelevant : 1;
+    unsigned long bCallScriptEventOnCeaseRelevant : 1;
+    int NodeTickTag;  // 0x44
+    int NodeInitTag;  // 0x48
+    int NodeEndEventTick;  // 0x4C
+    int TickArrayIndex;  // 0x50
+    int NodeCachedAtomsTag;  // 0x54
+    float NodeTotalWeight;  // 0x58
+    TArrayNoInit<UAnimNodeBlendBase *> ParentNodes;  // 0x5C
+    FName NodeName;  // 0x68
+    TArrayNoInit<FBoneAtom> CachedBoneAtoms;  // 0x70
+    unsigned char CachedNumDesiredBones;  // 0x7C
+    char _pad0[0x3];
+    FBoneAtom CachedRootMotionDelta;  // 0x80
+    int bCachedHasRootMotion;  // 0xA0
+    TArrayNoInit<FCurveKey> CachedCurveKeys;  // 0xA4
+    int SearchTag;  // 0xB0
+    char _pad1[0xC];
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
     static hg::be<unsigned int> (&bNodeSearching);
     static hg::be<int> (&CurrentSearchTag);
     static TArray<UAnimNode *,FDefaultAllocator> (&NodesRequiringCacheClear);
+    hg::be<unsigned int> _bits40;  // 0x40, from bRelevant
+    hg::be<int> NodeTickTag;
+    hg::be<int> NodeInitTag;
+    hg::be<int> NodeEndEventTick;
+    hg::be<int> TickArrayIndex;
+    hg::be<int> NodeCachedAtomsTag;
+    hg::be<float> NodeTotalWeight;
+    TArrayNoInit<UAnimNodeBlendBase *> ParentNodes;
+    FName NodeName;
+    TArrayNoInit<FBoneAtom> CachedBoneAtoms;
+    unsigned char CachedNumDesiredBones;
+    char _pad0[0x3];
+    FBoneAtom CachedRootMotionDelta;
+    hg::be<int> bCachedHasRootMotion;
+    TArrayNoInit<FCurveKey> CachedCurveKeys;
+    hg::be<int> SearchTag;
+    char _pad1[0xC];
     #endif
-HG_PRIVATE:
-    unsigned int UAnimNodeData[0x20];
 };
 
-class UAnimNodeBlendBase : public UAnimNode  // size 0xE0, opaque
+class UAnimNodeBlendBase : public UAnimNode  // size 0xE0
 {
 public:
     enum
@@ -7493,14 +8934,20 @@ public:
     typedef UAnimNode Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    TArrayNoInit<FAnimBlendChild> Children;  // 0xC0
+    unsigned long bFixNumChildren : 1;  // 0xCC
+    unsigned char BlendType;  // 0xD0
+    char _pad0[0xF];
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    TArrayNoInit<FAnimBlendChild> Children;
+    hg::be<unsigned int> _bitsCC;  // 0xCC, from bFixNumChildren
+    unsigned char BlendType;
+    char _pad0[0xF];
     #endif
-HG_PRIVATE:
-    unsigned int UAnimNodeBlendBaseData[0x8];
 };
 
-class UAnimNodeBlendList : public UAnimNodeBlendBase  // size 0x100, opaque
+class UAnimNodeBlendList : public UAnimNodeBlendBase  // size 0x100
 {
 public:
     enum
@@ -7537,14 +8984,26 @@ public:
     typedef UAnimNodeBlendBase Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    TArrayNoInit<float> TargetWeight;  // 0xE0
+    float BlendTimeToGo;  // 0xEC
+    int ActiveChildIndex;  // 0xF0
+    unsigned long bPlayActiveChild : 1;  // 0xF4
+    unsigned long bForceChildFullWeightWhenBecomingRelevant : 1;
+    unsigned long bSkipBlendWhenNotRendered : 1;
+    float SliderPosition;  // 0xF8
+    char _pad0[0x4];
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    TArrayNoInit<float> TargetWeight;
+    hg::be<float> BlendTimeToGo;
+    hg::be<int> ActiveChildIndex;
+    hg::be<unsigned int> _bitsF4;  // 0xF4, from bPlayActiveChild
+    hg::be<float> SliderPosition;
+    char _pad0[0x4];
     #endif
-HG_PRIVATE:
-    unsigned int UAnimNodeBlendListData[0x8];
 };
 
-class UAnimNodeSlot : public UAnimNodeBlendBase  // size 0x100, opaque
+class UAnimNodeSlot : public UAnimNodeBlendBase  // size 0x100
 {
 public:
     enum
@@ -7615,11 +9074,26 @@ public:
     typedef UAnimNodeBlendBase Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    unsigned long bIsPlayingCustomAnim : 1;  // 0xE0
+    unsigned long bEarlyAnimEndNotify : 1;
+    unsigned long bSkipBlendWhenNotRendered : 1;
+    unsigned long bAdditiveAnimationsOverrideSource : 1;
+    unsigned long bIsBeingUsedByInterpGroup : 1;
+    unsigned long bDontAddToAlwaysTickArray : 1;
+    float PendingBlendOutTime;  // 0xE4
+    int CustomChildIndex;  // 0xE8
+    int TargetChildIndex;  // 0xEC
+    TArrayNoInit<float> TargetWeight;  // 0xF0
+    float BlendTimeToGo;  // 0xFC
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::be<unsigned int> _bitsE0;  // 0xE0, from bIsPlayingCustomAnim
+    hg::be<float> PendingBlendOutTime;
+    hg::be<int> CustomChildIndex;
+    hg::be<int> TargetChildIndex;
+    TArrayNoInit<float> TargetWeight;
+    hg::be<float> BlendTimeToGo;
     #endif
-HG_PRIVATE:
-    unsigned int UAnimNodeSlotData[0x8];
 };
 
 class UGripAFActionHandle : public UObject  // size 0x40, opaque
@@ -8232,7 +9706,7 @@ HG_PRIVATE:
     unsigned int UGripBTObjectData[0x2];
 };
 
-class UGripBTNode : public UGripBTObject  // size 0x88, opaque
+class UGripBTNode : public UGripBTObject  // size 0x88
 {
 public:
     enum
@@ -8266,11 +9740,31 @@ public:
     typedef UGripBTObject Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    UGripBTNode *ParentNode;  // 0x44
+    TArrayNoInit<FNodeChild> Children;  // 0x48
+    float RandomWeight;  // 0x54
+    FName NodeName;  // 0x58
+    FStringNoInit NodeDescription;  // 0x60
+    FStringNoInit Comment;  // 0x6C
+    FName DefaultTitle;  // 0x78
+    unsigned char LastExecutionResult;  // 0x80
+    unsigned char LastEvaluationResult;  // 0x81
+    char _pad0[0x2];
+    int DummyVarJustSoBaseClassDontEndWithAByteToAvoidCompilerWarning;  // 0x84
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<UGripBTNode> ParentNode;
+    TArrayNoInit<FNodeChild> Children;
+    hg::be<float> RandomWeight;
+    FName NodeName;
+    FStringNoInit NodeDescription;
+    FStringNoInit Comment;
+    FName DefaultTitle;
+    unsigned char LastExecutionResult;
+    unsigned char LastEvaluationResult;
+    char _pad0[0x2];
+    hg::be<int> DummyVarJustSoBaseClassDontEndWithAByteToAvoidCompilerWarning;
     #endif
-HG_PRIVATE:
-    unsigned int UGripBTNodeData[0x11];
 };
 
 class UCCSBTEncircleTarget : public UGripBTNode  // size 0x98, opaque
@@ -9126,7 +10620,7 @@ public:
     #endif
 };
 
-class UCCSBTSelectTarget : public UGripBTNode  // size 0x98, opaque
+class UCCSBTSelectTarget : public UGripBTNode  // size 0x98
 {
 public:
     enum
@@ -9155,11 +10649,15 @@ public:
     typedef UGripBTNode Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    unsigned char TargetSelectionAlgorithm;  // 0x88
+    char _pad0[0x3];
+    FStringNoInit SpecificTargetName;  // 0x8C
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    unsigned char TargetSelectionAlgorithm;
+    char _pad0[0x3];
+    FStringNoInit SpecificTargetName;
     #endif
-HG_PRIVATE:
-    unsigned int UCCSBTSelectTargetData[0x4];
 };
 
 class UCCSBTShoot : public UGripBTNode  // size 0x94, opaque
@@ -10126,7 +11624,7 @@ public:
     #endif
 };
 
-class UPrimitiveComponent : public UActorComponent  // size 0x1E0, opaque
+class UPrimitiveComponent : public UActorComponent  // size 0x1E0
 {
 public:
     enum
@@ -10310,12 +11808,169 @@ public:
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
     static int CurrentTag;
+    int Tag;  // 0x58
+    FBoxSphereBounds Bounds;  // 0x5C
+    FPrimitiveSceneInfo *SceneInfo;  // 0x78
+    FRenderCommandFence DetachFence;  // 0x7C
+    float LocalToWorldDeterminant;  // 0x80
+    char _pad0[0xC];
+    FMatrix LocalToWorld;  // 0x90
+    int MotionBlurInfoIndex;  // 0xD0
+    TArray<FDecalInteraction *,FDefaultAllocator> DecalList;  // 0xD4
+    TArray<UDecalComponent *,FDefaultAllocator> DecalsToReattach;  // 0xE0
+    UPrimitiveComponent *ShadowParent;  // 0xEC
+    UPrimitiveComponent *ReplacementPrimitive;  // 0xF0
+    UFogVolumeDensityComponent *FogVolumeComponent;  // 0xF4
+    ULightComponent *OverrideLightComponent;  // 0xF8
+    ULightEnvironmentComponent *LightEnvironment;  // 0xFC
+    ULightEnvironmentComponent *PreviousLightEnvironment;  // 0x100
+    float MinDrawDistance;  // 0x104
+    float MassiveLODDistance;  // 0x108
+    float LDMaxDrawDistance;  // 0x10C
+    float CachedMaxDrawDistance;  // 0x110
+    float MotionBlurInstanceScale;  // 0x114
+    float LDCullDistance;  // 0x118
+    float CachedCullDistance_DEPRECATED;  // 0x11C
+    unsigned char DepthPriorityGroup;  // 0x120
+    unsigned char ViewOwnerDepthPriorityGroup;  // 0x121
+    unsigned char DetailMode;  // 0x122
+    unsigned char RBChannel;  // 0x123
+    unsigned char RBDominanceGroup;  // 0x124
+    unsigned char PreviewEnvironmentShadowing;  // 0x125
+    char _pad1[0x2];
+    unsigned long bUseViewOwnerDepthPriorityGroup : 1;  // 0x128
+    unsigned long bAllowCullDistanceVolume : 1;
+    unsigned long HiddenGame : 1;
+    unsigned long HiddenEditor : 1;
+    unsigned long bOwnerNoSee : 1;
+    unsigned long bOnlyOwnerSee : 1;
+    unsigned long bIgnoreOwnerHidden : 1;
+    unsigned long bUseAsOccluder : 1;
+    unsigned long bAllowApproximateOcclusion : 1;
+    unsigned long bFirstFrameOcclusion : 1;
+    unsigned long bIgnoreNearPlaneIntersection : 1;
+    unsigned long bSelectable : 1;
+    unsigned long bForceMipStreaming : 1;
+    unsigned long bAcceptsDecals : 1;
+    unsigned long bAcceptsDecalsDuringGameplay : 1;
+    unsigned long bAcceptsStaticDecals : 1;
+    unsigned long bAcceptsDynamicDecals : 1;
+    unsigned long bIsRefreshingDecals : 1;
+    unsigned long bAllowDecalAutomaticReAttach : 1;
+    unsigned long bUsePerInstanceHitProxies : 1;
+    unsigned long CastShadow : 1;
+    unsigned long bForceDirectLightMap : 1;
+    unsigned long bCastDynamicShadow : 1;
+    unsigned long bCastStaticShadow : 1;
+    unsigned long bSelfShadowOnly : 1;
+    unsigned long bNoModSelfShadow : 1;
+    unsigned long bAcceptsDynamicDominantLightShadows : 1;
+    unsigned long bCastHiddenShadow : 1;
+    unsigned long bCastShadowAsTwoSided : 1;
+    unsigned long bAcceptsLights : 1;
+    unsigned long bAcceptsDynamicLights : 1;
+    unsigned long bUseOnePassLightingOnTranslucency : 1;
+    unsigned long bUsePrecomputedShadows : 1;  // 0x12C
+    unsigned long bHasExplicitShadowParent : 1;
+    unsigned long bAllowAmbientOcclusion : 1;
+    unsigned long CollideActors : 1;
+    unsigned long AlwaysCheckCollision : 1;
+    unsigned long BlockActors : 1;
+    unsigned long BlockZeroExtent : 1;
+    unsigned long BlockNonZeroExtent : 1;
+    unsigned long CanBlockCamera : 1;
+    unsigned long BlockRigidBody : 1;
+    unsigned long bBlockFootPlacement : 1;
+    unsigned long bDisableAllRigidBody : 1;
+    unsigned long bSkipRBGeomCreation : 1;
+    unsigned long bNotifyRigidBodyCollision : 1;
+    unsigned long bFluidDrain : 1;
+    unsigned long bFluidTwoWay : 1;
+    unsigned long bIgnoreRadialImpulse : 1;
+    unsigned long bIgnoreRadialForce : 1;
+    unsigned long bIgnoreForceField : 1;
+    unsigned long bUseCompartment : 1;
+    unsigned long AlwaysLoadOnClient : 1;
+    unsigned long AlwaysLoadOnServer : 1;
+    unsigned long bIgnoreHiddenActorsMembership : 1;
+    unsigned long AbsoluteTranslation : 1;
+    unsigned long AbsoluteRotation : 1;
+    unsigned long AbsoluteScale : 1;
+    unsigned long bAllowShadowFade : 1;
+    unsigned long bSupportedOnMobile : 1;
+    unsigned long bWasSNFiltered : 1;
+    TArrayNoInit<FOctreeNode *> OctreeNodes;  // 0x130
+    int TranslucencySortPriority;  // 0x13C
+    int VisibilityId;  // 0x140
+    FLightingChannelContainer LightingChannels;  // 0x144
+    FRBCollisionChannelContainer RBCollideWithChannels;  // 0x148
+    UPhysicalMaterial *PhysMaterialOverride;  // 0x14C
+    URB_BodyInstance *BodyInstance;  // 0x150
+    char _pad2[0xC];
+    FMatrix CachedParentToWorld;  // 0x160
+    FVector Translation;  // 0x1A0
+    FRotator Rotation;  // 0x1AC
+    float Scale;  // 0x1B8
+    FVector Scale3D;  // 0x1BC
+    float BoundsScale;  // 0x1C8
+    float LastSubmitTime;  // 0x1CC
+    float LastRenderTime;  // 0x1D0
+    float ScriptRigidBodyCollisionThreshold;  // 0x1D4
+    char _pad3[0x8];
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
     static hg::be<int> (&CurrentTag);
+    hg::be<int> Tag;
+    FBoxSphereBounds Bounds;
+    hg::gptr<FPrimitiveSceneInfo> SceneInfo;
+    FRenderCommandFence DetachFence;
+    hg::be<float> LocalToWorldDeterminant;
+    char _pad0[0xC];
+    FMatrix LocalToWorld;
+    hg::be<int> MotionBlurInfoIndex;
+    TArray<FDecalInteraction *,FDefaultAllocator> DecalList;
+    TArray<UDecalComponent *,FDefaultAllocator> DecalsToReattach;
+    hg::gptr<UPrimitiveComponent> ShadowParent;
+    hg::gptr<UPrimitiveComponent> ReplacementPrimitive;
+    hg::gptr<UFogVolumeDensityComponent> FogVolumeComponent;
+    hg::gptr<ULightComponent> OverrideLightComponent;
+    hg::gptr<ULightEnvironmentComponent> LightEnvironment;
+    hg::gptr<ULightEnvironmentComponent> PreviousLightEnvironment;
+    hg::be<float> MinDrawDistance;
+    hg::be<float> MassiveLODDistance;
+    hg::be<float> LDMaxDrawDistance;
+    hg::be<float> CachedMaxDrawDistance;
+    hg::be<float> MotionBlurInstanceScale;
+    hg::be<float> LDCullDistance;
+    hg::be<float> CachedCullDistance_DEPRECATED;
+    unsigned char DepthPriorityGroup;
+    unsigned char ViewOwnerDepthPriorityGroup;
+    unsigned char DetailMode;
+    unsigned char RBChannel;
+    unsigned char RBDominanceGroup;
+    unsigned char PreviewEnvironmentShadowing;
+    char _pad1[0x2];
+    hg::be<unsigned int> _bits128;  // 0x128, from bUseViewOwnerDepthPriorityGroup
+    hg::be<unsigned int> _bits12C;  // 0x12C, from bUsePrecomputedShadows
+    TArrayNoInit<FOctreeNode *> OctreeNodes;
+    hg::be<int> TranslucencySortPriority;
+    hg::be<int> VisibilityId;
+    FLightingChannelContainer LightingChannels;
+    FRBCollisionChannelContainer RBCollideWithChannels;
+    hg::gptr<UPhysicalMaterial> PhysMaterialOverride;
+    hg::gptr<URB_BodyInstance> BodyInstance;
+    char _pad2[0xC];
+    FMatrix CachedParentToWorld;
+    FVector Translation;
+    FRotator Rotation;
+    hg::be<float> Scale;
+    FVector Scale3D;
+    hg::be<float> BoundsScale;
+    hg::be<float> LastSubmitTime;
+    hg::be<float> LastRenderTime;
+    hg::be<float> ScriptRigidBodyCollisionThreshold;
+    char _pad3[0x8];
     #endif
-HG_PRIVATE:
-    unsigned int UPrimitiveComponentData[0x62];
 };
 
 class UCCSVisualizationComponent : public UPrimitiveComponent  // size 0x1F0, opaque
@@ -10612,7 +12267,7 @@ HG_PRIVATE:
     unsigned int UGripBTScriptNodeCacheData[0x3];
 };
 
-class UUDKAnimBlendBase : public UAnimNodeBlendList  // size 0x120, opaque
+class UUDKAnimBlendBase : public UAnimNodeBlendList  // size 0x120
 {
 public:
     enum
@@ -10643,11 +12298,17 @@ public:
     typedef UAnimNodeBlendList Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    float BlendTime;  // 0x100
+    TArrayNoInit<float> ChildBlendTimes;  // 0x104
+    unsigned long bTickAnimInScript : 1;  // 0x110
+    char _pad0[0xC];
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::be<float> BlendTime;
+    TArrayNoInit<float> ChildBlendTimes;
+    hg::be<unsigned int> _bits110;  // 0x110, from bTickAnimInScript
+    char _pad0[0xC];
     #endif
-HG_PRIVATE:
-    unsigned int UUDKAnimBlendBaseData[0x8];
 };
 
 class UHaloAnimBlendByAimProfile : public UUDKAnimBlendBase  // size 0x120, opaque
@@ -10879,7 +12540,7 @@ public:
     #endif
 };
 
-class UUDKAnimNodeCopyBoneTranslation : public UAnimNodeBlendBase  // size 0x140, opaque
+class UUDKAnimNodeCopyBoneTranslation : public UAnimNodeBlendBase  // size 0x140
 {
 public:
     enum
@@ -10908,14 +12569,30 @@ public:
     typedef UAnimNodeBlendBase Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    UAnimNodeAimOffset *CachedAimNode;  // 0xE0
+    FName OldAimProfileName;  // 0xE4
+    TArrayNoInit<FBoneCopyInfo> DefaultBoneCopyArray;  // 0xEC
+    TArrayNoInit<FBoneCopyInfo> DualWieldBoneCopyArray;  // 0xF8
+    TArrayNoInit<FBoneCopyInfo> ActiveBoneCopyArray;  // 0x104
+    TArrayNoInit<unsigned char> RequiredBones;  // 0x110
+    TArrayNoInit<UUDKAnimNodeSeqWeap *> SeqWeaps;  // 0x11C
+    TArrayNoInit<UUDKAnimBlendByWeapType *> WeapTypeBlends;  // 0x128
+    char _pad0[0xC];
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<UAnimNodeAimOffset> CachedAimNode;
+    FName OldAimProfileName;
+    TArrayNoInit<FBoneCopyInfo> DefaultBoneCopyArray;
+    TArrayNoInit<FBoneCopyInfo> DualWieldBoneCopyArray;
+    TArrayNoInit<FBoneCopyInfo> ActiveBoneCopyArray;
+    TArrayNoInit<unsigned char> RequiredBones;
+    TArrayNoInit<UUDKAnimNodeSeqWeap *> SeqWeaps;
+    TArrayNoInit<UUDKAnimBlendByWeapType *> WeapTypeBlends;
+    char _pad0[0xC];
     #endif
-HG_PRIVATE:
-    unsigned int UUDKAnimNodeCopyBoneTranslationData[0x18];
 };
 
-class UHaloAnimNodeCopyBoneTranslation : public UUDKAnimNodeCopyBoneTranslation  // size 0x150, opaque
+class UHaloAnimNodeCopyBoneTranslation : public UUDKAnimNodeCopyBoneTranslation  // size 0x150
 {
 public:
     enum
@@ -10941,11 +12618,13 @@ public:
     typedef UUDKAnimNodeCopyBoneTranslation Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    TArrayNoInit<UHaloAnimBlendByAimProfile *> AimProfileBlends;  // 0x140
+    char _pad0[0x4];
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    TArrayNoInit<UHaloAnimBlendByAimProfile *> AimProfileBlends;
+    char _pad0[0x4];
     #endif
-HG_PRIVATE:
-    unsigned int UHaloAnimNodeCopyBoneTranslationData[0x4];
 };
 
 class UHaloBTKamikaze : public UCCSBTMoveTo  // size 0xD4, opaque
@@ -11194,6 +12873,177 @@ public:
     #endif
 };
 
+class UWorld : public UObject, public FNetworkNotify  // size 0x2DC, opaque
+{
+public:
+    enum
+    {
+        IsIntrinsic = 1,
+    };
+    HG_VIRTUAL unsigned int AllowAudioPlayback();
+HG_PRIVATE:
+    UWorld &operator=(const UWorld &);
+public:
+    static UClass *GetPrivateStaticClassUWorld(const wchar_t *);
+    static void InitializePrivateStaticClassUWorld();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    void StaticConstructor();
+    ENetMode GetNetMode() const;
+    AGameInfo *GetGameInfo() const;
+    ANavigationPoint *GetFirstNavigationPoint() const;
+    AController *GetFirstController() const;
+    APawn *GetFirstPawn() const;
+    AActor *GetFirstVehicle() const;
+    ABrush *GetBrush() const;
+    unsigned int HasBegunPlay() const;
+    unsigned int HasBegunPlayAndNotAssociatingLevel() const;
+    float GetTimeSeconds() const;
+    float GetRealTimeSeconds() const;
+    float GetAudioTimeSeconds() const;
+    float GetDeltaSeconds() const;
+    APhysicsVolume *GetDefaultPhysicsVolume() const;
+    APhysicsVolume *GetPhysicsVolume(FVector, AActor *, unsigned int) const;
+    USequence *GetGameSequence(ULevel *) const;
+    void SetGameSequence(USequence *, ULevel *);
+    AWorldInfo *GetWorldInfo(unsigned int) const;
+    UModel *GetModel() const;
+    float GetGravityZ() const;
+    float GetDefaultGravityZ() const;
+    float GetRBGravityZ() const;
+    const FString GetMapName() const;
+    void AddLevelNavList(ULevel *, unsigned int);
+    void RemoveLevelNavList(ULevel *, unsigned int);
+    void ResetNavList();
+    AActor *FindActorByGuid(FGuid &, UClass *);
+    void AddController(AController *);
+    void RemoveController(AController *);
+    void AddPawn(APawn *);
+    void RemovePawn(APawn *);
+    void AddActor(AActor *);
+    void RemoveActor(AActor *, unsigned int);
+    void RemoveActor(AActor *);
+    void AddVehicle(AActor *);
+    void RemoveVehicle(AActor *);
+    unsigned int ContainsActor(AActor *);
+    HG_VIRTUAL void Serialize(FArchive &);
+    HG_VIRTUAL void FinishDestroy();
+    void ClearComponents();
+    void UpdateComponents(unsigned int);
+    void UpdateCullDistanceVolumes();
+    void CleanupWorld(unsigned int);
+    void InvalidateModelGeometry(unsigned int);
+    void InvalidateModelSurface(unsigned int);
+    void CommitModelSurfaces();
+    void FixupCrossLevelRefs(unsigned int, ULevel *);
+    void AddToWorld(ULevelStreaming *, const FVector &);
+    void RemoveFromWorld(ULevelStreaming *);
+    void UpdateLevelStreaming(FSceneViewFamily *);
+    void FlushLevelStreaming(FSceneViewFamily *, unsigned int, FName);
+    unsigned int IsVisibilityRequestPending();
+    unsigned int AllowLevelLoadRequests();
+    void Init();
+    static void CreateNew();
+    HG_VIRTUAL unsigned int PreSaveRoot(const wchar_t *, TArray<FString,FDefaultAllocator> &);
+    HG_VIRTUAL void PostSaveRoot(unsigned int);
+    unsigned int SaveWorld(const FString &, unsigned int, unsigned int, unsigned int);
+    void PerformGarbageCollection();
+    void DelayGarbageCollection();
+    HG_VIRTUAL void PostLoad();
+    void Tick(ELevelTick, float);
+    void TickNetClient(float);
+    void TickNetServer(float);
+    int ServerTickClients(float);
+    void TickHostMigration(float);
+    int TickDemoRecord(float);
+    int TickDemoPlayback(float);
+    void TickAsyncWork(float);
+    void WaitForAsyncWork();
+    void ProcessLevelStreamingVolumes(FVector *);
+    void ModifyLevel(ULevel *);
+    unsigned int Exec(const wchar_t *, FOutputDevice &);
+    void ShrinkLevel();
+    unsigned int Listen(FURL, FString &);
+    void BuildServerMasterMap();
+    unsigned int IsClient();
+    unsigned int IsServer();
+    unsigned int IsPaused();
+    unsigned int MoveActor(AActor *, const FVector &, const FRotator &, unsigned long, FCheckResult &);
+    unsigned int FarMoveActor(AActor *, const FVector &, unsigned int, unsigned int, unsigned int);
+    unsigned int EditorDestroyLevel(ULevel *);
+    unsigned int EditorDestroyActor(AActor *, unsigned int);
+    unsigned int DestroyActor(AActor *, unsigned int, unsigned int);
+    AActor *SpawnActor(UClass *, FName, const FVector &, const FRotator &, AActor *, unsigned int, unsigned int, AActor *, APawn *, unsigned int, ULevel *, unsigned int);
+    ABrush *SpawnBrush();
+    APlayerController *SpawnPlayActor(UPlayer *, ENetRole, const FURL &, const FUniqueNetId &, FString &, unsigned char);
+    void CleanUpBeforeLevelTransition();
+    unsigned int FindSpot(const FVector &, FVector &, unsigned int, AActor *);
+    unsigned int CheckSlice(FVector &, const FVector &, int &, AActor *);
+    unsigned int CheckEncroachment(AActor *, FVector, FRotator, unsigned int);
+    unsigned int SinglePointCheck(FCheckResult &, const FVector &, const FVector &, unsigned long);
+    unsigned int EncroachingWorldGeometry(FCheckResult &, const FVector &, const FVector &, unsigned int, AActor *);
+    unsigned int SingleLineCheck(FCheckResult &, AActor *, const FVector &, const FVector &, unsigned long, const FVector &, ULightComponent *);
+    FCheckResult *MultiPointCheck(FMemStack &, const FVector &, const FVector &, unsigned long);
+    FCheckResult *MultiLineCheck(FMemStack &, const FVector &, const FVector &, const FVector &, unsigned long, AActor *, ULightComponent *);
+    unsigned int BSPLineCheck(FCheckResult &, AActor *, const FVector &, const FVector &, const FVector &, unsigned long);
+    unsigned int BSPFastLineCheck(const FVector &, const FVector &);
+    unsigned int BSPPointCheck(FCheckResult &, AActor *, const FVector &, const FVector &);
+    void InitWorldRBPhys();
+    void TermWorldRBPhys();
+    void TickWorldRBPhys(float);
+    void WaitWorldRBPhys();
+    URB_BodyInstance *InstanceRBBody(const URB_BodyInstance *);
+    void ReturnRBBody(URB_BodyInstance *);
+    URB_ConstraintInstance *InstanceRBConstraint(const URB_ConstraintInstance *);
+    void ReturnRBConstraint(URB_ConstraintInstance *);
+    void SetGameInfo(const FURL &);
+    void BeginPlay(const FURL &, unsigned int);
+    unsigned int VerifyPackageInfo(FPackageInfo &);
+    unsigned int DestroySwappedPC(UNetConnection *);
+    HG_VIRTUAL EAcceptConnection NotifyAcceptingConnection();
+    HG_VIRTUAL void NotifyAcceptedConnection(UNetConnection *);
+    HG_VIRTUAL unsigned int NotifyAcceptingChannel(UChannel *);
+    HG_VIRTUAL UWorld *NotifyGetWorld();
+    HG_VIRTUAL void NotifyControlMessage(UNetConnection *, unsigned char, FInBunch &);
+    HG_VIRTUAL void NotifyReceivedFile(UNetConnection *, int, const wchar_t *, unsigned int);
+    HG_VIRTUAL unsigned int NotifySendingFile(UNetConnection *, FGuid);
+    HG_VIRTUAL void NotifyProgress(EProgressMessageType, const FString &, const FString &);
+    HG_VIRTUAL EAcceptConnection NotifyAcceptingPeerConnection();
+    HG_VIRTUAL void NotifyAcceptedPeerConnection(UNetConnection *);
+    HG_VIRTUAL void NotifyPeerControlMessage(UNetConnection *, unsigned char, FInBunch &);
+    void WelcomePlayer(UNetConnection *);
+    void WelcomeSplitPlayer(UChildConnection *);
+    UNetDriver *GetNetDriver(FName);
+    void SetNetDriver(UNetDriver *, FName);
+    static void VerifyNavList(const wchar_t *, ANavigationPoint *);
+    void DumpCoverStats();
+    void DelayStreamingVolumeUpdates(int);
+    void SetPersistentFaceFXAnimSet(UFaceFXAnimSet *);
+    void FindAndSetPersistentFaceFXAnimSet();
+    void MountPersistentFaceFXAnimSet();
+    void UnmountPersistentFaceFXAnimSet();
+    void MountPersistentFaceFXAnimSetOnActor(AActor *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UWorld();
+public:
+    UWorld(const FURL &);
+HG_PROTECTED:
+    UWorld();
+public:
+    #endif
+    typedef UObject Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    #endif
+HG_PRIVATE:
+    unsigned int UWorldData[0xA7];
+};
+
 #include "Core/Inc/UnObjBas.h"
 #include "Core/Inc/UnScript.h"
 
@@ -11206,6 +13056,7 @@ inline UClass *AActor::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline AActor::~AActor() { ConditionalDestroy(); }
 
 inline UClass *AController::StaticClass()
 {
@@ -11216,6 +13067,7 @@ inline UClass *AController::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline AController::~AController() { ConditionalDestroy(); }
 
 inline UClass *AAIController::StaticClass()
 {
@@ -11250,6 +13102,7 @@ inline UClass *AGameAIController::StaticClass()
     return PrivateStaticClass;
 }
 inline const wchar_t *AGameAIController::StaticConfigName() { return L"Game"; }
+inline AGameAIController::~AGameAIController() { ConditionalDestroy(); }
 
 inline UClass *ACCSController::StaticClass()
 {
@@ -11311,6 +13164,7 @@ inline UClass *APawn::StaticClass()
     return PrivateStaticClass;
 }
 inline const wchar_t *APawn::StaticConfigName() { return L"Game"; }
+inline APawn::~APawn() { ConditionalDestroy(); }
 
 inline UClass *AUSSPawn::StaticClass()
 {
@@ -11525,6 +13379,7 @@ inline UClass *UAnimNode::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UAnimNode::~UAnimNode() { ConditionalDestroy(); }
 
 inline UClass *UAnimNodeBlendBase::StaticClass()
 {
@@ -11535,6 +13390,7 @@ inline UClass *UAnimNodeBlendBase::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UAnimNodeBlendBase::~UAnimNodeBlendBase() { ConditionalDestroy(); }
 
 inline UClass *UAnimNodeSlot::StaticClass()
 {
@@ -11545,6 +13401,7 @@ inline UClass *UAnimNodeSlot::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UAnimNodeSlot::~UAnimNodeSlot() { ConditionalDestroy(); }
 
 inline UCCSATAnimNodeSlot::UCCSATAnimNodeSlot() {}
 inline UClass *UCCSATAnimNodeSlot::StaticClass()
@@ -11569,6 +13426,7 @@ inline UClass *UAnimNodeBlendList::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UAnimNodeBlendList::~UAnimNodeBlendList() { ConditionalDestroy(); }
 
 inline UCCSATBlendListBase::UCCSATBlendListBase() {}
 inline UClass *UCCSATBlendListBase::StaticClass()
@@ -11593,6 +13451,7 @@ inline UClass *UActorFactory::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UActorFactory::~UActorFactory() { ConditionalDestroy(); }
 
 inline UClass *UActorFactoryAI::StaticClass()
 {
@@ -11603,6 +13462,7 @@ inline UClass *UActorFactoryAI::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UActorFactoryAI::~UActorFactoryAI() { ConditionalDestroy(); }
 
 inline UClass *UGwNavActorFactoryAI::StaticClass()
 {
@@ -11648,6 +13508,7 @@ inline UClass *UGripBTNode::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UGripBTNode::~UGripBTNode() { ConditionalDestroy(); }
 
 inline UClass *UCCSBTEncircleTarget::StaticClass()
 {
@@ -12392,7 +14253,6 @@ inline UClass *UActorComponent::StaticClass()
 }
 inline UActorComponent::~UActorComponent() { ConditionalDestroy(); }
 
-inline UPrimitiveComponent::UPrimitiveComponent() {}
 inline UClass *UPrimitiveComponent::StaticClass()
 {
     if (!PrivateStaticClass)
@@ -12402,6 +14262,7 @@ inline UClass *UPrimitiveComponent::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UPrimitiveComponent::~UPrimitiveComponent() { ConditionalDestroy(); }
 
 inline UClass *UCCSVisualizationComponent::StaticClass()
 {
@@ -12425,6 +14286,7 @@ inline UClass *UUDKAnimBlendBase::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UUDKAnimBlendBase::~UUDKAnimBlendBase() { ConditionalDestroy(); }
 
 inline UClass *UHaloAnimBlendByAimProfile::StaticClass()
 {
@@ -12522,6 +14384,7 @@ inline UClass *UUDKAnimNodeCopyBoneTranslation::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UUDKAnimNodeCopyBoneTranslation::~UUDKAnimNodeCopyBoneTranslation() { ConditionalDestroy(); }
 
 inline UClass *UHaloAnimNodeCopyBoneTranslation::StaticClass()
 {
@@ -12644,8 +14507,31 @@ extern FName UDKBASE_StartFireBurstObj;
 extern FName UDKBASE_StopFireBurst;
 extern FName UDKBASE_SurveyUsedBBMembers;
 
+inline FBoneAtom::FBoneAtom() {}
 inline FVector::FVector() {}
 inline FRotator::FRotator() {}
+inline FVector2D::FVector2D() {}
+inline FMatrix::FMatrix() {}
+inline FRenderCommandFence::FRenderCommandFence() : NumPendingFences(0) {}
+inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}
+inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}
+#ifndef HAGGAR_HOST
+inline FAICmdHistoryItem::FAICmdHistoryItem() {}
+inline FAnimBlendChild::FAnimBlendChild() {}
+inline FBoneCopyInfo::FBoneCopyInfo() {}
+inline FCCSSystemConfigData::FCCSSystemConfigData() {}
+inline FCoverInfo::FCoverInfo() {}
+inline FDynamicLinkInfo::FDynamicLinkInfo() {}
+inline FEnemyThreatInfo::FEnemyThreatInfo() {}
+inline FNodeChild::FNodeChild() {}
+inline FRootMotionCurve::FRootMotionCurve() {}
+inline FScalarParameterInterpStruct::FScalarParameterInterpStruct() {}
+inline FVisiblePortalInfo::FVisiblePortalInfo() {}
+#endif
+inline ICCSPawn::ICCSPawn() {}
+inline ICCSPawn::~ICCSPawn() {}
+inline IInterface_Speaker::IInterface_Speaker() {}
+inline IInterface_Speaker::~IInterface_Speaker() {}
 inline GwNavVehicle_eventExecuteVehicleCommand_Parms::GwNavVehicle_eventExecuteVehicleCommand_Parms(EEventParm) {}
 inline CCSController_eventCreateDebugVizComponent_Parms::CCSController_eventCreateDebugVizComponent_Parms(EEventParm) {}
 inline CCSController_eventFindNavMeshDistance_Parms::CCSController_eventFindNavMeshDistance_Parms(EEventParm) {}
@@ -13160,3 +15046,4 @@ inline void UHaloAnimBlendByJumpType::execOnChangeJumpType(FFrame &Stack, void *
 }
 
 // ---- written by hand below this line (gen_header.py keeps it) ----
+#include "UDKBase/Inc/UDKBaseInline.h"

@@ -15,10 +15,8 @@ extern void (*const EmitUHaloSaveGameInternalConstructor)(void *) = &UHaloSaveGa
 // UHaloSaveGame::UHaloSaveGame (in the header)
 // @retail 0x833CA278
 // UHaloSaveGame::~UHaloSaveGame (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x833CA2F0
 // UHaloSaveGame::`scalar deleting destructor' (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x833CA348
 // UHaloSaveGame::InternalConstructor (in the header)
 // @retail 0x833CA480

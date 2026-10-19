@@ -2,6 +2,7 @@
 //   python tools/gen_header.py HaloRBTKamikaze CCSBlackboard CCSBrain CCSTarget CCSCharacter CCSGameCharacter "GripBBProperty<CCSTarget *>" FName --opaque ICCSMeatPuppet --add "IGripBTInterface=template <class T0> T0 *GetBlackboard();" --host-thunks runtime/src/decomp/HaloRBTKamikaze.thunks.cpp -o <this file>
 #pragma once
 #include "Core/Inc/HostGuest.h"
+#include "Core/Inc/Array.h"
 
 namespace Grip {
 template <class T0, int T1> struct AllocatorGH;
@@ -14,8 +15,6 @@ template <class T0, class T1> class GripBBArray;
 template <class T0> class GripBBProperty;
 template <class T0, class T1> class Grip_Array;
 template <class T0, int T1> class Grip_ArrayPOD;
-template <class T0, class T1> class TArray;
-template <class T0> class TArrayNoInit;
 class AActor;
 class APawn;
 class CCSBBVisualization;
@@ -29,7 +28,6 @@ class CCSGlobalBlackboard;
 class CCSRBTMoveTo;
 struct CCSSystemsConfig;
 struct CCSTarget;
-class FDefaultAllocator;
 class FName;
 struct FNameEntry;
 class FOutputDevice;

@@ -5,3 +5,5 @@
 inline FVector::FVector(float InX, float InY, float InZ) : X(InX), Y(InY), Z(InZ) {}
 inline FVector FVector::operator+(const FVector &V) const { return FVector(X + V.X, Y + V.Y, Z + V.Z); }
 inline FVector FVector::operator*(float Scale) const { return FVector(X * Scale, Y * Scale, Z * Scale); }
+inline FVector FVector::operator-(const FVector &V) const { return FVector(X - V.X, Y - V.Y, Z - V.Z); }
+inline float FVector::SizeSquared() const { return X * X + Y * Y + Z * Z; }

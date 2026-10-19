@@ -638,10 +638,8 @@ void UHaloAnimBlendByTurnInPlace::InitializePrivateStaticClassUHaloAnimBlendByTu
 // UHaloAnimNodeCopyBoneTranslation::UHaloAnimNodeCopyBoneTranslation (in the header)
 // @retail 0x833A3B28
 // UHaloAnimNodeCopyBoneTranslation::~UHaloAnimNodeCopyBoneTranslation (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x833A3B90
 // UHaloAnimNodeCopyBoneTranslation::`scalar deleting destructor' (in the header)
-//   not matched yet: the destructor also destroys members, which the opaque layout leaves out
 // @retail 0x833A6C10
 // UHaloAnimNodeCopyBoneTranslation::InternalConstructor (in the header)
 // @retail 0x833B0888

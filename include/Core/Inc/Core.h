@@ -1,0 +1,56 @@
+// The base of UE3's Core that inline code expands to: memory, check(), the
+// global operator new and delete. Written from the disassembly. Generated
+// headers include it first.
+#pragma once
+
+#ifndef HAGGAR_HOST
+// The CRT's, declared here (the XDK's CRT headers aren't needed)
+extern "C" void *memcpy(void *Dest, const void *Src, unsigned int Count);
+extern "C" void *memmove(void *Dest, const void *Src, unsigned int Count);
+extern "C" void *memset(void *Dest, int Value, unsigned int Count);
+inline void *operator new(unsigned int, void *Mem) throw() { return Mem; }
+inline void operator delete(void *, void *) throw() {}
+#else
+#include <cstring>
+#include <new>
+#endif
+
+enum ENoInit
+{
+    E_NoInit = 0,
+};
+
+#define DEFAULT_ALIGNMENT 8
+#define INDEX_NONE -1
+
+void *appMalloc(unsigned long Count, unsigned long Alignment = DEFAULT_ALIGNMENT);
+void *appRealloc(void *Original, unsigned long Count, unsigned long Alignment = DEFAULT_ALIGNMENT);
+void appFree(void *Original);
+inline void *appMemcpy(void *Dest, const void *Src, int Count) { return memcpy(Dest, Src, Count); }
+inline void *appMemmove(void *Dest, const void *Src, int Count) { return memmove(Dest, Src, Count); }
+inline void appMemzero(void *Dest, int Count) { memset(Dest, 0, Count); }
+
+#ifndef HAGGAR_HOST
+inline void *operator new(unsigned int Size) { return appMalloc(Size); }
+inline void operator delete(void *Ptr) { appFree(Ptr); }
+inline void *operator new[](unsigned int Size) { return appMalloc(Size); }
+inline void operator delete[](void *Ptr) { appFree(Ptr); }
+#endif
+
+void appFailAssertFunc(const char *Expr, const char *File, int Line, const wchar_t *Format = L"", ...);
+void appFailAssertFuncDebug(const char *Expr, const char *File, int Line, const wchar_t *Format = L"", ...);
+
+#define appDebugBreak() (*((int *)3) = 13)
+#define check(expr)                                                   \
+    {                                                                 \
+        if (!(expr))                                                  \
+        {                                                             \
+            appFailAssertFuncDebug(#expr, __FILE__, __LINE__, L"");   \
+            appDebugBreak();                                          \
+            appFailAssertFunc(#expr, __FILE__, __LINE__, L"");        \
+        }                                                             \
+    }
+
+template <class T> inline T Min(const T A, const T B) { return (A <= B) ? A : B; }
+template <class T> inline T Max(const T A, const T B) { return (A >= B) ? A : B; }
+template <class T> inline T Clamp(const T X, const T Lo, const T Hi) { return X < Lo ? Lo : X < Hi ? X : Hi; }

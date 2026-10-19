@@ -26,9 +26,11 @@ from pdbfile import IMAGE_BASE
 
 # Classes the hand-written code of a package needs in its header as well:
 # with their members (TARGETS) or opaque (OPAQUE).
-TARGETS = {'MegaHaloGame': ['FSystemSettings'], 'UDKBase': ['AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
+TARGETS = {'MegaHaloGame': ['FSystemSettings'], 'UDKBase': ['FRenderCommandFence', 'AUDKCover', 'ACoverLink', 'UUDKTargetableComponent', 'CCSNorman', 'FVector', 'AActor', 'CCSPSTargetAwareness', 'CCSPSCover',
+                       'ActorWrapper', 'CCSGameCover', 'FCoverInfo', 'CCSCharacter', 'CCSGameCharacter', 'FCoverSlot',
+                       'APawn', 'UActorComponent', 'ACCSController', 'CCSBrain', 'Grip_Vector', 'AController',
                        'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>']}
-OPAQUE = {'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator',
+OPAQUE = {'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'AUDKPawn',
                        # the behaviour-tree nodes' runtime classes
                        'CCSRBTEnemyClosestRange',
                        'CCSRBTEnemyLowestLKPAge',
@@ -64,6 +66,8 @@ OPAQUE = {'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator',
                        'CCSRBTWaitInCover',
                        'HaloRBTKamikaze',
                        ]}
+# Member declarations the PDB lacks (member templates), per package.
+EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();']}}
 # Event thunks of other classes that a package's code calls (inlined there).
 EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 
@@ -138,9 +142,15 @@ class Classes:
                      and (shape := tiny_shape(r)) and self._exists(r['name'].rsplit('::', 1)[0])]
         event_classes += sorted({r['name'].rsplit('::', 1)[0] for r, _s in self.tiny})
         self.parms = [self.parms_name(r) for r in self.events_all if self._exists(self.parms_name(r))]
-        self.header = gen_header.Header(types, self.parms + TARGETS.get(package, []) + (['FFrame'] if self.execs else []),
-                                        self.classes + event_classes + ['UClass'] + OPAQUE.get(package, []))
+        self.header = gen_header.Header(types)  # a probe, for the member checks below
+        # a class whose destructor destroys members needs them rendered
+        self.member_targets = sorted({b for c in self.classes for b in self.chain(c) if not self.own_members_trivial(b)})
+        self.header = gen_header.Header(types, self.parms + TARGETS.get(package, []) + self.member_targets
+                                        + (['FFrame'] if self.execs else []),
+                                        self.classes + event_classes + ['UClass', 'FName'] + OPAQUE.get(package, []))
         self.packages = script_packages()
+        for name, decls in EXTRA.get(package, {}).items():
+            self.header.extra.setdefault(name, []).extend(decls)
         for name, ti in self.header.classes.items():  # DECLARE_CLASS's typedef Super
             bases = self.header.bases(ti)
             if bases and any(m['name'] == 'StaticClass' for m in self.header.methods(ti)):
@@ -205,9 +215,32 @@ class Classes:
             return None
         if name in ('ctor', 'internal') and len(self.header.bases(self.t.find(cls))) > 1:
             return 'the vtable pointers of its interfaces, which the opaque layout leaves out'
-        if name in ('dtor', 'sdd') and not self.own_members_trivial(cls):
+        if name in ('dtor', 'sdd') and not self.own_members_trivial(cls) and cls not in self.header.targets:
             return 'the destructor also destroys members, which the opaque layout leaves out'
         return None
+
+    def out_of_line(self):
+        """Names of functions defined in a .cpp (not inline in a header).
+        A constructor row from a .cpp counts for every overload: the PDB
+        often has no decorated name to tell which one it is."""
+        if not hasattr(self, '_out_of_line'):
+            self._out_of_line = {r['name'] for r in inventory.read_csv(paths.CONFIG / 'functions.csv')
+                                 if r['source'].endswith('.cpp')}
+        return self._out_of_line
+
+    def script_struct_constructors(self):
+        """The script compiler's empty default constructor of each struct
+        that has one beside its (EEventParm) one, unless the struct's
+        cpptext defines it in a .cpp (an out-of-line row)."""
+        defined = self.out_of_line()
+        out = []
+        for t, ti in sorted(self.header.classes.items()):
+            short = gen_header.split_scope(t)[-1]
+            ctors = [self.header.method_decl(t, m) for m in self.header.methods(ti) if m['name'] == short]
+            if f'{short}();' in ctors and f'{short}(EEventParm);' in ctors and f'{t}::{short}' not in defined \
+                    and t not in EMPTY_CONSTRUCTORS:
+                out.append(f'inline {t}::{short}() {{}}')
+        return ['#ifndef HAGGAR_HOST'] + out + ['#endif'] if out else []
 
     def _has(self, cls, method):
         return any(m['name'] == method for m in self.header.methods(self.t.find(cls)))
@@ -223,7 +256,7 @@ class Classes:
                 if c in done:
                     continue
                 done.add(c)
-                if self._has(c, c):  # NO_DEFAULT_CONSTRUCTOR
+                if self._has(c, c) and f'{c}::{c}' not in self.out_of_line():  # NO_DEFAULT_CONSTRUCTOR
                     out.append(f'inline {c}::{c}() {{}}')
                 out += [f'inline UClass *{c}::StaticClass()', '{', '    if (!PrivateStaticClass)', '    {',
                         f'        PrivateStaticClass = GetPrivateStaticClass{c}(L"{self.package_of(c)}");',
@@ -231,8 +264,7 @@ class Classes:
                 _within, config = script_header(self.package_of(c), c)
                 if config and self._has(c, 'StaticConfigName'):
                     out.append(f'inline const wchar_t *{c}::StaticConfigName() {{ return L"{config}"; }}')
-                if c in self.classes or self.own_members_trivial(c):
-                    # retail inlines a base's destructor only when it has no members to destroy
+                if c in self.classes or self.own_members_trivial(c) or c in self.member_targets:
                     out.append(f'inline {c}::~{c}() {{ ConditionalDestroy(); }}')
                 if c in self.classes:
                     out += [f'inline void *{c}::operator new(const unsigned int, EInternal *InMem) {{ return (void *)InMem; }}',
@@ -310,6 +342,17 @@ class Classes:
         for t in EMPTY_CONSTRUCTORS:
             if t in self.header.classes and self._has(t, t):
                 out.append(f'inline {t}::{t}() {{}}')
+        for t, body, target in KNOWN_BODIES:
+            if t in self.header.classes and (t in self.header.targets or not target):
+                out.append(body)
+        out += self.script_struct_constructors()
+        for t, ti in sorted(self.header.classes.items()):
+            # an interface (a vtable pointer and nothing else): its constructor only sets that
+            if not self.header.bases(ti) and self.header.has_vfptr(ti) and self.t.sizeof(ti) == 4                     and self._has(t, gen_header.split_scope(t)[-1]):
+                short = gen_header.split_scope(t)[-1]
+                out.append(f'inline {t}::{short}() {{}}')
+                if self._has(t, '~' + short):
+                    out.append(f'inline {t}::~{short}() {{}}')
         for parms in self.parms:
             if any(m['name'] == parms for m in self.header.methods(self.t.find(parms))):
                 out.append(f'inline {parms}::{parms}(EEventParm) {{}}')
@@ -411,8 +454,16 @@ STRUCT_PARAMETERS = ('FVector', 'FRotator')
 def simple_parameter(ptype):
     return ptype in SCALAR_PARAMETERS + STRUCT_PARAMETERS or (
         re.fullmatch(r'[AU]\w+ \*', ptype) is not None)
+# Inline constructors of engine classes the packages' constructors expand
+# (written from the disassembly); emitted when the class is a target.
+# (class, body, whether the class must be a target)
+KNOWN_BODIES = [
+    ('FRenderCommandFence', 'inline FRenderCommandFence::FRenderCommandFence() : NumPendingFences(0) {}', True),
+    ('FString', 'inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}', False),
+    ('FStringNoInit', 'inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}', False),
+]
 # UE3 math types whose default constructor leaves them uninitialised
-EMPTY_CONSTRUCTORS = ('FVector', 'FRotator', 'FVector2D', 'FVector4', 'FPlane', 'FQuat', 'FLinearColor', 'FColor', 'FMatrix')
+EMPTY_CONSTRUCTORS = ('FBoneAtom', 'FVector', 'FRotator', 'FVector2D', 'FVector4', 'FPlane', 'FQuat', 'FLinearColor', 'FColor', 'FMatrix')
 
 
 def event_thunk(cls, member, ret, args, fname, parms, has_ctor):

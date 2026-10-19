@@ -1,15 +1,15 @@
 // Generated from the PDB by: python tools/gen_classes.py Cognition
 #pragma once
 #include "Core/Inc/HostGuest.h"
+#include "Core/Inc/Array.h"
+#include "Core/Inc/ScriptInterface.h"
 
-template <class T0, class T1> class TArray;
 template <class T0, class T1> class TIndirectArray;
 template <class T0, class T1, class T2> class TMap;
 class AActor;
 class FArchive;
 struct FAsyncPackage;
 class FCanvas;
-class FDefaultAllocator;
 class FDefaultSetAllocator;
 class FEditPropertyChain;
 class FExportObjectInnerContext;
@@ -17,6 +17,8 @@ class FFeedbackContext;
 struct FFrame;
 class FGuid;
 class FName;
+struct FNameEntry;
+struct FNodeChild;
 struct FObjectDuplicationParameters;
 struct FObjectInstancingGraph;
 class FOutputDevice;
@@ -27,6 +29,7 @@ struct FReferencerInformationList;
 struct FScriptDelegate;
 struct FStateFrame;
 class FString;
+struct FStringNoInit;
 class GripRBTNode;
 class UArrayProperty;
 class UCCSBTTree;
@@ -85,6 +88,10 @@ enum EClassCastFlag
     CASTCLASS_UDelegateProperty = 8388608,
     CASTCLASS_UComponent = 16777216,
     CASTCLASS_AllFlags = -1,
+};
+enum EEventParm
+{
+    EC_EventParm = 0,
 };
 enum EExprToken
 {
@@ -177,6 +184,16 @@ enum EExprToken
     EX_FirstNative = 112,
     EX_Max = 4096,
 };
+enum EFindName
+{
+    FNAME_Find = 0,
+    FNAME_Add = 1,
+    FNAME_Replace = 2,
+};
+enum EForceInit
+{
+    E_ForceInit = 0,
+};
 enum EGotoState
 {
     GOTOSTATE_NotFound = 0,
@@ -207,6 +224,562 @@ enum EGripBTNodeType
 enum EInternal
 {
     EC_Internal = 0,
+};
+enum ELinkerNameTableConstructor
+{
+    ENAME_LinkerConstructor = 0,
+};
+enum EName
+{
+    NAME_None = 0,
+    NAME_ByteProperty = 1,
+    NAME_IntProperty = 2,
+    NAME_BoolProperty = 3,
+    NAME_FloatProperty = 4,
+    NAME_ObjectProperty = 5,
+    NAME_NameProperty = 6,
+    NAME_DelegateProperty = 7,
+    NAME_ClassProperty = 8,
+    NAME_ArrayProperty = 9,
+    NAME_StructProperty = 10,
+    NAME_VectorProperty = 11,
+    NAME_RotatorProperty = 12,
+    NAME_StrProperty = 13,
+    NAME_MapProperty = 14,
+    NAME_InterfaceProperty = 15,
+    NAME_Core = 20,
+    NAME_Engine = 21,
+    NAME_Editor = 22,
+    NAME_Gameplay = 23,
+    NAME_Byte = 80,
+    NAME_Int = 81,
+    NAME_Bool = 82,
+    NAME_Float = 83,
+    NAME_Name = 84,
+    NAME_String = 85,
+    NAME_Struct = 86,
+    NAME_Vector = 87,
+    NAME_Rotator = 88,
+    NAME_SHVector = 89,
+    NAME_Color = 90,
+    NAME_Plane = 91,
+    NAME_Button = 92,
+    NAME_Matrix = 94,
+    NAME_LinearColor = 95,
+    NAME_QWord = 96,
+    NAME_Pointer = 97,
+    NAME_Double = 98,
+    NAME_Quat = 99,
+    NAME_Vector4 = 1250,
+    NAME_Begin = 100,
+    NAME_State = 102,
+    NAME_Function = 103,
+    NAME_Self = 104,
+    NAME_TRUE = 105,
+    NAME_FALSE = 106,
+    NAME_Transient = 107,
+    NAME_Enum = 117,
+    NAME_Replication = 119,
+    NAME_Reliable = 120,
+    NAME_Unreliable = 121,
+    NAME_Always = 122,
+    NAME_Server = 123,
+    NAME_Client = 124,
+    NAME_Field = 150,
+    NAME_Object = 151,
+    NAME_TextBuffer = 152,
+    NAME_Linker = 153,
+    NAME_LinkerLoad = 154,
+    NAME_LinkerSave = 155,
+    NAME_Subsystem = 156,
+    NAME_Factory = 157,
+    NAME_TextBufferFactory = 158,
+    NAME_Exporter = 159,
+    NAME_StackNode = 160,
+    NAME_Property = 161,
+    NAME_Camera = 162,
+    NAME_PlayerInput = 163,
+    NAME_Actor = 164,
+    NAME_ObjectRedirector = 165,
+    NAME_ObjectArchetype = 166,
+    NAME_Vect = 600,
+    NAME_Rot = 601,
+    NAME_ArrayCount = 605,
+    NAME_EnumCount = 606,
+    NAME_Rng = 607,
+    NAME_NameOf = 608,
+    NAME_Else = 620,
+    NAME_If = 621,
+    NAME_Goto = 622,
+    NAME_Stop = 623,
+    NAME_Until = 625,
+    NAME_While = 626,
+    NAME_Do = 627,
+    NAME_Break = 628,
+    NAME_For = 629,
+    NAME_ForEach = 630,
+    NAME_Assert = 631,
+    NAME_Switch = 632,
+    NAME_Case = 633,
+    NAME_Default = 634,
+    NAME_Continue = 635,
+    NAME_ElseIf = 636,
+    NAME_FilterEditorOnly = 637,
+    NAME_Private = 640,
+    NAME_Const = 641,
+    NAME_Out = 642,
+    NAME_Export = 643,
+    NAME_DuplicateTransient = 644,
+    NAME_NoImport = 645,
+    NAME_Skip = 646,
+    NAME_Coerce = 647,
+    NAME_Optional = 648,
+    NAME_Input = 649,
+    NAME_Config = 650,
+    NAME_EditorOnly = 651,
+    NAME_NotForConsole = 652,
+    NAME_EditConst = 653,
+    NAME_Localized = 654,
+    NAME_GlobalConfig = 655,
+    NAME_SafeReplace = 656,
+    NAME_New = 657,
+    NAME_Protected = 658,
+    NAME_Public = 659,
+    NAME_EditInline = 660,
+    NAME_EditInlineUse = 661,
+    NAME_Deprecated = 662,
+    NAME_Atomic = 663,
+    NAME_Immutable = 664,
+    NAME_Automated = 665,
+    NAME_RepNotify = 666,
+    NAME_Interp = 667,
+    NAME_NoClear = 668,
+    NAME_NonTransactional = 669,
+    NAME_EditFixedSize = 670,
+    NAME_ImmutableWhenCooked = 940,
+    NAME_RepRetry = 941,
+    NAME_PrivateWrite = 942,
+    NAME_ProtectedWrite = 943,
+    NAME_EditHide = 944,
+    NAME_EditTextBox = 945,
+    NAME_Intrinsic = 671,
+    NAME_Within = 672,
+    NAME_Abstract = 673,
+    NAME_Package = 674,
+    NAME_Guid = 675,
+    NAME_Parent = 676,
+    NAME_Class = 677,
+    NAME_Extends = 678,
+    NAME_NoExport = 679,
+    NAME_Placeable = 680,
+    NAME_PerObjectConfig = 681,
+    NAME_NativeReplication = 682,
+    NAME_NotPlaceable = 683,
+    NAME_EditInlineNew = 684,
+    NAME_NotEditInlineNew = 685,
+    NAME_HideCategories = 686,
+    NAME_ShowCategories = 687,
+    NAME_CollapseCategories = 688,
+    NAME_DontCollapseCategories = 689,
+    NAME_DependsOn = 698,
+    NAME_HideDropDown = 699,
+    NAME_Implements = 950,
+    NAME_Interface = 951,
+    NAME_Inherits = 952,
+    NAME_PerObjectLocalized = 953,
+    NAME_NonTransient = 954,
+    NAME_Archetype = 955,
+    NAME_StrictConfig = 956,
+    NAME_UnusedStructKeyword1 = 957,
+    NAME_UnusedStructKeyword2 = 958,
+    NAME_SerializeText = 959,
+    NAME_CrossLevel = 960,
+    NAME_CrossLevelActive = 961,
+    NAME_CrossLevelPassive = 962,
+    NAME_ClassGroup = 963,
+    NAME_Auto = 690,
+    NAME_Ignores = 691,
+    NAME_Instanced = 692,
+    NAME_Component = 693,
+    NAME_Components = 694,
+    NAME_Global = 695,
+    NAME_Super = 696,
+    NAME_Outer = 697,
+    NAME_Operator = 700,
+    NAME_PreOperator = 701,
+    NAME_PostOperator = 702,
+    NAME_Final = 703,
+    NAME_Iterator = 704,
+    NAME_Latent = 705,
+    NAME_Return = 706,
+    NAME_Singular = 707,
+    NAME_Simulated = 708,
+    NAME_Exec = 709,
+    NAME_Event = 710,
+    NAME_Static = 711,
+    NAME_Native = 712,
+    NAME_Invariant = 713,
+    NAME_Delegate = 714,
+    NAME_Virtual = 715,
+    NAME_NoExportHeader = 716,
+    NAME_DLLImport = 717,
+    NAME_NativeOnly = 718,
+    NAME_UnusedFunctionKeyword3 = 719,
+    NAME_Var = 720,
+    NAME_Local = 721,
+    NAME_Import = 722,
+    NAME_From = 723,
+    NAME_Spawn = 730,
+    NAME_Array = 731,
+    NAME_Map = 732,
+    NAME_AutoExpandCategories = 733,
+    NAME_AutoCollapseCategories = 734,
+    NAME_DontAutoCollapseCategories = 735,
+    NAME_DontSortCategories = 736,
+    NAME_Tag = 740,
+    NAME_Role = 742,
+    NAME_RemoteRole = 743,
+    NAME_System = 744,
+    NAME_User = 745,
+    NAME_PersistentLevel = 746,
+    NAME_TheWorld = 747,
+    NAME_Benchmark = 748,
+    NAME_Windows = 750,
+    NAME_XBox = 751,
+    NAME_PlayStation = 752,
+    NAME_Linux = 753,
+    NAME_MacOSX = 754,
+    NAME_PC = 755,
+    NAME_DevDecals = 756,
+    NAME_PerfWarning = 757,
+    NAME_DevStreaming = 758,
+    NAME_DevLive = 759,
+    NAME_Log = 760,
+    NAME_Critical = 761,
+    NAME_Init = 762,
+    NAME_Exit = 763,
+    NAME_Cmd = 764,
+    NAME_Play = 765,
+    NAME_Console = 766,
+    NAME_Warning = 767,
+    NAME_ExecWarning = 768,
+    NAME_ScriptWarning = 769,
+    NAME_ScriptLog = 770,
+    NAME_Dev = 771,
+    NAME_DevNet = 772,
+    NAME_DevPath = 773,
+    NAME_DevNetTraffic = 774,
+    NAME_DevAudio = 775,
+    NAME_DevLoad = 776,
+    NAME_DevSave = 777,
+    NAME_DevGarbage = 778,
+    NAME_DevKill = 779,
+    NAME_DevReplace = 780,
+    NAME_DevUI = 781,
+    NAME_DevSound = 782,
+    NAME_DevCompile = 783,
+    NAME_DevBind = 784,
+    NAME_Localization = 785,
+    NAME_Compatibility = 786,
+    NAME_NetComeGo = 787,
+    NAME_Title = 788,
+    NAME_Error = 789,
+    NAME_Heading = 790,
+    NAME_SubHeading = 791,
+    NAME_FriendlyError = 792,
+    NAME_Progress = 793,
+    NAME_UserPrompt = 794,
+    NAME_SourceControl = 795,
+    NAME_DevPhysics = 796,
+    NAME_DevTick = 797,
+    NAME_DevStats = 798,
+    NAME_DevComponents = 799,
+    NAME_DevMemory = 809,
+    NAME_XMA = 810,
+    NAME_WAV = 811,
+    NAME_AILog = 812,
+    NAME_DevParticle = 813,
+    NAME_PerfEvent = 814,
+    NAME_LocalizationWarning = 815,
+    NAME_DevUIStyles = 816,
+    NAME_DevUIStates = 817,
+    NAME_DevUIFocus = 818,
+    NAME_ParticleWarn = 819,
+    NAME_UTrace = 854,
+    NAME_DevCollision = 855,
+    NAME_DevSHA = 856,
+    NAME_DevSpawn = 857,
+    NAME_DevAnim = 858,
+    NAME_Hack = 859,
+    NAME_DevShaders = 1118,
+    NAME_DevDataBase = 1119,
+    NAME_DevDataStore = 1120,
+    NAME_DevAudioVerbose = 1121,
+    NAME_DevUIAnimation = 1125,
+    NAME_DevHDDCaching = 1126,
+    NAME_DevMovie = 1127,
+    NAME_DevShadersDetailed = 1128,
+    NAME_PlayerManagement = 1129,
+    NAME_DevPatch = 1130,
+    NAME_DevLightmassSolver = 1131,
+    NAME_DevAssetDataBase = 1132,
+    NAME_GameStats = 200,
+    NAME_DevFaceFX = 201,
+    NAME_DevCrossLevel = 202,
+    NAME_DevConfig = 203,
+    NAME_DevCamera = 204,
+    NAME_DebugState = 205,
+    NAME_DevAbsorbFuncs = 206,
+    NAME_DevLevelTools = 207,
+    NAME_DevGFxUI = 208,
+    NAME_DevGFxUIWarning = 209,
+    NAME_DevNavMesh = 210,
+    NAME_DevNavMeshWarning = 211,
+    NAME_DevMCP = 212,
+    NAME_DevBeacon = 213,
+    NAME_DevHTTP = 214,
+    NAME_DevMovieCapture = 215,
+    NAME_DevHttpRequest = 216,
+    NAME_DevNetTrafficDetail = 217,
+    NAME_White = 800,
+    NAME_Black = 801,
+    NAME_Red = 802,
+    NAME_Green = 803,
+    NAME_Blue = 804,
+    NAME_Cyan = 805,
+    NAME_Magenta = 806,
+    NAME_Yellow = 807,
+    NAME_DefaultColor = 808,
+    NAME_KeyType = 820,
+    NAME_KeyEvent = 821,
+    NAME_Write = 822,
+    NAME_Message = 823,
+    NAME_InitialState = 824,
+    NAME_Texture = 825,
+    NAME_Sound = 826,
+    NAME_FireTexture = 827,
+    NAME_IceTexture = 828,
+    NAME_WaterTexture = 829,
+    NAME_WaveTexture = 830,
+    NAME_WetTexture = 831,
+    NAME_Main = 832,
+    NAME_VideoChange = 834,
+    NAME_SendText = 835,
+    NAME_SendBinary = 836,
+    NAME_ConnectFailure = 837,
+    NAME_Length = 838,
+    NAME_Insert = 839,
+    NAME_Remove = 840,
+    NAME_Add = 1200,
+    NAME_AddItem = 1201,
+    NAME_RemoveItem = 1202,
+    NAME_InsertItem = 1203,
+    NAME_Sort = 1204,
+    NAME_Game = 841,
+    NAME_SequenceObjects = 842,
+    NAME_PausedState = 843,
+    NAME_ContinuedState = 844,
+    NAME_SelectionColor = 845,
+    NAME_Find = 846,
+    NAME_UI = 847,
+    NAME_DevCooking = 848,
+    NAME_DevOnline = 849,
+    NAME_DataBinding = 850,
+    NAME_OptionMusic = 851,
+    NAME_OptionSFX = 852,
+    NAME_OptionVoice = 853,
+    NAME_Linear = 1122,
+    NAME_Point = 1123,
+    NAME_Aniso = 1124,
+    NAME_Master = 860,
+    NAME_Ambient = 861,
+    NAME_UnGrouped = 862,
+    NAME_VoiceChat = 863,
+    NAME_Brush = 1208,
+    NAME_Attributes = 865,
+    NAME_Strings = 866,
+    NAME_Images = 867,
+    NAME_SceneData = 868,
+    NAME_EndIf = 870,
+    NAME_Include = 871,
+    NAME_Define = 872,
+    NAME_Undefine = 873,
+    NAME_IsDefined = 874,
+    NAME_NotDefined = 875,
+    NAME_Debug = 876,
+    NAME_Counter = 877,
+    NAME_SetCounter = 878,
+    NAME_GetCounter = 879,
+    NAME_EngineVersion = 880,
+    NAME_IfCondition = 881,
+    NAME_FontCharacter = 900,
+    NAME_SourceState = 901,
+    NAME_InitChild2StartBone = 902,
+    NAME_SourceStyle = 903,
+    NAME_SoundCueLocalized = 904,
+    NAME_SoundCue = 905,
+    NAME_RawDistributionFloat = 906,
+    NAME_RawDistributionVector = 907,
+    NAME_UIDockingSet = 908,
+    NAME_DockPadding = 909,
+    NAME_ScaleType = 912,
+    NAME_EvalType = 913,
+    NAME_AutoSizePadding = 914,
+    NAME_PlayerWalking = 915,
+    NAME_PlayerClimbing = 916,
+    NAME_PlayerDriving = 917,
+    NAME_PlayerSwimming = 918,
+    NAME_PlayerFlying = 919,
+    NAME_Spectating = 920,
+    NAME_PlayerWaiting = 921,
+    NAME_WaitingForPawn = 922,
+    NAME_RoundEnded = 923,
+    NAME_Dead = 924,
+    NAME_Gear_General = 1000,
+    NAME_Gear_ActiveReload = 1001,
+    NAME_Gear_MiniGames = 1002,
+    NAME_Gear_ResurrectionSystem = 1003,
+    NAME_Gear_VehicleSystem = 1004,
+    NAME_Gear_CheckpointSystem = 1005,
+    NAME_Cover = 1006,
+    NAME_AICommand = 1007,
+    NAME_Success = 1008,
+    NAME_Failure = 1009,
+    NAME_Aborted = 1010,
+    NAME_PlayerTakingCover = 1011,
+    NAME_Engaging = 1012,
+    NAME_PlayerTurreting = 1013,
+    NAME_Reviving = 1014,
+    NAME_PlayerID = 1080,
+    NAME_TeamID = 1081,
+    NAME_HearSoundFinished = 1082,
+    NAME_OnParticleSystemFinished = 1083,
+    NAME_Time = 1100,
+    NAME_PPVolume_BloomEffect = 1101,
+    NAME_PPVolume_DOFEffect = 1102,
+    NAME_PPVolume_MotionBlurEffect = 1103,
+    NAME_PPVolume_SceneEffect = 1104,
+    NAME_PPVolume_DOFAndBloomEffect = 1105,
+    NAME_Desaturation = 1106,
+    NAME_HighLights = 1107,
+    NAME_MidTones = 1108,
+    NAME_Shadows = 1109,
+    NAME_PPVolume_UberPostProcessEffect = 1110,
+    NAME_DeviceID = 1111,
+    NAME_InterpCurveFloat = 1112,
+    NAME_InterpCurveVector2D = 1113,
+    NAME_InterpCurveVector = 1114,
+    NAME_InterpCurveTwoVectors = 1115,
+    NAME_InterpCurveQuat = 1116,
+    NAME_UniqueNetId = 1117,
+    NAME_PopUp = 1133,
+    NAME_Team = 1134,
+    NAME_DevDlc = 1135,
+    NAME_Landscape_RedTexture = 1140,
+    NAME_Landscape_GreenTexture = 1141,
+    NAME_Landscape_BlueTexture = 1142,
+    NAME_Landscape_RedMask = 1143,
+    NAME_Landscape_GreenMask = 1144,
+    NAME_Landscape_BlueMask = 1145,
+    NAME_Base = 1150,
+    NAME_Specular = 1151,
+    NAME_Emissive = 1152,
+    NAME_Environment = 1153,
+    NAME_RimLighting = 1154,
+    NAME_BumpOffset = 1155,
+    NAME_Masking = 1156,
+    NAME_TextureBlending = 1157,
+    NAME_ColorBlending = 1158,
+    NAME_TextureTransform = 1159,
+    NAME_VertexAnimation = 1160,
+    NAME_MobileSpecularPower = 1165,
+    NAME_MobileEnvironmentAmount = 1166,
+    NAME_MobileEnvironmentFresnelAmount = 1167,
+    NAME_MobileEnvironmentFresnelExponent = 1168,
+    NAME_MobileRimLightingStrength = 1169,
+    NAME_MobileRimLightingExponent = 1170,
+    NAME_MobileBumpOffsetReferencePlane = 1171,
+    NAME_MobileBumpOffsetHeightRatio = 1172,
+    NAME_MobileTransformCenterX = 1173,
+    NAME_MobileTransformCenterY = 1174,
+    NAME_MobilePannerSpeedX = 1175,
+    NAME_MobilePannerSpeedY = 1176,
+    NAME_MobileRotateSpeed = 1177,
+    NAME_MobileFixedScaleX = 1178,
+    NAME_MobileFixedScaleY = 1179,
+    NAME_MobileSineScaleX = 1180,
+    NAME_MobileSineScaleY = 1181,
+    NAME_MobileSineScaleFrequencyMultipler = 1182,
+    NAME_MobileFixedOffsetX = 1183,
+    NAME_MobileFixedOffsetY = 1184,
+    NAME_MobileTangentVertexFrequencyMultiplier = 1185,
+    NAME_MobileVerticalFrequencyMultiplier = 1186,
+    NAME_MobileMaxVertexMovementAmplitude = 1187,
+    NAME_MobileSwayFrequencyMultiplier = 1188,
+    NAME_MobileSwayMaxAngle = 1189,
+    NAME_MobileSpecularColor = 1190,
+    NAME_MobileEmissiveColor = 1191,
+    NAME_MobileEnvironmentColor = 1192,
+    NAME_MobileRimLightingColor = 1193,
+    NAME_MobileDefaultUniformColor = 1194,
+    NAME_MobileOpacityMultiplier = 1195,
+    NAME_MobileBaseTexture = 1230,
+    NAME_MobileNormalTexture = 1231,
+    NAME_MobileEmissiveTexture = 1232,
+    NAME_MobileMaskTexture = 1233,
+    NAME_MobileDetailTexture = 1234,
+    NAME_MobileDetailTexture2 = 1235,
+    NAME_MobileDetailTexture3 = 1236,
+    NAME_MobileEnvironmentTexture = 1237,
+    NAME_Fortress_MCP = 1056,
+    NAME_Destroyed = 300,
+    NAME_GainedChild = 301,
+    NAME_LostChild = 302,
+    NAME_HitWall = 303,
+    NAME_Falling = 304,
+    NAME_Landed = 305,
+    NAME_Touch = 306,
+    NAME_UnTouch = 307,
+    NAME_Bump = 308,
+    NAME_BeginState = 309,
+    NAME_EndState = 310,
+    NAME_BaseChange = 311,
+    NAME_Attach = 312,
+    NAME_Detach = 313,
+    NAME_EncroachingOn = 314,
+    NAME_EncroachedBy = 315,
+    NAME_MayFall = 316,
+    NAME_Tick = 317,
+    NAME_SeePlayer = 318,
+    NAME_EnemyNotVisible = 319,
+    NAME_HearNoise = 320,
+    NAME_UpdateEyeHeight = 321,
+    NAME_SeeMonster = 322,
+    NAME_SpecialHandling = 323,
+    NAME_BotDesireability = 324,
+    NAME_NotifyBump = 325,
+    NAME_NotifyLanded = 326,
+    NAME_NotifyHitWall = 327,
+    NAME_PreBeginPlay = 328,
+    NAME_PostBeginPlay = 329,
+    NAME_UnusedProbe = 330,
+    NAME_All = 331,
+    NAME_PoppedState = 398,
+    NAME_PushedState = 399,
+    NAME_MeshEmitterVertexColor = 400,
+    NAME_TextureOffsetParameter = 401,
+    NAME_TextureScaleParameter = 402,
+    NAME_ImpactVel = 403,
+    NAME_SlideVel = 404,
+    NAME_TextureOffset1Parameter = 405,
+    NAME_MeshEmitterDynamicParameter = 406,
+    NAME_ExpressionInput = 407,
+    NAME_OnAudioFinished = 1205,
+    NAME_ForceScriptOrder = 1206,
+    NAME_Mobile = 1207,
+    NAME_Untitled = 1209,
+    NAME_Timer = 1210,
+    NAME_PS3 = 1211,
 };
 enum ENativeConstructor
 {
@@ -243,6 +816,179 @@ enum EPlatformType
     PLATFORM_DLCSupported = 78,
 };
 }
+
+class FName  // size 0x8, opaque
+{
+public:
+    int GetIndex() const;
+    int GetNumber() const;
+    const FString GetNameString() const;
+    void ToString(FString &) const;
+    FString ToString() const;
+    void AppendString(FString &) const;
+    unsigned int HasAnyFlags(unsigned __int64) const;
+    void SetFlags(unsigned __int64) const;
+    void ClearFlags(unsigned __int64) const;
+    unsigned int operator==(const wchar_t *) const;
+    unsigned int operator==(const FName &) const;
+    unsigned int operator!=(const FName &) const;
+    unsigned int IsValid() const;
+    int Compare(const FName &) const;
+    static void StaticInit();
+    static void DisplayHash(FOutputDevice &);
+    static void Hardcode(FNameEntry *);
+    static FString SafeString(EName, int);
+    static unsigned int SafeSuppressed(EName);
+    static int GetMaxNames();
+    static int GetNameEntryMemorySize();
+    static int GetNameTableMemorySize();
+    static int GetNumAnsiNames();
+    static int GetNumUnicodeNames();
+    static FNameEntry *GetEntry(int);
+    static unsigned int GetInitialized();
+    static void SplitOldName(const wchar_t *, FString &, int &);
+    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
+HG_PRIVATE:
+    static unsigned int &GetIsInitialized();
+    void Init(const char *, int, EFindName);
+    void Init(const wchar_t *, int, EFindName, unsigned int);
+public:
+    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
+    #ifndef HAGGAR_HOST
+    FName(ELinkerNameTableConstructor, const char *);
+    FName(ELinkerNameTableConstructor, const wchar_t *);
+    FName(const wchar_t *, int, EFindName);
+    FName(int);
+    FName(const char *, EFindName);
+    FName(const wchar_t *, EFindName, unsigned int);
+    FName();
+    FName(EName, int);
+    FName(EName);
+    #endif
+    #ifndef HAGGAR_HOST
+    static TArrayNoInit<FNameEntry *> Names;
+    static FNameEntry *NameHash[4096];
+    static int NameEntryMemorySize;
+    static int NumAnsiNames;
+    static int NumUnicodeNames;
+    #else
+    static TArrayNoInit<FNameEntry *> (&Names);
+    static hg::gptr<FNameEntry> (&NameHash)[4096];
+    static hg::be<int> (&NameEntryMemorySize);
+    static hg::be<int> (&NumAnsiNames);
+    static hg::be<int> (&NumUnicodeNames);
+    #endif
+HG_PRIVATE:
+    unsigned int FNameData[0x2];
+};
+
+struct FNodeChild  // size 0x14, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FNodeChild(EEventParm);
+    FNodeChild();
+    #endif
+HG_PRIVATE:
+    unsigned int FNodeChildData[0x5];
+};
+
+class FString : public TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
+{
+public:
+    FString &operator=(const FString &);
+    FString &operator=(const wchar_t *);
+    const wchar_t &operator[](int) const;
+    wchar_t &operator[](int);
+    void CheckInvariants() const;
+    void Empty(int);
+    unsigned int IsEmpty() const;
+    void Shrink();
+    void TrimToNullTerminator();
+    FString operator*(const FString &) const;
+    FString operator*(const wchar_t *) const;
+    const wchar_t *operator*() const;
+    const TArray<wchar_t,FDefaultAllocator> &GetCharArray() const;
+    TArray<wchar_t,FDefaultAllocator> &GetCharArray();
+    FString &operator+=(const FString &);
+    FString &operator+=(const wchar_t);
+    FString &operator+=(const char *);
+    FString &operator+=(const wchar_t *);
+    FString &AppendChar(const wchar_t);
+    FString operator+(const FString &) const;
+    FString operator+(const wchar_t *) const;
+    FString operator+(const wchar_t) const;
+    FString &operator*=(const FString &);
+    FString &operator*=(const wchar_t *);
+    unsigned int operator<=(const FString &) const;
+    unsigned int operator<=(const wchar_t *) const;
+    unsigned int operator<(const FString &) const;
+    unsigned int operator<(const wchar_t *) const;
+    unsigned int operator>=(const FString &) const;
+    unsigned int operator>=(const wchar_t *) const;
+    unsigned int operator>(const FString &) const;
+    unsigned int operator>(const wchar_t *) const;
+    unsigned int operator==(const FString &) const;
+    unsigned int operator==(const wchar_t *) const;
+    unsigned int operator!=(const FString &) const;
+    unsigned int operator!=(const wchar_t *) const;
+    int Len() const;
+    FString Left(int) const;
+    FString LeftChop(int) const;
+    FString Right(int) const;
+    FString RightChop(int) const;
+    FString Mid(int, int) const;
+    int InStr(const FString &, unsigned int, unsigned int, int) const;
+    int InStr(const wchar_t *, unsigned int, unsigned int, int) const;
+    unsigned int Split(const FString &, FString *, FString *, unsigned int) const;
+    FString ToUpper() const;
+    FString ToLower() const;
+    unsigned int ToUBOOL() const;
+    FString LeftPad(int) const;
+    FString RightPad(int) const;
+    unsigned int IsNumeric() const;
+    static FString Printf__VA(const wchar_t *, ...);
+    static FString Printf(const wchar_t *);
+    static FString Chr(wchar_t);
+    unsigned int StartsWith(const FString &) const;
+    unsigned int EndsWith(const FString &) const;
+    FString Trim();
+    FString TrimTrailing();
+    FString TrimQuotes(unsigned int *) const;
+    int ParseIntoArray(TArray<FString,FDefaultAllocator> *, const wchar_t *, unsigned int) const;
+    int ParseIntoArrayWS(TArray<FString,FDefaultAllocator> *, const wchar_t *) const;
+    static int CullArray(TArray<FString,FDefaultAllocator> *);
+    FString Reverse() const;
+    void ReverseString();
+    FString Replace(const wchar_t *, const wchar_t *, unsigned int) const;
+    int ReplaceInline(const wchar_t *, const wchar_t *);
+    FString ReplaceQuotesWithEscapedQuotes() const;
+    FString ReplaceCharWithEscapedChar(const TArray<wchar_t,FDefaultAllocator> *) const;
+    FString ReplaceEscapedCharWithChar(const TArray<wchar_t,FDefaultAllocator> *) const;
+    FString ConvertTabsToSpaces(const int);
+    static FString FormatAsNumber(int);
+    void Reserve(const unsigned int);
+    #ifndef HAGGAR_HOST
+    FString(ENoInit);
+    FString(const char *);
+    FString(int, const wchar_t *);
+    FString(const wchar_t *);
+    FString(const FString &, int);
+    FString(const FString &);
+    FString();
+    #endif
+};
+
+struct FStringNoInit : public FString  // size 0xC, opaque
+{
+public:
+    FStringNoInit &operator=(const FString &);
+    FStringNoInit &operator=(const wchar_t *);
+    #ifndef HAGGAR_HOST
+    FStringNoInit(EForceInit);
+    FStringNoInit();
+    #endif
+};
 
 class UObject  // size 0x3C, opaque
 {
@@ -1021,7 +1767,7 @@ HG_PRIVATE:
     unsigned int UGripBTObjectData[0x2];
 };
 
-class UGripBTNode : public UGripBTObject  // size 0x88, opaque
+class UGripBTNode : public UGripBTObject  // size 0x88
 {
 public:
     enum
@@ -1055,11 +1801,31 @@ public:
     typedef UGripBTObject Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    UGripBTNode *ParentNode;  // 0x44
+    TArrayNoInit<FNodeChild> Children;  // 0x48
+    float RandomWeight;  // 0x54
+    FName NodeName;  // 0x58
+    FStringNoInit NodeDescription;  // 0x60
+    FStringNoInit Comment;  // 0x6C
+    FName DefaultTitle;  // 0x78
+    unsigned char LastExecutionResult;  // 0x80
+    unsigned char LastEvaluationResult;  // 0x81
+    char _pad0[0x2];
+    int DummyVarJustSoBaseClassDontEndWithAByteToAvoidCompilerWarning;  // 0x84
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<UGripBTNode> ParentNode;
+    TArrayNoInit<FNodeChild> Children;
+    hg::be<float> RandomWeight;
+    FName NodeName;
+    FStringNoInit NodeDescription;
+    FStringNoInit Comment;
+    FName DefaultTitle;
+    unsigned char LastExecutionResult;
+    unsigned char LastEvaluationResult;
+    char _pad0[0x2];
+    hg::be<int> DummyVarJustSoBaseClassDontEndWithAByteToAvoidCompilerWarning;
     #endif
-HG_PRIVATE:
-    unsigned int UGripBTNodeData[0x11];
 };
 
 class UGripBTPriority : public UGripBTNode  // size 0x88, opaque
@@ -1093,7 +1859,7 @@ public:
     #endif
 };
 
-class UGripBTTree : public UGripBTPriority  // size 0x98, opaque
+class UGripBTTree : public UGripBTPriority  // size 0x98
 {
 public:
     enum
@@ -1119,11 +1885,13 @@ public:
     typedef UGripBTPriority Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    TArrayNoInit<UGripBTNode *> AllTreeNodes;  // 0x88
+    unsigned long bBeingEdited : 1;  // 0x94
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    TArrayNoInit<UGripBTNode *> AllTreeNodes;
+    hg::be<unsigned int> _bits94;  // 0x94, from bBeingEdited
     #endif
-HG_PRIVATE:
-    unsigned int UGripBTTreeData[0x4];
 };
 
 class UCCSBTTree : public UGripBTTree  // size 0x98, opaque
@@ -1404,6 +2172,7 @@ inline UClass *UGripBTNode::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UGripBTNode::~UGripBTNode() { ConditionalDestroy(); }
 
 inline UClass *UGripBTPriority::StaticClass()
 {
@@ -1425,6 +2194,7 @@ inline UClass *UGripBTTree::StaticClass()
     }
     return PrivateStaticClass;
 }
+inline UGripBTTree::~UGripBTTree() { ConditionalDestroy(); }
 
 inline UCCSBTTree::UCCSBTTree() {}
 inline UClass *UCCSBTTree::StaticClass()
@@ -1441,4 +2211,9 @@ inline void *UCCSBTTree::operator new(const unsigned int, EInternal *InMem) { re
 inline void UCCSBTTree::InternalConstructor(void *X) { new ((EInternal *)X) UCCSBTTree; }
 
 
+inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}
+inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}
+#ifndef HAGGAR_HOST
+inline FNodeChild::FNodeChild() {}
+#endif
 // ---- written by hand below this line (gen_header.py keeps it) ----

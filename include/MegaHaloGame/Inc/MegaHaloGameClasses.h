@@ -1,14 +1,14 @@
 // Generated from the PDB by: python tools/gen_classes.py MegaHaloGame
 #pragma once
 #include "Core/Inc/HostGuest.h"
+#include "Core/Inc/Array.h"
+#include "Core/Inc/ScriptInterface.h"
 
-template <class T0, class T1> class TArray;
 template <class T0, class T1> class TIndirectArray;
 template <class T0, class T1, class T2> class TMap;
 class AActor;
 class FArchive;
 struct FAsyncPackage;
-class FDefaultAllocator;
 class FDefaultSetAllocator;
 class FEditPropertyChain;
 class FExec;
@@ -18,6 +18,7 @@ class FFeedbackContext;
 struct FFrame;
 class FGuid;
 class FName;
+struct FNameEntry;
 struct FObjectDuplicationParameters;
 struct FObjectInstancingGraph;
 struct FOutParmRec;
@@ -29,6 +30,7 @@ struct FReferencerInformationList;
 struct FScriptDelegate;
 struct FStateFrame;
 class FString;
+struct FStringNoInit;
 class FSystemSetting;
 class FSystemSettings;
 struct FTextureLODSettings;
@@ -167,6 +169,16 @@ enum EExprToken
     EX_FirstNative = 112,
     EX_Max = 4096,
 };
+enum EFindName
+{
+    FNAME_Find = 0,
+    FNAME_Add = 1,
+    FNAME_Replace = 2,
+};
+enum EForceInit
+{
+    E_ForceInit = 0,
+};
 enum EGotoState
 {
     GOTOSTATE_NotFound = 0,
@@ -176,6 +188,10 @@ enum EGotoState
 enum EInternal
 {
     EC_Internal = 0,
+};
+enum ELinkerNameTableConstructor
+{
+    ENAME_LinkerConstructor = 0,
 };
 enum EName
 {
@@ -733,10 +749,6 @@ enum ENativeConstructor
 {
     EC_NativeConstructor = 0,
 };
-enum ENoInit
-{
-    E_NoInit = 0,
-};
 enum ESamplerFilter
 {
     SF_Point = 0,
@@ -947,76 +959,69 @@ public:
     #endif
 };
 
-template <> class TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
+class FName  // size 0x8, opaque
 {
 public:
-    enum
-    {
-        AllocatorNeedsElementType = 0,
-    };
-    const wchar_t *GetTypedData() const;
-    wchar_t *GetTypedData();
-    const wchar_t *GetData() const;
-    wchar_t *GetData();
-    unsigned long GetTypeSize() const;
-    unsigned long GetAllocatedSize() const;
-    int GetSlack() const;
-    unsigned int IsValidIndex(int) const;
-    int Num() const;
-    const wchar_t &operator()(int) const;
-    wchar_t &operator()(int);
-    wchar_t Pop();
-    void Push(const wchar_t &);
-    const wchar_t &Top() const;
-    wchar_t &Top();
-    const wchar_t &Last(int) const;
-    wchar_t &Last(int);
-    void Shrink();
-    unsigned int FindItem(const wchar_t &, int &) const;
-    int FindItemIndex(const wchar_t &) const;
-    unsigned int ContainsItem(const wchar_t &) const;
-    unsigned int operator==(const TArray<wchar_t,FDefaultAllocator> &) const;
-    unsigned int operator!=(const TArray<wchar_t,FDefaultAllocator> &) const;
-    void BulkSerialize(FArchive &, int);
-    void CountBytes(FArchive &);
-    int Add(int);
-    void Insert(int, int);
-    void InsertZeroed(int, int);
-    int InsertItem(const wchar_t &, int);
-    void Remove(int, int);
-    void RemoveSwap(int, int);
-    void Empty(int);
-    void SetNum(int);
-    void Append(const TArray<wchar_t,FDefaultAllocator> &);
-    TArray<wchar_t,FDefaultAllocator> &operator+=(const TArray<wchar_t,FDefaultAllocator> &);
-    TArray<wchar_t,FDefaultAllocator> &operator=(const TArray<wchar_t,FDefaultAllocator> &);
-    int AddItem(const wchar_t &);
-    int AddZeroed(int);
-    int AddUniqueItem(const wchar_t &);
-    void Reserve(int);
-    void Init(const wchar_t &, int);
-    void Init(int);
-    int RemoveSingleItem(const wchar_t &);
-    int RemoveItem(const wchar_t &);
-    int RemoveSingleItemSwap(const wchar_t &);
-    int RemoveItemSwap(const wchar_t &);
-    void Swap(int, int);
-    void SwapItems(int, int);
-    void Reset(int);
+    int GetIndex() const;
+    int GetNumber() const;
+    const FString GetNameString() const;
+    void ToString(FString &) const;
+    FString ToString() const;
+    void AppendString(FString &) const;
+    unsigned int HasAnyFlags(unsigned __int64) const;
+    void SetFlags(unsigned __int64) const;
+    void ClearFlags(unsigned __int64) const;
+    unsigned int operator==(const wchar_t *) const;
+    unsigned int operator==(const FName &) const;
+    unsigned int operator!=(const FName &) const;
+    unsigned int IsValid() const;
+    int Compare(const FName &) const;
+    static void StaticInit();
+    static void DisplayHash(FOutputDevice &);
+    static void Hardcode(FNameEntry *);
+    static FString SafeString(EName, int);
+    static unsigned int SafeSuppressed(EName);
+    static int GetMaxNames();
+    static int GetNameEntryMemorySize();
+    static int GetNameTableMemorySize();
+    static int GetNumAnsiNames();
+    static int GetNumUnicodeNames();
+    static FNameEntry *GetEntry(int);
+    static unsigned int GetInitialized();
+    static void SplitOldName(const wchar_t *, FString &, int &);
+    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
 HG_PRIVATE:
-    const wchar_t &DebugGet(int) const;
-HG_PROTECTED:
-    void DestructItems(int, int);
+    static unsigned int &GetIsInitialized();
+    void Init(const char *, int, EFindName);
+    void Init(const wchar_t *, int, EFindName, unsigned int);
 public:
+    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
     #ifndef HAGGAR_HOST
-    TArray(const TArray<wchar_t,FDefaultAllocator> &);
-    TArray(int);
-    TArray(ENoInit);
-    TArray();
-    ~TArray();
+    FName(ELinkerNameTableConstructor, const char *);
+    FName(ELinkerNameTableConstructor, const wchar_t *);
+    FName(const wchar_t *, int, EFindName);
+    FName(int);
+    FName(const char *, EFindName);
+    FName(const wchar_t *, EFindName, unsigned int);
+    FName();
+    FName(EName, int);
+    FName(EName);
+    #endif
+    #ifndef HAGGAR_HOST
+    static TArrayNoInit<FNameEntry *> Names;
+    static FNameEntry *NameHash[4096];
+    static int NameEntryMemorySize;
+    static int NumAnsiNames;
+    static int NumUnicodeNames;
+    #else
+    static TArrayNoInit<FNameEntry *> (&Names);
+    static hg::gptr<FNameEntry> (&NameHash)[4096];
+    static hg::be<int> (&NameEntryMemorySize);
+    static hg::be<int> (&NumAnsiNames);
+    static hg::be<int> (&NumUnicodeNames);
     #endif
 HG_PRIVATE:
-    unsigned int TArrayData[0x3];
+    unsigned int FNameData[0x2];
 };
 
 class FString : public TArray<wchar_t,FDefaultAllocator>  // size 0xC, opaque
@@ -1102,6 +1107,17 @@ public:
     FString(const FString &, int);
     FString(const FString &);
     FString();
+    #endif
+};
+
+struct FStringNoInit : public FString  // size 0xC, opaque
+{
+public:
+    FStringNoInit &operator=(const FString &);
+    FStringNoInit &operator=(const wchar_t *);
+    #ifndef HAGGAR_HOST
+    FStringNoInit(EForceInit);
+    FStringNoInit();
     #endif
 };
 
@@ -2353,7 +2369,7 @@ HG_PRIVATE:
     unsigned int UClassData[0x26];
 };
 
-class UHaloSaveGame : public UObject  // size 0x68, opaque
+class UHaloSaveGame : public UObject  // size 0x68
 {
 public:
     enum
@@ -2382,11 +2398,19 @@ public:
     typedef UObject Super;
     #ifndef HAGGAR_HOST
     static UClass *PrivateStaticClass;
+    FStringNoInit PersistentMapFileName;  // 0x3C
+    TArrayNoInit<FString> StreamingMapFileNames;  // 0x48
+    TArrayNoInit<FString> SerializedWorldData;  // 0x54
+    int NumPlayers;  // 0x60
+    unsigned long InitialLoad : 1;  // 0x64
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
+    FStringNoInit PersistentMapFileName;
+    TArrayNoInit<FString> StreamingMapFileNames;
+    TArrayNoInit<FString> SerializedWorldData;
+    hg::be<int> NumPlayers;
+    hg::be<unsigned int> _bits64;  // 0x64, from InitialLoad
     #endif
-HG_PRIVATE:
-    unsigned int UHaloSaveGameData[0xB];
 };
 
 #include "Core/Inc/UnObjBas.h"
@@ -2407,4 +2431,6 @@ inline void *UHaloSaveGame::operator new(const unsigned int, EInternal *InMem) {
 inline void UHaloSaveGame::InternalConstructor(void *X) { new ((EInternal *)X) UHaloSaveGame; }
 
 
+inline FString::FString(ENoInit) : TArray<wchar_t, FDefaultAllocator>(E_NoInit) {}
+inline FStringNoInit::FStringNoInit() : FString(E_NoInit) {}
 // ---- written by hand below this line (gen_header.py keeps it) ----
