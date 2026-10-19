@@ -296,7 +296,7 @@ defaultproperties
 		Translation=(X=35.0000000,Y=0.0000000,Z=0.0000000)
 	end object
 	Components[4]=CollisionCylinder
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	CollisionType=COLLIDE_TouchAll
 	bCollideActors=true
 	bProjTarget=false
 	CollisionComponent=CollisionCylinder

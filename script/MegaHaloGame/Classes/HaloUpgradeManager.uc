@@ -386,5 +386,5 @@ defaultproperties
 	UpgradeLevels[0]=(BaseClassName="MegaHaloGameContent.HaloTurret_MachineGun_Content",BaseClass=none,BaseArchetype=HaloUpgrade_Turret'HaloUpgradeArchetypes.Turret.Turret_Upgrade0')
 	UpgradeLevels[1]=(BaseClassName="MegaHaloGameContent.HaloTurret_Mortar_Content",BaseClass=none,BaseArchetype=HaloUpgrade_Mortar'HaloUpgradeArchetypes.Mortar.Mortar_Upgrade0')
 	UpgradeRadius=400.0000000
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

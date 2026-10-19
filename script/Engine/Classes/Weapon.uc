@@ -106,7 +106,7 @@ reliable client simulated function ClientWeaponThrown()
 {
 	LogInternal((((((((string(WorldInfo.TimeSeconds) @ "Self:") @ string(self)) @ "Instigator:") @ string(Instigator)) @ string(GetStateName())) $ "::") $ string(GetFuncName())) @ "", 'Inventory');
 	// End:0x114
-	if(int(WorldInfo.NetMode) == int(NM_Client))
+	if(WorldInfo.NetMode == NM_Client)
 	{
 		GotoState('Inactive');
 		// End:0x100
@@ -352,7 +352,7 @@ function bool CanAttack(Actor Other)
 
 function bool FireOnRelease()
 {
-	return (ShouldFireOnRelease.Length > 0) && int(ShouldFireOnRelease[int(CurrentFireMode)]) != int(0);
+	return (ShouldFireOnRelease.Length > 0) && int(ShouldFireOnRelease[int(CurrentFireMode)]) != 0;
 	//return ReturnValue;	
 }
 
@@ -360,7 +360,7 @@ simulated function AnimNodeSequence GetWeaponAnimNodeSeq()
 {
 	local AnimTree Tree;
 	local AnimNodeSequence AnimSeq;
-	local editinline SkeletalMeshComponent SkelMesh;
+	local SkeletalMeshComponent SkelMesh;
 
 	SkelMesh = SkeletalMeshComponent(Mesh);
 	// End:0xEF
@@ -388,7 +388,7 @@ simulated function PlayWeaponAnimation(name Sequence, float fDesiredDuration, op
 	local AnimTree Tree;
 
 	// End:0x2D
-	if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if(WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		return;
 	}
@@ -430,7 +430,7 @@ simulated function StopWeaponAnimation()
 	local AnimNodeSequence AnimSeq;
 
 	// End:0x2B
-	if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if(WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		return;
 	}
@@ -604,7 +604,7 @@ simulated function StartFire(byte FireModeNum)
 	if((Instigator == none) || !Instigator.bNoWeaponFiring)
 	{
 		// End:0x5C
-		if(int(Role) < int(ROLE_Authority))
+		if(Role < ROLE_Authority)
 		{
 			ServerStartFire(FireModeNum);
 		}
@@ -634,7 +634,7 @@ simulated function StopFire(byte FireModeNum)
 {
 	EndFire(FireModeNum);
 	// End:0x3A
-	if(int(Role) < int(ROLE_Authority))
+	if(Role < ROLE_Authority)
 	{
 		ServerStopFire(FireModeNum);
 	}
@@ -689,7 +689,7 @@ simulated function SendToFiringState(byte FireModeNum)
 		return;
 	}
 	// End:0xEA
-	if((FiringStatesArray[int(FireModeNum)] == 'None') || int(WeaponFireTypes[int(FireModeNum)]) == int(3))
+	if((FiringStatesArray[int(FireModeNum)] == 'None') || int(WeaponFireTypes[int(FireModeNum)]) == 3)
 	{
 		return;
 	}
@@ -853,7 +853,7 @@ simulated function InstantFire()
 	EndTrace = StartTrace + (Vector(GetAdjustedAim(StartTrace)) * (GetTraceRange()));
 	RealImpact = CalcWeaponFire(StartTrace, EndTrace, ImpactList);
 	// End:0xCA
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		SetFlashLocation(RealImpact.HitLocation);
 	}
@@ -875,7 +875,7 @@ simulated function ProcessInstantHit(byte FiringMode, ImpactInfo Impact, optiona
 {
 	local int TotalDamage;
 	local KActorFromStatic NewKActor;
-	local editinline StaticMeshComponent HitStaticMesh;
+	local StaticMeshComponent HitStaticMesh;
 
 	// End:0x252
 	if(Impact.HitActor != none)
@@ -910,7 +910,7 @@ simulated function Projectile ProjectileFire()
 
 	IncrementFlashCount();
 	// End:0x1B4
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		StartTrace = Instigator.GetWeaponStartTraceLocation();
 		AimDir = Vector(GetAdjustedAim(StartTrace));
@@ -1124,7 +1124,7 @@ simulated state Active
 		local int I;
 
 		// End:0x1E
-		if(int(Role) == int(ROLE_Authority))
+		if(Role == ROLE_Authority)
 		{
 			CacheAIController();
 		}

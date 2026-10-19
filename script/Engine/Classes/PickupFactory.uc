@@ -19,11 +19,11 @@ var PickupFactory OriginalFactory;
 replication
 {
 	// Pos:0x000
-	if(bNetDirty && int(Role) == int(ROLE_Authority))
+	if(bNetDirty && Role == ROLE_Authority)
 		bPickupHidden;
 
 	// Pos:0x020
-	if(bNetInitial && int(Role) == int(ROLE_Authority))
+	if(bNetInitial && Role == ROLE_Authority)
 		InventoryType;
 }
 
@@ -421,14 +421,11 @@ state Sleeping
 Begin:
 
 	bRespawnPaused = true;
-	J0x0C:
 
 	// End:0x24 [Loop If]
-	if(DelayRespawn())
+	while(DelayRespawn())
 	{
 		Sleep(1.0000000);
-		// [Loop Continue]
-		goto J0x0C;
 	}
 	bRespawnPaused = false;
 	Sleep((GetRespawnTime()) - RespawnEffectTime);
@@ -491,8 +488,8 @@ defaultproperties
 	Components[2]=none
 	Components[3]=CollisionCylinder
 	Components[4]=none
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
-	TickGroup=ETickingGroup.TG_DuringAsyncWork
+	RemoteRole=ROLE_SimulatedProxy
+	TickGroup=TG_DuringAsyncWork
 	bStatic=false
 	bIgnoreEncroachers=true
 	bAlwaysRelevant=true

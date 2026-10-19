@@ -391,7 +391,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 			return true;
 		}
 	}
-	bLastMan = Reason ComplementEqual "LastMan";
+	bLastMan = Reason ~= "LastMan";
 	// End:0x139
 	if(!bLastMan && CheckModifiedEndGame(Winner, Reason))
 	{
@@ -1100,14 +1100,14 @@ function CampaignSkillAdjust(UTBot aBot)
 				}
 			}
 			// End:0x22D
-			if(aBot.PlayerReplicationInfo.PlayerName ComplementEqual "Akasha")
+			if(aBot.PlayerReplicationInfo.PlayerName ~= "Akasha")
 			{
 				aBot.Skill += 1.5000000;				
 			}
 			else
 			{
 				// End:0x291
-				if(aBot.PlayerReplicationInfo.PlayerName ComplementEqual "Loque")
+				if(aBot.PlayerReplicationInfo.PlayerName ~= "Loque")
 				{
 					aBot.Skill += 0.7500000;
 				}
@@ -1510,7 +1510,7 @@ function ParseSpeechRecipients(UTPlayerController Speaker, const out array<Speec
 	local bool bEntireTeam;
 	local UTPlayerReplicationInfo PRI;
 
-	bEntireTeam = ((Words[0].WordText ComplementEqual "Team") || Words[0].WordText ComplementEqual "everyone") || Words[0].WordText ComplementEqual "all";
+	bEntireTeam = ((Words[0].WordText ~= "Team") || Words[0].WordText ~= "everyone") || Words[0].WordText ~= "all";
 	I = 0;
 	J0x95:
 
@@ -1519,7 +1519,7 @@ function ParseSpeechRecipients(UTPlayerController Speaker, const out array<Speec
 	{
 		PRI = UTPlayerReplicationInfo(GameReplicationInfo.PRIArray[I]);
 		// End:0x25A
-		if((((PRI != none) && PRI.Team != none) && PRI.Team == Speaker.PlayerReplicationInfo.Team) && bEntireTeam || PRI.GetCallSign() ComplementEqual Words[0].WordText)
+		if((((PRI != none) && PRI.Team != none) && PRI.Team == Speaker.PlayerReplicationInfo.Team) && bEntireTeam || PRI.GetCallSign() ~= Words[0].WordText)
 		{
 			B = UTBot(GameReplicationInfo.PRIArray[I].Owner);
 			// End:0x25A

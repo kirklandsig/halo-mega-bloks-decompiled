@@ -423,7 +423,7 @@ struct TAlphaBlend
 		AlphaTarget=0.0000000
 		BlendTime=0.6700000
 		BlendTimeToGo=0.0000000
-		BlendType=AlphaBlendType.ABT_Linear
+		BlendType=ABT_Linear
 	}
 };
 
@@ -529,7 +529,7 @@ struct InterpCurvePointFloat
 		OutVal=0.0000000
 		ArriveTangent=0.0000000
 		LeaveTangent=0.0000000
-		InterpMode=EInterpCurveMode.CIM_Linear
+		InterpMode=CIM_Linear
 	}
 };
 
@@ -541,7 +541,7 @@ struct InterpCurveFloat
 	structdefaultproperties
 	{
 		Points=none
-		InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents
+		InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents
 	}
 };
 
@@ -559,7 +559,7 @@ struct InterpCurvePointVector2D
 		OutVal=(X=0.0000000,Y=0.0000000)
 		ArriveTangent=(X=0.0000000,Y=0.0000000)
 		LeaveTangent=(X=0.0000000,Y=0.0000000)
-		InterpMode=EInterpCurveMode.CIM_Linear
+		InterpMode=CIM_Linear
 	}
 };
 
@@ -571,7 +571,7 @@ struct InterpCurveVector2D
 	structdefaultproperties
 	{
 		Points=none
-		InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents
+		InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents
 	}
 };
 
@@ -589,7 +589,7 @@ struct InterpCurvePointVector
 		OutVal=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 		ArriveTangent=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 		LeaveTangent=(X=0.0000000,Y=0.0000000,Z=0.0000000)
-		InterpMode=EInterpCurveMode.CIM_Linear
+		InterpMode=CIM_Linear
 	}
 };
 
@@ -601,7 +601,7 @@ struct InterpCurveVector
 	structdefaultproperties
 	{
 		Points=none
-		InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents
+		InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents
 	}
 };
 
@@ -619,7 +619,7 @@ struct InterpCurvePointTwoVectors
 		OutVal=(v1=(X=0.0000000,Y=0.0000000,Z=0.0000000),v2=(X=0.0000000,Y=0.0000000,Z=0.0000000))
 		ArriveTangent=(v1=(X=0.0000000,Y=0.0000000,Z=0.0000000),v2=(X=0.0000000,Y=0.0000000,Z=0.0000000))
 		LeaveTangent=(v1=(X=0.0000000,Y=0.0000000,Z=0.0000000),v2=(X=0.0000000,Y=0.0000000,Z=0.0000000))
-		InterpMode=EInterpCurveMode.CIM_Linear
+		InterpMode=CIM_Linear
 	}
 };
 
@@ -631,7 +631,7 @@ struct InterpCurveTwoVectors
 	structdefaultproperties
 	{
 		Points=none
-		InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents
+		InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents
 	}
 };
 
@@ -649,7 +649,7 @@ struct InterpCurvePointQuat
 		OutVal=(X=0.0000000,Y=0.0000000,Z=0.0000000,W=0.0000000)
 		ArriveTangent=(X=0.0000000,Y=0.0000000,Z=0.0000000,W=0.0000000)
 		LeaveTangent=(X=0.0000000,Y=0.0000000,Z=0.0000000,W=0.0000000)
-		InterpMode=EInterpCurveMode.CIM_Linear
+		InterpMode=CIM_Linear
 	}
 };
 
@@ -661,7 +661,7 @@ struct InterpCurveQuat
 	structdefaultproperties
 	{
 		Points=none
-		InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents
+		InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents
 	}
 };
 
@@ -679,7 +679,7 @@ struct InterpCurvePointLinearColor
 		OutVal=(R=1.0000000,G=0.0000000,B=0.0000000,A=0.0000000)
 		ArriveTangent=(R=1.0000000,G=0.0000000,B=0.0000000,A=0.0000000)
 		LeaveTangent=(R=1.0000000,G=0.0000000,B=0.0000000,A=0.0000000)
-		InterpMode=EInterpCurveMode.CIM_Linear
+		InterpMode=CIM_Linear
 	}
 };
 
@@ -691,7 +691,7 @@ struct InterpCurveLinearColor
 	structdefaultproperties
 	{
 		Points=none
-		InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents
+		InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents
 	}
 };
 
@@ -757,130 +757,130 @@ var native const editconst Class Class;
 var native const editconst Object ObjectArchetype;
 
 // Export UObject::execNot_PreBool(FFrame&, void* const)
-native(129) static final preoperator bool Not_PreBool(bool A);
+native(129) static final preoperator bool !(bool A);
 
 // Export UObject::execEqualEqual_BoolBool(FFrame&, void* const)
-native(242) static final operator(24) bool EqualEqual_BoolBool(bool A, bool B);
+native(242) static final operator(24) bool ==(bool A, bool B);
 
 // Export UObject::execNotEqual_BoolBool(FFrame&, void* const)
-native(243) static final operator(26) bool NotEqual_BoolBool(bool A, bool B);
+native(243) static final operator(26) bool !=(bool A, bool B);
 
 // Export UObject::execAndAnd_BoolBool(FFrame&, void* const)
-native(130) static final operator(30) bool AndAnd_BoolBool(bool A, skip bool B);
+native(130) static final operator(30) bool &&(bool A, skip bool B);
 
 // Export UObject::execXorXor_BoolBool(FFrame&, void* const)
-native(131) static final operator(30) bool XorXor_BoolBool(bool A, bool B);
+native(131) static final operator(30) bool ^^(bool A, bool B);
 
 // Export UObject::execOrOr_BoolBool(FFrame&, void* const)
-native(132) static final operator(32) bool OrOr_BoolBool(bool A, skip bool B);
+native(132) static final operator(32) bool ||(bool A, skip bool B);
 
 // Export UObject::execMultiplyEqual_ByteByte(FFrame&, void* const)
-native(133) static final operator(34) byte MultiplyEqual_ByteByte(out byte A, byte B);
+native(133) static final operator(34) byte *=(out byte A, byte B);
 
 // Export UObject::execMultiplyEqual_ByteFloat(FFrame&, void* const)
-native(198) static final operator(34) byte MultiplyEqual_ByteFloat(out byte A, float B);
+native(198) static final operator(34) byte *=(out byte A, float B);
 
 // Export UObject::execDivideEqual_ByteByte(FFrame&, void* const)
-native(134) static final operator(34) byte DivideEqual_ByteByte(out byte A, byte B);
+native(134) static final operator(34) byte /=(out byte A, byte B);
 
 // Export UObject::execAddEqual_ByteByte(FFrame&, void* const)
-native(135) static final operator(34) byte AddEqual_ByteByte(out byte A, byte B);
+native(135) static final operator(34) byte +=(out byte A, byte B);
 
 // Export UObject::execSubtractEqual_ByteByte(FFrame&, void* const)
-native(136) static final operator(34) byte SubtractEqual_ByteByte(out byte A, byte B);
+native(136) static final operator(34) byte -=(out byte A, byte B);
 
 // Export UObject::execAddAdd_PreByte(FFrame&, void* const)
-native(137) static final preoperator byte AddAdd_PreByte(out byte A);
+native(137) static final preoperator byte ++(out byte A);
 
 // Export UObject::execSubtractSubtract_PreByte(FFrame&, void* const)
-native(138) static final preoperator byte SubtractSubtract_PreByte(out byte A);
+native(138) static final preoperator byte --(out byte A);
 
 // Export UObject::execAddAdd_Byte(FFrame&, void* const)
-native(139) static final postoperator byte AddAdd_Byte(out byte A);
+native(139) static final postoperator byte ++(out byte A);
 
 // Export UObject::execSubtractSubtract_Byte(FFrame&, void* const)
-native(140) static final postoperator byte SubtractSubtract_Byte(out byte A);
+native(140) static final postoperator byte --(out byte A);
 
 // Export UObject::execComplement_PreInt(FFrame&, void* const)
-native(141) static final preoperator int Complement_PreInt(int A);
+native(141) static final preoperator int ~(int A);
 
 // Export UObject::execSubtract_PreInt(FFrame&, void* const)
-native(143) static final preoperator int Subtract_PreInt(int A);
+native(143) static final preoperator int -(int A);
 
 // Export UObject::execMultiply_IntInt(FFrame&, void* const)
-native(144) static final operator(16) int Multiply_IntInt(int A, int B);
+native(144) static final operator(16) int *(int A, int B);
 
 // Export UObject::execDivide_IntInt(FFrame&, void* const)
-native(145) static final operator(16) int Divide_IntInt(int A, int B);
+native(145) static final operator(16) int /(int A, int B);
 
 // Export UObject::execPercent_IntInt(FFrame&, void* const)
-native(253) static final operator(18) int Percent_IntInt(int A, int B);
+native(253) static final operator(18) int %(int A, int B);
 
 // Export UObject::execAdd_IntInt(FFrame&, void* const)
-native(146) static final operator(20) int Add_IntInt(int A, int B);
+native(146) static final operator(20) int +(int A, int B);
 
 // Export UObject::execSubtract_IntInt(FFrame&, void* const)
-native(147) static final operator(20) int Subtract_IntInt(int A, int B);
+native(147) static final operator(20) int -(int A, int B);
 
 // Export UObject::execLessLess_IntInt(FFrame&, void* const)
-native(148) static final operator(22) int LessLess_IntInt(int A, int B);
+native(148) static final operator(22) int <<(int A, int B);
 
 // Export UObject::execGreaterGreater_IntInt(FFrame&, void* const)
-native(149) static final operator(22) int GreaterGreater_IntInt(int A, int B);
+native(149) static final operator(22) int >>(int A, int B);
 
 // Export UObject::execGreaterGreaterGreater_IntInt(FFrame&, void* const)
-native(196) static final operator(22) int GreaterGreaterGreater_IntInt(int A, int B);
+native(196) static final operator(22) int >>>(int A, int B);
 
 // Export UObject::execLess_IntInt(FFrame&, void* const)
-native(150) static final operator(24) bool Less_IntInt(int A, int B);
+native(150) static final operator(24) bool <(int A, int B);
 
 // Export UObject::execGreater_IntInt(FFrame&, void* const)
-native(151) static final operator(24) bool Greater_IntInt(int A, int B);
+native(151) static final operator(24) bool >(int A, int B);
 
 // Export UObject::execLessEqual_IntInt(FFrame&, void* const)
-native(152) static final operator(24) bool LessEqual_IntInt(int A, int B);
+native(152) static final operator(24) bool <=(int A, int B);
 
 // Export UObject::execGreaterEqual_IntInt(FFrame&, void* const)
-native(153) static final operator(24) bool GreaterEqual_IntInt(int A, int B);
+native(153) static final operator(24) bool >=(int A, int B);
 
 // Export UObject::execEqualEqual_IntInt(FFrame&, void* const)
-native(154) static final operator(24) bool EqualEqual_IntInt(int A, int B);
+native(154) static final operator(24) bool ==(int A, int B);
 
 // Export UObject::execNotEqual_IntInt(FFrame&, void* const)
-native(155) static final operator(26) bool NotEqual_IntInt(int A, int B);
+native(155) static final operator(26) bool !=(int A, int B);
 
 // Export UObject::execAnd_IntInt(FFrame&, void* const)
-native(156) static final operator(28) int And_IntInt(int A, int B);
+native(156) static final operator(28) int &(int A, int B);
 
 // Export UObject::execXor_IntInt(FFrame&, void* const)
-native(157) static final operator(28) int Xor_IntInt(int A, int B);
+native(157) static final operator(28) int ^(int A, int B);
 
 // Export UObject::execOr_IntInt(FFrame&, void* const)
-native(158) static final operator(28) int Or_IntInt(int A, int B);
+native(158) static final operator(28) int |(int A, int B);
 
 // Export UObject::execMultiplyEqual_IntFloat(FFrame&, void* const)
-native(159) static final operator(34) int MultiplyEqual_IntFloat(out int A, float B);
+native(159) static final operator(34) int *=(out int A, float B);
 
 // Export UObject::execDivideEqual_IntFloat(FFrame&, void* const)
-native(160) static final operator(34) int DivideEqual_IntFloat(out int A, float B);
+native(160) static final operator(34) int /=(out int A, float B);
 
 // Export UObject::execAddEqual_IntInt(FFrame&, void* const)
-native(161) static final operator(34) int AddEqual_IntInt(out int A, int B);
+native(161) static final operator(34) int +=(out int A, int B);
 
 // Export UObject::execSubtractEqual_IntInt(FFrame&, void* const)
-native(162) static final operator(34) int SubtractEqual_IntInt(out int A, int B);
+native(162) static final operator(34) int -=(out int A, int B);
 
 // Export UObject::execAddAdd_PreInt(FFrame&, void* const)
-native(163) static final preoperator int AddAdd_PreInt(out int A);
+native(163) static final preoperator int ++(out int A);
 
 // Export UObject::execSubtractSubtract_PreInt(FFrame&, void* const)
-native(164) static final preoperator int SubtractSubtract_PreInt(out int A);
+native(164) static final preoperator int --(out int A);
 
 // Export UObject::execAddAdd_Int(FFrame&, void* const)
-native(165) static final postoperator int AddAdd_Int(out int A);
+native(165) static final postoperator int ++(out int A);
 
 // Export UObject::execSubtractSubtract_Int(FFrame&, void* const)
-native(166) static final postoperator int SubtractSubtract_Int(out int A);
+native(166) static final postoperator int --(out int A);
 
 // Export UObject::execRand(FFrame&, void* const)
 native(167) static final function int Rand(int Max);
@@ -898,58 +898,58 @@ native(251) static final function int Clamp(int V, int A, int B);
 native static final function string ToHex(int A);
 
 // Export UObject::execSubtract_PreFloat(FFrame&, void* const)
-native(169) static final preoperator float Subtract_PreFloat(float A);
+native(169) static final preoperator float -(float A);
 
 // Export UObject::execMultiplyMultiply_FloatFloat(FFrame&, void* const)
-native(170) static final operator(12) float MultiplyMultiply_FloatFloat(float Base, float Exp);
+native(170) static final operator(12) float **(float Base, float Exp);
 
 // Export UObject::execMultiply_FloatFloat(FFrame&, void* const)
-native(171) static final operator(16) float Multiply_FloatFloat(float A, float B);
+native(171) static final operator(16) float *(float A, float B);
 
 // Export UObject::execDivide_FloatFloat(FFrame&, void* const)
-native(172) static final operator(16) float Divide_FloatFloat(float A, float B);
+native(172) static final operator(16) float /(float A, float B);
 
 // Export UObject::execPercent_FloatFloat(FFrame&, void* const)
-native(173) static final operator(18) float Percent_FloatFloat(float A, float B);
+native(173) static final operator(18) float %(float A, float B);
 
 // Export UObject::execAdd_FloatFloat(FFrame&, void* const)
-native(174) static final operator(20) float Add_FloatFloat(float A, float B);
+native(174) static final operator(20) float +(float A, float B);
 
 // Export UObject::execSubtract_FloatFloat(FFrame&, void* const)
-native(175) static final operator(20) float Subtract_FloatFloat(float A, float B);
+native(175) static final operator(20) float -(float A, float B);
 
 // Export UObject::execLess_FloatFloat(FFrame&, void* const)
-native(176) static final operator(24) bool Less_FloatFloat(float A, float B);
+native(176) static final operator(24) bool <(float A, float B);
 
 // Export UObject::execGreater_FloatFloat(FFrame&, void* const)
-native(177) static final operator(24) bool Greater_FloatFloat(float A, float B);
+native(177) static final operator(24) bool >(float A, float B);
 
 // Export UObject::execLessEqual_FloatFloat(FFrame&, void* const)
-native(178) static final operator(24) bool LessEqual_FloatFloat(float A, float B);
+native(178) static final operator(24) bool <=(float A, float B);
 
 // Export UObject::execGreaterEqual_FloatFloat(FFrame&, void* const)
-native(179) static final operator(24) bool GreaterEqual_FloatFloat(float A, float B);
+native(179) static final operator(24) bool >=(float A, float B);
 
 // Export UObject::execEqualEqual_FloatFloat(FFrame&, void* const)
-native(180) static final operator(24) bool EqualEqual_FloatFloat(float A, float B);
+native(180) static final operator(24) bool ==(float A, float B);
 
 // Export UObject::execComplementEqual_FloatFloat(FFrame&, void* const)
-native(210) static final operator(24) bool ComplementEqual_FloatFloat(float A, float B);
+native(210) static final operator(24) bool ~=(float A, float B);
 
 // Export UObject::execNotEqual_FloatFloat(FFrame&, void* const)
-native(181) static final operator(26) bool NotEqual_FloatFloat(float A, float B);
+native(181) static final operator(26) bool !=(float A, float B);
 
 // Export UObject::execMultiplyEqual_FloatFloat(FFrame&, void* const)
-native(182) static final operator(34) float MultiplyEqual_FloatFloat(out float A, float B);
+native(182) static final operator(34) float *=(out float A, float B);
 
 // Export UObject::execDivideEqual_FloatFloat(FFrame&, void* const)
-native(183) static final operator(34) float DivideEqual_FloatFloat(out float A, float B);
+native(183) static final operator(34) float /=(out float A, float B);
 
 // Export UObject::execAddEqual_FloatFloat(FFrame&, void* const)
-native(184) static final operator(34) float AddEqual_FloatFloat(out float A, float B);
+native(184) static final operator(34) float +=(out float A, float B);
 
 // Export UObject::execSubtractEqual_FloatFloat(FFrame&, void* const)
-native(185) static final operator(34) float SubtractEqual_FloatFloat(out float A, float B);
+native(185) static final operator(34) float -=(out float A, float B);
 
 // Export UObject::execAbs(FFrame&, void* const)
 native(186) static final function float Abs(float A);
@@ -1048,58 +1048,58 @@ native static final function float FInterpTo(float Current, float Target, float 
 native static final function float FInterpConstantTo(float Current, float Target, float DeltaTime, float InterpSpeed);
 
 // Export UObject::execSubtract_PreVector(FFrame&, void* const)
-native(211) static final preoperator Vector Subtract_PreVector(Vector A);
+native(211) static final preoperator Vector -(Vector A);
 
 // Export UObject::execMultiply_VectorFloat(FFrame&, void* const)
-native(212) static final operator(16) Vector Multiply_VectorFloat(Vector A, float B);
+native(212) static final operator(16) Vector *(Vector A, float B);
 
 // Export UObject::execMultiply_FloatVector(FFrame&, void* const)
-native(213) static final operator(16) Vector Multiply_FloatVector(float A, Vector B);
+native(213) static final operator(16) Vector *(float A, Vector B);
 
 // Export UObject::execMultiply_VectorVector(FFrame&, void* const)
-native(296) static final operator(16) Vector Multiply_VectorVector(Vector A, Vector B);
+native(296) static final operator(16) Vector *(Vector A, Vector B);
 
 // Export UObject::execDivide_VectorFloat(FFrame&, void* const)
-native(214) static final operator(16) Vector Divide_VectorFloat(Vector A, float B);
+native(214) static final operator(16) Vector /(Vector A, float B);
 
 // Export UObject::execAdd_VectorVector(FFrame&, void* const)
-native(215) static final operator(20) Vector Add_VectorVector(Vector A, Vector B);
+native(215) static final operator(20) Vector +(Vector A, Vector B);
 
 // Export UObject::execSubtract_VectorVector(FFrame&, void* const)
-native(216) static final operator(20) Vector Subtract_VectorVector(Vector A, Vector B);
+native(216) static final operator(20) Vector -(Vector A, Vector B);
 
 // Export UObject::execLessLess_VectorRotator(FFrame&, void* const)
-native(275) static final operator(22) Vector LessLess_VectorRotator(Vector A, Rotator B);
+native(275) static final operator(22) Vector <<(Vector A, Rotator B);
 
 // Export UObject::execGreaterGreater_VectorRotator(FFrame&, void* const)
-native(276) static final operator(22) Vector GreaterGreater_VectorRotator(Vector A, Rotator B);
+native(276) static final operator(22) Vector >>(Vector A, Rotator B);
 
 // Export UObject::execEqualEqual_VectorVector(FFrame&, void* const)
-native(217) static final operator(24) bool EqualEqual_VectorVector(Vector A, Vector B);
+native(217) static final operator(24) bool ==(Vector A, Vector B);
 
 // Export UObject::execNotEqual_VectorVector(FFrame&, void* const)
-native(218) static final operator(26) bool NotEqual_VectorVector(Vector A, Vector B);
+native(218) static final operator(26) bool !=(Vector A, Vector B);
 
 // Export UObject::execDot_VectorVector(FFrame&, void* const)
-native(219) static final operator(16) float Dot_VectorVector(Vector A, Vector B);
+native(219) static final operator(16) float Dot(Vector A, Vector B);
 
 // Export UObject::execCross_VectorVector(FFrame&, void* const)
-native(220) static final operator(16) Vector Cross_VectorVector(Vector A, Vector B);
+native(220) static final operator(16) Vector Cross(Vector A, Vector B);
 
 // Export UObject::execMultiplyEqual_VectorFloat(FFrame&, void* const)
-native(221) static final operator(34) Vector MultiplyEqual_VectorFloat(out Vector A, float B);
+native(221) static final operator(34) Vector *=(out Vector A, float B);
 
 // Export UObject::execMultiplyEqual_VectorVector(FFrame&, void* const)
-native(297) static final operator(34) Vector MultiplyEqual_VectorVector(out Vector A, Vector B);
+native(297) static final operator(34) Vector *=(out Vector A, Vector B);
 
 // Export UObject::execDivideEqual_VectorFloat(FFrame&, void* const)
-native(222) static final operator(34) Vector DivideEqual_VectorFloat(out Vector A, float B);
+native(222) static final operator(34) Vector /=(out Vector A, float B);
 
 // Export UObject::execAddEqual_VectorVector(FFrame&, void* const)
-native(223) static final operator(34) Vector AddEqual_VectorVector(out Vector A, Vector B);
+native(223) static final operator(34) Vector +=(out Vector A, Vector B);
 
 // Export UObject::execSubtractEqual_VectorVector(FFrame&, void* const)
-native(224) static final operator(34) Vector SubtractEqual_VectorVector(out Vector A, Vector B);
+native(224) static final operator(34) Vector -=(out Vector A, Vector B);
 
 // Export UObject::execVSize(FFrame&, void* const)
 native(225) static final function float VSize(Vector A);
@@ -1172,40 +1172,40 @@ final simulated function bool InCylinder(Vector Origin, Rotator Dir, float Width
 }
 
 // Export UObject::execEqualEqual_RotatorRotator(FFrame&, void* const)
-native(142) static final operator(24) bool EqualEqual_RotatorRotator(Rotator A, Rotator B);
+native(142) static final operator(24) bool ==(Rotator A, Rotator B);
 
 // Export UObject::execNotEqual_RotatorRotator(FFrame&, void* const)
-native(203) static final operator(26) bool NotEqual_RotatorRotator(Rotator A, Rotator B);
+native(203) static final operator(26) bool !=(Rotator A, Rotator B);
 
 // Export UObject::execMultiply_RotatorFloat(FFrame&, void* const)
-native(287) static final operator(16) Rotator Multiply_RotatorFloat(Rotator A, float B);
+native(287) static final operator(16) Rotator *(Rotator A, float B);
 
 // Export UObject::execMultiply_FloatRotator(FFrame&, void* const)
-native(288) static final operator(16) Rotator Multiply_FloatRotator(float A, Rotator B);
+native(288) static final operator(16) Rotator *(float A, Rotator B);
 
 // Export UObject::execDivide_RotatorFloat(FFrame&, void* const)
-native(289) static final operator(16) Rotator Divide_RotatorFloat(Rotator A, float B);
+native(289) static final operator(16) Rotator /(Rotator A, float B);
 
 // Export UObject::execMultiplyEqual_RotatorFloat(FFrame&, void* const)
-native(290) static final operator(34) Rotator MultiplyEqual_RotatorFloat(out Rotator A, float B);
+native(290) static final operator(34) Rotator *=(out Rotator A, float B);
 
 // Export UObject::execDivideEqual_RotatorFloat(FFrame&, void* const)
-native(291) static final operator(34) Rotator DivideEqual_RotatorFloat(out Rotator A, float B);
+native(291) static final operator(34) Rotator /=(out Rotator A, float B);
 
 // Export UObject::execAdd_RotatorRotator(FFrame&, void* const)
-native(316) static final operator(20) Rotator Add_RotatorRotator(Rotator A, Rotator B);
+native(316) static final operator(20) Rotator +(Rotator A, Rotator B);
 
 // Export UObject::execSubtract_RotatorRotator(FFrame&, void* const)
-native(317) static final operator(20) Rotator Subtract_RotatorRotator(Rotator A, Rotator B);
+native(317) static final operator(20) Rotator -(Rotator A, Rotator B);
 
 // Export UObject::execAddEqual_RotatorRotator(FFrame&, void* const)
-native(318) static final operator(34) Rotator AddEqual_RotatorRotator(out Rotator A, Rotator B);
+native(318) static final operator(34) Rotator +=(out Rotator A, Rotator B);
 
 // Export UObject::execSubtractEqual_RotatorRotator(FFrame&, void* const)
-native(319) static final operator(34) Rotator SubtractEqual_RotatorRotator(out Rotator A, Rotator B);
+native(319) static final operator(34) Rotator -=(out Rotator A, Rotator B);
 
 // Export UObject::execClockwiseFrom_IntInt(FFrame&, void* const)
-native static final operator(24) bool ClockwiseFrom_IntInt(int A, int B);
+native static final operator(24) bool ClockwiseFrom(int A, int B);
 
 // Export UObject::execGetAxes(FFrame&, void* const)
 native(229) static final function GetAxes(Rotator A, out Vector X, out Vector Y, out Vector Z);
@@ -1366,40 +1366,40 @@ static final function Rotator MakeRotator(int Pitch, int Yaw, int Roll)
 }
 
 // Export UObject::execConcat_StrStr(FFrame&, void* const)
-native(112) static final operator(40) string Concat_StrStr(coerce string A, coerce string B);
+native(112) static final operator(40) string $(coerce string A, coerce string B);
 
 // Export UObject::execAt_StrStr(FFrame&, void* const)
-native(168) static final operator(40) string At_StrStr(coerce string A, coerce string B);
+native(168) static final operator(40) string @(coerce string A, coerce string B);
 
 // Export UObject::execLess_StrStr(FFrame&, void* const)
-native(115) static final operator(24) bool Less_StrStr(string A, string B);
+native(115) static final operator(24) bool <(string A, string B);
 
 // Export UObject::execGreater_StrStr(FFrame&, void* const)
-native(116) static final operator(24) bool Greater_StrStr(string A, string B);
+native(116) static final operator(24) bool >(string A, string B);
 
 // Export UObject::execLessEqual_StrStr(FFrame&, void* const)
-native(120) static final operator(24) bool LessEqual_StrStr(string A, string B);
+native(120) static final operator(24) bool <=(string A, string B);
 
 // Export UObject::execGreaterEqual_StrStr(FFrame&, void* const)
-native(121) static final operator(24) bool GreaterEqual_StrStr(string A, string B);
+native(121) static final operator(24) bool >=(string A, string B);
 
 // Export UObject::execEqualEqual_StrStr(FFrame&, void* const)
-native(122) static final operator(24) bool EqualEqual_StrStr(string A, string B);
+native(122) static final operator(24) bool ==(string A, string B);
 
 // Export UObject::execNotEqual_StrStr(FFrame&, void* const)
-native(123) static final operator(26) bool NotEqual_StrStr(string A, string B);
+native(123) static final operator(26) bool !=(string A, string B);
 
 // Export UObject::execComplementEqual_StrStr(FFrame&, void* const)
-native(124) static final operator(24) bool ComplementEqual_StrStr(string A, string B);
+native(124) static final operator(24) bool ~=(string A, string B);
 
 // Export UObject::execConcatEqual_StrStr(FFrame&, void* const)
-native(322) static final operator(44) string ConcatEqual_StrStr(out string A, coerce string B);
+native(322) static final operator(44) string $=(out string A, coerce string B);
 
 // Export UObject::execAtEqual_StrStr(FFrame&, void* const)
-native(323) static final operator(44) string AtEqual_StrStr(out string A, coerce string B);
+native(323) static final operator(44) string @=(out string A, coerce string B);
 
 // Export UObject::execSubtractEqual_StrStr(FFrame&, void* const)
-native(324) static final operator(45) string SubtractEqual_StrStr(out string A, coerce string B);
+native(324) static final operator(45) string -=(out string A, coerce string B);
 
 // Export UObject::execLen(FFrame&, void* const)
 native(125) static final function int Len(coerce string S);
@@ -1516,16 +1516,16 @@ static final function array<string> SplitString(string Source, optional string D
 native static final function string PathName(Object CheckObject);
 
 // Export UObject::execEqualEqual_ObjectObject(FFrame&, void* const)
-native(114) static final operator(24) bool EqualEqual_ObjectObject(Object A, Object B);
+native(114) static final operator(24) bool ==(Object A, Object B);
 
 // Export UObject::execNotEqual_ObjectObject(FFrame&, void* const)
-native(119) static final operator(26) bool NotEqual_ObjectObject(Object A, Object B);
+native(119) static final operator(26) bool !=(Object A, Object B);
 
 // Export UObject::execEqualEqual_InterfaceInterface(FFrame&, void* const)
-native static final operator(24) bool EqualEqual_InterfaceInterface(Interface A, Interface B);
+native static final operator(24) bool ==(Interface A, Interface B);
 
 // Export UObject::execNotEqual_InterfaceInterface(FFrame&, void* const)
-native static final operator(26) bool NotEqual_InterfaceInterface(Interface A, Interface B);
+native static final operator(26) bool !=(Interface A, Interface B);
 
 // Export UObject::execClassIsChildOf(FFrame&, void* const)
 native(258) static final function bool ClassIsChildOf(Class TestClass, Class ParentClass);
@@ -1534,13 +1534,13 @@ native(258) static final function bool ClassIsChildOf(Class TestClass, Class Par
 native(197) final function bool IsA(name ClassName);
 
 // Export UObject::execEqualEqual_NameName(FFrame&, void* const)
-native(254) static final operator(24) bool EqualEqual_NameName(name A, name B);
+native(254) static final operator(24) bool ==(name A, name B);
 
 // Export UObject::execNotEqual_NameName(FFrame&, void* const)
-native(255) static final operator(26) bool NotEqual_NameName(name A, name B);
+native(255) static final operator(26) bool !=(name A, name B);
 
 // Export UObject::execMultiply_MatrixMatrix(FFrame&, void* const)
-native static final operator(34) Matrix Multiply_MatrixMatrix(Matrix A, Matrix B);
+native static final operator(34) Matrix *(Matrix A, Matrix B);
 
 // Export UObject::execTransformVector(FFrame&, void* const)
 native static final function Vector TransformVector(Matrix TM, Vector A);
@@ -1597,34 +1597,34 @@ native static final function Rotator QuatToRotator(Quat A);
 native static final function Quat QuatSlerp(Quat A, Quat B, float Alpha, optional bool bShortestPath);
 
 // Export UObject::execAdd_QuatQuat(FFrame&, void* const)
-native(270) static final operator(16) Quat Add_QuatQuat(Quat A, Quat B);
+native(270) static final operator(16) Quat +(Quat A, Quat B);
 
 // Export UObject::execSubtract_QuatQuat(FFrame&, void* const)
-native(271) static final operator(16) Quat Subtract_QuatQuat(Quat A, Quat B);
+native(271) static final operator(16) Quat -(Quat A, Quat B);
 
 // Export UObject::execAdd_Vector2DVector2D(FFrame&, void* const)
-native static final operator(16) Vector2D Add_Vector2DVector2D(Vector2D A, Vector2D B);
+native static final operator(16) Vector2D +(Vector2D A, Vector2D B);
 
 // Export UObject::execSubtract_Vector2DVector2D(FFrame&, void* const)
-native static final operator(16) Vector2D Subtract_Vector2DVector2D(Vector2D A, Vector2D B);
+native static final operator(16) Vector2D -(Vector2D A, Vector2D B);
 
 // Export UObject::execMultiply_Vector2DFloat(FFrame&, void* const)
-native static final operator(16) Vector2D Multiply_Vector2DFloat(Vector2D A, float B);
+native static final operator(16) Vector2D *(Vector2D A, float B);
 
 // Export UObject::execDivide_Vector2DFloat(FFrame&, void* const)
-native static final operator(16) Vector2D Divide_Vector2DFloat(Vector2D A, float B);
+native static final operator(16) Vector2D /(Vector2D A, float B);
 
 // Export UObject::execMultiplyEqual_Vector2DFloat(FFrame&, void* const)
-native static final operator(34) Vector2D MultiplyEqual_Vector2DFloat(out Vector2D A, float B);
+native static final operator(34) Vector2D *=(out Vector2D A, float B);
 
 // Export UObject::execDivideEqual_Vector2DFloat(FFrame&, void* const)
-native static final operator(34) Vector2D DivideEqual_Vector2DFloat(out Vector2D A, float B);
+native static final operator(34) Vector2D /=(out Vector2D A, float B);
 
 // Export UObject::execAddEqual_Vector2DVector2D(FFrame&, void* const)
-native static final operator(34) Vector2D AddEqual_Vector2DVector2D(out Vector2D A, Vector2D B);
+native static final operator(34) Vector2D +=(out Vector2D A, Vector2D B);
 
 // Export UObject::execSubtractEqual_Vector2DVector2D(FFrame&, void* const)
-native static final operator(34) Vector2D SubtractEqual_Vector2DVector2D(out Vector2D A, Vector2D B);
+native static final operator(34) Vector2D -=(out Vector2D A, Vector2D B);
 
 static final simulated function float GetRangeValueByPct(Vector2D Range, float Pct)
 {
@@ -1660,7 +1660,7 @@ native static final function Vector EvalInterpCurveVector(const out InterpCurveV
 // Export UObject::execEvalInterpCurveVector2D(FFrame&, void* const)
 native static final function Vector2D EvalInterpCurveVector2D(const out InterpCurveVector2D Vector2DCurve, float InVal);
 
-static final operator(20) Color Subtract_ColorColor(Color A, Color B)
+static final operator(20) Color -(Color A, Color B)
 {
 	A.R -= B.R;
 	A.G -= B.G;
@@ -1669,7 +1669,7 @@ static final operator(20) Color Subtract_ColorColor(Color A, Color B)
 	//return ReturnValue;	
 }
 
-static final operator(16) Color Multiply_FloatColor(float A, Color B)
+static final operator(16) Color *(float A, Color B)
 {
 	B.R *= A;
 	B.G *= A;
@@ -1678,7 +1678,7 @@ static final operator(16) Color Multiply_FloatColor(float A, Color B)
 	//return ReturnValue;	
 }
 
-static final operator(16) Color Multiply_ColorFloat(Color A, float B)
+static final operator(16) Color *(Color A, float B)
 {
 	A.R *= B;
 	A.G *= B;
@@ -1687,7 +1687,7 @@ static final operator(16) Color Multiply_ColorFloat(Color A, float B)
 	//return ReturnValue;	
 }
 
-static final operator(20) Color Add_ColorColor(Color A, Color B)
+static final operator(20) Color +(Color A, Color B)
 {
 	A.R += B.R;
 	A.G += B.G;
@@ -1756,7 +1756,7 @@ static final function Color LinearColorToColor(LinearColor OldColor)
 	//return ReturnValue;	
 }
 
-static final operator(16) LinearColor Multiply_LinearColorFloat(LinearColor LC, float Mult)
+static final operator(16) LinearColor *(LinearColor LC, float Mult)
 {
 	LC.R *= Mult;
 	LC.G *= Mult;
@@ -1765,7 +1765,7 @@ static final operator(16) LinearColor Multiply_LinearColorFloat(LinearColor LC, 
 	//return ReturnValue;	
 }
 
-static final operator(20) LinearColor Subtract_LinearColorLinearColor(LinearColor A, LinearColor B)
+static final operator(20) LinearColor -(LinearColor A, LinearColor B)
 {
 	A.R -= B.R;
 	A.G -= B.G;

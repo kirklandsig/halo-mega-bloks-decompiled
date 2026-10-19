@@ -9,7 +9,7 @@ var AnimNodeSequence MeleeSequence;
 
 function Initialize()
 {
-	local editinline SkeletalMeshComponent SkelMesh;
+	local SkeletalMeshComponent SkelMesh;
 
 	super.Initialize();
 	SkelMesh = Controller.Pawn.Mesh;

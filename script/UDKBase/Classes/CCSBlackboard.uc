@@ -1,5 +1,6 @@
 class CCSBlackboard extends GripBlackboard
-	native;
+	native
+	dependson(CCSCover, CCSTarget);
 
 enum CCSMoveCmd
 {
@@ -36,7 +37,7 @@ struct native CCSMoveCmdData
 
 	structdefaultproperties
 	{
-		MoveCmd=CCSMoveCmd.MOVE_CMD_NONE
+		MoveCmd=MOVE_CMD_NONE
 		Position=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 	}
 };

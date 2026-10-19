@@ -4,7 +4,8 @@ class Pawn extends Actor
 	nativereplication
 	config(Game)
 	placeable
-	implements(Interface_Speaker);
+	implements(Interface_Speaker)
+	dependson(Controller);
 
 enum EPathSearchType
 {
@@ -31,7 +32,6 @@ struct native ScalarParameterInterpStruct
 	}
 };
 
-var private native const noexport Pointer VfTable_IInterface_Speaker;
 var const float MaxStepHeight;
 var const float MaxJumpHeight;
 var const float WalkableFloorZ;
@@ -276,7 +276,7 @@ replication
 		RootMotionInterpRate;
 
 	// Pos:0x116
-	if((int(Role) == int(ROLE_Authority)) && bNetDirty)
+	if((Role == ROLE_Authority) && bNetDirty)
 		HealthMax;
 }
 
@@ -737,7 +737,7 @@ simulated function IncrementFlashCount(Weapon InWeapon, byte InFiringMode)
 	bForceNetUpdate = true;
 	FlashCount++;
 	// End:0x38
-	if(int(FlashCount) == int(0))
+	if(int(FlashCount) == 0)
 	{
 		FlashCount += 2;
 	}
@@ -749,7 +749,7 @@ simulated function IncrementFlashCount(Weapon InWeapon, byte InFiringMode)
 simulated function FlashCountUpdated(Weapon InWeapon, byte InFlashCount, bool bViaReplication)
 {
 	// End:0x35
-	if(int(InFlashCount) > int(0))
+	if(int(InFlashCount) > 0)
 	{
 		WeaponFired(InWeapon, bViaReplication);		
 	}
@@ -763,7 +763,7 @@ simulated function FlashCountUpdated(Weapon InWeapon, byte InFlashCount, bool bV
 simulated function ClearFlashCount(Weapon InWeapon)
 {
 	// End:0x49
-	if(int(FlashCount) != int(0))
+	if(int(FlashCount) != 0)
 	{
 		bForceNetUpdate = true;
 		FlashCount = 0;
@@ -945,7 +945,7 @@ function PossessedBy(Controller C, bool bVehicleTransition)
 	if(C.IsA('PlayerController'))
 	{
 		// End:0x114
-		if(int(WorldInfo.NetMode) != int(NM_Standalone))
+		if(WorldInfo.NetMode != NM_Standalone)
 		{
 			RemoteRole = ROLE_AutonomousProxy;
 		}
@@ -1021,7 +1021,7 @@ function DropToGround()
 
 function bool CanGrabLadder()
 {
-	return ((bCanClimbLadders && Controller != none) && int(Physics) != int(9)) && (int(Physics) != int(2)) || Abs(Velocity.Z) <= JumpZ;
+	return ((bCanClimbLadders && Controller != none) && int(Physics) != 9) && (int(Physics) != 2) || Abs(Velocity.Z) <= JumpZ;
 	//return ReturnValue;	
 }
 
@@ -1050,7 +1050,7 @@ event SetWalking(bool bNewIsWalking)
 simulated function bool CanSplash()
 {
 	// End:0xB2
-	if((((WorldInfo.TimeSeconds - SplashTime) > 0.1500000) && (int(Physics) == int(2)) || int(Physics) == int(4)) && Abs(Velocity.Z) > float(100))
+	if((((WorldInfo.TimeSeconds - SplashTime) > 0.1500000) && (int(Physics) == 2) || int(Physics) == 4) && Abs(Velocity.Z) > float(100))
 	{
 		SplashTime = WorldInfo.TimeSeconds;
 		return true;
@@ -1067,7 +1067,7 @@ function EndClimbLadder(LadderVolume OldLadder)
 		Controller.EndClimbLadder();
 	}
 	// End:0x47
-	if(int(Physics) == int(9))
+	if(int(Physics) == 9)
 	{
 		SetPhysics(2);
 	}
@@ -1123,7 +1123,7 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 	{
 		T = (((("Floor " $ string(Floor)) $ " DesiredSpeed ") $ string(DesiredSpeed)) $ " Crouched ") $ string(bIsCrouched);
 		// End:0x371
-		if((OnLadder != none) || int(Physics) == int(9))
+		if((OnLadder != none) || int(Physics) == 9)
 		{
 			T = (T $ " on ladder ") $ string(OnLadder);
 		}
@@ -1288,7 +1288,7 @@ singular simulated event Rotator GetBaseAimRotation()
 	// End:0xBE
 	if(POVRot.Pitch == 0)
 	{
-		POVRot.Pitch = int(RemoteViewPitch) << int(8);
+		POVRot.Pitch = int(RemoteViewPitch) << 8;
 	}
 	return POVRot;
 	//return ReturnValue;	
@@ -1306,7 +1306,7 @@ simulated event bool InFreeCam()
 simulated function Rotator GetAdjustedAimFor(Weapon W, Vector StartFireLoc)
 {
 	// End:0x30
-	if((Controller == none) || int(Role) < int(ROLE_Authority))
+	if((Controller == none) || Role < ROLE_Authority)
 	{
 		return GetBaseAimRotation();
 	}
@@ -1373,7 +1373,7 @@ event ClientMessage(coerce string S, optional name Type)
 simulated event FellOutOfWorld(Class<DamageType> dmgType)
 {
 	// End:0x79
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		Health = -1;
 		Died(none, dmgType, Location);
@@ -1391,18 +1391,18 @@ simulated event FellOutOfWorld(Class<DamageType> dmgType)
 singular simulated event OutsideWorldBounds()
 {
 	// End:0x34
-	if((int(Role) == int(ROLE_Authority)) && PlayerController(Controller) == none)
+	if((Role == ROLE_Authority) && PlayerController(Controller) == none)
 	{
 		Destroy();		
 	}
 	else
 	{
 		// End:0x53
-		if(int(Role) == int(ROLE_Authority))
+		if(Role == ROLE_Authority)
 		{
 			KilledBy(self);
 		}
-		SetPhysics(ROLE_None);
+		SetPhysics(PHYS_None);
 		SetHidden(true);
 		LifeSpan = FMin(LifeSpan, 1.0000000);
 	}
@@ -1453,7 +1453,7 @@ function AddVelocity(Vector NewVelocity, Vector HitLocation, Class<DamageType> D
 		return;
 	}
 	// End:0x9E
-	if((int(Physics) == int(1)) || ((int(Physics) == int(9)) || int(Physics) == int(8)) && NewVelocity.Z > default.JumpZ)
+	if((int(Physics) == 1) || ((int(Physics) == 9) || int(Physics) == 8) && NewVelocity.Z > default.JumpZ)
 	{
 		SetPhysics(2);
 	}
@@ -1489,7 +1489,7 @@ function TakeFallingDamage()
 	if(Velocity.Z < (-0.5000000 * MaxFallSpeed))
 	{
 		// End:0x130
-		if(int(Role) == int(ROLE_Authority))
+		if(Role == ROLE_Authority)
 		{
 			// End:0x130
 			if(Velocity.Z < (float(-1) * MaxFallSpeed))
@@ -1545,14 +1545,14 @@ simulated function FaceRotation(Rotator NewRotation, float DeltaTime)
 	if(!InFreeCam())
 	{
 		// End:0x4E
-		if(int(Physics) == int(9))
+		if(int(Physics) == 9)
 		{
 			NewRotation = OnLadder.WallDir;			
 		}
 		else
 		{
 			// End:0x96
-			if((int(Physics) == int(1)) || int(Physics) == int(2))
+			if((int(Physics) == 1) || int(Physics) == 2)
 			{
 				NewRotation.Pitch = 0;
 			}
@@ -1591,7 +1591,7 @@ event EncroachedBy(Actor Other)
 function gibbedBy(Actor Other)
 {
 	// End:0x16
-	if(int(Role) < int(ROLE_Authority))
+	if(Role < ROLE_Authority)
 	{
 		return;
 	}
@@ -1693,7 +1693,7 @@ simulated event Destroyed()
 		InvManager.Destroy();
 	}
 	// End:0x5D
-	if(int(WorldInfo.NetMode) == int(NM_Client))
+	if(WorldInfo.NetMode == NM_Client)
 	{
 		return;
 	}
@@ -1735,7 +1735,7 @@ event PostBeginPlay()
 		FacialAudioComp.__OnAudioFinished__Delegate = FaceFXAudioFinished;
 	}
 	// End:0x1BF
-	if(((int(Role) == int(ROLE_Authority)) && InvManager == none) && InventoryManagerClass != none)
+	if(((Role == ROLE_Authority) && InvManager == none) && InventoryManagerClass != none)
 	{
 		InvManager = Spawn(InventoryManagerClass, self);
 		// End:0x19F
@@ -1869,7 +1869,7 @@ function SetMovementPhysics()
 	else
 	{
 		// End:0x43
-		if(int(Physics) != int(2))
+		if(int(Physics) != 2)
 		{
 			SetPhysics(2);
 		}
@@ -1982,7 +1982,7 @@ event TakeDamage(int Damage, Controller InstigatedBy, Vector HitLocation, Vector
 	local Controller Killer;
 
 	// End:0x29
-	if((int(Role) < int(ROLE_Authority)) || Health <= 0)
+	if((Role < ROLE_Authority) || Health <= 0)
 	{
 		return;
 	}
@@ -2002,12 +2002,12 @@ event TakeDamage(int Damage, Controller InstigatedBy, Vector HitLocation, Vector
 	}
 	Damage = Max(Damage, 0);
 	// End:0x15B
-	if((int(Physics) == int(0)) && DrivenVehicle == none)
+	if((int(Physics) == 0) && DrivenVehicle == none)
 	{
 		SetMovementPhysics();
 	}
 	// End:0x1E0
-	if((int(Physics) == int(1)) && DamageType.default.bExtraMomentumZ)
+	if((int(Physics) == 1) && DamageType.default.bExtraMomentumZ)
 	{
 		Momentum.Z = FMax(Momentum.Z, 0.4000000 * VSize(Momentum));
 	}
@@ -2229,7 +2229,7 @@ event TickSpecial(float DeltaTime)
 event HeadVolumeChange(PhysicsVolume newHeadVolume)
 {
 	// End:0x3C
-	if((int(WorldInfo.NetMode) == int(NM_Client)) || Controller == none)
+	if((WorldInfo.NetMode == NM_Client) || Controller == none)
 	{
 		return;
 	}
@@ -2281,7 +2281,7 @@ event BreathTimer()
 	if(HeadVolume.bWaterVolume)
 	{
 		// End:0x6F
-		if(((Health < 0) || int(WorldInfo.NetMode) == int(NM_Client)) || DrivenVehicle != none)
+		if(((Health < 0) || WorldInfo.NetMode == NM_Client) || DrivenVehicle != none)
 		{
 			return;
 		}
@@ -2313,7 +2313,7 @@ function bool CheckWaterJump(out Vector WallNormal)
 	if(AIController(Controller) != none)
 	{
 		// End:0x117
-		if((Controller.InLatentExecution(Controller.503) && Controller.MoveTarget != none) && !Controller.MoveTarget.PhysicsVolume.bWaterVolume)
+		if((Controller.InLatentExecution(Controller.LATENT_MOVETOWARD) && Controller.MoveTarget != none) && !Controller.MoveTarget.PhysicsVolume.bWaterVolume)
 		{
 			Checkpoint = Normal(Controller.MoveTarget.Location - Location);			
 		}
@@ -2355,17 +2355,17 @@ function bool CheckWaterJump(out Vector WallNormal)
 function bool DoJump(bool bUpdating)
 {
 	// End:0x203
-	if(((bJumpCapable && !bIsCrouched) && !bWantsToCrouch) && ((int(Physics) == int(1)) || int(Physics) == int(9)) || int(Physics) == int(8))
+	if(((bJumpCapable && !bIsCrouched) && !bWantsToCrouch) && ((int(Physics) == 1) || int(Physics) == 9) || int(Physics) == 8)
 	{
 		// End:0xA6
-		if(int(Physics) == int(8))
+		if(int(Physics) == 8)
 		{
 			Velocity = JumpZ * Floor;			
 		}
 		else
 		{
 			// End:0xDF
-			if(int(Physics) == int(9))
+			if(int(Physics) == 9)
 			{
 				Velocity.Z = 0.0000000;				
 			}
@@ -2413,16 +2413,16 @@ function PlayHit(float Damage, Controller InstigatedBy, Vector HitLocation, Clas
 simulated function TurnOff()
 {
 	// End:0x20
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		RemoteRole = ROLE_SimulatedProxy;
 	}
 	// End:0xD4
-	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && Mesh != none)
+	if((WorldInfo.NetMode != NM_DedicatedServer) && Mesh != none)
 	{
 		Mesh.bPauseAnims = true;
 		// End:0xD4
-		if(int(Physics) == int(10))
+		if(int(Physics) == 10)
 		{
 			Mesh.PhysicsWeight = 1.0000000;
 			Mesh.bUpdateKinematicBonesFromAnimation = false;
@@ -2444,7 +2444,7 @@ simulated function TurnOff()
 function SetDyingPhysics()
 {
 	// End:0x19
-	if(int(Physics) != int(10))
+	if(int(Physics) != 10)
 	{
 		SetPhysics(2);
 	}
@@ -2537,7 +2537,7 @@ simulated event StopDriving(Vehicle V)
 		V.StopFiring();
 	}
 	// End:0xBC
-	if(int(Physics) == int(10))
+	if(int(Physics) == 10)
 	{
 		return;
 	}
@@ -2553,7 +2553,7 @@ simulated event StopDriving(Vehicle V)
 	}
 	SetCollision(true, true);
 	// End:0x191
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		// End:0x17A
 		if(PhysicsVolume.bWaterVolume && Health > 0)
@@ -2964,7 +2964,7 @@ simulated event BecomeViewTarget(PlayerController PC)
 		PhysicsVolume.NotifyPawnBecameViewTarget(self, PC);
 	}
 	// End:0x92
-	if(!bReplicateHealthToAll && int(WorldInfo.NetMode) != int(NM_Client))
+	if(!bReplicateHealthToAll && WorldInfo.NetMode != NM_Client)
 	{
 		PC.ForceSingleNetUpdateFor(self);
 	}
@@ -3074,9 +3074,11 @@ simulated event OnRootMotionCollision(Vector adjustment)
 
 state Dying
 {
-	ignores Died, Landed, BaseChange, PlayNextAnimation, PlayWeaponSwitch, FellOutOfWorld, 
+	ignores Died, Landed, BaseChange, PlayWeaponSwitch, FellOutOfWorld, 
 		BreathTimer, Falling, PhysicsVolumeChange, HeadVolumeChange, HitWall, 
 		Bump;
+
+	simulated function PlayNextAnimation() {}
 
 	singular simulated event OutsideWorldBounds()
 	{
@@ -3104,7 +3106,7 @@ state Dying
 	{
 		SetPhysics(2);
 		// End:0x66
-		if((int(Physics) == int(0)) && Momentum.Z < float(0))
+		if((int(Physics) == 0) && Momentum.Z < float(0))
 		{
 			Momentum.Z *= float(-1);
 		}
@@ -3145,7 +3147,7 @@ state Dying
 		local int I;
 
 		// End:0x4A
-		if(bTearOff && int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+		if(bTearOff && WorldInfo.NetMode == NM_DedicatedServer)
 		{
 			LifeSpan = 2.0000000;			
 		}
@@ -3223,7 +3225,7 @@ defaultproperties
 	bLOSHearing=true
 	bModifyNavPointDest=true
 	bLimitFallAccel=true
-	WalkingPhysics=EPhysics.PHYS_Walking
+	WalkingPhysics=PHYS_Walking
 	CrouchHeight=40.0000000
 	CrouchRadius=34.0000000
 	NonPreferredVehiclePathMultiplier=1.0000000
@@ -3282,8 +3284,8 @@ defaultproperties
 	Components[0]=none
 	Components[1]=CollisionCylinder
 	Components[2]=none
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	RemoteRole=ROLE_SimulatedProxy
+	CollisionType=COLLIDE_CustomDefault
 	bUpdateSimulatedPosition=true
 	bCanBeDamaged=true
 	bShouldBaseAtStartup=true

@@ -11,7 +11,7 @@ var private array<int> PendingFire;
 replication
 {
 	// Pos:0x000
-	if((((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bNetOwner)
+	if((((!bSkipActorPropertyReplication || bNetInitial) && Role == ROLE_Authority) && bNetDirty) && bNetOwner)
 		InventoryChain;
 }
 
@@ -502,7 +502,7 @@ reliable client simulated function SetCurrentWeapon(Weapon DesiredWeapon)
 {
 	InternalSetCurrentWeapon(DesiredWeapon);
 	// End:0x3A
-	if(int(Role) < int(ROLE_Authority))
+	if(Role < ROLE_Authority)
 	{
 		ServerSetCurrentWeapon(DesiredWeapon);
 	}
@@ -695,9 +695,9 @@ simulated function UpdateController()
 
 defaultproperties
 {
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
-	TickGroup=ETickingGroup.TG_DuringAsyncWork
+	RemoteRole=ROLE_SimulatedProxy
+	CollisionType=COLLIDE_CustomDefault
+	TickGroup=TG_DuringAsyncWork
 	bHidden=true
 	bOnlyRelevantToOwner=true
 	bReplicateInstigator=true

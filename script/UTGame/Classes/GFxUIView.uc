@@ -1,4 +1,5 @@
-class GFxUIView extends GFxObject within GFxMoviePlayer;
+class GFxUIView extends GFxObject within GFxMoviePlayer
+	dependson(WorldInfo);
 
 const GS_USERNAME_MAXLENGTH = 15;
 const GS_PASSWORD_MAXLENGTH = 30;

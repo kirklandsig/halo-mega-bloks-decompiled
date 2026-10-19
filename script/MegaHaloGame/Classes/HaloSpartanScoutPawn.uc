@@ -175,8 +175,8 @@ defaultproperties
 	begin object name="HaloTargetableComponent"
 	end object
 	MyHaloTargetableComponent=HaloTargetableComponent
-	CharacterRole=ECharacterRole.CR_SCOUT
-	PawnType=PlayerPawnType.PPT_Scout
+	CharacterRole=CR_SCOUT
+	PawnType=PPT_Scout
 	DefaultWeaponClass=Class'MegaHaloGame.HaloWeapon_BattleRifle'
 	AkCharacterType="Spartan_Recruit"
 	// Reference: HaloJumpComponent'MegaHaloGame.Default__HaloSpartanScoutPawn.MyJumpComponent'

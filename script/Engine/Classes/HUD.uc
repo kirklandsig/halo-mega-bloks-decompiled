@@ -2,7 +2,8 @@ class HUD extends Actor
 	transient
 	native
 	config(Game)
-	notplaceable;
+	notplaceable
+	dependson(Canvas);
 
 struct native ConsoleMessage
 {
@@ -352,7 +353,7 @@ function DrawRoute(Pawn Target)
 		if(C.NavigationHandle.FindPath())
 		{
 			DrawDebugCoordinateSystem(Dest, rot(0, 0, 0), 25.0000000, true);
-			C.NavigationHandle.DrawPathCache(,, true);			
+			C.NavigationHandle.DrawPathCache(, true);			
 		}
 		else
 		{
@@ -712,7 +713,7 @@ function LocalizedMessage(Class<LocalMessage> InMessageClass, PlayerReplicationI
 			if(LocalMessages[I].Message == InMessageClass)
 			{
 				// End:0x212
-				if(InMessageClass.default.bCountInstances && LocalMessages[I].StringMessage ComplementEqual CriticalString)
+				if(InMessageClass.default.bCountInstances && LocalMessages[I].StringMessage ~= CriticalString)
 				{
 					MessageCount = ((LocalMessages[I].Count == 0) ? 2 : LocalMessages[I].Count + 1);
 				}
@@ -1014,7 +1015,7 @@ function DrawText(string Text, Vector2D Position, Font TextFont, Vector2D FontSc
 	Canvas.TextSize(Text, XL, YL);
 	Canvas.SetPos(((Canvas.ClipX / float(2)) - (XL / float(2))) + Position.X, ((Canvas.ClipY / float(3)) - (YL / float(2))) + Position.Y);
 	Canvas.SetDrawColor(TextColor.R, TextColor.G, TextColor.B, TextColor.A);
-	Canvas.super(HUD).DrawText(Text, false, FontScale.X, FontScale.Y, RenderInfo);
+	Canvas.DrawText(Text, false, FontScale.X, FontScale.Y, RenderInfo);
 	//return;	
 }
 
@@ -1074,7 +1075,7 @@ event OnLostFocusPause(bool bEnable)
 		return;
 	}
 	// End:0x83
-	if(int(WorldInfo.NetMode) != int(NM_Client))
+	if(WorldInfo.NetMode != NM_Client)
 	{
 		bLostFocusPaused = bEnable;
 		PlayerOwner.SetPause(bEnable);
@@ -1096,7 +1097,7 @@ defaultproperties
 	MaxHUDAreaMessageCount=3
 	ConsoleMessagePosY=0.8000000
 	DebugDisplay[0]="AI"
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
-	TickGroup=ETickingGroup.TG_DuringAsyncWork
+	CollisionType=COLLIDE_CustomDefault
+	TickGroup=TG_DuringAsyncWork
 	bHidden=true
 }

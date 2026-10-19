@@ -1,6 +1,7 @@
 class UTHUD extends UTHUDBase
 	transient
-	config(Game);
+	config(Game)
+	dependson(UTWeapon);
 
 struct native DamageInfo
 {
@@ -508,7 +509,7 @@ function DrawMessageText(HudLocalizedMessage LocalMessage, float ScreenX, float 
 	if(LocalMessage.Count > 0)
 	{
 		// End:0xCD
-		if(Right(StringMessage, 1) ComplementEqual ".")
+		if(Right(StringMessage, 1) ~= ".")
 		{
 			StringMessage = Left(StringMessage, Len(StringMessage) - 1);
 		}

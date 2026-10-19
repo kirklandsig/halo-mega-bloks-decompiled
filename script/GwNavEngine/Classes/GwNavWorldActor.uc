@@ -23,5 +23,5 @@ defaultproperties
 		ReplacementPrimitive=none
 	end object
 	WorldElementRenderingComp=ElementRenderingComponent
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

@@ -111,7 +111,7 @@ defaultproperties
 	// Archetype: UDKTargetableComponent'MegaHaloGame.Default__HaloDestructibleActor.targetableComponent'
 	begin object name="targetableComponent"
 		OutterThreatRadius=100000.0000000
-		AITargetType=HaloTargetType.TARGET_PASSIVE_OBJECTIVE
+		AITargetType=TARGET_PASSIVE_OBJECTIVE
 	end object
 	MyTargetableComponent=targetableComponent
 	// Reference: HaloTargetableComponent_Destructible'MegaHaloGame.Default__HaloPowerCorePawn.HaloTargetableComponent'

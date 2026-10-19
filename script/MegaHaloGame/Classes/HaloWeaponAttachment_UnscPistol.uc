@@ -25,5 +25,5 @@ defaultproperties
 	MuzzleFlashDuration=0.0950000
 	DefaultImpactEffect=(DecalMaterials=(MaterialInstanceTimeVarying'WP_UNSC_ASSAULT.Decals.MITV_WP_RocketLauncher_Impact_Decal01'),DurationOfDecal=5.0000000,DecalWidth=32.0000000,DecalHeight=32.0000000,ParticleTemplate=ParticleSystem'WP_UNSC_ASSAULT.Effects.WP_UNSC_AssaultRifle_Hit')
 	WeaponClass=Class'MegaHaloGame.HaloWeapon_UnscPistol'
-	WeapAnimType=EWeapAnimType.EWAT_Pistol
+	WeapAnimType=EWAT_Pistol
 }

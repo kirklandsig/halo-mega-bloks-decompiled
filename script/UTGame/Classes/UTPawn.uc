@@ -1973,9 +1973,9 @@ exec function FixedView(string VisibleMeshes)
 		// End:0xBF
 		if(VisibleMeshes != "")
 		{
-			bVisibleMeshes = ((VisibleMeshes ComplementEqual "yes") || VisibleMeshes ComplementEqual "true") || VisibleMeshes ComplementEqual "1";
+			bVisibleMeshes = ((VisibleMeshes ~= "yes") || VisibleMeshes ~= "true") || VisibleMeshes ~= "1";
 			// End:0xAB
-			if(VisibleMeshes ComplementEqual "default")
+			if(VisibleMeshes ~= "default")
 			{
 				bVisibleMeshes = !IsFirstPerson();
 			}
@@ -5594,7 +5594,7 @@ defaultproperties
 	SoundGroupClass=Class'UTGame.UTPawnSoundGroup'
 	// Reference: ForceFeedbackWaveform'UTGame.Default__UTPawn.ForceFeedbackWaveformFall'
 	begin object name="ForceFeedbackWaveformFall" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=50,RightAmplitude=40,LeftFunction=EWaveformFunction.WF_Sin90to180,RightFunction=EWaveformFunction.WF_Sin90to180,Duration=0.2000000)
+		Samples[0]=(LeftAmplitude=50,RightAmplitude=40,LeftFunction=WF_Sin90to180,RightFunction=WF_Sin90to180,Duration=0.2000000)
 	end object
 	FallingDamageWaveForm=ForceFeedbackWaveformFall
 	MinHoverboardInterval=0.7000000
@@ -5670,7 +5670,7 @@ defaultproperties
 		bOwnerNoSee=true
 		CastShadow=false
 		Scale=1.0150000
-		TickGroup=ETickingGroup.TG_PostAsyncWork
+		TickGroup=TG_PostAsyncWork
 	end object
 	OverlayMesh=OverlayMeshComponent0
 	LeftFootControlName="LeftFootControl"
@@ -5695,12 +5695,12 @@ defaultproperties
 		bSyncActorLocationToRootRigidBody=false
 		bOverrideAttachmentOwnerVisibility=true
 		ReplacementPrimitive=none
-		DepthPriorityGroup=ESceneDepthPriorityGroup.SDPG_Foreground
+		DepthPriorityGroup=SDPG_Foreground
 		bOnlyOwnerSee=true
 		CastShadow=false
 		AbsoluteRotation=true
 		AbsoluteScale=true
-		TickGroup=ETickingGroup.TG_DuringAsyncWork
+		TickGroup=TG_DuringAsyncWork
 	end object
 	ArmsMesh=FirstPersonArms
 	// Reference: UDKSkeletalMeshComponent'UTGame.Default__UTPawn.FirstPersonArms2'
@@ -5712,14 +5712,14 @@ defaultproperties
 		bSyncActorLocationToRootRigidBody=false
 		bOverrideAttachmentOwnerVisibility=true
 		ReplacementPrimitive=none
-		DepthPriorityGroup=ESceneDepthPriorityGroup.SDPG_Foreground
+		DepthPriorityGroup=SDPG_Foreground
 		HiddenGame=true
 		bOnlyOwnerSee=true
 		CastShadow=false
 		AbsoluteRotation=true
 		AbsoluteScale=true
 		Scale3D=(X=1.0000000,Y=-1.0000000,Z=1.0000000)
-		TickGroup=ETickingGroup.TG_DuringAsyncWork
+		TickGroup=TG_DuringAsyncWork
 	end object
 	ArmsMesh=FirstPersonArms2
 	// Reference: GwNavBotHandle'UTGame.Default__UTPawn.myGwNavBotHandle'
@@ -5770,7 +5770,7 @@ defaultproperties
 		bCacheAnimSequenceNodes=false
 		ReplacementPrimitive=none
 		LightEnvironment=DynamicLightEnvironmentComponent'UTGame.Default__UTPawn.MyLightEnvironment'
-		RBChannel=ERBCollisionChannel.RBCC_Untitled3
+		RBChannel=RBCC_Untitled3
 		RBDominanceGroup=20
 		bOwnerNoSee=true
 		bUseOnePassLightingOnTranslucency=true

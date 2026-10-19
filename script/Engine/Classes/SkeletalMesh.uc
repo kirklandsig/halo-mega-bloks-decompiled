@@ -1,6 +1,7 @@
 class SkeletalMesh extends Object
 	native
-	noexport;
+	noexport
+	dependson(ApexClothingAsset);
 
 enum BoneBreakOption
 {
@@ -109,7 +110,7 @@ struct native BoneMirrorInfo
 	structdefaultproperties
 	{
 		SourceIndex=0
-		BoneFlipAxis=EAxis.AXIS_NONE
+		BoneFlipAxis=AXIS_NONE
 	}
 };
 
@@ -123,7 +124,7 @@ struct native BoneMirrorExport
 	{
 		BoneName="None"
 		SourceBoneName="None"
-		BoneFlipAxis=EAxis.AXIS_NONE
+		BoneFlipAxis=AXIS_NONE
 	}
 };
 
@@ -135,8 +136,8 @@ struct TriangleSortSettings
 
 	structdefaultproperties
 	{
-		TriangleSorting=TriangleSortOption.TRISORT_None
-		CustomLeftRightAxis=TriangleSortAxis.TSA_X_Axis
+		TriangleSorting=TRISORT_None
+		CustomLeftRightAxis=TSA_X_Axis
 		CustomLeftRightBoneName="None"
 	}
 };
@@ -183,13 +184,13 @@ struct native SkeletalMeshOptimizationSettings
 	structdefaultproperties
 	{
 		MaxDeviationPercentage=0.0000000
-		SilhouetteImportance=SkeletalMeshOptimizationImportance.SMOI_Off
-		TextureImportance=SkeletalMeshOptimizationImportance.SMOI_Off
-		ShadingImportance=SkeletalMeshOptimizationImportance.SMOI_Off
-		SkinningImportance=SkeletalMeshOptimizationImportance.SMOI_Off
+		SilhouetteImportance=SMOI_Off
+		TextureImportance=SMOI_Off
+		ShadingImportance=SMOI_Off
+		SkinningImportance=SMOI_Off
 		BoneReductionRatio=0.0000000
 		MaxBonesPerVertex=0
-		ReductionMethod=SkeletalMeshOptimizationType.SMOT_NumOfTriangles
+		ReductionMethod=SMOT_NumOfTriangles
 		NumOfTrianglesPercentage=0.0000000
 		WeldingThreshold=0.0000000
 		bRecalcNormals=false
@@ -206,7 +207,7 @@ struct native ClothSpecialBoneInfo
 	structdefaultproperties
 	{
 		BoneName="None"
-		BoneType=ClothBoneType.CLOTHBONE_Fixed
+		BoneType=CLOTHBONE_Fixed
 		AttachedVertexIndices=none
 	}
 };
@@ -232,7 +233,7 @@ struct native SoftBodySpecialBoneInfo
 	structdefaultproperties
 	{
 		BoneName="None"
-		BoneType=SoftBodyBoneType.SOFTBODYBONE_Fixed
+		BoneType=SOFTBODYBONE_Fixed
 		AttachedVertexIndices=none
 	}
 };
@@ -361,8 +362,8 @@ var const bool bUseClothingAssetMaterial;
 
 defaultproperties
 {
-	SkelMirrorAxis=EAxis.AXIS_X
-	SkelMirrorFlipAxis=EAxis.AXIS_Z
+	SkelMirrorAxis=AXIS_X
+	SkelMirrorFlipAxis=AXIS_Z
 	bUseSimpleLineCollision=true
 	bUseSimpleBoxCollision=true
 	ClothStretchStiffness=1.0000000

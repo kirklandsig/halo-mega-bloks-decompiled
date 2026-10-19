@@ -163,7 +163,7 @@ function CreateObjectiveMarkers()
 
 defaultproperties
 {
-	Zone=(Actor=none,Marker=EObjectiveMarker.OMN_Location,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=true,bClampToScreen=true)
+	Zone=(Actor=none,Marker=OMN_Location,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=true,bClampToScreen=true)
 	EnemyCountToEnableEnemyMarkers=5
 	bFindEnemies=true
 	FindEnemiesTimer=1.0000000

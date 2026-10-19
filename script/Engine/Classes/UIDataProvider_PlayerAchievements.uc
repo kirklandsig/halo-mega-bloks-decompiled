@@ -1,7 +1,8 @@
 class UIDataProvider_PlayerAchievements extends UIDataProvider_OnlinePlayerDataBase
 	transient
 	native
-	config(Engine);
+	config(Engine)
+	dependson(OnlineSubsystem);
 
 var transient array<AchievementDetails> Achievements;
 
@@ -44,11 +45,11 @@ function OnPlayerAchievementsChanged(int TitleId)
 	{
 		OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 		// End:0x10D
-		if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && TitleId == 0)
+		if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none)) && TitleId == 0)
 		{
 			Result = OnlineSub.PlayerInterface.GetAchievements(byte(PlayerControllerId), Achievements, TitleId);
 			// End:0x10D
-			if(int(Result) == int(2))
+			if(int(Result) == 2)
 			{
 				PopulateAchievementIcons();
 			}
@@ -80,7 +81,7 @@ event OnRegister(LocalPlayer InPlayer)
 		if(OnlineSub != none)
 		{
 			// End:0x185
-			if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+			if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 			{
 				OnlineSub.PlayerInterface.AddLoginChangeDelegate(OnLoginChange);
 				OnlineSub.PlayerInterface.AddReadAchievementsCompleteDelegate(byte(PlayerControllerId), OnPlayerAchievementsChanged);
@@ -101,12 +102,12 @@ event OnUnregister()
 	if(OnlineSub != none)
 	{
 		// End:0xB3
-		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 		{
 			OnlineSub.PlayerInterface.ClearLoginChangeDelegate(OnLoginChange);
 		}
 		// End:0x18A
-		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 		{
 			OnlineSub.PlayerInterface.ClearUnlockAchievementCompleteDelegate(byte(PlayerControllerId), OnPlayerAchievementUnlocked);
 			OnlineSub.PlayerInterface.ClearReadAchievementsCompleteDelegate(byte(PlayerControllerId), OnPlayerAchievementsChanged);
@@ -137,7 +138,7 @@ function UpdateAchievements()
 		Achievements.Length = 0;
 		OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 		// End:0x165
-		if((((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0)) && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId)))
+		if((((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none)) && int(OnlineSub.PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > 0) && !OnlineSub.PlayerInterface.IsGuestLogin(byte(PlayerControllerId)))
 		{
 			OnlineSub.PlayerInterface.ReadAchievements(byte(PlayerControllerId));
 		}

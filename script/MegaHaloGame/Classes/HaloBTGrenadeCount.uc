@@ -124,7 +124,7 @@ event string GetNodeTitle()
 
 defaultproperties
 {
-	Operator=BTConditionOperator.GREATER_THAN_OR_EQUAL_TO
+	Operator=GREATER_THAN_OR_EQUAL_TO
 	Threshold=1
 	NodeDescription="Returns true if the number of grenades in comparison to the threshold is true."
 	DefaultTitle="Grenade Count"

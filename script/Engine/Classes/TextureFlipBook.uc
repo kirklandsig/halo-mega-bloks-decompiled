@@ -55,6 +55,6 @@ defaultproperties
 	VerticalImages=1
 	FrameRate=4.0000000
 	FrameTime=0.2500000
-	AddressX=TextureAddress.TA_Clamp
-	AddressY=TextureAddress.TA_Clamp
+	AddressX=TA_Clamp
+	AddressY=TA_Clamp
 }

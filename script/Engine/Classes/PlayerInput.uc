@@ -119,7 +119,7 @@ event PlayerInput(float DeltaTime)
 	RawJoyLookUp = aLookUp;
 	DeltaTime /= Outer.WorldInfo.TimeDilation;
 	// End:0x12A
-	if(Outer.bDemoOwner && int(Outer.WorldInfo.NetMode) == int(NM_Client))
+	if(Outer.bDemoOwner && Outer.WorldInfo.NetMode == NM_Client)
 	{
 		DeltaTime /= Outer.WorldInfo.DemoPlayTimeDilation;
 	}
@@ -152,7 +152,7 @@ event PlayerInput(float DeltaTime)
 	aLookUp *= FOVScale;
 	aTurn *= FOVScale;
 	// End:0x34F
-	if(int(bStrafe) > int(0))
+	if(int(bStrafe) > 0)
 	{
 		aStrafe += (aBaseX + aMouseX);		
 	}
@@ -234,7 +234,7 @@ function Actor.EDoubleClickDir CheckForDoubleClickMove(float DeltaTime)
 	local Actor.EDoubleClickDir DoubleClickMove, OldDoubleClick;
 
 	// End:0x38
-	if(int(Outer.DoubleClickDir) == int(5))
+	if(int(Outer.DoubleClickDir) == 5)
 	{
 		DoubleClickMove = 5;		
 	}
@@ -246,10 +246,10 @@ function Actor.EDoubleClickDir CheckForDoubleClickMove(float DeltaTime)
 	if(DoubleClickTime > 0.0000000)
 	{
 		// End:0x117
-		if(int(Outer.DoubleClickDir) == int(5))
+		if(int(Outer.DoubleClickDir) == 5)
 		{
 			// End:0x114
-			if((Outer.Pawn != none) && int(Outer.Pawn.Physics) == int(1))
+			if((Outer.Pawn != none) && int(Outer.Pawn.Physics) == 1)
 			{
 				DoubleClickTimer = 0.0000000;
 				Outer.DoubleClickDir = 6;
@@ -258,7 +258,7 @@ function Actor.EDoubleClickDir CheckForDoubleClickMove(float DeltaTime)
 		else
 		{
 			// End:0x35A
-			if(int(Outer.DoubleClickDir) != int(6))
+			if(int(Outer.DoubleClickDir) != 6)
 			{
 				OldDoubleClick = Outer.DoubleClickDir;
 				Outer.DoubleClickDir = 0;
@@ -292,7 +292,7 @@ function Actor.EDoubleClickDir CheckForDoubleClickMove(float DeltaTime)
 					}
 				}
 				// End:0x2DA
-				if(int(Outer.DoubleClickDir) == int(0))
+				if(int(Outer.DoubleClickDir) == 0)
 				{
 					Outer.DoubleClickDir = OldDoubleClick;					
 				}
@@ -311,7 +311,7 @@ function Actor.EDoubleClickDir CheckForDoubleClickMove(float DeltaTime)
 			}
 		}
 		// End:0x3F2
-		if(int(Outer.DoubleClickDir) == int(6))
+		if(int(Outer.DoubleClickDir) == 6)
 		{
 			DoubleClickTimer = FMin(DoubleClickTimer - DeltaTime, 0.0000000);
 			// End:0x3EF
@@ -324,7 +324,7 @@ function Actor.EDoubleClickDir CheckForDoubleClickMove(float DeltaTime)
 		else
 		{
 			// End:0x49F
-			if((int(Outer.DoubleClickDir) != int(0)) && int(Outer.DoubleClickDir) != int(5))
+			if((int(Outer.DoubleClickDir) != 0) && int(Outer.DoubleClickDir) != 5)
 			{
 				DoubleClickTimer -= DeltaTime;
 				// End:0x49F
@@ -509,7 +509,7 @@ function float SmoothMouse(float aMouse, float DeltaTime, out byte SampleCount, 
 			if(SmoothedMouse[Index] != float(0))
 			{
 				// End:0x16E
-				if(DeltaTime < (MouseSamplingTime * float(int(SampleCount) + int(1))))
+				if(DeltaTime < (MouseSamplingTime * float(int(SampleCount) + 1)))
 				{
 					aMouse = (aMouse * DeltaTime) / (MouseSamplingTime * float(SampleCount));					
 				}

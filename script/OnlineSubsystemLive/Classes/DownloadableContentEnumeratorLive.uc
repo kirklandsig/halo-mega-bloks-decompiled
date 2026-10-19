@@ -20,11 +20,11 @@ function FindDLC()
 		{
 			PlayerInt = OnlineSub.PlayerInterface;
 			// End:0x21D
-			if(NotEqual_InterfaceInterface(PlayerInt, OnlinePlayerInterface(none)))
+			if(NotEqual_InterfaceInterface(PlayerInt, none))
 			{
 				ContentInt = OnlineSub.ContentInterface;
 				// End:0x21D
-				if(NotEqual_InterfaceInterface(ContentInt, OnlineContentInterface(none)))
+				if(NotEqual_InterfaceInterface(ContentInt, none))
 				{
 					PlayerIndex = 0;
 					J0xEE:
@@ -33,7 +33,7 @@ function FindDLC()
 					if(PlayerIndex < 4)
 					{
 						// End:0x1E2
-						if((int(PlayerInt.GetLoginStatus(byte(PlayerIndex))) > int(0)) && !PlayerInt.IsGuestLogin(byte(PlayerIndex)))
+						if((int(PlayerInt.GetLoginStatus(byte(PlayerIndex))) > 0) && !PlayerInt.IsGuestLogin(byte(PlayerIndex)))
 						{
 							ContentInt.AddReadContentComplete(byte(PlayerIndex), 0, OnReadContentComplete);
 							ReadsOutstanding += int(ContentInt.ReadContentList(byte(PlayerIndex), 0));							
@@ -75,7 +75,7 @@ function OnReadContentComplete(bool bWasSuccessful)
 		{
 			ContentInt = OnlineSub.ContentInterface;
 			// End:0x128
-			if(NotEqual_InterfaceInterface(ContentInt, OnlineContentInterface(none)))
+			if(NotEqual_InterfaceInterface(ContentInt, none))
 			{
 				PlayerIndex = 0;
 				J0xA5:

@@ -15,7 +15,7 @@ struct CheckpointRecord
 	{
 		Location=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 		Rotation=(Pitch=0,Yaw=0,Roll=0)
-		CollisionType=ECollisionType.COLLIDE_CustomDefault
+		CollisionType=COLLIDE_CustomDefault
 		bHidden=false
 		bIsShutdown=false
 		bNeedsPositionReplication=false
@@ -72,7 +72,7 @@ event bool EncroachingOn(Actor Other)
 	local bool bLandingPawn;
 
 	// End:0x3A
-	if(bContinueOnEncroachPhysicsObject && int(Other.Physics) == int(10))
+	if(bContinueOnEncroachPhysicsObject && int(Other.Physics) == 10)
 	{
 		return false;
 	}
@@ -90,7 +90,7 @@ event bool EncroachingOn(Actor Other)
 		if(P != none)
 		{
 			// End:0x2BA
-			if((int(P.Physics) == int(2)) && Velocity.Z > 0.0000000)
+			if((int(P.Physics) == 2) && Velocity.Z > 0.0000000)
 			{
 				Height = P.GetCollisionHeight() * vect(0.0000000, 0.0000000, 1.0000000);
 				// End:0x2B7
@@ -402,7 +402,7 @@ simulated function ShutDown()
 
 function bool ShouldSaveForCheckpoint()
 {
-	return bShouldSaveForCheckpoint || int(RemoteRole) == int(ROLE_SimulatedProxy);
+	return bShouldSaveForCheckpoint || RemoteRole == ROLE_SimulatedProxy;
 	//return ReturnValue;	
 }
 
@@ -412,15 +412,15 @@ function CreateCheckpointRecord(out CheckpointRecord Record)
 	Record.Rotation = Rotation;
 	Record.bHidden = bHidden;
 	Record.CollisionType = ReplicatedCollisionType;
-	Record.bNeedsPositionReplication = (int(RemoteRole) == int(ROLE_SimulatedProxy)) && bUpdateSimulatedPosition;
-	Record.bIsShutdown = (int(Physics) == int(0)) && bHidden;
+	Record.bNeedsPositionReplication = (RemoteRole == ROLE_SimulatedProxy) && bUpdateSimulatedPosition;
+	Record.bIsShutdown = (int(Physics) == 0) && bHidden;
 	//return;	
 }
 
 function ApplyCheckpointRecord(const out CheckpointRecord Record)
 {
 	local Actor OldBase;
-	local editinline SkeletalMeshComponent OldBaseComp;
+	local SkeletalMeshComponent OldBaseComp;
 	local name OldBaseBoneName;
 	local array<Actor> OldAttached;
 	local array<Vector> OldLocations;
@@ -526,9 +526,9 @@ defaultproperties
 	LightEnvironment=MyLightEnvironment
 	Components[0]=MyLightEnvironment
 	Components[1]=StaticMeshComponent0
-	Physics=EPhysics.PHYS_Interpolating
-	RemoteRole=ENetRole.ROLE_None
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	Physics=PHYS_Interpolating
+	RemoteRole=ROLE_None
+	CollisionType=COLLIDE_CustomDefault
 	bNoDelete=true
 	bAlwaysRelevant=true
 	bOnlyDirtyReplication=true

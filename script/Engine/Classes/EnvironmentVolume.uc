@@ -3,8 +3,6 @@ class EnvironmentVolume extends Volume
 	placeable
 	implements(Interface_NavMeshPathObstacle,Interface_NavMeshPathObject);
 
-var private native const noexport Pointer VfTable_IInterface_NavMeshPathObstacle;
-var private native const noexport Pointer VfTable_IInterface_NavMeshPathObject;
 var const transient bool bSplitNavMesh;
 
 // Export UEnvironmentVolume::execSetSplitNavMesh(FFrame&, void* const)

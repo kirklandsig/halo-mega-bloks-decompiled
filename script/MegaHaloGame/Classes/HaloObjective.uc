@@ -45,7 +45,7 @@ struct ObjectiveMarkerData
 	structdefaultproperties
 	{
 		Actor=none
-		Marker=EObjectiveMarker.OMN_None
+		Marker=OMN_None
 		bDraw=true
 		bDrawTagSymbol=false
 		bShowHealth=false
@@ -81,7 +81,7 @@ struct ObjectiveMarker
 	structdefaultproperties
 	{
 		Actor=none
-		Type=EObjectiveMarker.OMN_None
+		Type=OMN_None
 		ScreenLocation=(X=-64.0000000,Y=-64.0000000)
 		Icon=none
 		iconOffset=(X=-32.0000000,Y=-32.0000000)
@@ -101,7 +101,7 @@ struct IconData
 
 	structdefaultproperties
 	{
-		Type=EObjectiveMarker.OMN_None
+		Type=OMN_None
 		Icon=none
 		Size=(X=0.0000000,Y=0.0000000)
 		Offset=(X=0.0000000,Y=0.0000000)
@@ -585,22 +585,19 @@ function CreateObjectiveMarker(ObjectiveMarkerData Data)
 					break;
 			}
 		}
-		else
-		{
-			HealthMIC = new Class'Engine.MaterialInstanceConstant';
-			HealthMIC.SetParent(Material'mainhud.ObjectiveMarkers.ObjectiveHealthBar_Mat');
-			Marker.Actor = Data.Actor;
-			Marker.Type = Data.Marker;
-			Marker.Icon = IconMIC;
-			Marker.iconOffset = Icons[IconIndex].Offset;
-			Marker.IconSize = Icons[IconIndex].Size;
-			Marker.bShowDistance = Data.bShowDistance;
-			Marker.bShowHealth = Data.bShowHealth;
-			Marker.Health = HealthMIC;
-			Markers.AddItem(Marker);
-		}/* !MISMATCHING REMOVE, tried If got Type:Else Position:0x244! */
+		HealthMIC = new Class'Engine.MaterialInstanceConstant';
+		HealthMIC.SetParent(Material'mainhud.ObjectiveMarkers.ObjectiveHealthBar_Mat');
+		Marker.Actor = Data.Actor;
+		Marker.Type = Data.Marker;
+		Marker.Icon = IconMIC;
+		Marker.iconOffset = Icons[IconIndex].Offset;
+		Marker.IconSize = Icons[IconIndex].Size;
+		Marker.bShowDistance = Data.bShowDistance;
+		Marker.bShowHealth = Data.bShowHealth;
+		Marker.Health = HealthMIC;
+		Markers.AddItem(Marker);
 		//return;		
-	}/* !MISMATCHING REMOVE, tried Else got Type:If Position:0x085! */
+	}
 }
 
 function PostRender(Canvas Canvas, GFxHaloMinimapHUD HUD, Pawn Pawn)
@@ -796,14 +793,14 @@ function Deserialize(JsonObject Data)
 
 defaultproperties
 {
-	Icons[0]=(Type=EObjectiveMarker.OMN_Inactive,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Inactive',Size=(X=18.0000000,Y=18.0000000),Offset=(X=-9.0000000,Y=-9.0000000))
-	Icons[1]=(Type=EObjectiveMarker.OMN_Defend,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_DefendTarget',Size=(X=32.0000000,Y=30.0000000),Offset=(X=-16.0000000,Y=-15.0000000))
-	Icons[2]=(Type=EObjectiveMarker.OMN_Location,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Location',Size=(X=32.0000000,Y=32.0000000),Offset=(X=-16.0000000,Y=-16.0000000))
-	Icons[3]=(Type=EObjectiveMarker.OMN_Takedown,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_TakeDown',Size=(X=20.0000000,Y=36.0000000),Offset=(X=-16.0000000,Y=-18.0000000))
-	Icons[4]=(Type=EObjectiveMarker.OMN_Use,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Use',Size=(X=32.0000000,Y=32.0000000),Offset=(X=-28.0000000,Y=-16.0000000))
-	Icons[5]=(Type=EObjectiveMarker.OMN_Zone,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_DefendZone',Size=(X=32.0000000,Y=30.0000000),Offset=(X=-16.0000000,Y=-15.0000000))
-	Icons[6]=(Type=EObjectiveMarker.OMN_Chase,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Chase',Size=(X=32.0000000,Y=32.0000000),Offset=(X=-16.0000000,Y=-16.0000000))
-	Icons[7]=(Type=EObjectiveMarker.OMN_Flee,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Flee',Size=(X=32.0000000,Y=32.0000000),Offset=(X=-16.0000000,Y=-16.0000000))
+	Icons[0]=(Type=OMN_Inactive,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Inactive',Size=(X=18.0000000,Y=18.0000000),Offset=(X=-9.0000000,Y=-9.0000000))
+	Icons[1]=(Type=OMN_Defend,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_DefendTarget',Size=(X=32.0000000,Y=30.0000000),Offset=(X=-16.0000000,Y=-15.0000000))
+	Icons[2]=(Type=OMN_Location,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Location',Size=(X=32.0000000,Y=32.0000000),Offset=(X=-16.0000000,Y=-16.0000000))
+	Icons[3]=(Type=OMN_Takedown,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_TakeDown',Size=(X=20.0000000,Y=36.0000000),Offset=(X=-16.0000000,Y=-18.0000000))
+	Icons[4]=(Type=OMN_Use,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Use',Size=(X=32.0000000,Y=32.0000000),Offset=(X=-28.0000000,Y=-16.0000000))
+	Icons[5]=(Type=OMN_Zone,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_DefendZone',Size=(X=32.0000000,Y=30.0000000),Offset=(X=-16.0000000,Y=-15.0000000))
+	Icons[6]=(Type=OMN_Chase,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Chase',Size=(X=32.0000000,Y=32.0000000),Offset=(X=-16.0000000,Y=-16.0000000))
+	Icons[7]=(Type=OMN_Flee,Icon=Texture2D'mainhud.ObjectiveMarkers.OMIcon_Flee',Size=(X=32.0000000,Y=32.0000000),Offset=(X=-16.0000000,Y=-16.0000000))
 	bIsPrimaryObjective=true
 	bUseNavigation=true
 	bShowStartMessage=true

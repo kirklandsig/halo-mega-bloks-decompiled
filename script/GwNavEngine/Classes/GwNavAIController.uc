@@ -51,7 +51,7 @@ state Walk
 	event PushedState()
 	{
 		// End:0x53
-		if(int(Physics) == int(2))
+		if(int(Physics) == 2)
 		{
 			ClearLatentAction(Class'Engine.SeqAct_AIMoveToActor', true);
 			Pawn.ZeroMovementVariables();

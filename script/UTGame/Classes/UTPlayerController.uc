@@ -1,5 +1,6 @@
 class UTPlayerController extends UDKPlayerController
-	config(Game);
+	config(Game)
+	dependson(UTPawn, UTPlayerReplicationInfo);
 
 const GS_USERNAME_MAXLENGTH = 15;
 const GS_PASSWORD_MAXLENGTH = 30;
@@ -585,11 +586,8 @@ exec function OnConnectionStatusChange(OnlineSubsystem.EOnlineServerConnectionSt
 							break;
 					}
 				}
-				else
-				{
-				}/* !MISMATCHING REMOVE, tried If got Type:Else Position:0x21A! */
 			}
-		}/* !MISMATCHING REMOVE, tried Else got Type:If Position:0x0C7! */
+		}
 		LogInternal((((((((((("(" $ string(Name)) $ ") UTPlayerController::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "ConnectionStatus:'") $ string(GetEnum(Enum'Engine.OnlineSubsystem.EOnlineServerConnectionStatus', int(ConnectionStatus)))) $ "'") @ "bInvalidConnectionStatus:'") $ string(bInvalidConnectionStatus)) $ "'", 'DevOnline');
 		// End:0x2EE
 		if(bInvalidConnectionStatus)
@@ -2526,7 +2524,7 @@ unreliable server function ServerViewPlayerByName(string PlayerName)
 	if(I < WorldInfo.GRI.PRIArray.Length)
 	{
 		// End:0x16C
-		if(WorldInfo.GRI.PRIArray[I].PlayerName ComplementEqual PlayerName)
+		if(WorldInfo.GRI.PRIArray[I].PlayerName ~= PlayerName)
 		{
 			// End:0x16A
 			if(WorldInfo.Game.CanSpectate(self, WorldInfo.GRI.PRIArray[I]))
@@ -3460,7 +3458,7 @@ function ReadLeaderboardStatsComplete(bool bWasSuccessful)
 event bool NotifyDisconnect(string Command)
 {
 	// End:0x3F
-	if((Right(Command, 6) ComplementEqual " force") || InStr(Command, " force ", true, true) != -1)
+	if((Right(Command, 6) ~= " force") || InStr(Command, " force ", true, true) != -1)
 	{
 		return false;
 	}
@@ -4120,18 +4118,18 @@ defaultproperties
 	bForceBehindView=true
 	bLandingShake=true
 	IdentifiedTeam=255
-	PawnShadowMode=EPawnShadowMode.SHADOW_All
-	AutoObjectivePreference=EAutoObjectivePreference.AOP_NoPreference
+	PawnShadowMode=SHADOW_All
+	AutoObjectivePreference=AOP_NoPreference
 	LastKickWarningTime=-1000.0000000
 	MsgPlayerNotFound="Player not Found!"
 	// Reference: ForceFeedbackWaveform'UTGame.Default__UTPlayerController.ForceFeedbackWaveform7'
 	begin object name="ForceFeedbackWaveform7" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=60,RightAmplitude=50,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=0.2000000)
+		Samples[0]=(LeftAmplitude=60,RightAmplitude=50,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=0.2000000)
 	end object
 	CameraShakeShortWaveForm=ForceFeedbackWaveform7
 	// Reference: ForceFeedbackWaveform'UTGame.Default__UTPlayerController.ForceFeedbackWaveform8'
 	begin object name="ForceFeedbackWaveform8" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=60,RightAmplitude=50,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=0.4000000)
+		Samples[0]=(LeftAmplitude=60,RightAmplitude=50,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=0.4000000)
 	end object
 	CameraShakeLongWaveForm=ForceFeedbackWaveform8
 	DamageCameraAnim=CameraAnim'FX_HitEffects.DamageViewShake'

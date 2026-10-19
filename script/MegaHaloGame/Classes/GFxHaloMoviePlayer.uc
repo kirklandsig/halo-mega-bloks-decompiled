@@ -6,43 +6,43 @@ var string LocalizationSection;
 
 function PlayAkEvent(AkEvent Event)
 {
-	Class'Engine.WorldInfo'.static.GetWorldInfo().super(GFxHaloMoviePlayer).PlayAkEvent(Event);
+	Class'Engine.WorldInfo'.static.GetWorldInfo().PlayAkEvent(Event);
 	//return;	
 }
 
 function PostAkEvent(AkEvent Event)
 {
-	Class'Engine.WorldInfo'.static.GetWorldInfo().super(GFxHaloMoviePlayer).PostAkEvent(Event);
+	Class'Engine.WorldInfo'.static.GetWorldInfo().PostAkEvent(Event);
 	//return;	
 }
 
 function PostGlobalAkEvent(AkEvent Event)
 {
-	Class'Engine.WorldInfo'.static.GetWorldInfo().super(GFxHaloMoviePlayer).PostGlobalAkEvent(Event);
+	Class'Engine.WorldInfo'.static.GetWorldInfo().PostGlobalAkEvent(Event);
 	//return;	
 }
 
 function SetRTPCValue(name rtpcName, float Value)
 {
-	Class'Engine.WorldInfo'.static.GetWorldInfo().super(GFxHaloMoviePlayer).SetRTPCValue(rtpcName, Value);
+	Class'Engine.WorldInfo'.static.GetWorldInfo().SetRTPCValue(rtpcName, Value);
 	//return;	
 }
 
 function SetAkState(name StateGroup, name StateName)
 {
-	Class'Engine.WorldInfo'.static.GetWorldInfo().super(GFxHaloMoviePlayer).SetAkState(StateGroup, StateName);
+	Class'Engine.WorldInfo'.static.GetWorldInfo().SetAkState(StateGroup, StateName);
 	//return;	
 }
 
 function SetSwitch(name SwitchGroup, name switchVal)
 {
-	Class'Engine.WorldInfo'.static.GetWorldInfo().super(GFxHaloMoviePlayer).SetSwitch(SwitchGroup, switchVal);
+	Class'Engine.WorldInfo'.static.GetWorldInfo().SetSwitch(SwitchGroup, switchVal);
 	//return;	
 }
 
 function PostTrigger(name Trigger)
 {
-	Class'Engine.WorldInfo'.static.GetWorldInfo().super(GFxHaloMoviePlayer).PostTrigger(Trigger);
+	Class'Engine.WorldInfo'.static.GetWorldInfo().PostTrigger(Trigger);
 	//return;	
 }
 

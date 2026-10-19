@@ -129,5 +129,5 @@ defaultproperties
 {
 	MuzzleFlashSocketName="MuzzleFlashSocket"
 	MuzzleFlashDuration=0.0500000
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

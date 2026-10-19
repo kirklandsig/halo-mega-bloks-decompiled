@@ -32,7 +32,7 @@ struct DragElementInfo
 		bCanDropInOver=false
 		OrigTouch=(X=0.0000000,Y=0.0000000)
 		CurTouch=(X=0.0000000,Y=0.0000000)
-		EventType=ETouchType.Touch_Began
+		EventType=Touch_Began
 	}
 };
 

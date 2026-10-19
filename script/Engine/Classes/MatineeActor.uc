@@ -20,11 +20,11 @@ var float ClientSidePositionErrorTolerance;
 replication
 {
 	// Pos:0x000
-	if(bNetInitial && int(Role) == int(ROLE_Authority))
+	if(bNetInitial && Role == ROLE_Authority)
 		InterpAction;
 
 	// Pos:0x020
-	if(bNetDirty && int(Role) == int(ROLE_Authority))
+	if(bNetDirty && Role == ROLE_Authority)
 		AIGroupNames, AIGroupPawns, 
 		PlayRate, Position, 
 		bIsPlaying, bPaused, 
@@ -123,8 +123,8 @@ defaultproperties
 	Position=-1.0000000
 	ClientSidePositionErrorTolerance=0.1000000
 	Components[0]=none
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	RemoteRole=ROLE_SimulatedProxy
+	CollisionType=COLLIDE_CustomDefault
 	bAlwaysRelevant=true
 	bReplicateMovement=false
 	bSkipActorPropertyReplication=true

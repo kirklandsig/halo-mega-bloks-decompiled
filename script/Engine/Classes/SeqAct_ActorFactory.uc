@@ -36,7 +36,7 @@ defaultproperties
 {
 	bEnabled=true
 	bCheckSpawnCollision=true
-	StartingPhysics=EPhysics.PHYS_Falling
+	StartingPhysics=PHYS_Falling
 	SpawnCount=1
 	SpawnDelay=0.5000000
 	LastSpawnIdx=-1

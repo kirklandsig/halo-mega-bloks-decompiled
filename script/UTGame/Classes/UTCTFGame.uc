@@ -164,7 +164,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 			return true;
 		}
 	}
-	bLastMan = Reason ComplementEqual "LastMan";
+	bLastMan = Reason ~= "LastMan";
 	// End:0x128
 	if(CheckModifiedEndGame(Winner, Reason))
 	{

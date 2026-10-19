@@ -1,5 +1,6 @@
 class CheatManager extends Object within PlayerController
-	native;
+	native
+	dependson(AppNotificationsBase);
 
 var const localized string ViewingFrom;
 var const localized string OwnCamera;
@@ -12,7 +13,7 @@ exec function FXPlay(Class<Pawn> aClass, string FXAnimPath)
 	local int dotPos;
 
 	// End:0x2A2
-	if(int(Outer.WorldInfo.NetMode) == int(NM_Standalone))
+	if(Outer.WorldInfo.NetMode == NM_Standalone)
 	{
 		ClosestPawn = none;
 		ClosestPawnDistance = 10000000.0000000;
@@ -53,7 +54,7 @@ exec function FXStop(Class<Pawn> aClass)
 	local float ThisDistance, ClosestPawnDistance;
 
 	// End:0x213
-	if(int(Outer.WorldInfo.NetMode) == int(NM_Standalone))
+	if(Outer.WorldInfo.NetMode == NM_Standalone)
 	{
 		ClosestPawn = none;
 		ClosestPawnDistance = 10000000.0000000;
@@ -501,7 +502,7 @@ exec function DestroyFractures(optional float Radius)
 	foreach Outer.CollidingActors(Class'Engine.FracturedStaticMeshActor', FracActor, Radius, Outer.Pawn.Location, true)
 	{
 		// End:0x119
-		if(int(FracActor.Physics) == int(0))
+		if(int(FracActor.Physics) == 0)
 		{
 			FracActor.BreakOffPartsInRadius(Outer.Pawn.Location, Radius, 500.0000000, true);
 		}		
@@ -576,7 +577,7 @@ exec function ViewPlayer(string S)
 	foreach Outer.WorldInfo.AllControllers(Class'Engine.Controller', P)
 	{
 		// End:0xB1
-		if(P.bIsPlayer && P.PlayerReplicationInfo.PlayerName ComplementEqual S)
+		if(P.bIsPlayer && P.PlayerReplicationInfo.PlayerName ~= S)
 		{
 			// End:0xB2
 			break;
@@ -705,7 +706,7 @@ exec function ViewClass(Class<Actor> aClass)
 exec function Loaded()
 {
 	// End:0x40
-	if(int(Outer.WorldInfo.NetMode) != int(NM_Standalone))
+	if(Outer.WorldInfo.NetMode != NM_Standalone)
 	{
 		return;
 	}
@@ -802,7 +803,7 @@ exec function DumpOnlineSessionState()
 	local int PlayerIndex;
 
 	// End:0xC7B
-	if(int(Outer.WorldInfo.NetMode) != int(NM_Client))
+	if(Outer.WorldInfo.NetMode != NM_Client)
 	{
 		LogInternal("");
 		LogInternal("GameInfo state");
@@ -904,7 +905,7 @@ exec function TestNavMeshPath(optional bool bDrawPath = true)
 			// End:0x2FC
 			if(bDrawPath)
 			{
-				Outer.NavigationHandle.DrawPathCache(,, true);
+				Outer.NavigationHandle.DrawPathCache(, true);
 			}			
 		}
 		else
@@ -1031,7 +1032,7 @@ exec function DebugDownloadTitleFile(string Filename, optional bool bFromCache)
 		if(bFromCache)
 		{
 			// End:0x193
-			if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileCacheInterface, OnlineTitleFileCacheInterface(none)))
+			if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileCacheInterface, none))
 			{
 				LogInternal((((((("(" $ string(Name)) $ ") CheatManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "starting file load for") @ Filename);
 				Outer.OnlineSub.TitleFileCacheInterface.AddLoadTitleFileCompleteDelegate(OnLoadComplete);
@@ -1045,7 +1046,7 @@ exec function DebugDownloadTitleFile(string Filename, optional bool bFromCache)
 		else
 		{
 			// End:0x373
-			if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileInterface, OnlineTitleFileInterface(none)))
+			if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileInterface, none))
 			{
 				LogInternal((((((("(" $ string(Name)) $ ") CheatManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "starting file download request for") @ Filename);
 				Outer.OnlineSub.TitleFileInterface.AddReadTitleFileCompleteDelegate(OnDownloadComplete);
@@ -1088,7 +1089,7 @@ exec function DebugSaveTitleFile(string Filename)
 	if(Outer.OnlineSub != none)
 	{
 		// End:0x1DE
-		if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileInterface, OnlineTitleFileInterface(none)))
+		if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileInterface, none))
 		{
 			// End:0x166
 			if(Outer.OnlineSub.TitleFileInterface.GetTitleFileContents(Filename, FileContents))
@@ -1105,7 +1106,7 @@ exec function DebugSaveTitleFile(string Filename)
 			LogInternal(((((("(" $ string(Name)) $ ") CheatManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "OnlineTitleFileInterface not supported");
 		}
 		// End:0x3C1
-		if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileCacheInterface, OnlineTitleFileCacheInterface(none)))
+		if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileCacheInterface, none))
 		{
 			LogInternal((((((("(" $ string(Name)) $ ") CheatManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "starting file save for") @ Filename);
 			Outer.OnlineSub.TitleFileCacheInterface.AddSaveTitleFileCompleteDelegate(OnSaveComplete);
@@ -1132,7 +1133,7 @@ exec function DebugDeleteTitleFiles()
 	if(Outer.OnlineSub != none)
 	{
 		// End:0x1EB
-		if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileCacheInterface, OnlineTitleFileCacheInterface(none)))
+		if(NotEqual_InterfaceInterface(Outer.OnlineSub.TitleFileCacheInterface, none))
 		{
 			LogInternal(((((("(" $ string(Name)) $ ") CheatManager::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "deleting all title files in cache dir");
 			// End:0x182
@@ -1218,7 +1219,7 @@ private final function OnReceivedLocalNotificationDebug(const out NotificationIn
 exec function DebugQueryUserFiles(string UserId)
 {
 	// End:0x11E
-	if((Outer.OnlineSub != none) && NotEqual_InterfaceInterface(Outer.OnlineSub.UserCloudInterface, UserCloudFileInterface(none)))
+	if((Outer.OnlineSub != none) && NotEqual_InterfaceInterface(Outer.OnlineSub.UserCloudInterface, none))
 	{
 		Outer.OnlineSub.UserCloudInterface.AddEnumerateUserFileCompleteDelegate(OnEnumerateUserFilesComplete);
 		Outer.OnlineSub.UserCloudInterface.EnumerateUserFiles(UserId);
@@ -1240,7 +1241,7 @@ exec function DebugWriteUserFile(string UserId, string Filename)
 	local array<byte> FileContents;
 
 	// End:0x17B
-	if((Outer.OnlineSub != none) && NotEqual_InterfaceInterface(Outer.OnlineSub.UserCloudInterface, UserCloudFileInterface(none)))
+	if((Outer.OnlineSub != none) && NotEqual_InterfaceInterface(Outer.OnlineSub.UserCloudInterface, none))
 	{
 		Idx = 0;
 		J0x7B:
@@ -1270,7 +1271,7 @@ private final function OnWriteUserFileComplete(bool bWasSuccessful, string UserI
 exec function DebugReadUserFile(string UserId, string Filename)
 {
 	// End:0x127
-	if((Outer.OnlineSub != none) && NotEqual_InterfaceInterface(Outer.OnlineSub.UserCloudInterface, UserCloudFileInterface(none)))
+	if((Outer.OnlineSub != none) && NotEqual_InterfaceInterface(Outer.OnlineSub.UserCloudInterface, none))
 	{
 		Outer.OnlineSub.UserCloudInterface.AddReadUserFileCompleteDelegate(OnReadUserFileComplete);
 		Outer.OnlineSub.UserCloudInterface.ReadUserFile(UserId, Filename);
@@ -1292,7 +1293,7 @@ private final function OnReadUserFileComplete(bool bWasSuccessful, string UserId
 exec function DebugDeleteUserFile(string UserId, string Filename)
 {
 	// End:0x129
-	if((Outer.OnlineSub != none) && NotEqual_InterfaceInterface(Outer.OnlineSub.UserCloudInterface, UserCloudFileInterface(none)))
+	if((Outer.OnlineSub != none) && NotEqual_InterfaceInterface(Outer.OnlineSub.UserCloudInterface, none))
 	{
 		Outer.OnlineSub.UserCloudInterface.AddDeleteUserFileCompleteDelegate(OnDeleteUserFileComplete);
 		Outer.OnlineSub.UserCloudInterface.DeleteUserFile(UserId, Filename, true, true);

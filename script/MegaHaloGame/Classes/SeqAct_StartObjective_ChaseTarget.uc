@@ -49,7 +49,7 @@ defaultproperties
 	InnerRadius=100.0000000
 	OuterRadius=500.0000000
 	GracePeriod=3.0000000
-	Marker=EObjectiveMarker.OMN_Chase
+	Marker=OMN_Chase
 	bDraw=true
 	bShowHealth=true
 	bShowDistance=true

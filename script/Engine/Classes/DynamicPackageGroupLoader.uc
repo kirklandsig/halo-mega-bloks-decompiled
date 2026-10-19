@@ -76,5 +76,5 @@ defaultproperties
 {
 	PackageGroups[0]=(Name="Warthog",PackageNameList=("Warthog","MainHUD","BadPackageName"))
 	PackageGroups[1]=(Name="Mongoose",PackageNameList=("Warthog","MainHUD","BadPackageName"))
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

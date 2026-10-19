@@ -95,7 +95,7 @@ defaultproperties
 	end object
 	Components[0]=Sprite
 	Components[1]=CollisionCylinder
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 	bHidden=true
 	bCollideActors=true
 	bProjTarget=true

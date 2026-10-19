@@ -1,5 +1,4 @@
-class UIDataStorePublisher extends UIDataStoreSubscriber
-	abstract
+interface UIDataStorePublisher extends UIDataStoreSubscriber
 	native;
 
 // Export UUIDataStorePublisher::execSaveSubscriberValue(FFrame&, void* const)

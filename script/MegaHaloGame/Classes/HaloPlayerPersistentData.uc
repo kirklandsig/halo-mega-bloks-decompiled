@@ -34,7 +34,7 @@ function SetValue(int PersistentDataID, int NewValue)
 defaultproperties
 {
 	VersionNumber=2
-	ProfileMappings[0]=(Id=0,Name="None",ColumnHeaderText="",MappingType=EPropertyValueMappingType.PVMT_RawValue,ValueMappings=none,PredefinedValues=none,MinVal=0.0000000,MaxVal=0.0000000,RangeIncrement=0.0000000)
-	ProfileMappings[1]=(Id=0,Name="None",ColumnHeaderText="",MappingType=EPropertyValueMappingType.PVMT_RawValue,ValueMappings=none,PredefinedValues=none,MinVal=0.0000000,MaxVal=0.0000000,RangeIncrement=0.0000000)
-	ProfileMappings[2]=(Id=2,Name="CurrentMap",ColumnHeaderText="",MappingType=EPropertyValueMappingType.PVMT_RawValue,ValueMappings=none,PredefinedValues=none,MinVal=0.0000000,MaxVal=0.0000000,RangeIncrement=0.0000000)
+	ProfileMappings[0]=(Id=0,Name="None",ColumnHeaderText="",MappingType=PVMT_RawValue,ValueMappings=none,PredefinedValues=none,MinVal=0.0000000,MaxVal=0.0000000,RangeIncrement=0.0000000)
+	ProfileMappings[1]=(Id=0,Name="None",ColumnHeaderText="",MappingType=PVMT_RawValue,ValueMappings=none,PredefinedValues=none,MinVal=0.0000000,MaxVal=0.0000000,RangeIncrement=0.0000000)
+	ProfileMappings[2]=(Id=2,Name="CurrentMap",ColumnHeaderText="",MappingType=PVMT_RawValue,ValueMappings=none,PredefinedValues=none,MinVal=0.0000000,MaxVal=0.0000000,RangeIncrement=0.0000000)
 }

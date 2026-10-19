@@ -243,7 +243,7 @@ defaultproperties
 	UnpackMax[1]=1.0000000
 	UnpackMax[2]=1.0000000
 	UnpackMax[3]=1.0000000
-	Filter=TextureFilter.TF_Linear
+	Filter=TF_Linear
 	AdjustBrightness=1.0000000
 	AdjustBrightnessCurve=1.0000000
 	AdjustSaturation=1.0000000

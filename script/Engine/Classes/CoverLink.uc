@@ -1,7 +1,8 @@
 class CoverLink extends NavigationPoint
 	native
 	config(Game)
-	placeable;
+	placeable
+	dependson(Pylon);
 
 const COVERLINK_ExposureDot = 0.4f;
 const COVERLINK_EdgeCheckDot = 0.25f;
@@ -64,12 +65,12 @@ enum EFireLinkID
 	FLI_MAX                         // 2
 };
 
-struct native atomicwhencooked immutablewhencooked CoverReference extends ActorReference
+struct native immutablewhencooked CoverReference extends ActorReference
 {
 	var int SlotIdx;
 };
 
-struct native atomicwhencooked immutablewhencooked CoverInfo
+struct native immutablewhencooked CoverInfo
 {
 	var editconst CoverLink Link;
 	var editconst int SlotIdx;
@@ -81,7 +82,7 @@ struct native atomicwhencooked immutablewhencooked CoverInfo
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked CovPosInfo
+struct native immutablewhencooked CovPosInfo
 {
 	var CoverLink Link;
 	var int LtSlotIdx;
@@ -103,7 +104,7 @@ struct native atomicwhencooked immutablewhencooked CovPosInfo
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked FireLinkItem
+struct native immutablewhencooked FireLinkItem
 {
 	var CoverLink.ECoverType SrcType;
 	var CoverLink.ECoverAction SrcAction;
@@ -112,14 +113,14 @@ struct native atomicwhencooked immutablewhencooked FireLinkItem
 
 	structdefaultproperties
 	{
-		SrcType=ECoverType.CT_None
-		SrcAction=ECoverAction.CA_Default
-		DestType=ECoverType.CT_None
-		DestAction=ECoverAction.CA_Default
+		SrcType=CT_None
+		SrcAction=CA_Default
+		DestType=CT_None
+		DestAction=CA_Default
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked FireLink
+struct native immutablewhencooked FireLink
 {
 	var array<byte> Interactions;
 	var private const int PackedProperties_CoverPairRefAndDynamicInfo;
@@ -135,7 +136,7 @@ struct native atomicwhencooked immutablewhencooked FireLink
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked DynamicLinkInfo
+struct native immutablewhencooked DynamicLinkInfo
 {
 	var Vector LastTargetLocation;
 	var Vector LastSrcLocation;
@@ -147,7 +148,7 @@ struct native atomicwhencooked immutablewhencooked DynamicLinkInfo
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked ExposedLink
+struct native immutablewhencooked ExposedLink
 {
 	var const editconst CoverReference TargetActor;
 	var byte ExposedScale;
@@ -159,7 +160,7 @@ struct native atomicwhencooked immutablewhencooked ExposedLink
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked SlotMoveRef
+struct native immutablewhencooked SlotMoveRef
 {
 	var PolyReference Poly;
 	var BasedPosition Dest;
@@ -173,7 +174,7 @@ struct native atomicwhencooked immutablewhencooked SlotMoveRef
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked CoverSlot
+struct native immutablewhencooked CoverSlot
 {
 	var Pawn SlotOwner;
 	var Pawn SlotOccupier;
@@ -220,9 +221,9 @@ struct native atomicwhencooked immutablewhencooked CoverSlot
 		SlotOwner=none
 		SlotOccupier=none
 		SlotValidAfterTime=0.0000000
-		ForceCoverType=ECoverType.CT_None
-		CoverType=ECoverType.CT_None
-		LocationDescription=ECoverLocationDescription.CoverDesc_None
+		ForceCoverType=CT_None
+		CoverType=CT_None
+		LocationDescription=CoverDesc_None
 		LocationOffset=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 		RotationOffset=(Pitch=0,Yaw=0,Roll=0)
 		Actions=none
@@ -673,7 +674,7 @@ simulated event SetDisabled(bool bNewDisabled)
 		}
 	}
 	// End:0xE8
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		CoverReplicator = WorldInfo.Game.GetCoverReplicator();
 		// End:0xE8
@@ -795,7 +796,7 @@ function OnModifyCover(SeqAct_ModifyCover Action)
 						if(Action.InputLinks[3].bHasImpulse)
 						{
 							// End:0x41E
-							if(int(Action.ManualCoverType) != int(0))
+							if(int(Action.ManualCoverType) != 0)
 							{
 								Slots[SlotIdx].CoverType = Action.ManualCoverType;
 								// End:0x41E
@@ -947,12 +948,12 @@ simulated function BreakFracturedMeshes(Vector Origin, float Radius, float RBStr
 	foreach CollidingActors(Class'Engine.FracturedStaticMeshActor', FracActor, Radius, Origin, true)
 	{
 		// End:0x11B
-		if((int(FracActor.Physics) == int(0)) && FracActor.IsFracturedByDamageType(DamageType))
+		if((int(FracActor.Physics) == 0) && FracActor.IsFracturedByDamageType(DamageType))
 		{
 			// End:0x11B
 			if(FracActor.FractureEffectIsRelevant(false, Instigator, bWantPhysChunksAndParticles))
 			{
-				FracActor.BreakOffPartsInRadius(Origin, Radius, RBStrength, ((int(bWantPhysChunksAndParticles) == int(1)) ? true : false));
+				FracActor.BreakOffPartsInRadius(Origin, Radius, RBStrength, ((int(bWantPhysChunksAndParticles) == 1) ? true : false));
 			}
 		}		
 	}	

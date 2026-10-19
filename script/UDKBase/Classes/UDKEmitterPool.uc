@@ -111,7 +111,7 @@ defaultproperties
 	// Archetype: ParticleSystemComponent'Engine.Default__EmitterPool.ParticleSystemComponent0'
 	begin object name="ParticleSystemComponent0"
 		bOverrideLODMethod=true
-		LODMethod=ParticleSystemLODMethod.PARTICLESYSTEMLODMETHOD_DirectSet
+		LODMethod=PARTICLESYSTEMLODMETHOD_DirectSet
 		ReplacementPrimitive=none
 	end object
 	PSCTemplate=ParticleSystemComponent0

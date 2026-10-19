@@ -18,6 +18,6 @@ function Tick(float DeltaTime)
 
 defaultproperties
 {
-	HVCC_Type=HVCCType.HVCC_Addon
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	HVCC_Type=HVCC_Addon
+	CollisionType=COLLIDE_CustomDefault
 }

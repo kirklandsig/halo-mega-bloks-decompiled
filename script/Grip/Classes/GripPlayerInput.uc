@@ -16,7 +16,7 @@ static function bool ProcessKey(PlayerController OwnerCtrl, name Key, Object.EIn
 		return false;
 	}
 	// End:0x169
-	if(int(Event) == int(0))
+	if(int(Event) == 0)
 	{
 		// End:0x72
 		if(Key == 'F1')
@@ -50,7 +50,7 @@ static function bool ProcessKey(PlayerController OwnerCtrl, name Key, Object.EIn
 		}
 	}
 	// End:0x1B5
-	if(int(Event) == int(1))
+	if(int(Event) == 1)
 	{
 		// End:0x1B5
 		if(Key == 'F3')

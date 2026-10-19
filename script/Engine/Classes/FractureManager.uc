@@ -17,7 +17,7 @@ var transient array<FracturedStaticMeshActor> ActorsWithDeferredPartsToSpawn;
 simulated event SpawnChunkDestroyEffect(ParticleSystem Effect, Box ChunkBox, Vector ChunkDir, float Scale)
 {
 	local Vector ChunkMiddle;
-	local editinline ParticleSystemComponent EffectComp;
+	local ParticleSystemComponent EffectComp;
 
 	ChunkMiddle = 0.5000000 * (ChunkBox.Min + ChunkBox.Max);
 	EffectComp = WorldInfo.MyEmitterPool.SpawnEmitter(Effect, ChunkMiddle, Rotator(ChunkDir));
@@ -132,5 +132,5 @@ defaultproperties
 	DestroyVibrationLevel=3.0000000
 	DestroyMinAngVel=2.5000000
 	ExplosionVelScale=1.0000000
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

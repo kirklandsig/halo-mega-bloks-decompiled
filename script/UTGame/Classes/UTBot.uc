@@ -1,4 +1,5 @@
-class UTBot extends UDKBot;
+class UTBot extends UDKBot
+	dependson(UTCharInfo);
 
 const MAXSTAKEOUTDIST = 2000;
 const ENEMYLOCATIONFUZZ = 1200;

@@ -69,7 +69,7 @@ function bool CanAttack(Actor Other)
 {
 	local Vector WeaponEndLocation;
 	local Rotator WeaponEndRotation, InstigatorAim, Delta;
-	local editinline SkeletalMeshComponent WeapMeshComp;
+	local SkeletalMeshComponent WeapMeshComp;
 
 	WeapMeshComp = SkeletalMeshComponent(Mesh);
 	// End:0x178

@@ -1,7 +1,8 @@
 class UIDataProvider_OnlinePlayerStorage extends UIDataProvider_OnlinePlayerDataBase
 	transient
 	native
-	config(Game);
+	config(Game)
+	dependson(OnlineSubsystem);
 
 struct native PlayerStorageArrayProvider
 {
@@ -78,7 +79,7 @@ event OnRegister(LocalPlayer InPlayer)
 		{
 			PlayerInterface = OnlineSub.PlayerInterface;
 			// End:0x11D
-			if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+			if(NotEqual_InterfaceInterface(PlayerInterface, none))
 			{
 				PlayerInterface.AddLoginChangeDelegate(OnLoginChange);
 				AddReadCompleteDelegate(PlayerInterface, byte(PlayerControllerId));
@@ -87,7 +88,7 @@ event OnRegister(LocalPlayer InPlayer)
 			}
 		}
 		// End:0x1DE
-		if(NotEqual_InterfaceInterface(OnlineSub.SystemInterface, OnlineSystemInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.SystemInterface, none))
 		{
 			OnlineSub.SystemInterface.AddStorageDeviceChangeDelegate(OnStorageDeviceChange);
 			OnlineSub.SystemInterface.AddExternalUIChangeDelegate(OnExternalUIChange);
@@ -107,13 +108,13 @@ event OnUnregister()
 	{
 		PlayerInterface = OnlineSub.PlayerInterface;
 		// End:0xCF
-		if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+		if(NotEqual_InterfaceInterface(PlayerInterface, none))
 		{
 			PlayerInterface.ClearLoginChangeDelegate(OnLoginChange);
 			ClearReadCompleteDelegate(PlayerInterface, byte(PlayerControllerId));
 		}
 		// End:0x190
-		if(NotEqual_InterfaceInterface(OnlineSub.SystemInterface, OnlineSystemInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.SystemInterface, none))
 		{
 			OnlineSub.SystemInterface.ClearStorageDeviceChangeDelegate(OnStorageDeviceChange);
 			OnlineSub.SystemInterface.ClearExternalUIChangeDelegate(OnExternalUIChange);
@@ -143,7 +144,7 @@ function OnReadStorageComplete(byte LocalUserNum, bool bWasSuccessful)
 			{
 				PlayerInterface = OnlineSub.PlayerInterface;
 				// End:0x105
-				if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+				if(NotEqual_InterfaceInterface(PlayerInterface, none))
 				{
 					bWasErrorLastRead = false;
 					// End:0x105
@@ -179,12 +180,12 @@ function OnLoginChange(byte LocalUserNum)
 		{
 			PlayerInterface = OnlineSub.PlayerInterface;
 			// End:0x135
-			if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+			if(NotEqual_InterfaceInterface(PlayerInterface, none))
 			{
 				LoginStatus = PlayerInterface.GetLoginStatus(byte(PlayerControllerId));
 				PlayerInterface.GetUniquePlayerId(byte(PlayerControllerId), NetId);
 				// End:0x135
-				if(int(LoginStatus) == int(0))
+				if(int(LoginStatus) == 0)
 				{
 					Profile.SetToDefaults();
 				}
@@ -205,7 +206,7 @@ function RefreshStorageData()
 	{
 		OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 		// End:0x17E
-		if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
+		if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none)) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, none))
 		{
 			bFoundCachedData = GetData(OnlineSub.PlayerInterface, byte(PlayerControllerId));
 			// End:0x17E
@@ -228,7 +229,7 @@ function ShowDeviceSelection()
 
 	OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	// End:0x141
-	if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
+	if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none)) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, none))
 	{
 		OnlineSub.PlayerInterfaceEx.AddDeviceSelectionDoneDelegate(byte(PlayerControllerId), OnDeviceSelectionComplete);
 		OnlineSub.PlayerInterfaceEx.ShowDeviceSelectionUI(byte(PlayerControllerId), DeviceStorageSizeNeeded);
@@ -266,7 +267,7 @@ function OnStorageDeviceChange()
 
 	OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	// End:0xFE
-	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.SystemInterface, OnlineSystemInterface(none)))
+	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.SystemInterface, none))
 	{
 		// End:0xFE
 		if(!OnlineSub.PlayerInterfaceEx.IsDeviceValid(Profile.DeviceID, DeviceStorageSizeNeeded))

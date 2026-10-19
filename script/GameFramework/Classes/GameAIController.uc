@@ -1,7 +1,8 @@
 class GameAIController extends GwNavAIController
 	abstract
 	native
-	config(Game);
+	config(Game)
+	dependson(GameTypes);
 
 var const editinline transient GameAICommand CommandList;
 var transient bool bHasRunawayCommandList;
@@ -47,7 +48,7 @@ native final function CheckCommandCount();
 native final function DumpCommandStack();
 
 // Export UGameAIController::execFindCommandOfClass(FFrame&, void* const)
-native final function GameAICommand FindCommandOfClass(Class<GameAICommand> SearchClass);
+native final function coerce GameAICommand FindCommandOfClass(Class<GameAICommand> SearchClass);
 
 // Export UGameAIController::execGetAICommandInStack(FFrame&, void* const)
 native function GameAICommand GetAICommandInStack(const Class<GameAICommand> InClass);
@@ -187,7 +188,7 @@ function SetDesiredRotation(Rotator TargetDesiredRotation, optional bool InLockD
 	// End:0x68
 	if(Pawn != none)
 	{
-		Pawn.super(GameAIController).SetDesiredRotation(TargetDesiredRotation, InLockDesiredRotation, InUnlockWhenReached, InterpolationTime);
+		Pawn.SetDesiredRotation(TargetDesiredRotation, InLockDesiredRotation, InUnlockWhenReached, InterpolationTime);
 	}
 	//return;	
 }

@@ -27,7 +27,7 @@ struct FBlendStruct
 		Base=0.0000000
 		Target=0.0000000
 		BlendTime=0.0000000
-		BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic
+		BlendFunction=VTBlend_Cubic
 		BlendExp=2.0000000
 		Time=0.0000000
 		Value=0.0000000
@@ -45,7 +45,7 @@ struct RTransitionStruct
 	{
 		ARotation=(Pitch=0,Yaw=0,Roll=0)
 		BRotation=(Pitch=0,Yaw=0,Roll=0)
-		Params=(BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,bLockOutgoing=false)
+		Params=(BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,bLockOutgoing=false)
 		Time=0.0000000
 	}
 };
@@ -80,7 +80,7 @@ struct RNamedBlend
 		Base=(Pitch=0,Yaw=0,Roll=0)
 		Target=(Pitch=0,Yaw=0,Roll=0)
 		Value=(Pitch=0,Yaw=0,Roll=0)
-		Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000)
+		Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000)
 		BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None")
 		OnBlendOutEventName="None"
 	}
@@ -102,7 +102,7 @@ struct VNamedBlend
 		Base=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 		Target=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 		Value=(X=0.0000000,Y=0.0000000,Z=0.0000000)
-		Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000)
+		Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000)
 		BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None")
 		OnBlendOutEventName="None"
 	}
@@ -124,7 +124,7 @@ struct FNamedBlend
 		Base=0.0000000
 		Target=0.0000000
 		Value=0.0000000
-		Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000)
+		Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000)
 		BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None")
 		OnBlendOutEventName="None"
 	}
@@ -2272,11 +2272,11 @@ function TPOV UpdateView(const TPOV POV, const Actor Target, const HaloCameraCon
 defaultproperties
 {
 	FBlendRangeDefault=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None")
-	RotationBlend=(Name="None",Base=(Pitch=0,Yaw=0,Roll=0),Target=(Pitch=0,Yaw=0,Roll=0),Value=(Pitch=0,Yaw=0,Roll=0),Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
-	LocationBlend=(Name="None",Base=(X=0.0000000,Y=0.0000000,Z=0.0000000),Target=(X=0.0000000,Y=0.0000000,Z=0.0000000),Value=(X=0.0000000,Y=0.0000000,Z=0.0000000),Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
-	FOVBlend=(Name="None",Base=0.0000000,Target=0.0000000,Value=0.0000000,Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
-	OrbitFocusOffsetBlend=(Name="None",Base=(X=0.0000000,Y=0.0000000,Z=0.0000000),Target=(X=0.0000000,Y=0.0000000,Z=0.0000000),Value=(X=0.0000000,Y=0.0000000,Z=0.0000000),Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
-	OrbitDistanceBlend=(Name="None",Base=0.0000000,Target=0.0000000,Value=0.0000000,Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
+	RotationBlend=(Name="None",Base=(Pitch=0,Yaw=0,Roll=0),Target=(Pitch=0,Yaw=0,Roll=0),Value=(Pitch=0,Yaw=0,Roll=0),Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
+	LocationBlend=(Name="None",Base=(X=0.0000000,Y=0.0000000,Z=0.0000000),Target=(X=0.0000000,Y=0.0000000,Z=0.0000000),Value=(X=0.0000000,Y=0.0000000,Z=0.0000000),Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
+	FOVBlend=(Name="None",Base=0.0000000,Target=0.0000000,Value=0.0000000,Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
+	OrbitFocusOffsetBlend=(Name="None",Base=(X=0.0000000,Y=0.0000000,Z=0.0000000),Target=(X=0.0000000,Y=0.0000000,Z=0.0000000),Value=(X=0.0000000,Y=0.0000000,Z=0.0000000),Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
+	OrbitDistanceBlend=(Name="None",Base=0.0000000,Target=0.0000000,Value=0.0000000,Blend=(Base=0.0000000,Target=0.0000000,BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,Time=0.0000000,Value=0.0000000),BlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),OnBlendOutEventName="None")
 	POVCache=(Location=(X=0.0000000,Y=0.0000000,Z=0.0000000),Rotation=(Pitch=0,Yaw=0,Roll=0),FOV=90.0000000)
 	OrbitEncounterPriorityInfo=(Name="None",Call="None",Priority=-99999999)
 	OrbitEncounterRotationBlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None")
@@ -2285,7 +2285,7 @@ defaultproperties
 	LockViewFOVPriorityInfo=(Name="None",Call="None",Priority=-99999999)
 	OrbitSettingsPriorityInfo=(Name="None",Call="None",Priority=-99999999)
 	OrbitLockOnPriorityInfo=(Name="None",Call="None",Priority=-99999999)
-	RotationTransition=(ARotation=(Pitch=0,Yaw=0,Roll=0),BRotation=(Pitch=0,Yaw=0,Roll=0),Params=(BlendTime=0.0000000,BlendFunction=EViewTargetBlendFunction.VTBlend_Cubic,BlendExp=2.0000000,bLockOutgoing=false),Time=0.0000000)
-	PRIORITY_BLEND_FUNCTION=EViewTargetBlendFunction.VTBlend_Cubic
+	RotationTransition=(ARotation=(Pitch=0,Yaw=0,Roll=0),BRotation=(Pitch=0,Yaw=0,Roll=0),Params=(BlendTime=0.0000000,BlendFunction=VTBlend_Cubic,BlendExp=2.0000000,bLockOutgoing=false),Time=0.0000000)
+	PRIORITY_BLEND_FUNCTION=VTBlend_Cubic
 	TestOrbitFollowScale=1.0000000
 }

@@ -122,7 +122,7 @@ event string GetNodeTitle()
 
 defaultproperties
 {
-	Operator=BTConditionOperator.EQUAL_TO
+	Operator=EQUAL_TO
 	NodeDescription="Returns true if my rank comparison to the checked rank is true."
 	DefaultTitle="Rank"
 }

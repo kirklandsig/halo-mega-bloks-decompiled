@@ -30,5 +30,5 @@ defaultproperties
 {
 	MeshElementIndex=-1
 	GeneralColor=(R=1.0000000,G=1.0000000,B=1.0000000,A=1.0000000)
-	HVCC_Type=HVCCType.HVCC_Skin
+	HVCC_Type=HVCC_Skin
 }

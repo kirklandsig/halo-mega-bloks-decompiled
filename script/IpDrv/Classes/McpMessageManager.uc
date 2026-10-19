@@ -516,5 +516,5 @@ defaultproperties
 	DeleteMessageUrl="/messagedelete"
 	QueryMessagesUrl="/messagelist"
 	QueryMessageContentsUrl="/messagecontents"
-	CompressionType=EMcpMessageCompressionType.MMCT_LZO
+	CompressionType=MMCT_LZO
 }

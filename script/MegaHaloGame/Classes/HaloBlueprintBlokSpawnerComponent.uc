@@ -13,7 +13,7 @@ struct EPrimitiveData
 
 	structdefaultproperties
 	{
-		Type=EHaloConstructionPrimitiveTypes.HCP_None
+		Type=HCP_None
 		Count=0
 		ImpulseXScalar=75.0000000
 		ImpulseYScalar=75.0000000

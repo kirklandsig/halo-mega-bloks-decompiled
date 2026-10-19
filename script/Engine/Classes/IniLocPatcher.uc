@@ -16,7 +16,7 @@ struct native IniLocFileEntry
 		DLName=""
 		HashCode=""
 		bIsUnicode=false
-		ReadState=EOnlineEnumerationReadState.OERS_NotStarted
+		ReadState=OERS_NotStarted
 	}
 };
 
@@ -50,7 +50,7 @@ function Init()
 	{
 		TitleFileInterface = OnlineSub.TitleFileInterface;
 		// End:0xB4
-		if(NotEqual_InterfaceInterface(TitleFileInterface, OnlineTitleFileInterface(none)))
+		if(NotEqual_InterfaceInterface(TitleFileInterface, none))
 		{
 			TitleFileInterface.AddReadTitleFileCompleteDelegate(OnDownloadFileComplete);			
 		}
@@ -70,7 +70,7 @@ function Init()
 		}
 		TitleFileCacheInterface = OnlineSub.TitleFileCacheInterface;
 		// End:0x1B8
-		if(NotEqual_InterfaceInterface(TitleFileCacheInterface, OnlineTitleFileCacheInterface(none)))
+		if(NotEqual_InterfaceInterface(TitleFileCacheInterface, none))
 		{
 			TitleFileCacheInterface.AddLoadTitleFileCompleteDelegate(OnFileCacheLoadComplete);
 			TitleFileCacheInterface.AddSaveTitleFileCompleteDelegate(OnFileCacheSaveComplete);
@@ -87,7 +87,7 @@ function DownloadFiles()
 	if(bRequestEmsFileList)
 	{
 		// End:0x69
-		if((MaxCachedFileAge > 0) && NotEqual_InterfaceInterface(TitleFileCacheInterface, OnlineTitleFileCacheInterface(none)))
+		if((MaxCachedFileAge > 0) && NotEqual_InterfaceInterface(TitleFileCacheInterface, none))
 		{
 			TitleFileCacheInterface.DeleteTitleFiles(float(MaxCachedFileAge));
 		}
@@ -164,7 +164,7 @@ function StartLoadingFiles()
 	if(bRequestEmsFileList)
 	{
 		// End:0x12D
-		if(NotEqual_InterfaceInterface(TitleFileCacheInterface, OnlineTitleFileCacheInterface(none)))
+		if(NotEqual_InterfaceInterface(TitleFileCacheInterface, none))
 		{
 			Index = 0;
 			J0x38:
@@ -173,7 +173,7 @@ function StartLoadingFiles()
 			if(Index < Files.Length)
 			{
 				// End:0x11F
-				if(int(Files[Index].ReadState) == int(0))
+				if(int(Files[Index].ReadState) == 0)
 				{
 					// End:0xF6
 					if(TitleFileCacheInterface.LoadTitleFile(Files[Index].DLName))
@@ -194,7 +194,7 @@ function StartLoadingFiles()
 	else
 	{
 		// End:0x2A7
-		if(NotEqual_InterfaceInterface(TitleFileInterface, OnlineTitleFileInterface(none)))
+		if(NotEqual_InterfaceInterface(TitleFileInterface, none))
 		{
 			Index = 0;
 			J0x15B:
@@ -203,7 +203,7 @@ function StartLoadingFiles()
 			if(Index < Files.Length)
 			{
 				// End:0x299
-				if(int(Files[Index].ReadState) == int(0))
+				if(int(Files[Index].ReadState) == 0)
 				{
 					Files[Index].Filename = UpdateLocFileName(Files[Index].Filename);
 					// End:0x270
@@ -249,7 +249,7 @@ function OnDownloadFileComplete(bool bWasSuccessful, string Filename)
 					bSuccessLoad = true;
 					Files[Index].ReadState = 2;
 					// End:0x184
-					if(bRequestEmsFileList && NotEqual_InterfaceInterface(TitleFileCacheInterface, OnlineTitleFileCacheInterface(none)))
+					if(bRequestEmsFileList && NotEqual_InterfaceInterface(TitleFileCacheInterface, none))
 					{
 						TitleFileCacheInterface.SaveTitleFile(Files[Index].DLName, Files[Index].Filename, FileData);
 					}
@@ -329,7 +329,7 @@ function OnFileCacheLoadComplete(bool bWasSuccessful, string Filename)
 	{
 		TitleFileCacheInterface.DeleteTitleFile(Filename);
 		// End:0x31E
-		if(NotEqual_InterfaceInterface(TitleFileInterface, OnlineTitleFileInterface(none)) && TitleFileInterface.ReadTitleFile(Filename))
+		if(NotEqual_InterfaceInterface(TitleFileInterface, none) && TitleFileInterface.ReadTitleFile(Filename))
 		{
 			Files[Index].ReadState = 1;			
 		}
@@ -389,7 +389,7 @@ function CheckForAllFilesComplete()
 	if(Index < Files.Length)
 	{
 		// End:0x9F
-		if((int(Files[Index].ReadState) == int(0)) || int(Files[Index].ReadState) == int(1))
+		if((int(Files[Index].ReadState) == 0) || int(Files[Index].ReadState) == 1)
 		{
 			bAllFilesComplete = false;
 		}
@@ -469,12 +469,12 @@ function ClearCachedFiles()
 		goto J0x0B;
 	}
 	// End:0x9A
-	if(NotEqual_InterfaceInterface(TitleFileInterface, OnlineTitleFileInterface(none)))
+	if(NotEqual_InterfaceInterface(TitleFileInterface, none))
 	{
 		TitleFileInterface.ClearDownloadedFiles();
 	}
 	// End:0xDA
-	if(NotEqual_InterfaceInterface(TitleFileCacheInterface, OnlineTitleFileCacheInterface(none)))
+	if(NotEqual_InterfaceInterface(TitleFileCacheInterface, none))
 	{
 		TitleFileCacheInterface.ClearCachedFiles();
 	}

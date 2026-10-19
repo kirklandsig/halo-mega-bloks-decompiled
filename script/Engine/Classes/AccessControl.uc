@@ -1,6 +1,7 @@
 class AccessControl extends Info
 	config(Game)
-	notplaceable;
+	notplaceable
+	dependson(OnlineSubsystem, OnlineAuthInterface);
 
 struct PendingClientAuth
 {
@@ -122,7 +123,7 @@ function Controller GetControllerFromString(string Target)
 	foreach WorldInfo.AllControllers(Class'Engine.Controller', C)
 	{
 		// End:0xFF
-		if((C.PlayerReplicationInfo != none) && (C.PlayerReplicationInfo.PlayerName ComplementEqual Target) || C.PlayerReplicationInfo.PlayerName ComplementEqual Target)
+		if((C.PlayerReplicationInfo != none) && (C.PlayerReplicationInfo.PlayerName ~= Target) || C.PlayerReplicationInfo.PlayerName ~= Target)
 		{
 			FinalC = C;
 			// End:0x100
@@ -353,14 +354,14 @@ function bool CheckIPPolicy(string Address)
 			Policy = Left(IPPolicies[I], J);
 			Mask = Mid(IPPolicies[I], J + 1);
 			// End:0x12F
-			if(Policy ComplementEqual "ACCEPT")
+			if(Policy ~= "ACCEPT")
 			{
 				bAcceptPolicy = true;				
 			}
 			else
 			{
 				// End:0x152
-				if(Policy ComplementEqual "DENY")
+				if(Policy ~= "DENY")
 				{
 					bAcceptPolicy = false;					
 				}
@@ -438,12 +439,12 @@ function InitAuthHooks()
 	{
 		CachedAuthInt = OnlineSub.AuthInterface;
 		// End:0xF3
-		if(NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.GameInterface, none))
 		{
 			GameSettings = OnlineSub.GameInterface.GetGameSettings(WorldInfo.Game.PlayerReplicationInfoClass.default.SessionName);
 		}
 		// End:0x1DC
-		if((((int(WorldInfo.NetMode) == int(NM_DedicatedServer)) || int(WorldInfo.NetMode) == int(NM_ListenServer)) && GameSettings != none) && GameSettings.bIsLanMatch)
+		if((((WorldInfo.NetMode == NM_DedicatedServer) || WorldInfo.NetMode == NM_ListenServer) && GameSettings != none) && GameSettings.bIsLanMatch)
 		{
 			// End:0x1D0
 			if(bAuthenticateClients)
@@ -468,7 +469,7 @@ function InitAuthHooks()
 function RegisterAuthDelegates()
 {
 	// End:0x23B
-	if(NotEqual_InterfaceInterface(CachedAuthInt, OnlineAuthInterface(none)))
+	if(NotEqual_InterfaceInterface(CachedAuthInt, none))
 	{
 		// End:0x76
 		if(!CachedAuthInt.IsReady())
@@ -480,9 +481,9 @@ function RegisterAuthDelegates()
 		CachedAuthInt.AddClientAuthCompleteDelegate(OnClientAuthComplete);
 		CachedAuthInt.AddClientConnectionCloseDelegate(OnClientConnectionClose);
 		CachedAuthInt.AddServerAuthRetryRequestDelegate(ProcessServerAuthRetryRequest);
-		CachedAuthInt.ClearClientConnectionCloseDelegate(Class'Engine.AccessControl'.StaticOnClientConnectionClose);
+		CachedAuthInt.ClearClientConnectionCloseDelegate(Class'Engine.AccessControl'.static.StaticOnClientConnectionClose);
 		// End:0x22C
-		if(NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.GameInterface, none))
 		{
 			OnlineSub.GameInterface.AddDestroyOnlineGameCompleteDelegate(OnDestroyOnlineGameComplete);
 		}
@@ -503,7 +504,7 @@ function RegisterAuthDelegates()
 function ClearAuthDelegates(bool bExiting)
 {
 	// End:0x22A
-	if(NotEqual_InterfaceInterface(CachedAuthInt, OnlineAuthInterface(none)))
+	if(NotEqual_InterfaceInterface(CachedAuthInt, none))
 	{
 		CachedAuthInt.ClearAuthReadyDelegate(OnAuthReady);
 		CachedAuthInt.ClearServerAuthRequestDelegate(ProcessServerAuthRequest);
@@ -514,10 +515,10 @@ function ClearAuthDelegates(bool bExiting)
 		// End:0x19B
 		if(!bExiting)
 		{
-			CachedAuthInt.AddClientConnectionCloseDelegate(Class'Engine.AccessControl'.StaticOnClientConnectionClose);
+			CachedAuthInt.AddClientConnectionCloseDelegate(Class'Engine.AccessControl'.static.StaticOnClientConnectionClose);
 		}
 		// End:0x227
-		if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none)))
+		if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, none))
 		{
 			OnlineSub.GameInterface.ClearDestroyOnlineGameCompleteDelegate(OnDestroyOnlineGameComplete);
 		}		
@@ -544,14 +545,14 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 	OutError = "";
 	InPassword = WorldInfo.Game.ParseOption(Options, "Password");
 	// End:0x127
-	if((int(WorldInfo.NetMode) != int(NM_Standalone)) && WorldInfo.Game.AtCapacity(bSpectator))
+	if((WorldInfo.NetMode != NM_Standalone) && WorldInfo.Game.AtCapacity(bSpectator))
 	{
 		OutError = PathName(WorldInfo.Game.GameMessageClass) $ ".MaxedOutMessage";		
 	}
 	else
 	{
 		// End:0x1E2
-		if(((GamePassword != "") && !InPassword == GamePassword) && (AdminPassword == "") || !InPassword == AdminPassword)
+		if(((GamePassword != "") && !(InPassword == GamePassword)) && (AdminPassword == "") || !(InPassword == AdminPassword))
 		{
 			OutError = ((InPassword == "") ? "Engine.AccessControl.NeedPassword" : "Engine.AccessControl.WrongPassword");
 		}
@@ -562,14 +563,14 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 		OutError = "Engine.AccessControl.IPBanned";
 	}
 	// End:0xBB6
-	if(((bAuthenticateClients && OutError == "") && NotEqual_InterfaceInterface(CachedAuthInt, OnlineAuthInterface(none))) && bAuthDelegatesRegistered)
+	if(((bAuthenticateClients && OutError == "") && NotEqual_InterfaceInterface(CachedAuthInt, none)) && bAuthDelegatesRegistered)
 	{
 		// End:0xBB6
-		if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none)))
+		if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, none))
 		{
 			GameSettings = OnlineSub.GameInterface.GetGameSettings(WorldInfo.Game.PlayerReplicationInfoClass.default.SessionName);
 			// End:0xBB6
-			if((((int(WorldInfo.NetMode) == int(NM_DedicatedServer)) || int(WorldInfo.NetMode) == int(NM_ListenServer)) && GameSettings != none) && !GameSettings.bIsLanMatch)
+			if((((WorldInfo.NetMode == NM_DedicatedServer) || WorldInfo.NetMode == NM_ListenServer) && GameSettings != none) && !GameSettings.bIsLanMatch)
 			{
 				// End:0x475
 				if(!bSupportsAuth)
@@ -666,7 +667,7 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 						}						
 					}
 					// End:0x94F
-					if((((int(WorldInfo.NetMode) == int(NM_ListenServer)) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && OnlineSub.PlayerInterface.GetUniquePlayerId(0, HostUID)) && UniqueId == HostUID)
+					if((((WorldInfo.NetMode == NM_ListenServer) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none)) && OnlineSub.PlayerInterface.GetUniquePlayerId(0, HostUID)) && UniqueId == HostUID)
 					{
 						bFound = true;
 					}
@@ -859,7 +860,7 @@ function OnAuthReady()
 			SetTimer(3.0000000, true, 'PendingAuthTimer');
 		}
 		// End:0x2AF
-		if((bAuthenticateListenHost && int(WorldInfo.NetMode) == int(NM_ListenServer)) && bPendingListenAuth)
+		if((bAuthenticateListenHost && WorldInfo.NetMode == NM_ListenServer) && bPendingListenAuth)
 		{
 			BeginListenHostAuth();
 		}
@@ -925,7 +926,7 @@ function OnClientAuthComplete(bool bSuccess, UniqueNetId ClientUID, Player Clien
 	local AuthSession CurClientSession;
 
 	// End:0x127
-	if((((int(WorldInfo.NetMode) == int(NM_ListenServer)) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none))) && OnlineSub.PlayerInterface.GetUniquePlayerId(0, HostUID)) && HostUID == ClientUID)
+	if((((WorldInfo.NetMode == NM_ListenServer) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none)) && OnlineSub.PlayerInterface.GetUniquePlayerId(0, HostUID)) && HostUID == ClientUID)
 	{
 		// End:0x125
 		if(bSuccess)
@@ -1076,7 +1077,7 @@ function ProcessServerAuthRetryRequest(Player ClientConnection)
 	// End:0x3DD
 	if(bAuthenticateServer && ClientConnection != none)
 	{
-		bFoundAndAuthenticated = CachedAuthInt.FindClientAuthSession(ClientConnection, CurClientSession) && int(CurClientSession.AuthStatus) == int(2);
+		bFoundAndAuthenticated = CachedAuthInt.FindClientAuthSession(ClientConnection, CurClientSession) && int(CurClientSession.AuthStatus) == 2;
 		// End:0x3DD
 		if(bFoundAndAuthenticated)
 		{
@@ -1147,7 +1148,7 @@ function ProcessServerAuthRetryRequest(Player ClientConnection)
 function NotifyStartOnlineGame()
 {
 	// End:0xA6
-	if(((bAuthDelegatesRegistered && bAuthenticateListenHost) && int(WorldInfo.NetMode) == int(NM_ListenServer)) && NotEqual_InterfaceInterface(CachedAuthInt, OnlineAuthInterface(none)))
+	if(((bAuthDelegatesRegistered && bAuthenticateListenHost) && WorldInfo.NetMode == NM_ListenServer) && NotEqual_InterfaceInterface(CachedAuthInt, none))
 	{
 		// End:0x9A
 		if(CachedAuthInt.IsReady())
@@ -1196,7 +1197,7 @@ function BeginListenHostAuth(optional bool bRetry)
 		{
 			LogInternal("Kicking off listen auth session");
 			// End:0x298
-			if(NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none)))
+			if(NotEqual_InterfaceInterface(OnlineSub.GameInterface, none))
 			{
 				GameSettings = OnlineSub.GameInterface.GetGameSettings(WorldInfo.Game.PlayerReplicationInfoClass.default.SessionName);
 			}
@@ -1215,7 +1216,7 @@ function BeginListenHostAuth(optional bool bRetry)
 		else
 		{
 			// End:0x41A
-			if((int(ListenSession.AuthStatus) != int(2)) && !IsTimerActive('ListenHostAuthTimeout'))
+			if((int(ListenSession.AuthStatus) != 2) && !IsTimerActive('ListenHostAuthTimeout'))
 			{
 				LogInternal("BeginListenHostAuth was called when there is already a listen auth session, but the timeout is not active");
 				SetTimer(float(AuthRetryDelay), false, 'ListenHostAuthTimeout');
@@ -1238,7 +1239,7 @@ function ContinueListenHostAuth()
 	local int ServerIP, ServerPort;
 
 	// End:0xB7
-	if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+	if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 	{
 		bGotHostInfo = OnlineSub.PlayerInterface.GetUniquePlayerId(0, HostUID) && CachedAuthInt.GetServerAddr(ServerIP, ServerPort);
 	}
@@ -1259,7 +1260,7 @@ function EndListenHostAuth()
 	local int ServerIP, ServerPort;
 
 	// End:0xE5
-	if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+	if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 	{
 		bGotHostInfo = (CachedAuthInt.GetServerUniqueId(ServerUID) && CachedAuthInt.GetServerAddr(ServerIP, ServerPort)) && OnlineSub.PlayerInterface.GetUniquePlayerId(0, HostUID);
 	}
@@ -1345,10 +1346,10 @@ static final function StaticOnClientConnectionClose(Player ClientConnection)
 		CurAuthInt = CurOnlineSub.AuthInterface;
 	}
 	// End:0x3C1
-	if(NotEqual_InterfaceInterface(CurAuthInt, OnlineAuthInterface(none)) && ClientConnection != none)
+	if(NotEqual_InterfaceInterface(CurAuthInt, none) && ClientConnection != none)
 	{
 		// End:0x147
-		if(CurAuthInt.FindClientAuthSession(ClientConnection, CurClientSession) && int(CurClientSession.AuthStatus) == int(2))
+		if(CurAuthInt.FindClientAuthSession(ClientConnection, CurClientSession) && int(CurClientSession.AuthStatus) == 2)
 		{
 			CurAuthInt.EndRemoteClientAuthSession(CurClientSession.EndPointUID, CurClientSession.EndPointIP);
 		}
@@ -1392,7 +1393,7 @@ function OnDestroyOnlineGameComplete(name SessionName, bool bWasSuccessful)
 	local AuthSession CurClientSession;
 
 	// End:0x33
-	if(int(WorldInfo.NetMode) == int(NM_ListenServer))
+	if(WorldInfo.NetMode == NM_ListenServer)
 	{
 		EndListenHostAuth();
 	}
@@ -1400,7 +1401,7 @@ function OnDestroyOnlineGameComplete(name SessionName, bool bWasSuccessful)
 	foreach CachedAuthInt.AllClientAuthSessions(CurClientSession)
 	{
 		// End:0x243
-		if(int(CurClientSession.AuthStatus) == int(2))
+		if(int(CurClientSession.AuthStatus) == 2)
 		{
 			CachedAuthInt.EndRemoteClientAuthSession(CurClientSession.EndPointUID, CurClientSession.EndPointIP);
 			// End:0x188
@@ -1469,7 +1470,7 @@ function NotifyExit()
 function Cleanup(optional bool bExit)
 {
 	// End:0x8E
-	if(NotEqual_InterfaceInterface(CachedAuthInt, OnlineAuthInterface(none)))
+	if(NotEqual_InterfaceInterface(CachedAuthInt, none))
 	{
 		ClearAuthDelegates(bExit);
 		// End:0x8E

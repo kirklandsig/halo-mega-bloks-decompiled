@@ -2,7 +2,8 @@ class UIDataStore_OnlineGameSearch extends UIDataStore_Remote
 	abstract
 	transient
 	native
-	config(Engine);
+	config(Engine)
+	dependson(OnlineGameSearch);
 
 struct native GameSearchCfg
 {
@@ -39,7 +40,7 @@ event Init()
 	{
 		GameInterface = OnlineSub.GameInterface;
 		// End:0xB1
-		if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+		if(NotEqual_InterfaceInterface(GameInterface, none))
 		{
 			GameInterface.AddFindOnlineGamesCompleteDelegate(OnSearchComplete);
 		}
@@ -73,7 +74,7 @@ event bool SubmitGameSearch(byte ControllerIndex, optional bool bInvalidateExist
 	if(OnlineSub != none)
 	{
 		// End:0x168
-		if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+		if(NotEqual_InterfaceInterface(GameInterface, none))
 		{
 			// End:0x64
 			if(bInvalidateExistingSearchResults || ActiveSearchIndex == SelectedIndex)
@@ -151,7 +152,7 @@ event bool ShowHostGamercard(byte ControllerIndex, int ListIndex)
 		{
 			PlayerExt = OnlineSub.PlayerInterfaceEx;
 			// End:0x15F
-			if(NotEqual_InterfaceInterface(PlayerExt, OnlinePlayerInterfaceEx(none)))
+			if(NotEqual_InterfaceInterface(PlayerExt, none))
 			{
 				Game = GameSearchCfgList[SelectedIndex].Search.Results[ListIndex].GameSettings;
 				return PlayerExt.ShowGamerCardUI(ControllerIndex, Game.OwningPlayerId);				
@@ -287,7 +288,7 @@ function ClearAllSearchResults()
 
 	OriginalActiveIndex = ActiveSearchIndex;
 	// End:0x16B
-	if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+	if(NotEqual_InterfaceInterface(GameInterface, none))
 	{
 		GameTypeIndex = 0;
 		J0x3E:

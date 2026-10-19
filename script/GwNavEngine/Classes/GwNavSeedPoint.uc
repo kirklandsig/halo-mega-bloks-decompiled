@@ -8,5 +8,5 @@ defaultproperties
 {
 	NavdataFamilies[0]=GwNavNavdataFamily'EngineGwNav.DefaultFamily'
 	Components[0]=none
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

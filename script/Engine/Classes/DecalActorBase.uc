@@ -4,7 +4,6 @@ class DecalActorBase extends Actor
 	notplaceable
 	implements(EditorLinkSelectionInterface);
 
-var private native const noexport Pointer VfTable_IEditorLinkSelectionInterface;
 var const editconst export editinline DecalComponent Decal;
 
 defaultproperties
@@ -14,15 +13,15 @@ defaultproperties
 	// TemplateOwnerName: 'NewDecalComponent'
 	begin object name="NewDecalComponent" class=Engine.DecalComponent
 		bStaticDecal=true
-		DecalTransform=EDecalTransform.DecalTransform_OwnerAbsolute
+		DecalTransform=DecalTransform_OwnerAbsolute
 		ReplacementPrimitive=none
 	end object
 	Decal=NewDecalComponent
 	Components[0]=NewDecalComponent
 	Components[1]=none
 	Components[2]=none
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
-	TickGroup=ETickingGroup.TG_DuringAsyncWork
+	CollisionType=COLLIDE_CustomDefault
+	TickGroup=TG_DuringAsyncWork
 	bStatic=true
 	bMovable=false
 }

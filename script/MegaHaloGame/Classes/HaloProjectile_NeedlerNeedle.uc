@@ -370,8 +370,8 @@ defaultproperties
 	StayOnBaseLineWeight=0.0000500
 	BaseDirWeight=0.1000000
 	SeekTargetMaxSpeedForAI=250.0000000
-	TargetSearchMode=ETargetSearchMode.TargetSearchMode_Cone
-	TargetSearchModeOverrideForAI=ETargetSearchMode.TargetSearchMode_Cone
+	TargetSearchMode=TargetSearchMode_Cone
+	TargetSearchModeOverrideForAI=TargetSearchMode_Cone
 	TargetSearchRange=4000.0000000
 	TargetAngularSearchRange=50.0000000
 	SeekingTurnRate=20000.0000000

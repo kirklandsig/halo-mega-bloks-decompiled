@@ -83,7 +83,7 @@ defaultproperties
 		ReplacementPrimitive=none
 	end object
 	Components[1]=CollisionCylinder
-	TickGroup=ETickingGroup.TG_PostAsyncWork
+	TickGroup=TG_PostAsyncWork
 	bCollideActors=true
 	bCollideWorld=true
 	bBlockActors=true

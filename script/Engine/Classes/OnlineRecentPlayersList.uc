@@ -208,7 +208,7 @@ function bool ShowRecentPlayerList(byte LocalUserNum, string Title, string Descr
 
 	OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	// End:0xC9
-	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
+	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, none))
 	{
 		return OnlineSub.PlayerInterfaceEx.ShowCustomPlayersUI(LocalUserNum, RecentPlayers, Title, Description);
 	}
@@ -223,7 +223,7 @@ function bool ShowRecentPartiesPlayerList(byte LocalUserNum, string Title, strin
 
 	OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	// End:0xDC
-	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
+	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, none))
 	{
 		GetPlayersFromRecentParties(Players);
 		return OnlineSub.PlayerInterfaceEx.ShowCustomPlayersUI(LocalUserNum, Players, Title, Description);
@@ -238,7 +238,7 @@ function bool ShowLastPartyPlayerList(byte LocalUserNum, string Title, string De
 
 	OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	// End:0xDC
-	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
+	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, none))
 	{
 		return OnlineSub.PlayerInterfaceEx.ShowCustomPlayersUI(LocalUserNum, LastParty.PartyMembers, Title, Description);
 	}
@@ -253,7 +253,7 @@ function bool ShowCurrentPlayersList(byte LocalUserNum, string Title, string Des
 
 	OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	// End:0xDC
-	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
+	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, none))
 	{
 		GetPlayersFromCurrentPlayers(Players);
 		return OnlineSub.PlayerInterfaceEx.ShowCustomPlayersUI(LocalUserNum, Players, Title, Description);

@@ -32,7 +32,7 @@ simulated event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	// End:0x67
-	if((int(WorldInfo.NetMode) == int(NM_DedicatedServer)) && (int(RemoteRole) == int(ROLE_None)) || bNetTemporary)
+	if((WorldInfo.NetMode == NM_DedicatedServer) && (RemoteRole == ROLE_None) || bNetTemporary)
 	{
 		LifeSpan = 0.2000000;
 	}
@@ -108,7 +108,7 @@ function OnToggle(SeqAct_Toggle Action)
 	ParticleSystemComponent.LastRenderTime = WorldInfo.TimeSeconds;
 	ForceNetRelevant();
 	// End:0x214
-	if(int(RemoteRole) != int(ROLE_None))
+	if(RemoteRole != ROLE_None)
 	{
 		SetForcedInitialReplicatedProperty(BoolProperty'Engine.Emitter.bCurrentlyActive', bCurrentlyActive == default.bCurrentlyActive);
 	}
@@ -132,7 +132,7 @@ simulated function SetFloatParameter(name ParameterName, float Param)
 	// End:0x43
 	if(ParticleSystemComponent != none)
 	{
-		ParticleSystemComponent.super(Emitter).SetFloatParameter(ParameterName, Param);		
+		ParticleSystemComponent.SetFloatParameter(ParameterName, Param);		
 	}
 	else
 	{
@@ -146,7 +146,7 @@ simulated function SetVectorParameter(name ParameterName, Vector Param)
 	// End:0x43
 	if(ParticleSystemComponent != none)
 	{
-		ParticleSystemComponent.super(Emitter).SetVectorParameter(ParameterName, Param);		
+		ParticleSystemComponent.SetVectorParameter(ParameterName, Param);		
 	}
 	else
 	{
@@ -160,7 +160,7 @@ simulated function SetColorParameter(name ParameterName, Color Param)
 	// End:0x43
 	if(ParticleSystemComponent != none)
 	{
-		ParticleSystemComponent.super(Emitter).SetColorParameter(ParameterName, Param);		
+		ParticleSystemComponent.SetColorParameter(ParameterName, Param);		
 	}
 	else
 	{
@@ -194,7 +194,7 @@ simulated function SetActorParameter(name ParameterName, Actor Param)
 	// End:0x43
 	if(ParticleSystemComponent != none)
 	{
-		ParticleSystemComponent.super(Emitter).SetActorParameter(ParameterName, Param);		
+		ParticleSystemComponent.SetActorParameter(ParameterName, Param);		
 	}
 	else
 	{
@@ -217,7 +217,7 @@ simulated function OnSetParticleSysParam(SeqAct_SetParticleSysParam Action)
 		if(Idx < Action.InstanceParameters.Length)
 		{
 			// End:0x259
-			if(int(Action.InstanceParameters[Idx].ParamType) != int(0))
+			if(int(Action.InstanceParameters[Idx].ParamType) != 0)
 			{
 				ParamIdx = ParticleSystemComponent.InstanceParameters.Find('Name', Action.InstanceParameters[Idx].Name);
 				// End:0x18C
@@ -243,7 +243,7 @@ simulated function OnSetParticleSysParam(SeqAct_SetParticleSysParam Action)
 
 function bool ShouldSaveForCheckpoint()
 {
-	return bNoDelete && int(RemoteRole) != int(ROLE_None);
+	return bNoDelete && RemoteRole != ROLE_None;
 	//return ReturnValue;	
 }
 
@@ -286,8 +286,8 @@ defaultproperties
 	Components[0]=none
 	Components[1]=ParticleSystemComponent0
 	Components[2]=none
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
-	TickGroup=ETickingGroup.TG_DuringAsyncWork
+	CollisionType=COLLIDE_CustomDefault
+	TickGroup=TG_DuringAsyncWork
 	bNoDelete=true
 	bHardAttach=true
 	bGameRelevant=true

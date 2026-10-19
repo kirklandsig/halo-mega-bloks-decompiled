@@ -1,6 +1,7 @@
 class CCSBTMoveTo extends GripBTNode
 	abstract
-	native;
+	native
+	dependson(CCSPawn);
 
 var bool DummyVarToAvoidUnrealScriptCompilerErrorWhenDeclaringAnEnumVarAsFirstVariable;
 var CCSPawn.ECCSMovementSpeed Speed;

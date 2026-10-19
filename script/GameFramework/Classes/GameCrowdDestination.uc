@@ -1,7 +1,8 @@
 class GameCrowdDestination extends GameCrowdInteractionPoint
 	native
 	placeable
-	implements(GameCrowdSpawnInterface,EditorLinkSelectionInterface);
+	implements(GameCrowdSpawnInterface,EditorLinkSelectionInterface)
+	dependson(GameCrowdAgent);
 
 var private native const noexport Pointer VfTable_IEditorLinkSelectionInterface;
 var bool bKillWhenReached;

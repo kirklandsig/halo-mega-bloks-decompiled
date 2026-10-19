@@ -12,7 +12,7 @@ var float SplineTime;
 
 defaultproperties
 {
-	Behavior=EAIFlightBehaviors.FB_Active_Patrol
+	Behavior=FB_Active_Patrol
 	RouteFlightSpeed=700.0000000
 	SplineTime=3.0000000
 }

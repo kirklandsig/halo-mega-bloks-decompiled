@@ -48,6 +48,6 @@ function CreateObjectiveMarkers()
 
 defaultproperties
 {
-	UseObject=(Actor=none,Marker=EObjectiveMarker.OMN_Use,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=true,bClampToScreen=true)
+	UseObject=(Actor=none,Marker=OMN_Use,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=true,bClampToScreen=true)
 	IconFrame="use"
 }

@@ -866,6 +866,6 @@ defaultproperties
 	LocalizationSection="GFxHaloMainMenu"
 	MovieInfo=SwfMovie'MainMenu.GFx_MainMenu'
 	bCaptureInput=true
-	TimingMode=GFxTimingMode.TM_Real
+	TimingMode=TM_Real
 	WidgetBindings[0]=(WidgetName="StartButton",WidgetClass=Class'GFxUI.GFxClikWidget')
 }

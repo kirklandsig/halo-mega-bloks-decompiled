@@ -581,5 +581,5 @@ defaultproperties
 	end object
 	RadialImpulseComponent=ImpulseComponent0
 	Components[0]=ImpulseComponent0
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

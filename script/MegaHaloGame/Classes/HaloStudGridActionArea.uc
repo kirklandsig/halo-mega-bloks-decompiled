@@ -46,7 +46,7 @@ defaultproperties
 	end object
 	TouchCylinder=CollisionCylinder
 	Components[0]=CollisionCylinder
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	CollisionType=COLLIDE_TouchAll
 	bCollideActors=true
 	CollisionComponent=CollisionCylinder
 }

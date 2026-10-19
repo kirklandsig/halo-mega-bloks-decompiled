@@ -150,14 +150,14 @@ defaultproperties
 		bUpdateMatrices=false
 		bAlwaysCapture=true
 		bCaptureMainScene=false
-		ViewMode=ESceneCaptureViewMode.SceneCapView_Unlit
+		ViewMode=SceneCapView_Unlit
 	end object
 	SceneCapture=Capture
 	Components[0]=Light
 	Components[1]=Map
 	Components[2]=Screen
 	Components[3]=Capture
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 	bAlwaysTick=true
 	RotationRate=(Pitch=0,Yaw=10000,Roll=0)
 }

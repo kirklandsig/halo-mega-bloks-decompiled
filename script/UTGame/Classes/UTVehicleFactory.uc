@@ -410,7 +410,7 @@ defaultproperties
 	end object
 	Components[4]=MyLightEnvironment
 	Components[5]=none
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
+	RemoteRole=ROLE_SimulatedProxy
 	bStatic=false
 	bHidden=true
 	bAlwaysRelevant=true

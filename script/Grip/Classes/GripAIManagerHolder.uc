@@ -6,5 +6,5 @@ var native Pointer AIManager;
 
 defaultproperties
 {
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

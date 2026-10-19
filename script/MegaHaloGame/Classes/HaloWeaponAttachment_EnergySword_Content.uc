@@ -106,5 +106,5 @@ defaultproperties
 	end object
 	Mesh=SkeletalMeshComponent0
 	WeaponClass=Class'MegaHaloGame.HaloWeapon_EnergySword_Content'
-	WeapAnimType=EWeapAnimType.EWAT_Stinger
+	WeapAnimType=EWAT_Stinger
 }

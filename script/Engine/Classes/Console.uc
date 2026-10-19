@@ -91,7 +91,7 @@ function PurgeCommandFromHistory(string Command)
 		if(HistoryIdx < 16)
 		{
 			// End:0x124
-			if(History[HistoryIdx] ComplementEqual Command)
+			if(History[HistoryIdx] ~= Command)
 			{
 				Idx = HistoryIdx;
 				NextIdx = (HistoryIdx + 1) % 16;
@@ -119,7 +119,7 @@ function PurgeCommandFromHistory(string Command)
 function ConsoleCommand(string Command)
 {
 	// End:0xE3
-	if(((HistoryTop == 0) ? !History[16 - 1] ComplementEqual Command : !History[HistoryTop - 1] ComplementEqual Command))
+	if(((HistoryTop == 0) ? !(History[16 - 1] ~= Command) : !(History[HistoryTop - 1] ~= Command)))
 	{
 		PurgeCommandFromHistory(Command);
 		History[HistoryTop] = Command;
@@ -138,17 +138,13 @@ function ConsoleCommand(string Command)
 	{		
 		ConsoleTargetPlayer.Actor.ConsoleCommand(Command);		
 	}
+	else if((Outer.Outer.GamePlayers.Length > 0) && Outer.Outer.GamePlayers[0].Actor != none)
+	{			
+		Outer.Outer.GamePlayers[0].Actor.ConsoleCommand(Command);			
+	}
 	else
-	{
-		// End:0x276
-		if((Outer.Outer.GamePlayers.Length > 0) && Outer.Outer.GamePlayers[0].Actor != none)
-		{			
-			Outer.Outer.GamePlayers[0].Actor.ConsoleCommand(Command);			
-		}
-		else
-		{			
-			Outer.ConsoleCommand(Command);
-		}
+	{			
+		Outer.ConsoleCommand(Command);
 	}
 	//return;	
 }
@@ -220,7 +216,7 @@ function PostRender_Console(Canvas Canvas)
 function bool InputKey(int ControllerId, name Key, Object.EInputEvent Event, optional float AmountDepressed = 1.0000000, optional bool bGamepad = false)
 {
 	// End:0x97
-	if(int(Event) == int(0))
+	if(int(Event) == 0)
 	{
 		bCaptureKeyInput = false;
 		// End:0x64
@@ -230,15 +226,11 @@ function bool InputKey(int ControllerId, name Key, Object.EInputEvent Event, opt
 			bCaptureKeyInput = true;
 			return true;			
 		}
-		else
+		else if(Key == TypeKey)
 		{
-			// End:0x97
-			if(Key == TypeKey)
-			{
-				GotoState('Typing');
-				bCaptureKeyInput = true;
-				return true;
-			}
+			GotoState('Typing');
+			bCaptureKeyInput = true;
+			return true;
 		}
 	}
 	return bCaptureKeyInput;
@@ -260,13 +252,9 @@ function FlushPlayerInput()
 	{
 		PC = ConsoleTargetPlayer.Actor;		
 	}
-	else
+	else if((Outer.Outer.GamePlayers.Length > 0) && Outer.Outer.GamePlayers[0].Actor != none)
 	{
-		// End:0x11A
-		if((Outer.Outer.GamePlayers.Length > 0) && Outer.Outer.GamePlayers[0].Actor != none)
-		{
-			PC = Outer.Outer.GamePlayers[0].Actor;
-		}
+		PC = Outer.Outer.GamePlayers[0].Actor;
 	}
 	// End:0x183
 	if((PC != none) && PC.PlayerInput != none)
@@ -282,55 +270,39 @@ function bool ProcessControlKey(name Key, Object.EInputEvent Event)
 	if((Key == 'LeftControl') || Key == 'RightControl')
 	{
 		// End:0x53
-		if(int(Event) == int(1))
+		if(int(Event) == 1)
 		{
 			bCtrl = false;			
 		}
-		else
+		else if(int(Event) == 0)
 		{
-			// End:0x73
-			if(int(Event) == int(0))
-			{
-				bCtrl = true;
-			}
+			bCtrl = true;
 		}
 		return true;		
 	}
-	else
+	else if(((bCtrl && int(Event) == 0) && Outer.Outer.GamePlayers.Length > 0) && Outer.Outer.GamePlayers[0].Actor != none)
 	{
-		// End:0x2DD
-		if(((bCtrl && int(Event) == int(0)) && Outer.Outer.GamePlayers.Length > 0) && Outer.Outer.GamePlayers[0].Actor != none)
+		// End:0x1AF
+		if(Key == 'V')
 		{
-			// End:0x1AF
-			if(Key == 'V')
+			AppendInputText(Outer.Outer.GamePlayers[0].Actor.PasteFromClipboard());
+			return true;				
+		}
+		else if(Key == 'C')
+		{
+			Outer.Outer.GamePlayers[0].Actor.CopyToClipboard(TypedStr);
+			return true;					
+		}
+		else if(Key == 'X')
+		{
+			// End:0x2DB
+			if(TypedStr != "")
 			{
-				AppendInputText(Outer.Outer.GamePlayers[0].Actor.PasteFromClipboard());
-				return true;				
+				Outer.Outer.GamePlayers[0].Actor.CopyToClipboard(TypedStr);
+				SetInputText("");
+				SetCursorPos(0);
 			}
-			else
-			{
-				// End:0x234
-				if(Key == 'C')
-				{
-					Outer.Outer.GamePlayers[0].Actor.CopyToClipboard(TypedStr);
-					return true;					
-				}
-				else
-				{
-					// End:0x2DD
-					if(Key == 'X')
-					{
-						// End:0x2DB
-						if(TypedStr != "")
-						{
-							Outer.Outer.GamePlayers[0].Actor.CopyToClipboard(TypedStr);
-							SetInputText("");
-							SetCursorPos(0);
-						}
-						return true;
-					}
-				}
-			}
+			return true;
 		}
 	}
 	return false;
@@ -386,7 +358,7 @@ state Typing
 		local int NewPos, SpacePos, PeriodPos;
 
 		// End:0x2E
-		if(int(Event) == int(0))
+		if(int(Event) == 0)
 		{
 			bCaptureKeyInput = false;
 		}
@@ -395,275 +367,207 @@ state Typing
 		{
 			return true;			
 		}
-		else
+		else if(bGamepad)
 		{
-			// End:0x64
-			if(bGamepad)
+			return false;				
+		}
+		else if((Key == 'Escape') && int(Event) == 1)
+		{
+			// End:0xD0
+			if(TypedStr != "")
 			{
-				return false;				
+				SetInputText("");
+				SetCursorPos(0);
+				HistoryCur = HistoryTop;
+				return true;						
 			}
 			else
 			{
-				// End:0xE3
-				if((Key == 'Escape') && int(Event) == int(1))
+				GotoState('None');
+			}
+			return true;					
+		}
+		else if((Key == ConsoleKey) && int(Event) == 0)
+		{
+			GotoState('Open');
+			bCaptureKeyInput = true;
+			return true;						
+		}
+		else if((Key == TypeKey) && int(Event) == 0)
+		{
+			// End:0x1DB
+			if((AutoCompleteIndices.Length > 0) && !bAutoCompleteLocked)
+			{
+				TypedStr = AutoCompleteList[AutoCompleteIndices[AutoCompleteIndex]].Command;
+				SetCursorPos(Len(TypedStr));
+				bAutoCompleteLocked = true;								
+			}
+			else
+			{
+				GotoState('None');
+				bCaptureKeyInput = true;
+			}
+			return true;							
+		}
+		else if((Key == 'Enter') && int(Event) == 1)
+		{
+			// End:0x29B
+			if(TypedStr != "")
+			{
+				Temp = TypedStr;
+				SetInputText("");
+				SetCursorPos(0);
+				ConsoleCommand(Temp);
+				OutputText("");
+				GotoState('None');
+				UpdateCompleteIndices();									
+			}
+			else
+			{
+				GotoState('None');
+			}
+			return true;								
+		}
+		else if(global.InputKey(ControllerId, Key, Event, AmountDepressed, bGamepad))
+		{
+			return true;									
+		}
+		else if((int(Event) != 0) && int(Event) != 2)
+		{
+			// End:0x36E
+			if(!bGamepad)
+			{
+				return ((Key != 'LeftMouseButton') && Key != 'MiddleMouseButton') && Key != 'RightMouseButton';
+			}
+			return false;										
+		}
+		else if(Key == 'Up')
+		{
+			// End:0x413
+			if(!bNavigatingHistory && (bRequireCtrlToNavigateAutoComplete && bCtrl) || (!bRequireCtrlToNavigateAutoComplete && !bCtrl) && AutoCompleteIndices.Length > 1)
+			{
+				// End:0x410
+				if(++AutoCompleteIndex == AutoCompleteIndices.Length)
 				{
-					// End:0xD0
-					if(TypedStr != "")
-					{
-						SetInputText("");
-						SetCursorPos(0);
-						HistoryCur = HistoryTop;
-						return true;						
-					}
-					else
-					{
-						GotoState('None');
-					}
-					return true;					
+					AutoCompleteIndex = 0;
+				}												
+			}
+			else if(HistoryBot >= 0)
+			{
+				// End:0x44F
+				if(HistoryCur == HistoryBot)
+				{
+					HistoryCur = HistoryTop;														
 				}
 				else
 				{
-					// End:0x12F
-					if((Key == ConsoleKey) && int(Event) == int(0))
+					HistoryCur--;
+					// End:0x478
+					if(HistoryCur < 0)
 					{
-						GotoState('Open');
-						bCaptureKeyInput = true;
-						return true;						
-					}
-					else
-					{
-						// End:0x1FA
-						if((Key == TypeKey) && int(Event) == int(0))
-						{
-							// End:0x1DB
-							if((AutoCompleteIndices.Length > 0) && !bAutoCompleteLocked)
-							{
-								TypedStr = AutoCompleteList[AutoCompleteIndices[AutoCompleteIndex]].Command;
-								SetCursorPos(Len(TypedStr));
-								bAutoCompleteLocked = true;								
-							}
-							else
-							{
-								GotoState('None');
-								bCaptureKeyInput = true;
-							}
-							return true;							
-						}
-						else
-						{
-							// End:0x2AE
-							if((Key == 'Enter') && int(Event) == int(1))
-							{
-								// End:0x29B
-								if(TypedStr != "")
-								{
-									Temp = TypedStr;
-									SetInputText("");
-									SetCursorPos(0);
-									ConsoleCommand(Temp);
-									OutputText("");
-									GotoState('None');
-									UpdateCompleteIndices();									
-								}
-								else
-								{
-									GotoState('None');
-								}
-								return true;								
-							}
-							else
-							{
-								// End:0x2EE
-								if(global.InputKey(ControllerId, Key, Event, AmountDepressed, bGamepad))
-								{
-									return true;									
-								}
-								else
-								{
-									// End:0x373
-									if((int(Event) != int(0)) && int(Event) != int(2))
-									{
-										// End:0x36E
-										if(!bGamepad)
-										{
-											return ((Key != 'LeftMouseButton') && Key != 'MiddleMouseButton') && Key != 'RightMouseButton';
-										}
-										return false;										
-									}
-									else
-									{
-										// End:0x4CF
-										if(Key == 'Up')
-										{
-											// End:0x413
-											if(!bNavigatingHistory && (bRequireCtrlToNavigateAutoComplete && bCtrl) || (!bRequireCtrlToNavigateAutoComplete && !bCtrl) && AutoCompleteIndices.Length > 1)
-											{
-												// End:0x410
-												if(++AutoCompleteIndex == AutoCompleteIndices.Length)
-												{
-													AutoCompleteIndex = 0;
-												}												
-											}
-											else
-											{
-												// End:0x4CA
-												if(HistoryBot >= 0)
-												{
-													// End:0x44F
-													if(HistoryCur == HistoryBot)
-													{
-														HistoryCur = HistoryTop;														
-													}
-													else
-													{
-														HistoryCur--;
-														// End:0x478
-														if(HistoryCur < 0)
-														{
-															HistoryCur = 16 - 1;
-														}
-													}
-													SetInputText(History[HistoryCur]);
-													SetCursorPos(Len(History[HistoryCur]));
-													UpdateCompleteIndices();
-													bNavigatingHistory = true;
-												}
-											}
-											return true;											
-										}
-										else
-										{
-											// End:0x629
-											if(Key == 'Down')
-											{
-												// End:0x57E
-												if(!bNavigatingHistory && (bRequireCtrlToNavigateAutoComplete && bCtrl) || (!bRequireCtrlToNavigateAutoComplete && !bCtrl) && AutoCompleteIndices.Length > 1)
-												{
-													// End:0x56F
-													if(--AutoCompleteIndex < 0)
-													{
-														AutoCompleteIndex = AutoCompleteIndices.Length - 1;
-													}
-													bAutoCompleteLocked = false;													
-												}
-												else
-												{
-													// End:0x626
-													if(HistoryBot >= 0)
-													{
-														// End:0x5BA
-														if(HistoryCur == HistoryTop)
-														{
-															HistoryCur = HistoryBot;															
-														}
-														else
-														{
-															HistoryCur = (HistoryCur + 1) % 16;
-														}
-														SetInputText(History[HistoryCur]);
-														SetCursorPos(Len(History[HistoryCur]));
-														UpdateCompleteIndices();
-														bNavigatingHistory = true;
-													}
-												}												
-											}
-											else
-											{
-												// End:0x6BA
-												if(Key == 'BackSpace')
-												{
-													// End:0x6B5
-													if(TypedStrPos > 0)
-													{
-														SetInputText(Left(TypedStr, TypedStrPos - 1) $ Right(TypedStr, Len(TypedStr) - TypedStrPos));
-														SetCursorPos(TypedStrPos - 1);
-														bAutoCompleteLocked = false;
-													}
-													return true;													
-												}
-												else
-												{
-													// End:0x733
-													if(Key == 'Delete')
-													{
-														// End:0x72E
-														if(TypedStrPos < Len(TypedStr))
-														{
-															SetInputText(Left(TypedStr, TypedStrPos) $ Right(TypedStr, (Len(TypedStr) - TypedStrPos) - 1));
-														}
-														return true;														
-													}
-													else
-													{
-														// End:0x7CC
-														if(Key == 'Left')
-														{
-															// End:0x7AE
-															if(bCtrl)
-															{
-																NewPos = Max(InStr(TypedStr, ".", true, false, TypedStrPos), InStr(TypedStr, " ", true, false, TypedStrPos));
-																SetCursorPos(Max(0, NewPos));																
-															}
-															else
-															{
-																SetCursorPos(Max(0, TypedStrPos - 1));
-															}
-															return true;															
-														}
-														else
-														{
-															// End:0x90C
-															if(Key == 'Right')
-															{
-																// End:0x8E4
-																if(bCtrl)
-																{
-																	SpacePos = InStr(TypedStr, " ", false, false, TypedStrPos + 1);
-																	PeriodPos = InStr(TypedStr, ".", false, false, TypedStrPos + 1);
-																	NewPos = ((SpacePos < 0) ? PeriodPos : ((PeriodPos < 0) ? SpacePos : Min(SpacePos, PeriodPos)));
-																	// End:0x8B6
-																	if(NewPos == -1)
-																	{
-																		NewPos = Len(TypedStr);
-																	}
-																	SetCursorPos(Min(Len(TypedStr), Max(TypedStrPos, NewPos)));																	
-																}
-																else
-																{
-																	SetCursorPos(Min(Len(TypedStr), TypedStrPos + 1));
-																}
-																return true;																
-															}
-															else
-															{
-																// End:0x933
-																if(Key == 'Home')
-																{
-																	SetCursorPos(0);
-																	return true;																	
-																}
-																else
-																{
-																	// End:0x961
-																	if(Key == 'End')
-																	{
-																		SetCursorPos(Len(TypedStr));
-																		return true;
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
+						HistoryCur = 16 - 1;
 					}
 				}
+				SetInputText(History[HistoryCur]);
+				SetCursorPos(Len(History[HistoryCur]));
+				UpdateCompleteIndices();
+				bNavigatingHistory = true;
 			}
+			return true;											
+		}
+		else if(Key == 'Down')
+		{
+			// End:0x57E
+			if(!bNavigatingHistory && (bRequireCtrlToNavigateAutoComplete && bCtrl) || (!bRequireCtrlToNavigateAutoComplete && !bCtrl) && AutoCompleteIndices.Length > 1)
+			{
+				// End:0x56F
+				if(--AutoCompleteIndex < 0)
+				{
+					AutoCompleteIndex = AutoCompleteIndices.Length - 1;
+				}
+				bAutoCompleteLocked = false;													
+			}
+			else if(HistoryBot >= 0)
+			{
+				// End:0x5BA
+				if(HistoryCur == HistoryTop)
+				{
+					HistoryCur = HistoryBot;															
+				}
+				else
+				{
+					HistoryCur = (HistoryCur + 1) % 16;
+				}
+				SetInputText(History[HistoryCur]);
+				SetCursorPos(Len(History[HistoryCur]));
+				UpdateCompleteIndices();
+				bNavigatingHistory = true;
+			}
+		}
+		else if(Key == 'BackSpace')
+		{
+			// End:0x6B5
+			if(TypedStrPos > 0)
+			{
+				SetInputText(Left(TypedStr, TypedStrPos - 1) $ Right(TypedStr, Len(TypedStr) - TypedStrPos));
+				SetCursorPos(TypedStrPos - 1);
+				bAutoCompleteLocked = false;
+			}
+			return true;													
+		}
+		else if(Key == 'Delete')
+		{
+			// End:0x72E
+			if(TypedStrPos < Len(TypedStr))
+			{
+				SetInputText(Left(TypedStr, TypedStrPos) $ Right(TypedStr, (Len(TypedStr) - TypedStrPos) - 1));
+			}
+			return true;														
+		}
+		else if(Key == 'Left')
+		{
+			// End:0x7AE
+			if(bCtrl)
+			{
+				NewPos = Max(InStr(TypedStr, ".", true, false, TypedStrPos), InStr(TypedStr, " ", true, false, TypedStrPos));
+				SetCursorPos(Max(0, NewPos));																
+			}
+			else
+			{
+				SetCursorPos(Max(0, TypedStrPos - 1));
+			}
+			return true;															
+		}
+		else if(Key == 'Right')
+		{
+			// End:0x8E4
+			if(bCtrl)
+			{
+				SpacePos = InStr(TypedStr, " ", false, false, TypedStrPos + 1);
+				PeriodPos = InStr(TypedStr, ".", false, false, TypedStrPos + 1);
+				NewPos = ((SpacePos < 0) ? PeriodPos : ((PeriodPos < 0) ? SpacePos : Min(SpacePos, PeriodPos)));
+				// End:0x8B6
+				if(NewPos == -1)
+				{
+					NewPos = Len(TypedStr);
+				}
+				SetCursorPos(Min(Len(TypedStr), Max(TypedStrPos, NewPos)));																	
+			}
+			else
+			{
+				SetCursorPos(Min(Len(TypedStr), TypedStrPos + 1));
+			}
+			return true;																
+		}
+		else if(Key == 'Home')
+		{
+			SetCursorPos(0);
+			return true;																	
+		}
+		else if(Key == 'End')
+		{
+			SetCursorPos(Len(TypedStr));
+			return true;
 		}
 		return true;
 		//return ReturnValue;		
@@ -815,7 +719,7 @@ state Open
 		local string Temp;
 
 		// End:0x2E
-		if(int(Event) == int(0))
+		if(int(Event) == 0)
 		{
 			bCaptureKeyInput = false;
 		}
@@ -824,325 +728,241 @@ state Open
 		{
 			return true;			
 		}
-		else
+		else if(bGamepad)
 		{
-			// End:0x64
-			if(bGamepad)
+			return false;				
+		}
+		else if((Key == 'Escape') && int(Event) == 1)
+		{
+			// End:0xD0
+			if(TypedStr != "")
 			{
-				return false;				
+				SetInputText("");
+				SetCursorPos(0);
+				HistoryCur = HistoryTop;
+				return true;						
 			}
 			else
 			{
-				// End:0xE1
-				if((Key == 'Escape') && int(Event) == int(1))
+				GotoState('None');
+			}					
+		}
+		else if((Key == ConsoleKey) && int(Event) == 0)
+		{
+			GotoState('None');
+			bCaptureKeyInput = true;
+			return true;						
+		}
+		else if((Key == TypeKey) && int(Event) == 0)
+		{
+			// End:0x1D1
+			if((AutoCompleteIndices.Length > 0) && !bAutoCompleteLocked)
+			{
+				TypedStr = AutoCompleteList[AutoCompleteIndices[0]].Command;
+				SetCursorPos(Len(TypedStr));
+				bAutoCompleteLocked = true;								
+			}
+			else
+			{
+				GotoState('None');
+				bCaptureKeyInput = true;
+			}
+			return true;							
+		}
+		else if((Key == 'Enter') && int(Event) == 1)
+		{
+			// End:0x294
+			if(TypedStr != "")
+			{
+				Temp = TypedStr;
+				SetInputText("");
+				SetCursorPos(0);
+				// End:0x277
+				if(Temp ~= "cls")
 				{
-					// End:0xD0
-					if(TypedStr != "")
-					{
-						SetInputText("");
-						SetCursorPos(0);
-						HistoryCur = HistoryTop;
-						return true;						
-					}
-					else
-					{
-						GotoState('None');
-					}					
+					ClearOutput();										
 				}
 				else
 				{
-					// End:0x12D
-					if((Key == ConsoleKey) && int(Event) == int(0))
+					ConsoleCommand(Temp);
+				}
+				UpdateCompleteIndices();
+			}
+			return true;								
+		}
+		else if(global.InputKey(ControllerId, Key, Event, AmountDepressed, bGamepad))
+		{
+			return true;									
+		}
+		else if((int(Event) != 0) && int(Event) != 2)
+		{
+			// End:0x359
+			if(!bGamepad)
+			{
+				return ((Key != 'LeftMouseButton') && Key != 'MiddleMouseButton') && Key != 'RightMouseButton';
+			}
+			return false;										
+		}
+		else if(Key == 'Up')
+		{
+			// End:0x428
+			if(!bCtrl)
+			{
+				// End:0x425
+				if(HistoryBot >= 0)
+				{
+					// End:0x3C0
+					if(HistoryCur == HistoryBot)
 					{
-						GotoState('None');
-						bCaptureKeyInput = true;
-						return true;						
+						HistoryCur = HistoryTop;														
 					}
 					else
 					{
-						// End:0x1F0
-						if((Key == TypeKey) && int(Event) == int(0))
+						HistoryCur--;
+						// End:0x3E9
+						if(HistoryCur < 0)
 						{
-							// End:0x1D1
-							if((AutoCompleteIndices.Length > 0) && !bAutoCompleteLocked)
-							{
-								TypedStr = AutoCompleteList[AutoCompleteIndices[0]].Command;
-								SetCursorPos(Len(TypedStr));
-								bAutoCompleteLocked = true;								
-							}
-							else
-							{
-								GotoState('None');
-								bCaptureKeyInput = true;
-							}
-							return true;							
-						}
-						else
-						{
-							// End:0x299
-							if((Key == 'Enter') && int(Event) == int(1))
-							{
-								// End:0x294
-								if(TypedStr != "")
-								{
-									Temp = TypedStr;
-									SetInputText("");
-									SetCursorPos(0);
-									// End:0x277
-									if(Temp ComplementEqual "cls")
-									{
-										ClearOutput();										
-									}
-									else
-									{
-										ConsoleCommand(Temp);
-									}
-									UpdateCompleteIndices();
-								}
-								return true;								
-							}
-							else
-							{
-								// End:0x2D9
-								if(global.InputKey(ControllerId, Key, Event, AmountDepressed, bGamepad))
-								{
-									return true;									
-								}
-								else
-								{
-									// End:0x35E
-									if((int(Event) != int(0)) && int(Event) != int(2))
-									{
-										// End:0x359
-										if(!bGamepad)
-										{
-											return ((Key != 'LeftMouseButton') && Key != 'MiddleMouseButton') && Key != 'RightMouseButton';
-										}
-										return false;										
-									}
-									else
-									{
-										// End:0x482
-										if(Key == 'Up')
-										{
-											// End:0x428
-											if(!bCtrl)
-											{
-												// End:0x425
-												if(HistoryBot >= 0)
-												{
-													// End:0x3C0
-													if(HistoryCur == HistoryBot)
-													{
-														HistoryCur = HistoryTop;														
-													}
-													else
-													{
-														HistoryCur--;
-														// End:0x3E9
-														if(HistoryCur < 0)
-														{
-															HistoryCur = 16 - 1;
-														}
-													}
-													SetInputText(History[HistoryCur]);
-													SetCursorPos(Len(History[HistoryCur]));
-												}												
-											}
-											else
-											{
-												// End:0x47D
-												if(SBPos < (Scrollback.Length - 1))
-												{
-													SBPos++;
-													// End:0x47D
-													if(SBPos >= Scrollback.Length)
-													{
-														SBPos = Scrollback.Length - 1;
-													}
-												}
-											}
-											return true;											
-										}
-										else
-										{
-											// End:0x576
-											if(Key == 'Down')
-											{
-												// End:0x53D
-												if(!bCtrl)
-												{
-													// End:0x53A
-													if(HistoryBot >= 0)
-													{
-														// End:0x4E4
-														if(HistoryCur == HistoryTop)
-														{
-															HistoryCur = HistoryBot;															
-														}
-														else
-														{
-															HistoryCur = (HistoryCur + 1) % 16;
-														}
-														SetInputText(History[HistoryCur]);
-														SetCursorPos(Len(History[HistoryCur]));
-													}													
-												}
-												else
-												{
-													// End:0x571
-													if(SBPos > 0)
-													{
-														SBPos--;
-														// End:0x571
-														if(SBPos < 0)
-														{
-															SBPos = 0;
-														}
-													}
-												}
-												return true;												
-											}
-											else
-											{
-												// End:0x607
-												if(Key == 'BackSpace')
-												{
-													// End:0x602
-													if(TypedStrPos > 0)
-													{
-														SetInputText(Left(TypedStr, TypedStrPos - 1) $ Right(TypedStr, Len(TypedStr) - TypedStrPos));
-														SetCursorPos(TypedStrPos - 1);
-														bAutoCompleteLocked = false;
-													}
-													return true;													
-												}
-												else
-												{
-													// End:0x680
-													if(Key == 'Delete')
-													{
-														// End:0x67B
-														if(TypedStrPos < Len(TypedStr))
-														{
-															SetInputText(Left(TypedStr, TypedStrPos) $ Right(TypedStr, (Len(TypedStr) - TypedStrPos) - 1));
-														}
-														return true;														
-													}
-													else
-													{
-														// End:0x6B5
-														if(Key == 'Left')
-														{
-															SetCursorPos(Max(0, TypedStrPos - 1));
-															return true;															
-														}
-														else
-														{
-															// End:0x6F4
-															if(Key == 'Right')
-															{
-																SetCursorPos(Min(Len(TypedStr), TypedStrPos + 1));
-																return true;																
-															}
-															else
-															{
-																// End:0x728
-																if(bCtrl && Key == 'Home')
-																{
-																	SBPos = 0;																	
-																}
-																else
-																{
-																	// End:0x74F
-																	if(Key == 'Home')
-																	{
-																		SetCursorPos(0);
-																		return true;																		
-																	}
-																	else
-																	{
-																		// End:0x78F
-																		if(bCtrl && Key == 'End')
-																		{
-																			SBPos = Scrollback.Length - 1;																			
-																		}
-																		else
-																		{
-																			// End:0x7C0
-																			if(Key == 'End')
-																			{
-																				SetCursorPos(Len(TypedStr));
-																				return true;																				
-																			}
-																			else
-																			{
-																				// End:0x867
-																				if((Key == 'PageUp') || Key == 'MouseScrollUp')
-																				{
-																					// End:0x862
-																					if(SBPos < (Scrollback.Length - 1))
-																					{
-																						// End:0x828
-																						if(bCtrl)
-																						{
-																							SBPos += 5;																							
-																						}
-																						else
-																						{
-																							SBPos++;
-																						}
-																						// End:0x862
-																						if(SBPos >= Scrollback.Length)
-																						{
-																							SBPos = Scrollback.Length - 1;
-																						}
-																					}
-																					return true;																					
-																				}
-																				else
-																				{
-																					// End:0x8EA
-																					if((Key == 'PageDown') || Key == 'MouseScrollDown')
-																					{
-																						// End:0x8E8
-																						if(SBPos > 0)
-																						{
-																							// End:0x8C3
-																							if(bCtrl)
-																							{
-																								SBPos -= 5;																								
-																							}
-																							else
-																							{
-																								SBPos--;
-																							}
-																							// End:0x8E8
-																							if(SBPos < 0)
-																							{
-																								SBPos = 0;
-																							}
-																						}
-																						return true;
-																					}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
+							HistoryCur = 16 - 1;
 						}
 					}
+					SetInputText(History[HistoryCur]);
+					SetCursorPos(Len(History[HistoryCur]));
+				}												
+			}
+			else if(SBPos < (Scrollback.Length - 1))
+			{
+				SBPos++;
+				// End:0x47D
+				if(SBPos >= Scrollback.Length)
+				{
+					SBPos = Scrollback.Length - 1;
 				}
 			}
+			return true;											
+		}
+		else if(Key == 'Down')
+		{
+			// End:0x53D
+			if(!bCtrl)
+			{
+				// End:0x53A
+				if(HistoryBot >= 0)
+				{
+					// End:0x4E4
+					if(HistoryCur == HistoryTop)
+					{
+						HistoryCur = HistoryBot;															
+					}
+					else
+					{
+						HistoryCur = (HistoryCur + 1) % 16;
+					}
+					SetInputText(History[HistoryCur]);
+					SetCursorPos(Len(History[HistoryCur]));
+				}													
+			}
+			else if(SBPos > 0)
+			{
+				SBPos--;
+				// End:0x571
+				if(SBPos < 0)
+				{
+					SBPos = 0;
+				}
+			}
+			return true;												
+		}
+		else if(Key == 'BackSpace')
+		{
+			// End:0x602
+			if(TypedStrPos > 0)
+			{
+				SetInputText(Left(TypedStr, TypedStrPos - 1) $ Right(TypedStr, Len(TypedStr) - TypedStrPos));
+				SetCursorPos(TypedStrPos - 1);
+				bAutoCompleteLocked = false;
+			}
+			return true;													
+		}
+		else if(Key == 'Delete')
+		{
+			// End:0x67B
+			if(TypedStrPos < Len(TypedStr))
+			{
+				SetInputText(Left(TypedStr, TypedStrPos) $ Right(TypedStr, (Len(TypedStr) - TypedStrPos) - 1));
+			}
+			return true;														
+		}
+		else if(Key == 'Left')
+		{
+			SetCursorPos(Max(0, TypedStrPos - 1));
+			return true;															
+		}
+		else if(Key == 'Right')
+		{
+			SetCursorPos(Min(Len(TypedStr), TypedStrPos + 1));
+			return true;																
+		}
+		else if(bCtrl && Key == 'Home')
+		{
+			SBPos = 0;																	
+		}
+		else if(Key == 'Home')
+		{
+			SetCursorPos(0);
+			return true;																		
+		}
+		else if(bCtrl && Key == 'End')
+		{
+			SBPos = Scrollback.Length - 1;																			
+		}
+		else if(Key == 'End')
+		{
+			SetCursorPos(Len(TypedStr));
+			return true;																				
+		}
+		else if((Key == 'PageUp') || Key == 'MouseScrollUp')
+		{
+			// End:0x862
+			if(SBPos < (Scrollback.Length - 1))
+			{
+				// End:0x828
+				if(bCtrl)
+				{
+					SBPos += 5;																							
+				}
+				else
+				{
+					SBPos++;
+				}
+				// End:0x862
+				if(SBPos >= Scrollback.Length)
+				{
+					SBPos = Scrollback.Length - 1;
+				}
+			}
+			return true;																					
+		}
+		else if((Key == 'PageDown') || Key == 'MouseScrollDown')
+		{
+			// End:0x8E8
+			if(SBPos > 0)
+			{
+				// End:0x8C3
+				if(bCtrl)
+				{
+					SBPos -= 5;																								
+				}
+				else
+				{
+					SBPos--;
+				}
+				// End:0x8E8
+				if(SBPos < 0)
+				{
+					SBPos = 0;
+				}
+			}
+			return true;
 		}
 		return true;
 		//return ReturnValue;		

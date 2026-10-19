@@ -43,12 +43,12 @@ event OnRegister(LocalPlayer InPlayer)
 		{
 			PlayerInterface = OnlineSub.PlayerInterface;
 			// End:0xE8
-			if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+			if(NotEqual_InterfaceInterface(PlayerInterface, none))
 			{
 				PlayerInterface.AddLoginChangeDelegate(OnLoginChange);
 			}
 			// End:0x16E
-			if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
+			if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, none))
 			{
 				OnlineSub.PlayerInterfaceEx.AddProfileDataChangedDelegate(byte(PlayerControllerId), OnPlayerDataChange);
 			}			
@@ -82,12 +82,12 @@ event OnUnregister()
 		{
 			PlayerInterface = OnlineSub.PlayerInterface;
 			// End:0xCE
-			if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+			if(NotEqual_InterfaceInterface(PlayerInterface, none))
 			{
 				PlayerInterface.ClearLoginChangeDelegate(OnLoginChange);
 			}
 			// End:0x154
-			if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, OnlinePlayerInterfaceEx(none)))
+			if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterfaceEx, none))
 			{
 				OnlineSub.PlayerInterfaceEx.ClearProfileDataChangedDelegate(byte(PlayerControllerId), OnPlayerDataChange);
 			}
@@ -110,7 +110,7 @@ function OnLoginChange(byte LocalUserNum)
 		{
 			PlayerInterface = OnlineSub.PlayerInterface;
 			// End:0x109
-			if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)) && int(PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > int(0))
+			if(NotEqual_InterfaceInterface(PlayerInterface, none) && int(PlayerInterface.GetLoginStatus(byte(PlayerControllerId))) > 0)
 			{
 				PlayerNick = PlayerInterface.GetPlayerNickname(byte(PlayerControllerId));				
 			}
@@ -135,7 +135,7 @@ function OnPlayerDataChange()
 	if(OnlineSub != none)
 	{
 		// End:0xC5
-		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 		{
 			PlayerNick = OnlineSub.PlayerInterface.GetPlayerNickname(byte(PlayerControllerId));
 			RefreshSubscribers();
@@ -166,7 +166,7 @@ event OnlineProfileSettings GetCachedPlayerProfile(int ControllerId)
 	{
 		PlayerInterface = OnlineSub.PlayerInterface;
 		// End:0xB5
-		if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+		if(NotEqual_InterfaceInterface(PlayerInterface, none))
 		{
 			Result = PlayerInterface.GetProfileSettings(byte(ControllerId));
 		}
@@ -187,7 +187,7 @@ event OnlinePlayerStorage GetCachedPlayerStorage(int ControllerId)
 	{
 		PlayerInterface = OnlineSub.PlayerInterface;
 		// End:0xB5
-		if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+		if(NotEqual_InterfaceInterface(PlayerInterface, none))
 		{
 			Result = PlayerInterface.GetPlayerStorage(byte(ControllerId));
 		}

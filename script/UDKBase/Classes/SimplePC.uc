@@ -58,14 +58,14 @@ function OnConsoleCommand(SeqAct_ConsoleCommand inAction)
 	foreach inAction.Commands(Command)
 	{
 		// End:0x8C
-		if(WorldInfo.Game.bWaitingToStartMatch && Left(Command, 15) ComplementEqual "mobile playsong")
+		if(WorldInfo.Game.bWaitingToStartMatch && Left(Command, 15) ~= "mobile playsong")
 		{
 			continue;			
 		}
 		else
 		{
 			// End:0xE4
-			if(!Left(Command, 4) ComplementEqual "set " && !Left(Command, 9) ComplementEqual "setnopec ")
+			if(!Left(Command, 4) ~= "set " && !Left(Command, 9) ~= "setnopec ")
 			{				
 				ConsoleCommand(Command);
 			}			

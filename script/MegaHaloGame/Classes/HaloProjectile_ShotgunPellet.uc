@@ -46,7 +46,7 @@ defaultproperties
 	NearDamageRange=250.0000000
 	FarDamage=5.0000000
 	FarDamageRange=2500.0000000
-	TargetSearchMode=ETargetSearchMode.TargetSearchMode_Trace
+	TargetSearchMode=TargetSearchMode_Trace
 	TargetSearchRange=3000.0000000
 	TargetAngularSearchRange=10.0000000
 	SeekingTurnRate=32767.0000000

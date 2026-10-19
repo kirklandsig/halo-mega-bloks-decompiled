@@ -887,11 +887,11 @@ defaultproperties
 	ExhaustBone="Bumper"
 	MaxHornDuration=2.8000000
 	HornCooldownDuration=17.0000000
-	VehicleGears[0]=(MinPercent=0.0000000,MaxPercent=80.0000000,GearRatio=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=2000.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear)),InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents))
-	VehicleGears[1]=(MinPercent=40.0000000,MaxPercent=100.0000000,GearRatio=(Points=((InVal=500.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=2500.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear)),InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents))
+	VehicleGears[0]=(MinPercent=0.0000000,MaxPercent=80.0000000,GearRatio=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=2000.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear)),InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents))
+	VehicleGears[1]=(MinPercent=40.0000000,MaxPercent=100.0000000,GearRatio=(Points=((InVal=500.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=2500.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear)),InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents))
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloVehicle_SEP_Warthog.SuspensionWaveform1'
 	begin object name="SuspensionWaveform1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=50,RightAmplitude=50,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=0.2000000)
+		Samples[0]=(LeftAmplitude=50,RightAmplitude=50,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=0.2000000)
 	end object
 	SuspensionWaveform=SuspensionWaveform1
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloVehicle_SEP_Warthog.CrashWaveform1'

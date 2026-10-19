@@ -1,5 +1,6 @@
 class UTGame extends UDKGame
-	config(Game);
+	config(Game)
+	dependson(UTCharInfo);
 
 enum EVoiceChannel
 {
@@ -158,22 +159,22 @@ static function bool UseLowGore(WorldInfo WI)
 static function bool AllowMutator(string MutatorClassName)
 {
 	// End:0x40
-	if(!default.bTeamGame && MutatorClassName ComplementEqual "UTGame.UTMutator_FriendlyFire")
+	if(!default.bTeamGame && MutatorClassName ~= "UTGame.UTMutator_FriendlyFire")
 	{
 		return false;
 	}
 	// End:0x82
-	if(!default.bWeaponStay && MutatorClassName ComplementEqual "UTGame.UTMutator_WeaponsRespawn")
+	if(!default.bWeaponStay && MutatorClassName ~= "UTGame.UTMutator_WeaponsRespawn")
 	{
 		return false;
 	}
 	// End:0xAD
-	if(MutatorClassName ComplementEqual "UTGame.UTMutator_Survival")
+	if(MutatorClassName ~= "UTGame.UTMutator_Survival")
 	{
 		return false;
 	}
 	// End:0xD6
-	if(MutatorClassName ComplementEqual "UTGame.UTMutator_NoOrbs")
+	if(MutatorClassName ~= "UTGame.UTMutator_NoOrbs")
 	{
 		return false;
 	}
@@ -189,7 +190,7 @@ static event Class<GameInfo> SetGameType(string MapName, string Options, string 
 	local string GameOption;
 
 	// End:0x4B
-	if((Left(MapName, 9) ComplementEqual "EnvyEntry") || Left(MapName, 14) ComplementEqual "UDKFrontEndMap")
+	if((Left(MapName, 9) ~= "EnvyEntry") || Left(MapName, 14) ~= "UDKFrontEndMap")
 	{
 		return Class'UTGame.UTEntryGame';
 	}
@@ -209,7 +210,7 @@ static event Class<GameInfo> SetGameType(string MapName, string Options, string 
 	if(I < default.MapPrefixes.Length)
 	{
 		// End:0x12C
-		if(default.MapPrefixes[I] ComplementEqual ThisMapPrefix)
+		if(default.MapPrefixes[I] ~= ThisMapPrefix)
 		{
 			return default.Class;
 		}
@@ -224,7 +225,7 @@ static event Class<GameInfo> SetGameType(string MapName, string Options, string 
 	if(I < default.DefaultMapPrefixes.Length)
 	{
 		// End:0x1F7
-		if(default.DefaultMapPrefixes[I].Prefix ComplementEqual ThisMapPrefix)
+		if(default.DefaultMapPrefixes[I].Prefix ~= ThisMapPrefix)
 		{
 			NewGameType = Class<GameInfo>(DynamicLoadObject(default.DefaultMapPrefixes[I].GameType, Class'Core.Class'));
 			// End:0x1F7
@@ -244,7 +245,7 @@ static event Class<GameInfo> SetGameType(string MapName, string Options, string 
 	if(I < default.CustomMapPrefixes.Length)
 	{
 		// End:0x2C2
-		if(default.CustomMapPrefixes[I].Prefix ComplementEqual ThisMapPrefix)
+		if(default.CustomMapPrefixes[I].Prefix ~= ThisMapPrefix)
 		{
 			NewGameType = Class<GameInfo>(DynamicLoadObject(default.CustomMapPrefixes[I].GameType, Class'Core.Class'));
 			// End:0x2C2
@@ -677,7 +678,7 @@ event InitGame(string Options, out string ErrorMessage)
 	}
 	InOpt = ParseOption(Options, "CauseEvent");
 	// End:0x1AD
-	if(InOpt ComplementEqual "FlyThrough")
+	if(InOpt ~= "FlyThrough")
 	{
 		bFixedPlayerStart = true;
 		bForceRespawn = true;
@@ -988,7 +989,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 			return true;
 		}
 	}
-	bLastMan = Reason ComplementEqual "LastMan";
+	bLastMan = Reason ~= "LastMan";
 	// End:0x139
 	if(!bLastMan && CheckModifiedEndGame(Winner, Reason))
 	{
@@ -1334,7 +1335,7 @@ function ChangeName(Controller Other, string S, bool bNameChange)
 	local Controller aPlayer;
 
 	// End:0x43
-	if(Other.PlayerReplicationInfo.PlayerName ComplementEqual S)
+	if(Other.PlayerReplicationInfo.PlayerName ~= S)
 	{
 		return;
 	}
@@ -1347,14 +1348,14 @@ function ChangeName(Controller Other, string S, bool bNameChange)
 	foreach WorldInfo.AllControllers(Class'Engine.Controller', aPlayer)
 	{
 		// End:0x20B
-		if(aPlayer.bIsPlayer && aPlayer.PlayerReplicationInfo.PlayerName ComplementEqual S)
+		if(aPlayer.bIsPlayer && aPlayer.PlayerReplicationInfo.PlayerName ~= S)
 		{
 			// End:0x20B
 			if(PlayerController(Other) != none)
 			{
 				PlayerController(Other).ReceiveLocalizedMessage(GameMessageClass, 8);
 				// End:0x208
-				if(Other.PlayerReplicationInfo.PlayerName ComplementEqual DefaultPlayerName)
+				if(Other.PlayerReplicationInfo.PlayerName ~= DefaultPlayerName)
 				{
 					Other.PlayerReplicationInfo.SetPlayerName(DefaultPlayerName $ string(Other.PlayerReplicationInfo.PlayerID));
 				}				
@@ -2026,7 +2027,7 @@ function EndGame(PlayerReplicationInfo Winner, string Reason)
 	local int I;
 
 	// End:0x191
-	if(((((Reason ComplementEqual "triggered") || Reason ComplementEqual "LastMan") || Reason ComplementEqual "TimeLimit") || Reason ComplementEqual "FragLimit") || Reason ComplementEqual "TeamScoreLimit")
+	if(((((Reason ~= "triggered") || Reason ~= "LastMan") || Reason ~= "TimeLimit") || Reason ~= "FragLimit") || Reason ~= "TeamScoreLimit")
 	{
 		super(GameInfo).EndGame(Winner, Reason);
 		// End:0x191

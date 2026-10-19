@@ -24,7 +24,7 @@ defaultproperties
 	LocalData[0]=(Family=GwNavNavdataFamily'EngineGwNav.DefaultFamily',NavDataAggregate=none)
 	Components[0]=none
 	Components[1]=none
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 	bMovable=false
 	bNoEncroachCheck=true
 }

@@ -254,7 +254,7 @@ struct native PhysEffectInfo
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked ActorReference
+struct native immutablewhencooked ActorReference
 {
 	var Actor Actor;
 	var const editconst Guid Guid;
@@ -266,7 +266,7 @@ struct native atomicwhencooked immutablewhencooked ActorReference
 	}
 };
 
-struct native atomicwhencooked immutablewhencooked NavReference
+struct native immutablewhencooked NavReference
 {
 	var NavigationPoint Nav;
 	var const editconst Guid Guid;
@@ -455,49 +455,49 @@ var array<SeqAct_Latent> LatentActions;
 replication
 {
 	// Pos:0x000
-	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && ((int(RemoteRole) == int(ROLE_AutonomousProxy)) && bNetInitial) || ((int(RemoteRole) == int(ROLE_SimulatedProxy)) && bNetInitial || bUpdateSimulatedPosition) && (Base == none) || Base.bWorldGeometry)
+	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && ((RemoteRole == ROLE_AutonomousProxy) && bNetInitial) || ((RemoteRole == ROLE_SimulatedProxy) && bNetInitial || bUpdateSimulatedPosition) && (Base == none) || Base.bWorldGeometry)
 		Location, Rotation;
 
 	// Pos:0x0B8
-	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && int(RemoteRole) == int(ROLE_SimulatedProxy))
+	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && RemoteRole == ROLE_SimulatedProxy)
 		Base;
 
 	// Pos:0x0F8
-	if((((((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && bNetInitial || bUpdateSimulatedPosition) && int(RemoteRole) == int(ROLE_SimulatedProxy)) && Base != none) && !Base.bWorldGeometry)
+	if((((((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && bNetInitial || bUpdateSimulatedPosition) && RemoteRole == ROLE_SimulatedProxy) && Base != none) && !Base.bWorldGeometry)
 		RelativeLocation, RelativeRotation;
 
 	// Pos:0x18D
-	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && (int(RemoteRole) == int(ROLE_SimulatedProxy)) && bNetInitial || bUpdateSimulatedPosition)
+	if(((!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement) && (RemoteRole == ROLE_SimulatedProxy) && bNetInitial || bUpdateSimulatedPosition)
 		Physics, Velocity;
 
 	// Pos:0x1EB
-	if((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority))
+	if((!bSkipActorPropertyReplication || bNetInitial) && Role == ROLE_Authority)
 		bHardAttach;
 
 	// Pos:0x21C
-	if(((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
+	if(((!bSkipActorPropertyReplication || bNetInitial) && Role == ROLE_Authority) && bNetDirty)
 		bHidden;
 
 	// Pos:0x25C
-	if((((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bCollideActors || bCollideWorld)
+	if((((!bSkipActorPropertyReplication || bNetInitial) && Role == ROLE_Authority) && bNetDirty) && bCollideActors || bCollideWorld)
 		bBlockActors, bProjTarget;
 
 	// Pos:0x2BA
-	if((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority))
+	if((!bSkipActorPropertyReplication || bNetInitial) && Role == ROLE_Authority)
 		RemoteRole, Role, 
 		bNetOwner, bTearOff;
 
 	// Pos:0x2EB
-	if((((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty) && bReplicateInstigator)
+	if((((!bSkipActorPropertyReplication || bNetInitial) && Role == ROLE_Authority) && bNetDirty) && bReplicateInstigator)
 		Instigator;
 
 	// Pos:0x33A
-	if(((!bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
+	if(((!bSkipActorPropertyReplication || bNetInitial) && Role == ROLE_Authority) && bNetDirty)
 		DrawScale, ReplicatedCollisionType, 
 		bCollideActors, bCollideWorld;
 
 	// Pos:0x37A
-	if(((bNetOwner && !bSkipActorPropertyReplication || bNetInitial) && int(Role) == int(ROLE_Authority)) && bNetDirty)
+	if(((bNetOwner && !bSkipActorPropertyReplication || bNetInitial) && Role == ROLE_Authority) && bNetDirty)
 		Owner;
 }
 
@@ -865,7 +865,7 @@ native function GetBoundingCylinder(out float CollisionRadius, out float Collisi
 native final function bool IsBlockedBy(const Actor Other);
 
 // Export UActor::execSpawn(FFrame&, void* const)
-native final function Actor Spawn(Class<Actor> SpawnClass, optional Actor SpawnOwner, optional name SpawnTag, optional Vector SpawnLocation, optional Rotator SpawnRotation, optional Actor ActorTemplate, optional bool bNoCollisionFail, optional bool bOnlyPerformSpawnCheck);
+native final function coerce Actor Spawn(Class<Actor> SpawnClass, optional Actor SpawnOwner, optional name SpawnTag, optional Vector SpawnLocation, optional Rotator SpawnRotation, optional Actor ActorTemplate, optional bool bNoCollisionFail, optional bool bOnlyPerformSpawnCheck);
 
 // Export UActor::execDestroy(FFrame&, void* const)
 native(279) final function bool Destroy();
@@ -1029,7 +1029,7 @@ native final function PlayerController GetALocalPlayerController();
 event PreBeginPlay()
 {
 	// End:0xA4
-	if(((!bGameRelevant && !bStatic) && int(WorldInfo.NetMode) != int(NM_Client)) && !WorldInfo.Game.CheckRelevance(self))
+	if(((!bGameRelevant && !bStatic) && WorldInfo.NetMode != NM_Client) && !WorldInfo.Game.CheckRelevance(self))
 	{
 		// End:0xA1
 		if(bNoDelete)
@@ -1097,7 +1097,7 @@ simulated function bool HurtRadius(float BaseDamage, float DamageRadius, Class<D
 	local Actor Victim;
 	local bool bCausedDamage;
 	local TraceHitInfo HitInfo;
-	local editinline StaticMeshComponent HitComponent;
+	local StaticMeshComponent HitComponent;
 	local KActorFromStatic NewKActor;
 
 	// End:0x45
@@ -1391,7 +1391,7 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 	if(HUD.ShouldDisplayDebug('net'))
 	{
 		// End:0x2CA
-		if(int(WorldInfo.NetMode) != int(NM_Standalone))
+		if(WorldInfo.NetMode != NM_Standalone)
 		{
 			T = (((("ROLE:" @ string(Role)) @ "RemoteRole:") @ string(RemoteRole)) @ "NetMode:") @ string(WorldInfo.NetMode);
 			// End:0x25C
@@ -1625,7 +1625,7 @@ simulated function bool ActorEffectIsRelevant(Pawn EffectInstigator, bool bForce
 	local Rotator CameraRot;
 
 	// End:0x98
-	if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if(WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		// End:0x8D
 		if(bDebugEffectIsRelevant && bForceDedicated)
@@ -1635,7 +1635,7 @@ simulated function bool ActorEffectIsRelevant(Pawn EffectInstigator, bool bForce
 		return bForceDedicated;
 	}
 	// End:0x10D
-	if((bForceDedicated && int(WorldInfo.NetMode) == int(NM_ListenServer)) && WorldInfo.Game.NumPlayers > 1)
+	if((bForceDedicated && WorldInfo.NetMode == NM_ListenServer) && WorldInfo.Game.NumPlayers > 1)
 	{
 		return true;
 	}
@@ -1687,7 +1687,7 @@ simulated function bool ImpactEffectIsRelevant(Pawn EffectInstigator, Vector Spa
 	local Rotator CameraRot;
 
 	// End:0x99
-	if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if(WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		// End:0x8E
 		if(bDebugEffectIsRelevant && bForceDedicated)
@@ -1697,7 +1697,7 @@ simulated function bool ImpactEffectIsRelevant(Pawn EffectInstigator, Vector Spa
 		return bForceDedicated;
 	}
 	// End:0x10E
-	if((bForceDedicated && int(WorldInfo.NetMode) == int(NM_ListenServer)) && WorldInfo.Game.NumPlayers > 1)
+	if((bForceDedicated && WorldInfo.NetMode == NM_ListenServer) && WorldInfo.Game.NumPlayers > 1)
 	{
 		return true;
 	}
@@ -1948,7 +1948,7 @@ simulated function OnDestroy(SeqAct_Destroy Action)
 		}
 	}
 	// End:0x17A
-	if(bNoDelete || int(Role) < int(ROLE_Authority))
+	if(bNoDelete || Role < ROLE_Authority)
 	{
 		ShutDown();		
 	}
@@ -1966,7 +1966,7 @@ simulated function OnDestroy(SeqAct_Destroy Action)
 event ForceNetRelevant()
 {
 	// End:0x5B
-	if(((int(RemoteRole) == int(ROLE_None)) && bNoDelete) && !bStatic)
+	if(((RemoteRole == ROLE_None) && bNoDelete) && !bStatic)
 	{
 		RemoteRole = ROLE_SimulatedProxy;
 		bAlwaysRelevant = true;
@@ -1992,7 +1992,7 @@ simulated event ShutDown()
 	SetTickIsDisabled(true);
 	ForceNetRelevant();
 	// End:0x114
-	if(int(RemoteRole) != int(ROLE_None))
+	if(RemoteRole != ROLE_None)
 	{
 		SetForcedInitialReplicatedProperty(BoolProperty'Engine.Actor.bCollideActors', bCollideActors == default.bCollideActors);
 		SetForcedInitialReplicatedProperty(BoolProperty'Engine.Actor.bBlockActors', bBlockActors == default.bBlockActors);
@@ -2152,7 +2152,7 @@ simulated function OnSetVelocity(SeqAct_SetVelocity Action)
 	}
 	Velocity = V;
 	// End:0x13C
-	if((int(Physics) == int(10)) && CollisionComponent != none)
+	if((int(Physics) == 10) && CollisionComponent != none)
 	{
 		CollisionComponent.SetRBLinearVelocity(Velocity);
 	}
@@ -2186,10 +2186,10 @@ simulated function OnSetPhysics(SeqAct_SetPhysics Action)
 	ForceNetRelevant();
 	SetPhysics(Action.newPhysics);
 	// End:0xA3
-	if(int(RemoteRole) != int(ROLE_None))
+	if(RemoteRole != ROLE_None)
 	{
 		// End:0x78
-		if(int(Physics) != int(0))
+		if(int(Physics) != 0)
 		{
 			bUpdateSimulatedPosition = true;
 			// End:0x78
@@ -2216,7 +2216,7 @@ function OnChangeCollision(SeqAct_ChangeCollision Action)
 	}
 	ForceNetRelevant();
 	// End:0x13D
-	if(int(RemoteRole) != int(ROLE_None))
+	if(RemoteRole != ROLE_None)
 	{
 		SetForcedInitialReplicatedProperty(BoolProperty'Engine.Actor.bCollideActors', bCollideActors == default.bCollideActors);
 		SetForcedInitialReplicatedProperty(BoolProperty'Engine.Actor.bBlockActors', bBlockActors == default.bBlockActors);
@@ -2290,7 +2290,7 @@ simulated function OnToggleHidden(SeqAct_ToggleHidden Action)
 	}
 	ForceNetRelevant();
 	// End:0x231
-	if(int(RemoteRole) != int(ROLE_None))
+	if(RemoteRole != ROLE_None)
 	{
 		SetForcedInitialReplicatedProperty(BoolProperty'Engine.Actor.bHidden', bHidden == default.bHidden);
 	}
@@ -2378,7 +2378,7 @@ function DoKismetAttachment(Actor Attachment, SeqAct_AttachToActor Action)
 	Attachment.ForceNetRelevant();
 	Attachment.bNetDirty = true;
 	// End:0x45C
-	if((int(Attachment.RemoteRole) != int(ROLE_None)) && Attachment.bStatic || Attachment.bNoDelete)
+	if((Attachment.RemoteRole != ROLE_None) && Attachment.bStatic || Attachment.bNoDelete)
 	{
 		Attachment.SetForcedInitialReplicatedProperty(StructProperty'Engine.Actor.RelativeLocation', Attachment.RelativeLocation == Attachment.default.RelativeLocation);
 		Attachment.SetForcedInitialReplicatedProperty(StructProperty'Engine.Actor.RelativeRotation', Attachment.RelativeRotation == Attachment.default.RelativeRotation);
@@ -2612,7 +2612,7 @@ simulated function GetAimAdhesionExtent(out float Width, out float Height, out V
 event bool PlayParticleEffect(const AnimNotify_PlayParticleEffect AnimNotifyData)
 {
 	// End:0x60
-	if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if(WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		LogInternal("(Actor): PlayParticleEffect on dedicated server!");
 		return true;
@@ -2711,9 +2711,9 @@ defaultproperties
 	DrawScale=1.0000000
 	DrawScale3D=(X=1.0000000,Y=1.0000000,Z=1.0000000)
 	CustomTimeDilation=1.0000000
-	Role=ENetRole.ROLE_Authority
-	CollisionType=ECollisionType.COLLIDE_NoCollision
-	ReplicatedCollisionType=ECollisionType.None
+	Role=ROLE_Authority
+	CollisionType=COLLIDE_NoCollision
+	ReplicatedCollisionType=None
 	bPushedByEncroachers=true
 	bRouteBeginPlayEvenIfStatic=true
 	bCanStepUpOn=true

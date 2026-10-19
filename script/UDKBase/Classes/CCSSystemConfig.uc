@@ -44,7 +44,7 @@ struct native CCSSystemConfigData
 		AggressiveMobileWeight=-1.0000000
 		AggressiveStationaryWeight=-1.0000000
 		CoverQueryRadius=5000.0000000
-		TargetSelection=ECCSTargetSelectionConfig.CCSTargetPlayer
-		Movement=ECCSMovementConfig.CCSMovementGwNav
+		TargetSelection=CCSTargetPlayer
+		Movement=CCSMovementGwNav
 	}
 };

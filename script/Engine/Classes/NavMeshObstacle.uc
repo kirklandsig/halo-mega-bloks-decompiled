@@ -13,7 +13,6 @@ struct CheckpointRecord
 	}
 };
 
-var private native const noexport Pointer VfTable_IInterface_NavMeshPathObstacle;
 var bool bEnabled;
 var bool bPreserveInternalGeo;
 
@@ -120,5 +119,5 @@ defaultproperties
 		ReplacementPrimitive=none
 	end object
 	Components[1]=DrawBox0
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

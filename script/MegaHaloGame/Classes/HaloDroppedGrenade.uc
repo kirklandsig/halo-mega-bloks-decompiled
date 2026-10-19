@@ -179,7 +179,7 @@ defaultproperties
 	begin object name="StaticMeshComponent0"
 		ReplacementPrimitive=none
 		LightEnvironment=DynamicLightEnvironmentComponent'MegaHaloGame.Default__HaloDroppedGrenade.MyLightEnvironment'
-		RBChannel=ERBCollisionChannel.RBCC_Untitled1
+		RBChannel=RBCC_Untitled1
 	end object
 	StaticMeshComponent=StaticMeshComponent0
 	// Reference: DynamicLightEnvironmentComponent'MegaHaloGame.Default__HaloDroppedGrenade.MyLightEnvironment'
@@ -192,7 +192,7 @@ defaultproperties
 	GwNavObstacleComponentClassPath=""
 	Components[0]=MyLightEnvironment
 	Components[1]=StaticMeshComponent0
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	CollisionType=COLLIDE_TouchAll
 	bBlockActors=false
 	bProjTarget=false
 	bBlocksTeleport=false

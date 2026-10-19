@@ -19,7 +19,6 @@ struct native VisiblePortalInfo
 	}
 };
 
-var private native const noexport Pointer VfTable_IInterface_NavigationHandle;
 var repnotify editinline Pawn Pawn;
 var repnotify editinline PlayerReplicationInfo PlayerReplicationInfo;
 var const int PlayerNum;
@@ -89,7 +88,7 @@ var Vector NavMeshPath_SearchExtent_Modifier;
 replication
 {
 	// Pos:0x000
-	if(bNetDirty && int(Role) == int(ROLE_Authority))
+	if(bNetDirty && Role == ROLE_Authority)
 		Pawn, PlayerReplicationInfo;
 }
 
@@ -183,7 +182,7 @@ event PostBeginPlay()
 {
 	super.PostBeginPlay();
 	// End:0x65
-	if(!bDeleteMe && int(WorldInfo.NetMode) != int(NM_Client))
+	if(!bDeleteMe && WorldInfo.NetMode != NM_Client)
 	{
 		// End:0x5B
 		if(bIsPlayer)
@@ -395,7 +394,7 @@ event NotifyPostLanded()
 event Destroyed()
 {
 	// End:0x114
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		// End:0x7C
 		if(bIsPlayer && WorldInfo.Game != none)
@@ -471,7 +470,7 @@ native simulated function byte GetTeamNum();
 reliable server function ServerRestartPlayer()
 {
 	// End:0x44
-	if((int(WorldInfo.NetMode) != int(NM_Client)) && Pawn != none)
+	if((WorldInfo.NetMode != NM_Client) && Pawn != none)
 	{
 		ServerGivePawn();
 	}
@@ -1121,7 +1120,7 @@ state Dead
 	function PawnDied(Pawn P)
 	{
 		// End:0x4F
-		if(int(WorldInfo.NetMode) != int(NM_Client))
+		if(WorldInfo.NetMode != NM_Client)
 		{
 			WarnInternal(string(self) @ "Pawndied while dead");
 			ScriptTrace();
@@ -1132,7 +1131,7 @@ state Dead
 	reliable server function ServerRestartPlayer()
 	{
 		// End:0x2B
-		if(int(WorldInfo.NetMode) == int(NM_Client))
+		if(WorldInfo.NetMode == NM_Client)
 		{
 			return;
 		}
@@ -1189,7 +1188,7 @@ defaultproperties
 	NavigationHandleClass=Class'Engine.NavigationHandle'
 	SightCounterInterval=0.2000000
 	MaxMoveTowardPawnTargetTime=1.2000000
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 	bHidden=true
 	bOnlyRelevantToOwner=true
 	bHiddenEd=true

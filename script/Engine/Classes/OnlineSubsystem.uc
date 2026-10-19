@@ -1,7 +1,8 @@
 class OnlineSubsystem extends Object
 	abstract
 	native
-	config(Engine);
+	config(Engine)
+	dependson(Settings);
 
 enum ELoginStatus
 {
@@ -164,7 +165,7 @@ struct native OnlineFriend
 		SessionId=()
 		NickName=""
 		PresenceInfo=""
-		FriendState=EOnlineFriendState.OFS_Offline
+		FriendState=OFS_Offline
 		bIsOnline=false
 		bIsPlaying=false
 		bIsPlayingThisGame=false
@@ -190,7 +191,7 @@ struct native OnlineContent
 
 	structdefaultproperties
 	{
-		ContentType=EOnlineContentType.OCT_Downloaded
+		ContentType=OCT_Downloaded
 		UserIndex=0
 		bIsCorrupt=false
 		DeviceID=0
@@ -361,7 +362,7 @@ struct native TitleFile
 	structdefaultproperties
 	{
 		Filename=""
-		AsyncState=EOnlineEnumerationReadState.OERS_NotStarted
+		AsyncState=OERS_NotStarted
 		Data=none
 	}
 };
@@ -480,7 +481,7 @@ struct native OnlinePartyMember
 		UniqueId=(Uid=())
 		NickName=""
 		LocalUserNum=0
-		NatType=ENATType.NAT_Unknown
+		NatType=NAT_Unknown
 		TitleId=0
 		bIsLocal=false
 		bIsInPartyVoice=false
@@ -608,112 +609,112 @@ event Exit()
 event bool SetAccountInterface(Object NewInterface)
 {
 	AccountInterface = OnlineAccountInterface(NewInterface);
-	return NotEqual_InterfaceInterface(AccountInterface, OnlineAccountInterface(none));
+	return NotEqual_InterfaceInterface(AccountInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetPlayerInterface(Object NewInterface)
 {
 	PlayerInterface = OnlinePlayerInterface(NewInterface);
-	return NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none));
+	return NotEqual_InterfaceInterface(PlayerInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetPlayerInterfaceEx(Object NewInterface)
 {
 	PlayerInterfaceEx = OnlinePlayerInterfaceEx(NewInterface);
-	return NotEqual_InterfaceInterface(PlayerInterfaceEx, OnlinePlayerInterfaceEx(none));
+	return NotEqual_InterfaceInterface(PlayerInterfaceEx, none);
 	//return ReturnValue;	
 }
 
 event bool SetSystemInterface(Object NewInterface)
 {
 	SystemInterface = OnlineSystemInterface(NewInterface);
-	return NotEqual_InterfaceInterface(SystemInterface, OnlineSystemInterface(none));
+	return NotEqual_InterfaceInterface(SystemInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetGameInterface(Object NewInterface)
 {
 	GameInterface = OnlineGameInterface(NewInterface);
-	return NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none));
+	return NotEqual_InterfaceInterface(GameInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetContentInterface(Object NewInterface)
 {
 	ContentInterface = OnlineContentInterface(NewInterface);
-	return NotEqual_InterfaceInterface(ContentInterface, OnlineContentInterface(none));
+	return NotEqual_InterfaceInterface(ContentInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetVoiceInterface(Object NewInterface)
 {
 	VoiceInterface = OnlineVoiceInterface(NewInterface);
-	return NotEqual_InterfaceInterface(VoiceInterface, OnlineVoiceInterface(none));
+	return NotEqual_InterfaceInterface(VoiceInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetStatsInterface(Object NewInterface)
 {
 	StatsInterface = OnlineStatsInterface(NewInterface);
-	return NotEqual_InterfaceInterface(StatsInterface, OnlineStatsInterface(none));
+	return NotEqual_InterfaceInterface(StatsInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetNewsInterface(Object NewInterface)
 {
 	NewsInterface = OnlineNewsInterface(NewInterface);
-	return NotEqual_InterfaceInterface(NewsInterface, OnlineNewsInterface(none));
+	return NotEqual_InterfaceInterface(NewsInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetPartyChatInterface(Object NewInterface)
 {
 	PartyChatInterface = OnlinePartyChatInterface(NewInterface);
-	return NotEqual_InterfaceInterface(PartyChatInterface, OnlinePartyChatInterface(none));
+	return NotEqual_InterfaceInterface(PartyChatInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetTitleFileInterface(Object NewInterface)
 {
 	TitleFileInterface = OnlineTitleFileInterface(NewInterface);
-	return NotEqual_InterfaceInterface(TitleFileInterface, OnlineTitleFileInterface(none));
+	return NotEqual_InterfaceInterface(TitleFileInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetTitleFileCacheInterface(Object NewInterface)
 {
 	TitleFileCacheInterface = OnlineTitleFileCacheInterface(NewInterface);
-	return NotEqual_InterfaceInterface(TitleFileCacheInterface, OnlineTitleFileCacheInterface(none));
+	return NotEqual_InterfaceInterface(TitleFileCacheInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetSocialInterface(Object InSocialInterface)
 {
 	SocialInterface = OnlineSocialInterface(InSocialInterface);
-	return NotEqual_InterfaceInterface(SocialInterface, OnlineSocialInterface(none));
+	return NotEqual_InterfaceInterface(SocialInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetAuthInterface(Object InAuthInterface)
 {
 	AuthInterface = OnlineAuthInterface(InAuthInterface);
-	return NotEqual_InterfaceInterface(AuthInterface, OnlineAuthInterface(none));
+	return NotEqual_InterfaceInterface(AuthInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetUserCloudInterface(Object InCloudInterface)
 {
 	UserCloudInterface = UserCloudFileInterface(InCloudInterface);
-	return NotEqual_InterfaceInterface(UserCloudInterface, UserCloudFileInterface(none));
+	return NotEqual_InterfaceInterface(UserCloudInterface, none);
 	//return ReturnValue;	
 }
 
 event bool SetSharedCloudInterface(Object InCloudInterface)
 {
 	SharedCloudInterface = SharedCloudFileInterface(InCloudInterface);
-	return NotEqual_InterfaceInterface(SharedCloudInterface, SharedCloudFileInterface(none));
+	return NotEqual_InterfaceInterface(SharedCloudInterface, none);
 	//return ReturnValue;	
 }
 
@@ -758,7 +759,7 @@ event UniqueNetId GetPlayerUniqueNetIdFromIndex(int UserIndex)
 	local UniqueNetId ReturnVal, NullId;
 
 	// End:0x6E
-	if(EqualEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)) || !PlayerInterface.GetUniquePlayerId(byte(UserIndex), ReturnVal))
+	if(EqualEqual_InterfaceInterface(PlayerInterface, none) || !PlayerInterface.GetUniquePlayerId(byte(UserIndex), ReturnVal))
 	{
 		ReturnVal = NullId;
 	}

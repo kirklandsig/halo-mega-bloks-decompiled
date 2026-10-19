@@ -45,5 +45,5 @@ function CancelSpecialAbility()
 
 defaultproperties
 {
-	HVCC_Type=HVCCType.HVCC_NONE
+	HVCC_Type=HVCC_NONE
 }

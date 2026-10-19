@@ -39,11 +39,11 @@ function PlayAkEvent(string EventName, optional Actor SoundOwner)
 		// End:0x6D
 		if(SoundOwner != none)
 		{
-			SoundOwner.super(HaloAkEventMap).PlayAkEvent(Event);			
+			SoundOwner.PlayAkEvent(Event);			
 		}
 		else
 		{
-			Class'Engine.WorldInfo'.static.GetWorldInfo().super(HaloAkEventMap).PlayAkEvent(Event);
+			Class'Engine.WorldInfo'.static.GetWorldInfo().PlayAkEvent(Event);
 		}		
 	}
 	else
@@ -64,11 +64,11 @@ function PostAkEvent(string EventName, optional Actor SoundOwner)
 		// End:0x67
 		if(SoundOwner != none)
 		{
-			SoundOwner.super(HaloAkEventMap).PostAkEvent(Event);			
+			SoundOwner.PostAkEvent(Event);			
 		}
 		else
 		{
-			Class'Engine.WorldInfo'.static.GetWorldInfo().super(HaloAkEventMap).PostAkEvent(Event);
+			Class'Engine.WorldInfo'.static.GetWorldInfo().PostAkEvent(Event);
 		}		
 	}
 	else

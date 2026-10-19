@@ -652,7 +652,7 @@ defaultproperties
 	ReverseSpeedPercentage=0.6000000
 	BankSteeringLimit=0.1500000
 	TurretControls[0]="BigGunController"
-	LastBankDirection=BankDirection.BankForward
+	LastBankDirection=BankForward
 	// Reference: HaloCollectibleBlokSpawnerComponent'MegaHaloGame.Default__HaloVehicle_Wraith.BlokSpawnerComponent'
 	// TemplateOwnerClass: none
 	// TemplateOwnerName: 'BlokSpawnerComponent'
@@ -670,7 +670,7 @@ defaultproperties
 	bAutoBrakeEnabled=false
 	EngineBone="Ghost_Windshield"
 	ExhaustBone="Ghost_Tail_Bottom"
-	VehicleGears[0]=(MinPercent=0.0000000,MaxPercent=100.0000000,GearRatio=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=2400.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear)),InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents))
+	VehicleGears[0]=(MinPercent=0.0000000,MaxPercent=100.0000000,GearRatio=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=2400.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear)),InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents))
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloVehicle_Wraith.CrashWaveform1'
 	// Archetype: ForceFeedbackWaveform'MegaHaloGame.Default__HaloVehicle.CrashWaveform1'
 	begin object name="CrashWaveform1"

@@ -23,7 +23,7 @@ event Activated()
 
 defaultproperties
 {
-	ForcedMode=EGameplayMode.GM_InCombat
+	ForcedMode=GM_InCombat
 	bCallHandler=false
 	VariableLinks=none
 	ObjName="Force Gameplay Mode"

@@ -1,7 +1,8 @@
 class GameCrowdAgent extends CrowdAgentBase
 	abstract
 	native
-	implements(Interface_RVO);
+	implements(Interface_RVO)
+	dependson(GameCrowdAgentBehavior);
 
 enum EConformType
 {
@@ -1310,8 +1311,8 @@ defaultproperties
 	DesiredGroupRadius=200.0000000
 	MaxLOSLifeDistanceSq=400000000.0000000
 	Components[0]=MyLightEnvironment
-	Physics=EPhysics.PHYS_Interpolating
-	TickGroup=ETickingGroup.TG_DuringAsyncWork
+	Physics=PHYS_Interpolating
+	TickGroup=TG_DuringAsyncWork
 	bCollideActors=true
 	bProjTarget=true
 	bNoEncroachCheck=true

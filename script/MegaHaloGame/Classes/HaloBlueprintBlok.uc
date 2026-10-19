@@ -299,7 +299,7 @@ defaultproperties
 		StaticMesh=StaticMesh'FX_Bricks.Meshes.1_Peg_Std_Silver'
 		ReplacementPrimitive=none
 		LightEnvironment=DynamicLightEnvironmentComponent'MegaHaloGame.Default__HaloBlueprintBlok.MyLightEnvironment'
-		RBChannel=ERBCollisionChannel.RBCC_Untitled1
+		RBChannel=RBCC_Untitled1
 		CastShadow=false
 		bCastDynamicShadow=false
 		bCastStaticShadow=false

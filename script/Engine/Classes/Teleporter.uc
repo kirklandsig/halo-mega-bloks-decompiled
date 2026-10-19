@@ -17,11 +17,11 @@ var float LastFired;
 replication
 {
 	// Pos:0x000
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 		URL, bEnabled;
 
 	// Pos:0x011
-	if(bNetInitial && int(Role) == int(ROLE_Authority))
+	if(bNetInitial && Role == ROLE_Authority)
 		TargetVelocity, bChangesVelocity, 
 		bChangesYaw, bReversesX, 
 		bReversesY, bReversesZ;
@@ -33,7 +33,7 @@ native function bool CanTeleport(Actor A);
 event PostBeginPlay()
 {
 	// End:0x16
-	if(URL ComplementEqual "")
+	if(URL ~= "")
 	{
 		SetCollision(false, false);
 	}
@@ -70,7 +70,7 @@ simulated event bool Accept(Actor Incoming, Actor Source)
 	if(Pawn(Incoming) != none)
 	{
 		// End:0x1F7
-		if(int(Role) == int(ROLE_Authority))
+		if(Role == ROLE_Authority)
 		{
 			// End:0x1F6
 			foreach WorldInfo.AllControllers(Class'Engine.Controller', C)
@@ -89,7 +89,7 @@ simulated event bool Accept(Actor Incoming, Actor Source)
 			return false;
 		}
 		// End:0x36F
-		if((int(Role) == int(ROLE_Authority)) || (WorldInfo.TimeSeconds - LastFired) > 0.5000000)
+		if((Role == ROLE_Authority) || (WorldInfo.TimeSeconds - LastFired) > 0.5000000)
 		{
 			NewRot.Roll = 0;
 			Pawn(Incoming).SetRotation(NewRot);
@@ -132,7 +132,7 @@ simulated event bool Accept(Actor Incoming, Actor Source)
 		if(bChangesYaw)
 		{
 			// End:0x54C
-			if(int(Incoming.Physics) == int(1))
+			if(int(Incoming.Physics) == 1)
 			{
 				oldRot.Pitch = 0;
 			}
@@ -186,7 +186,7 @@ simulated event PostTouch(Actor Other)
 	if((InStr(URL, "/") >= 0) || InStr(URL, "#") >= 0)
 	{
 		// End:0xF9
-		if(((int(Role) == int(ROLE_Authority)) && Pawn(Other) != none) && Pawn(Other).IsHumanControlled())
+		if(((Role == ROLE_Authority) && Pawn(Other) != none) && Pawn(Other).IsHumanControlled())
 		{
 			WorldInfo.Game.SendPlayer(PlayerController(Pawn(Other).Controller), URL);
 		}		
@@ -197,7 +197,7 @@ simulated event PostTouch(Actor Other)
 		foreach AllActors(Class'Engine.Teleporter', D)
 		{
 			// End:0x18F
-			if((string(D.Tag) ComplementEqual URL) && D != self)
+			if((string(D.Tag) ~= URL) && D != self)
 			{
 				Dest[I] = D;
 				I++;
@@ -227,7 +227,7 @@ simulated event PostTouch(Actor Other)
 event Actor SpecialHandling(Pawn Other)
 {
 	// End:0x116
-	if(((bEnabled && Other.Controller.RouteCache.Length > 1) && Teleporter(Other.Controller.RouteCache[1]) != none) && string(Other.Controller.RouteCache[1].Tag) ComplementEqual URL)
+	if(((bEnabled && Other.Controller.RouteCache.Length > 1) && Teleporter(Other.Controller.RouteCache[1]) != none) && string(Other.Controller.RouteCache[1].Tag) ~= URL)
 	{
 		// End:0x114
 		if(IsOverlapping(Other))
@@ -260,7 +260,7 @@ defaultproperties
 	Components[2]=none
 	Components[3]=CollisionCylinder
 	Components[4]=none
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
+	RemoteRole=ROLE_SimulatedProxy
 	bCollideActors=true
 	CollisionComponent=CollisionCylinder
 }

@@ -1,6 +1,7 @@
 class GameCrowdPopulationManager extends CrowdPopulationManagerBase
 	native
-	implements(Interface_NavigationHandle);
+	implements(Interface_NavigationHandle)
+	dependson(SeqAct_GameCrowdSpawner);
 
 var private native const noexport Pointer VfTable_IInterface_NavigationHandle;
 var CrowdSpawnInfoItem CloudSpawnInfo;

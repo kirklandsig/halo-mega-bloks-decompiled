@@ -1,5 +1,6 @@
 class CCSBTOrientTowardTarget extends GripBTNode
-	native;
+	native
+	dependson(CCSPawn);
 
 var CCSPawn.ECCSAlertnessState Alertness;
 

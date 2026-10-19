@@ -178,7 +178,7 @@ function WebApplication GetApplication(string URI, out string SubURI)
 		{
 			L = Len(ApplicationPaths[I]);
 			// End:0xF9
-			if((Left(URI, L) ComplementEqual ApplicationPaths[I]) && (Len(URI) == L) || Mid(URI, L, 1) == "/")
+			if((Left(URI, L) ~= ApplicationPaths[I]) && (Len(URI) == L) || Mid(URI, L, 1) == "/")
 			{
 				SubURI = Mid(URI, L);
 				return ApplicationObjects[I];

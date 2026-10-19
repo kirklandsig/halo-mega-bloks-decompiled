@@ -9,7 +9,7 @@ struct RepairData
 	structdefaultproperties
 	{
 		bHasBeenRepaired=false
-		RepairObject=(Actor=none,Marker=EObjectiveMarker.OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
+		RepairObject=(Actor=none,Marker=OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
 	}
 };
 

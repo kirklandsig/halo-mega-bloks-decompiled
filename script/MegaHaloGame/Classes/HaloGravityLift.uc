@@ -52,7 +52,7 @@ defaultproperties
 	end object
 	BrushComponent=BrushComponent0
 	Components[0]=BrushComponent0
-	Physics=EPhysics.PHYS_Interpolating
+	Physics=PHYS_Interpolating
 	bStatic=false
 	CollisionComponent=BrushComponent0
 }

@@ -16,7 +16,7 @@ enum ENavMeshEdgeType
 	NAVEDGE_MAX                     // 8
 };
 
-struct native atomicwhencooked immutablewhencooked PolyReference
+struct native immutablewhencooked PolyReference
 {
 	var ActorReference OwningPylon;
 	var private int PolyId;
@@ -29,8 +29,6 @@ struct native atomicwhencooked immutablewhencooked PolyReference
 	}
 };
 
-var private native const noexport Pointer VfTable_IEditorLinkSelectionInterface;
-var private native const noexport Pointer VfTable_IInterface_NavigationHandle;
 var native const Pointer NavMeshPtr;
 var native const Pointer ObstacleMesh;
 var native const Pointer DynamicObstacleMesh;

@@ -1,5 +1,6 @@
 class SoundCue extends AkBaseSoundObject
-	native;
+	native
+	dependson(AudioDevice);
 
 struct native export SoundNodeEditorData
 {

@@ -193,7 +193,7 @@ defaultproperties
 	begin object name="StaticMeshComponent0"
 		ReplacementPrimitive=none
 		LightEnvironment=DynamicLightEnvironmentComponent'MegaHaloGame.Default__HaloDestructibleBlok.MyLightEnvironment'
-		RBChannel=ERBCollisionChannel.RBCC_Untitled1
+		RBChannel=RBCC_Untitled1
 		CastShadow=false
 		bCastDynamicShadow=false
 		bCastStaticShadow=false

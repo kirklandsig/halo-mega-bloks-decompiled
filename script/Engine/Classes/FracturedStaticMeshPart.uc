@@ -73,7 +73,7 @@ defaultproperties
 {
 	DestroyPartRadiusFactor=10.0000000
 	FracPartGravScale=2.0000000
-	AsleepRBChannel=ERBCollisionChannel.RBCC_GameplayPhysics
+	AsleepRBChannel=RBCC_GameplayPhysics
 	// Reference: FracturedStaticMeshComponent'Engine.Default__FracturedStaticMeshPart.FracturedStaticMeshComponent0'
 	// TemplateOwnerClass: none
 	// TemplateOwnerName: 'FracturedStaticMeshComponent0'
@@ -85,7 +85,7 @@ defaultproperties
 		bUseDynamicIndexBuffer=false
 		bUseDynamicIBWithHiddenFragments=false
 		ReplacementPrimitive=none
-		RBChannel=ERBCollisionChannel.RBCC_FracturedMeshPart
+		RBChannel=RBCC_FracturedMeshPart
 		bAcceptsDynamicDecals=false
 		bForceDirectLightMap=false
 		bCastDynamicShadow=false
@@ -98,8 +98,8 @@ defaultproperties
 	FracturedStaticMeshComponent=FracturedStaticMeshComponent0
 	SkinnedComponent=none
 	Components[0]=FracturedStaticMeshComponent0
-	Physics=EPhysics.PHYS_RigidBody
-	TickGroup=ETickingGroup.TG_PostAsyncWork
+	Physics=PHYS_RigidBody
+	TickGroup=TG_PostAsyncWork
 	bNoDelete=false
 	bWorldGeometry=false
 	bNetInitialRotation=true

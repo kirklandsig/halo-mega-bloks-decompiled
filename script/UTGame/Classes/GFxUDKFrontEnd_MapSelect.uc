@@ -1,5 +1,6 @@
 class GFxUDKFrontEnd_MapSelect extends GFxUDKFrontEnd_Screen within GFxMoviePlayer
-	config(UI);
+	config(UI)
+	dependson(UTGame);
 
 var GFxClikWidget ListMC;
 var GFxObject ListDataProvider;
@@ -233,7 +234,7 @@ final function string GetMapFriendlyName(string Map)
 	if(I < MapList.Length)
 	{
 		// End:0x203
-		if(MapList[I].MapName ComplementEqual Map)
+		if(MapList[I].MapName ~= Map)
 		{
 			StartIndex = InStr(Caps(MapList[I].FriendlyName), "<STRINGS:");
 			// End:0xD9

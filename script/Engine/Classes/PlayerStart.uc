@@ -1,6 +1,7 @@
 class PlayerStart extends NavigationPoint
 	native
-	notplaceable;
+	notplaceable
+	dependson(Canvas);
 
 var bool bEnabled;
 var bool bPrimaryStart;

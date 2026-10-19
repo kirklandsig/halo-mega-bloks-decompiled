@@ -27,7 +27,6 @@ enum ERouteType
 	ERT_MAX                         // 3
 };
 
-var private native const noexport Pointer VfTable_IEditorLinkSelectionInterface;
 var Route.ERouteType RouteType;
 var array<ActorReference> RouteList;
 var float FudgeFactor;

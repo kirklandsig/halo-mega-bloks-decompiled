@@ -103,21 +103,21 @@ function ValidateServerType()
 function string GetGameClassByFriendlyName(string FriendlyName)
 {
 	// End:0x33
-	if(FriendlyName ComplementEqual "Deathmatch")
+	if(FriendlyName ~= "Deathmatch")
 	{
 		return "UTGame.UTDeathmatch";		
 	}
 	else
 	{
 		// End:0x69
-		if(FriendlyName ComplementEqual "Team Deathmatch")
+		if(FriendlyName ~= "Team Deathmatch")
 		{
 			return "UTGame.UTTeamGame";			
 		}
 		else
 		{
 			// End:0xB2
-			if(FriendlyName ComplementEqual "Capture the Flag")
+			if(FriendlyName ~= "Capture the Flag")
 			{
 				return "UTGameContent.UTVehicleCTFGame_Content";
 			}
@@ -142,7 +142,7 @@ function OnFilterList_OptionChanged(EventData ev)
 	SelectedIndex = byte(Data.GetFloat("optIndex"));
 	OptionValue = ListOptions[ev.Index].OptionData[int(SelectedIndex)];
 	// End:0x224
-	if(OptionName ComplementEqual "Mode")
+	if(OptionName ~= "Mode")
 	{
 		GameClassName = GetGameClassByFriendlyName(OptionValue);
 		SettingsDataStore = UIDataStore_OnlineGameSettings(Class'Engine.UIRoot'.static.StaticResolveDataStore('UTGameSettings'));
@@ -153,9 +153,9 @@ function OnFilterList_OptionChanged(EventData ev)
 	else
 	{
 		// End:0x28E
-		if(OptionName ComplementEqual "Type")
+		if(OptionName ~= "Type")
 		{
-			bIsLAN = (OptionValue ComplementEqual "LAN") || Class'Engine.WorldInfo'.static.IsConsoleBuild(2);
+			bIsLAN = (OptionValue ~= "LAN") || Class'Engine.WorldInfo'.static.IsConsoleBuild(2);
 			SetFilterNetworkType(bIsLAN, false);
 		}
 	}
@@ -189,7 +189,7 @@ function SetFilterNetworkType(bool bLAN, optional bool bSkipUIUpdate)
 		if(I < ListOptions.Length)
 		{
 			// End:0x1F7
-			if(ListOptions[I].OptionName ComplementEqual "Type")
+			if(ListOptions[I].OptionName ~= "Type")
 			{
 				// [Explicit Break]
 				goto J0x205;
@@ -210,7 +210,7 @@ function SetFilterNetworkType(bool bLAN, optional bool bSkipUIUpdate)
 			if(J < ListOptions[I].OptionData.Length)
 			{
 				// End:0x2A8
-				if((ListOptions[I].OptionData[J] ComplementEqual "LAN") ^^ !bLAN)
+				if((ListOptions[I].OptionData[J] ~= "LAN") ^^ !bLAN)
 				{
 					// [Explicit Break]
 					goto J0x2B6;

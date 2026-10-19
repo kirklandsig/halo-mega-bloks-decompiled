@@ -479,7 +479,7 @@ defaultproperties
 	Components[5]=ParticleSystemComponent3
 	Components[6]=ParticleSystemComponent4
 	Components[7]=ParticleSystemComponent5
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 	BlockRigidBody=true
 	bCollideActors=true
 	bBlockActors=true

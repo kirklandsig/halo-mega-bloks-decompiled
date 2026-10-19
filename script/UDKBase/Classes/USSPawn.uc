@@ -1,9 +1,9 @@
 class USSPawn extends Pawn
 	native
 	config(Game)
-	implements(CCSPawn);
+	implements(CCSPawn)
+	dependson(CCSPawn);
 
-var private native const noexport Pointer VfTable_ICCSPawn;
 var CCSPawn.ECCSMovementType MovementType;
 var CCSPawn.ECCSAlertnessState AlertnessState;
 var CCSPawn.ECCSCoverPose WantedCoverPose;
@@ -375,10 +375,10 @@ defaultproperties
 		bOverrideAttachmentOwnerVisibility=true
 		bChartDistanceFactor=true
 		bCacheAnimSequenceNodes=false
-		RootMotionMode=ERootMotionMode.RMM_Translate
-		RootMotionRotationMode=ERootMotionRotationMode.RMRM_RotateActor
+		RootMotionMode=RMM_Translate
+		RootMotionRotationMode=RMRM_RotateActor
 		ReplacementPrimitive=none
-		RBChannel=ERBCollisionChannel.RBCC_Untitled3
+		RBChannel=RBCC_Untitled3
 		RBDominanceGroup=20
 		bOwnerNoSee=true
 		BlockRigidBody=true

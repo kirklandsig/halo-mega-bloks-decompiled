@@ -1,6 +1,7 @@
 class UTWeapon extends UDKWeapon
 	abstract
-	config(Weapon);
+	config(Weapon)
+	dependson(UTPlayerController);
 
 enum EZoomState
 {
@@ -2883,7 +2884,7 @@ defaultproperties
 	MinReloadPct[1]=0.6000000
 	// Reference: ForceFeedbackWaveform'UTGame.Default__UTWeapon.ForceFeedbackWaveformShooting1'
 	begin object name="ForceFeedbackWaveformShooting1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=30,RightAmplitude=20,LeftFunction=EWaveformFunction.WF_Constant,RightFunction=EWaveformFunction.WF_Constant,Duration=0.1000000)
+		Samples[0]=(LeftAmplitude=30,RightAmplitude=20,LeftFunction=WF_Constant,RightFunction=WF_Constant,Duration=0.1000000)
 	end object
 	WeaponFireWaveForm=ForceFeedbackWaveformShooting1
 	EffectSockets[0]="MuzzleFlashSocket"
@@ -2944,7 +2945,7 @@ defaultproperties
 	TargetFrictionDistanceMin=320.0000000
 	TargetFrictionDistancePeak=1500.0000000
 	TargetFrictionDistanceMax=3000.0000000
-	TargetFrictionDistanceCurve=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=320.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=1500.0000000,OutVal=1.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=3000.0000000,OutVal=0.3000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=7000.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear)),InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents)
+	TargetFrictionDistanceCurve=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=320.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=1500.0000000,OutVal=1.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=3000.0000000,OutVal=0.3000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=7000.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear)),InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents)
 	TargetFrictionMultiplierRange=(X=0.4000000,Y=0.3000000)
 	TargetFrictionPeakRadiusScale=1.0000000
 	TargetFrictionPeakHeightScale=0.2000000
@@ -2977,7 +2978,7 @@ defaultproperties
 	begin object name="FirstPersonMesh" class=UDKBase.UDKSkeletalMeshComponent
 		bOverrideAttachmentOwnerVisibility=true
 		ReplacementPrimitive=none
-		DepthPriorityGroup=ESceneDepthPriorityGroup.SDPG_Foreground
+		DepthPriorityGroup=SDPG_Foreground
 		bOnlyOwnerSee=true
 	end object
 	Mesh=FirstPersonMesh

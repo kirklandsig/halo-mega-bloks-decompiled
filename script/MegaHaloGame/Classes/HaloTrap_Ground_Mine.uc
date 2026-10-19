@@ -130,7 +130,7 @@ defaultproperties
 	end object
 	Components[0]=CollisionCylinder
 	Components[1]=StaticMeshComponent0
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	CollisionType=COLLIDE_TouchAll
 	bCollideActors=true
 	CollisionComponent=CollisionCylinder
 }

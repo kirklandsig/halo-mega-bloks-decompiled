@@ -308,7 +308,7 @@ defaultproperties
 		LightEnvironment=DynamicLightEnvironmentComponent'MegaHaloGame.Default__HaloBlokPickup.DroppedPickupLightEnvironment'
 		MaxDrawDistance=15000.0000000
 		CachedMaxDrawDistance=15000.0000000
-		RBChannel=ERBCollisionChannel.RBCC_Nothing
+		RBChannel=RBCC_Nothing
 		CastShadow=false
 		bForceDirectLightMap=true
 		bCastDynamicShadow=false

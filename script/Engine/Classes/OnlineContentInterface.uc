@@ -1,5 +1,5 @@
 interface OnlineContentInterface extends Interface
-	abstract;
+	dependson(OnlineSubsystem);
 
 delegate OnContentChange()
 {

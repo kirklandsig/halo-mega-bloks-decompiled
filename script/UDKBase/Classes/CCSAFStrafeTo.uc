@@ -1,5 +1,6 @@
 class CCSAFStrafeTo extends GripAFActionHandle
-	native;
+	native
+	dependson(CCSPawn);
 
 var Vector Target;
 var CCSPawn.ECCSMovementType MovementType;

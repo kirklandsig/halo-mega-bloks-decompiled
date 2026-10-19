@@ -2,7 +2,8 @@ class WorldInfo extends ZoneInfo
 	native
 	nativereplication
 	config(Game)
-	notplaceable;
+	notplaceable
+	dependson(PostProcessEffect, MusicTrackDataStructures);
 
 const MAX_BOOKMARK_NUMBER = 10;
 const MAX_INSTANCES_PER_CLASS = 5;
@@ -309,7 +310,7 @@ struct native HostMigrationState
 
 	structdefaultproperties
 	{
-		HostMigrationProgress=EHostMigrationProgress.HostMigration_None
+		HostMigrationProgress=HostMigration_None
 		HostMigrationElapsedTime=0.0000000
 		HostMigrationTravelCountdown=0.0000000
 		HostMigrationTravelURL=""
@@ -480,7 +481,7 @@ var editinlineuse Object GwNavWorldObject;
 replication
 {
 	// Pos:0x000
-	if(bNetDirty && int(Role) == int(ROLE_Authority))
+	if(bNetDirty && Role == ROLE_Authority)
 		Pauser, ReplicatedMusicTrack, 
 		TimeDilation, WorldGravityZ, 
 		bHighPriorityLoading;
@@ -630,7 +631,7 @@ simulated function PreBeginPlay()
 
 	super(Actor).PreBeginPlay();
 	// End:0x26F
-	if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && IsInPersistentLevel())
+	if((WorldInfo.NetMode != NM_DedicatedServer) && IsInPersistentLevel())
 	{
 		// End:0xCE
 		if(EmitterPoolClassPath != "")
@@ -803,7 +804,7 @@ simulated event NotifyHostMigrationStateChanged(WorldInfo.EHostMigrationProgress
 	local PlayerController PC;
 
 	// End:0x8F
-	if((int(OldState) == int(0)) && int(NewState) != int(0))
+	if((int(OldState) == 0) && int(NewState) != 0)
 	{
 		// End:0x8E
 		foreach LocalPlayerControllers(Class'Engine.PlayerController', PC)
@@ -828,13 +829,13 @@ native final function ClearObjectPools();
 
 defaultproperties
 {
-	DefaultPostProcessSettings=(bOverride_EnableBloom=true,bOverride_EnableDOF=true,bOverride_EnableMotionBlur=true,bOverride_EnableSceneEffect=true,bOverride_AllowAmbientOcclusion=true,bOverride_OverrideRimShaderColor=true,bOverride_Bloom_Scale=true,bOverride_Bloom_Threshold=true,bOverride_Bloom_Tint=true,bOverride_Bloom_ScreenBlendThreshold=true,bOverride_Bloom_InterpolationDuration=true,bOverride_DOF_FalloffExponent=true,bOverride_DOF_BlurKernelSize=true,bOverride_DOF_BlurBloomKernelSize=true,bOverride_DOF_MaxNearBlurAmount=true,bOverride_DOF_MinBlurAmount=false,bOverride_DOF_MaxFarBlurAmount=true,bOverride_DOF_FocusType=true,bOverride_DOF_FocusInnerRadius=true,bOverride_DOF_FocusDistance=true,bOverride_DOF_FocusPosition=true,bOverride_DOF_InterpolationDuration=true,bOverride_DOF_BokehTexture=false,bOverride_MotionBlur_MaxVelocity=false,bOverride_MotionBlur_Amount=false,bOverride_MotionBlur_FullMotionBlur=false,bOverride_MotionBlur_CameraRotationThreshold=false,bOverride_MotionBlur_CameraTranslationThreshold=false,bOverride_MotionBlur_InterpolationDuration=false,bOverride_Scene_Desaturation=true,bOverride_Scene_Colorize=false,bOverride_Scene_TonemapperScale=false,bOverride_Scene_ImageGrainScale=false,bOverride_Scene_HighLights=true,bOverride_Scene_MidTones=true,bOverride_Scene_Shadows=true,bOverride_Scene_InterpolationDuration=true,bOverride_Scene_ColorGradingLUT=false,bOverride_RimShader_Color=true,bOverride_RimShader_InterpolationDuration=true,bOverride_MobileColorGrading=false,bEnableBloom=true,bEnableDOF=false,bEnableMotionBlur=true,bEnableSceneEffect=true,bAllowAmbientOcclusion=true,bOverrideRimShaderColor=false,Bloom_Scale=0.2000000,Bloom_Threshold=1.0000000,Bloom_Tint=(R=255,G=255,B=0,A=255),Bloom_ScreenBlendThreshold=10.0000000,Bloom_InterpolationDuration=1.0000000,DOF_BlurBloomKernelSize=16.0000000,DOF_FalloffExponent=4.0000000,DOF_BlurKernelSize=12.0000000,DOF_MaxNearBlurAmount=0.0000000,DOF_MinBlurAmount=0.0000000,DOF_MaxFarBlurAmount=1.0000000,DOF_FocusType=EFocusType.FOCUS_Distance,DOF_FocusInnerRadius=2000.0000000,DOF_FocusDistance=0.0000000,DOF_FocusPosition=(X=0.0000000,Y=0.0000000,Z=0.0000000),DOF_InterpolationDuration=1.0000000,DOF_BokehTexture=none,MotionBlur_MaxVelocity=1.0000000,MotionBlur_Amount=0.5000000,MotionBlur_FullMotionBlur=true,MotionBlur_CameraRotationThreshold=45.0000000,MotionBlur_CameraTranslationThreshold=10000.0000000,MotionBlur_InterpolationDuration=1.0000000,Scene_Desaturation=0.0000000,Scene_Colorize=(X=1.0000000,Y=1.0000000,Z=1.0000000),Scene_TonemapperScale=1.0000000,Scene_ImageGrainScale=0.0000000,Scene_HighLights=(X=1.0000000,Y=1.0000000,Z=1.0000000),Scene_MidTones=(X=1.0000000,Y=1.0000000,Z=1.0000000),Scene_Shadows=(X=0.0000000,Y=0.0000000,Z=0.0000000),Scene_InterpolationDuration=1.0000000,RimShader_Color=(R=1.0000000,G=0.8277260,B=0.5859730,A=0.4704400),RimShader_InterpolationDuration=1.0000000,ColorGrading_LookupTable=none,ColorGradingLUT=(LUTTextures=none,LUTWeights=none),MobileColorGrading=(TransitionTime=1.0000000,Blend=0.0000000,Desaturation=0.0000000,HighLights=(R=1.0000000,G=0.7000000,B=0.7000000,A=0.7000000),MidTones=(R=1.0000000,G=0.0000000,B=0.0000000,A=0.0000000),Shadows=(R=1.0000000,G=0.0000000,B=0.0000000,A=0.0000000)),MobilePostProcess=(bOverride_Mobile_BlurAmount=false,bOverride_Mobile_TransitionTime=false,bOverride_Mobile_Bloom_Scale=false,bOverride_Mobile_Bloom_Threshold=false,bOverride_Mobile_Bloom_Tint=false,bOverride_Mobile_DOF_Distance=false,bOverride_Mobile_DOF_MinRange=false,bOverride_Mobile_DOF_MaxRange=false,bOverride_Mobile_DOF_NearBlurFactor=false,bOverride_Mobile_DOF_FarBlurFactor=false,Mobile_BlurAmount=16.0000000,Mobile_TransitionTime=1.0000000,Mobile_Bloom_Scale=6.0000000,Mobile_Bloom_Threshold=0.5000000,Mobile_Bloom_Tint=(R=1.0000000,G=1.0000000,B=1.0000000,A=1.0000000),Mobile_DOF_Distance=1500.0000000,Mobile_DOF_MinRange=600.0000000,Mobile_DOF_MaxRange=1200.0000000,Mobile_DOF_NearBlurFactor=1.0000000,Mobile_DOF_FarBlurFactor=1.0000000))
+	DefaultPostProcessSettings=(bOverride_EnableBloom=true,bOverride_EnableDOF=true,bOverride_EnableMotionBlur=true,bOverride_EnableSceneEffect=true,bOverride_AllowAmbientOcclusion=true,bOverride_OverrideRimShaderColor=true,bOverride_Bloom_Scale=true,bOverride_Bloom_Threshold=true,bOverride_Bloom_Tint=true,bOverride_Bloom_ScreenBlendThreshold=true,bOverride_Bloom_InterpolationDuration=true,bOverride_DOF_FalloffExponent=true,bOverride_DOF_BlurKernelSize=true,bOverride_DOF_BlurBloomKernelSize=true,bOverride_DOF_MaxNearBlurAmount=true,bOverride_DOF_MinBlurAmount=false,bOverride_DOF_MaxFarBlurAmount=true,bOverride_DOF_FocusType=true,bOverride_DOF_FocusInnerRadius=true,bOverride_DOF_FocusDistance=true,bOverride_DOF_FocusPosition=true,bOverride_DOF_InterpolationDuration=true,bOverride_DOF_BokehTexture=false,bOverride_MotionBlur_MaxVelocity=false,bOverride_MotionBlur_Amount=false,bOverride_MotionBlur_FullMotionBlur=false,bOverride_MotionBlur_CameraRotationThreshold=false,bOverride_MotionBlur_CameraTranslationThreshold=false,bOverride_MotionBlur_InterpolationDuration=false,bOverride_Scene_Desaturation=true,bOverride_Scene_Colorize=false,bOverride_Scene_TonemapperScale=false,bOverride_Scene_ImageGrainScale=false,bOverride_Scene_HighLights=true,bOverride_Scene_MidTones=true,bOverride_Scene_Shadows=true,bOverride_Scene_InterpolationDuration=true,bOverride_Scene_ColorGradingLUT=false,bOverride_RimShader_Color=true,bOverride_RimShader_InterpolationDuration=true,bOverride_MobileColorGrading=false,bEnableBloom=true,bEnableDOF=false,bEnableMotionBlur=true,bEnableSceneEffect=true,bAllowAmbientOcclusion=true,bOverrideRimShaderColor=false,Bloom_Scale=0.2000000,Bloom_Threshold=1.0000000,Bloom_Tint=(R=255,G=255,B=0,A=255),Bloom_ScreenBlendThreshold=10.0000000,Bloom_InterpolationDuration=1.0000000,DOF_BlurBloomKernelSize=16.0000000,DOF_FalloffExponent=4.0000000,DOF_BlurKernelSize=12.0000000,DOF_MaxNearBlurAmount=0.0000000,DOF_MinBlurAmount=0.0000000,DOF_MaxFarBlurAmount=1.0000000,DOF_FocusType=FOCUS_Distance,DOF_FocusInnerRadius=2000.0000000,DOF_FocusDistance=0.0000000,DOF_FocusPosition=(X=0.0000000,Y=0.0000000,Z=0.0000000),DOF_InterpolationDuration=1.0000000,DOF_BokehTexture=none,MotionBlur_MaxVelocity=1.0000000,MotionBlur_Amount=0.5000000,MotionBlur_FullMotionBlur=true,MotionBlur_CameraRotationThreshold=45.0000000,MotionBlur_CameraTranslationThreshold=10000.0000000,MotionBlur_InterpolationDuration=1.0000000,Scene_Desaturation=0.0000000,Scene_Colorize=(X=1.0000000,Y=1.0000000,Z=1.0000000),Scene_TonemapperScale=1.0000000,Scene_ImageGrainScale=0.0000000,Scene_HighLights=(X=1.0000000,Y=1.0000000,Z=1.0000000),Scene_MidTones=(X=1.0000000,Y=1.0000000,Z=1.0000000),Scene_Shadows=(X=0.0000000,Y=0.0000000,Z=0.0000000),Scene_InterpolationDuration=1.0000000,RimShader_Color=(R=1.0000000,G=0.8277260,B=0.5859730,A=0.4704400),RimShader_InterpolationDuration=1.0000000,ColorGrading_LookupTable=none,ColorGradingLUT=(LUTTextures=none,LUTWeights=none),MobileColorGrading=(TransitionTime=1.0000000,Blend=0.0000000,Desaturation=0.0000000,HighLights=(R=1.0000000,G=0.7000000,B=0.7000000,A=0.7000000),MidTones=(R=1.0000000,G=0.0000000,B=0.0000000,A=0.0000000),Shadows=(R=1.0000000,G=0.0000000,B=0.0000000,A=0.0000000)),MobilePostProcess=(bOverride_Mobile_BlurAmount=false,bOverride_Mobile_TransitionTime=false,bOverride_Mobile_Bloom_Scale=false,bOverride_Mobile_Bloom_Threshold=false,bOverride_Mobile_Bloom_Tint=false,bOverride_Mobile_DOF_Distance=false,bOverride_Mobile_DOF_MinRange=false,bOverride_Mobile_DOF_MaxRange=false,bOverride_Mobile_DOF_NearBlurFactor=false,bOverride_Mobile_DOF_FarBlurFactor=false,Mobile_BlurAmount=16.0000000,Mobile_TransitionTime=1.0000000,Mobile_Bloom_Scale=6.0000000,Mobile_Bloom_Threshold=0.5000000,Mobile_Bloom_Tint=(R=1.0000000,G=1.0000000,B=1.0000000,A=1.0000000),Mobile_DOF_Distance=1500.0000000,Mobile_DOF_MinRange=600.0000000,Mobile_DOF_MaxRange=1200.0000000,Mobile_DOF_NearBlurFactor=1.0000000,Mobile_DOF_FarBlurFactor=1.0000000))
 	bPersistPostProcessToNextLevel=true
 	bBumpOffsetEnabled=true
 	bPlaceCellsOnSurfaces=true
 	bAllowTemporalAA=true
 	SquintModeKernelSize=128.0000000
-	DefaultReverbSettings=(bApplyReverb=true,ReverbType=ReverbPreset.REVERB_Default,Volume=0.5000000,FadeTime=2.0000000)
+	DefaultReverbSettings=(bApplyReverb=true,ReverbType=REVERB_Default,Volume=0.5000000,FadeTime=2.0000000)
 	DefaultAmbientZoneSettings=(bIsWorldInfo=true,ExteriorVolume=1.0000000,ExteriorTime=0.5000000,ExteriorLPF=1.0000000,ExteriorLPFTime=0.5000000,InteriorVolume=1.0000000,InteriorTime=0.5000000,InteriorLPF=1.0000000,InteriorLPFTime=0.5000000)
 	FogStart=400.0000000
 	FogEnd=4000.0000000
@@ -844,8 +845,8 @@ defaultproperties
 	DemoPlayTimeDilation=1.0000000
 	DefaultTexture=Texture2D'EngineResources.DefaultTexture'
 	WhiteSquareTexture=Texture2D'EngineResources.WhiteSquareTexture'
-	NextTravelType=ETravelType.TRAVEL_Relative
-	LevelLightingQuality=ELightingBuildQuality.None
+	NextTravelType=TRAVEL_Relative
+	LevelLightingQuality=None
 	StallZ=1000000.0000000
 	DefaultGravityZ=-520.0000000
 	RBPhysicsGravityScaling=2.0000000
@@ -884,7 +885,7 @@ defaultproperties
 	LightmassSettings=(StaticLightingLevelScale=1.0000000,NumIndirectLightingBounces=3,EnvironmentColor=(R=0,G=0,B=0,A=0),EnvironmentIntensity=1.0000000,bEnableAdvancedEnvironmentColor=false,EnvironmentSunColor=(R=0,G=0,B=0,A=0),EnvironmentSunIntensity=1.0000000,EnvironmentLightTerminatorAngle=90.0000000,EnvironmentLightDirection=(X=0.0000000,Y=0.0000000,Z=0.0000000),EmissiveBoost=1.0000000,DiffuseBoost=5.0000000,SpecularBoost=1.0000000,IndirectNormalInfluenceBoost=0.3000000,bUseAmbientOcclusion=false,bEnableImageReflectionShadowing=false,DirectIlluminationOcclusionFraction=0.5000000,IndirectIlluminationOcclusionFraction=1.0000000,OcclusionExponent=1.0000000,FullyOccludedSamplesFraction=1.0000000,MaxOcclusionDistance=200.0000000,bVisualizeMaterialDiffuse=false,bVisualizeAmbientOcclusion=false,bCompressShadowmap=false)
 	HostMigrationTimeout=15.0000000
 	Components=none
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
+	RemoteRole=ROLE_SimulatedProxy
 	bWorldGeometry=true
 	bAlwaysRelevant=true
 	bMovable=false

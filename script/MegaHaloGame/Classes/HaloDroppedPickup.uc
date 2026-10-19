@@ -157,7 +157,7 @@ function GiveTo(HaloPawn P)
 	{
 		RemoveFromGlobalList();
 		Inventory.AnnouncePickup(P);
-		Inventory.super(HaloDroppedPickup).GiveTo(P);
+		Inventory.GiveTo(P);
 		Inventory = none;
 	}
 	Destroy();
@@ -219,7 +219,7 @@ defaultproperties
 	begin object name="StaticMeshComponent0"
 		ReplacementPrimitive=none
 		LightEnvironment=DynamicLightEnvironmentComponent'MegaHaloGame.Default__HaloDroppedPickup.MyLightEnvironment'
-		RBChannel=ERBCollisionChannel.RBCC_Untitled1
+		RBChannel=RBCC_Untitled1
 		CastShadow=false
 		bCastDynamicShadow=false
 		bCastStaticShadow=false
@@ -253,8 +253,8 @@ defaultproperties
 		CanBlockCamera=false
 	end object
 	Components[2]=CollisionCylinder
-	Physics=EPhysics.PHYS_Falling
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	Physics=PHYS_Falling
+	CollisionType=COLLIDE_TouchAll
 	bIgnoreRigidBodyPawns=true
 	bIgnoreEncroachers=true
 	bCollideWorld=true

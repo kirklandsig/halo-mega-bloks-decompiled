@@ -1,6 +1,7 @@
 class UTVehicle extends UDKVehicle
 	abstract
-	config(GwNavEngine);
+	config(GwNavEngine)
+	dependson(UTPlayerController);
 
 const UTVEHICLE_UNSET_TEAM = 128;
 
@@ -1247,7 +1248,7 @@ simulated function int GetSeatIndexFromPrefix(string Prefix)
 	if(I < Seats.Length)
 	{
 		// End:0x61
-		if(Seats[I].TurretVarPrefix ComplementEqual Prefix)
+		if(Seats[I].TurretVarPrefix ~= Prefix)
 		{
 			return I;
 		}
@@ -1491,7 +1492,7 @@ simulated event ReplicatedEvent(name VarName)
 						{
 							VarString = "" $ string(VarName);
 							// End:0x226
-							if(Right(VarString, 14) ComplementEqual "weaponrotation")
+							if(Right(VarString, 14) ~= "weaponrotation")
 							{
 								SeatIndex = GetSeatIndexFromPrefix(Left(VarString, Len(VarString) - 14));
 								// End:0x223
@@ -1503,7 +1504,7 @@ simulated event ReplicatedEvent(name VarName)
 							else
 							{
 								// End:0x304
-								if(Right(VarString, 10) ComplementEqual "flashcount")
+								if(Right(VarString, 10) ~= "flashcount")
 								{
 									SeatIndex = GetSeatIndexFromPrefix(Left(VarString, Len(VarString) - 10));
 									// End:0x301
@@ -1524,7 +1525,7 @@ simulated event ReplicatedEvent(name VarName)
 								else
 								{
 									// End:0x3EA
-									if(Right(VarString, 13) ComplementEqual "flashlocation")
+									if(Right(VarString, 13) ~= "flashlocation")
 									{
 										SeatIndex = GetSeatIndexFromPrefix(Left(VarString, Len(VarString) - 13));
 										// End:0x3E7
@@ -6116,7 +6117,7 @@ defaultproperties
 	SpawnInTemplates[0]=ParticleSystem'VH_All.Effects.P_VH_All_Spawn_Red'
 	SpawnInTemplates[1]=ParticleSystem'VH_All.Effects.P_VH_All_Spawn_Blue'
 	SpawnMaterialParameterName="ResInAmount"
-	SpawnMaterialParameterCurve=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=4.0000000,OutVal=2.5000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear)),InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents)
+	SpawnMaterialParameterCurve=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=4.0000000,OutVal=2.5000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear)),InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents)
 	SpawnInTime=4.0000000
 	CollisionDamageMult=0.0020000
 	SeatCameraScale=1.0000000

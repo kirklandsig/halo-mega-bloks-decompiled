@@ -8,7 +8,7 @@ var float Duration;
 
 defaultproperties
 {
-	NextExecutionResult=BTExecutionResult.ER_INPROGRESS
+	NextExecutionResult=ER_INPROGRESS
 	NextPreConditionResult=true
 	Interruptible=true
 	Duration=30.0000000

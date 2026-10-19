@@ -2,7 +2,7 @@ class HaloProjectile_CarbineBullet extends HaloProjectile;
 
 defaultproperties
 {
-	TargetSearchMode=ETargetSearchMode.TargetSearchMode_Cone
+	TargetSearchMode=TargetSearchMode_Cone
 	TargetSearchRange=4000.0000000
 	TargetAngularSearchRange=10.0000000
 	SeekingTurnRate=20000.0000000

@@ -150,7 +150,7 @@ singular simulated event Touch(Actor Other, PrimitiveComponent OtherComp, Vector
 		return;
 	}
 	// End:0x111
-	if((Other.StopsProjectile(self) && (int(Role) == int(ROLE_Authority)) || bBegunPlay) && bBlockedByInstigator || Other != Instigator)
+	if((Other.StopsProjectile(self) && (Role == ROLE_Authority) || bBegunPlay) && bBlockedByInstigator || Other != Instigator)
 	{
 		ImpactedActor = Other;
 		ProcessTouch(Other, HitLocation, HitNormal);
@@ -177,7 +177,7 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation, Vector HitNorma
 singular simulated event HitWall(Vector HitNormal, Actor Wall, PrimitiveComponent WallComp)
 {
 	local KActorFromStatic NewKActor;
-	local editinline StaticMeshComponent HitStaticMesh;
+	local StaticMeshComponent HitStaticMesh;
 
 	super.HitWall(HitNormal, Wall, WallComp);
 	// End:0xEA
@@ -218,7 +218,7 @@ simulated function Explode(Vector HitLocation, Vector HitNormal)
 	if((Damage > float(0)) && DamageRadius > float(0))
 	{
 		// End:0x41
-		if(int(Role) == int(ROLE_Authority))
+		if(Role == ROLE_Authority)
 		{
 			MakeNoise(1.0000000);
 		}
@@ -281,7 +281,7 @@ simulated function ApplyFluidSurfaceImpact(FluidSurfaceActor Fluid, Vector HitLo
 	if(CanSplash())
 	{
 		// End:0x119
-		if((((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && Instigator != none) && Instigator.IsPlayerPawn()) && Instigator.IsLocallyControlled())
+		if((((WorldInfo.NetMode != NM_DedicatedServer) && Instigator != none) && Instigator.IsPlayerPawn()) && Instigator.IsLocallyControlled())
 		{
 			WorldInfo.MyEmitterPool.SpawnEmitter(Fluid.ProjectileEntryEffect, HitLocation, Rotator(vect(0.0000000, 0.0000000, 1.0000000)), self);
 		}
@@ -307,9 +307,9 @@ defaultproperties
 	end object
 	CylinderComponent=CollisionCylinder
 	Components[0]=CollisionCylinder
-	Physics=EPhysics.PHYS_Projectile
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	Physics=PHYS_Projectile
+	RemoteRole=ROLE_SimulatedProxy
+	CollisionType=COLLIDE_CustomDefault
 	bNetTemporary=true
 	bReplicateInstigator=true
 	bGameRelevant=true

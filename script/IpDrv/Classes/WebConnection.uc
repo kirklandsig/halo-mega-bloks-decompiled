@@ -95,21 +95,21 @@ function ReceivedLine(string S)
 	else
 	{
 		// End:0x4B
-		if(Left(S, 4) ComplementEqual "GET ")
+		if(Left(S, 4) ~= "GET ")
 		{
 			ProcessGet(S);			
 		}
 		else
 		{
 			// End:0x7A
-			if(Left(S, 5) ComplementEqual "POST ")
+			if(Left(S, 5) ~= "POST ")
 			{
 				ProcessPost(S);				
 			}
 			else
 			{
 				// End:0xA9
-				if(Left(S, 5) ComplementEqual "HEAD ")
+				if(Left(S, 5) ~= "HEAD ")
 				{
 					ProcessHead(S);					
 				}

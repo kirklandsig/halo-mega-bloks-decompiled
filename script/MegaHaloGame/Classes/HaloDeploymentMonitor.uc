@@ -11,7 +11,7 @@ struct DeployableInfo
 
 	structdefaultproperties
 	{
-		DeployableCategory=ETargetDesignatorCategory.TDC_None
+		DeployableCategory=TDC_None
 		DeployableName="None"
 		OptionalCustomizations=none
 		Location=none

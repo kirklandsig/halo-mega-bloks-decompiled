@@ -52,7 +52,7 @@ function SetObjectiveProperties()
 
 defaultproperties
 {
-	Marker=EObjectiveMarker.OMN_Takedown
+	Marker=OMN_Takedown
 	bDraw=true
 	bShowHealth=true
 	bClampToScreen=true

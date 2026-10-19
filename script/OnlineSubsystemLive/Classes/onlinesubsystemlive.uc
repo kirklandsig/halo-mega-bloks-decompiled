@@ -13,7 +13,7 @@ struct native FriendsListCache
 	structdefaultproperties
 	{
 		Friends=none
-		ReadState=EOnlineEnumerationReadState.OERS_NotStarted
+		ReadState=OERS_NotStarted
 		ReadFriendsDelegates=none
 		FriendsChangeDelegates=none
 	}
@@ -37,7 +37,7 @@ struct native CachedLoginState
 
 	structdefaultproperties
 	{
-		LoginStatus=ELoginStatus.LS_NotLoggedIn
+		LoginStatus=LS_NotLoggedIn
 		OnlineXuid=(Uid=())
 		OfflineXuid=(Uid=())
 	}
@@ -53,7 +53,7 @@ struct native OnlineSaveGameDataMapping
 	{
 		InternalFileName=""
 		SaveGameData=none
-		ReadWriteState=EOnlineEnumerationReadState.OERS_NotStarted
+		ReadWriteState=OERS_NotStarted
 	}
 };
 
@@ -97,10 +97,10 @@ struct native ContentListCache
 	structdefaultproperties
 	{
 		SaveGameContent=none
-		SaveGameReadState=EOnlineEnumerationReadState.OERS_NotStarted
+		SaveGameReadState=OERS_NotStarted
 		SaveGameReadCompleteDelegates=none
 		Content=none
-		ReadState=EOnlineEnumerationReadState.OERS_NotStarted
+		ReadState=OERS_NotStarted
 		ContentChangeDelegates=none
 		ReadCompleteDelegates=none
 		NewDownloadCount=0
@@ -110,9 +110,9 @@ struct native ContentListCache
 		WriteSaveGameDataCompleteDelegates=none
 		SaveGames=none
 		SaveGameReadCrossTitleCompleteDelegates=none
-		SaveGameCrossTitleReadState=EOnlineEnumerationReadState.OERS_NotStarted
+		SaveGameCrossTitleReadState=OERS_NotStarted
 		ReadCrossTitleCompleteDelegates=none
-		ReadCrossTitleState=EOnlineEnumerationReadState.OERS_NotStarted
+		ReadCrossTitleState=OERS_NotStarted
 		CrossTitleSaveGameContent=none
 		CrossTitleContent=none
 		CrossTitleSaveGames=none
@@ -253,7 +253,7 @@ struct native CachedAchievements
 		PlayerNum=0
 		TitleId=0
 		Achievements=none
-		ReadState=EOnlineEnumerationReadState.OERS_NotStarted
+		ReadState=OERS_NotStarted
 		TempImage=none
 	}
 };
@@ -591,7 +591,7 @@ delegate OnLoginStatusChange(OnlineSubsystem.ELoginStatus NewStatus, UniqueNetId
 function AddLoginStatusChangeDelegate(delegate<OnLoginStatusChange> LoginStatusDelegate, byte LocalUserNum)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PlayerLoginStatusDelegates[int(LocalUserNum)].Delegates.Find(LoginStatusDelegate) == -1)
@@ -611,7 +611,7 @@ function ClearLoginStatusChangeDelegate(delegate<OnLoginStatusChange> LoginStatu
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PlayerLoginStatusDelegates[int(LocalUserNum)].Delegates.Find(LoginStatusDelegate);
 		// End:0xB0
@@ -676,7 +676,7 @@ function ClearMutingChangeDelegate(delegate<OnMutingChange> MutingDelegate)
 function AddFriendsChangeDelegate(byte LocalUserNum, delegate<OnFriendsChange> FriendsDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(FriendsCache[int(LocalUserNum)].FriendsChangeDelegates.Find(FriendsDelegate) == -1)
@@ -696,7 +696,7 @@ function ClearFriendsChangeDelegate(byte LocalUserNum, delegate<OnFriendsChange>
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = FriendsCache[int(LocalUserNum)].FriendsChangeDelegates.Find(FriendsDelegate);
 		// End:0xB0
@@ -1427,7 +1427,7 @@ delegate OnReadProfileSettingsComplete(byte LocalUserNum, bool bWasSuccessful)
 function AddReadProfileSettingsCompleteDelegate(byte LocalUserNum, delegate<OnReadProfileSettingsComplete> ReadProfileSettingsCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(ProfileCache[int(LocalUserNum)].ReadDelegates.Find(ReadProfileSettingsCompleteDelegate) == -1)
@@ -1447,7 +1447,7 @@ function ClearReadProfileSettingsCompleteDelegate(byte LocalUserNum, delegate<On
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = ProfileCache[int(LocalUserNum)].ReadDelegates.Find(ReadProfileSettingsCompleteDelegate);
 		// End:0xB0
@@ -1466,7 +1466,7 @@ function ClearReadProfileSettingsCompleteDelegate(byte LocalUserNum, delegate<On
 function OnlineProfileSettings GetProfileSettings(byte LocalUserNum)
 {
 	// End:0x53
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		return ProfileCache[int(LocalUserNum)].Profile;
 	}
@@ -1485,7 +1485,7 @@ delegate OnWriteProfileSettingsComplete(byte LocalUserNum, bool bWasSuccessful)
 function AddWriteProfileSettingsCompleteDelegate(byte LocalUserNum, delegate<OnWriteProfileSettingsComplete> WriteProfileSettingsCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(ProfileCache[int(LocalUserNum)].WriteDelegates.Find(WriteProfileSettingsCompleteDelegate) == -1)
@@ -1505,7 +1505,7 @@ function ClearWriteProfileSettingsCompleteDelegate(byte LocalUserNum, delegate<O
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = ProfileCache[int(LocalUserNum)].WriteDelegates.Find(WriteProfileSettingsCompleteDelegate);
 		// End:0xB0
@@ -1532,7 +1532,7 @@ delegate OnReadPlayerStorageComplete(byte LocalUserNum, bool bWasSuccessful)
 function AddReadPlayerStorageCompleteDelegate(byte LocalUserNum, delegate<OnReadPlayerStorageComplete> ReadPlayerStorageCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PlayerStorageCacheLocal[int(LocalUserNum)].ReadDelegates.Find(ReadPlayerStorageCompleteDelegate) == -1)
@@ -1552,7 +1552,7 @@ function ClearReadPlayerStorageCompleteDelegate(byte LocalUserNum, delegate<OnRe
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PlayerStorageCacheLocal[int(LocalUserNum)].ReadDelegates.Find(ReadPlayerStorageCompleteDelegate);
 		// End:0xB0
@@ -1585,7 +1585,7 @@ native function ClearReadPlayerStorageForNetIdCompleteDelegate(UniqueNetId NetId
 function OnlinePlayerStorage GetPlayerStorage(byte LocalUserNum)
 {
 	// End:0x56
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		return PlayerStorageCacheLocal[int(LocalUserNum)].PlayerStorage;		
 	}
@@ -1608,7 +1608,7 @@ delegate OnWritePlayerStorageComplete(byte LocalUserNum, bool bWasSuccessful)
 function AddWritePlayerStorageCompleteDelegate(byte LocalUserNum, delegate<OnWritePlayerStorageComplete> WritePlayerStorageCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PlayerStorageCacheLocal[int(LocalUserNum)].WriteDelegates.Find(WritePlayerStorageCompleteDelegate) == -1)
@@ -1628,7 +1628,7 @@ function ClearWritePlayerStorageCompleteDelegate(byte LocalUserNum, delegate<OnW
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PlayerStorageCacheLocal[int(LocalUserNum)].WriteDelegates.Find(WritePlayerStorageCompleteDelegate);
 		// End:0xB0
@@ -1669,7 +1669,7 @@ function AddDeviceSelectionDoneDelegate(byte LocalUserNum, delegate<OnDeviceSele
 	local int AddIndex;
 
 	// End:0x131
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x12E
 		if(DeviceCache[int(LocalUserNum)].DeviceSelectionDelegates.Find(DeviceDelegate) == -1)
@@ -1691,7 +1691,7 @@ function ClearDeviceSelectionDoneDelegate(byte LocalUserNum, delegate<OnDeviceSe
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = DeviceCache[int(LocalUserNum)].DeviceSelectionDelegates.Find(DeviceDelegate);
 		// End:0xB0
@@ -1724,7 +1724,7 @@ delegate OnUnlockAchievementComplete(bool bWasSuccessful)
 function AddUnlockAchievementCompleteDelegate(byte LocalUserNum, delegate<OnUnlockAchievementComplete> UnlockAchievementCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PerUserDelegates[int(LocalUserNum)].AchievementDelegates.Find(UnlockAchievementCompleteDelegate) == -1)
@@ -1744,7 +1744,7 @@ function ClearUnlockAchievementCompleteDelegate(byte LocalUserNum, delegate<OnUn
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PerUserDelegates[int(LocalUserNum)].AchievementDelegates.Find(UnlockAchievementCompleteDelegate);
 		// End:0xB0
@@ -1771,7 +1771,7 @@ delegate OnProfileDataChanged()
 function AddProfileDataChangedDelegate(byte LocalUserNum, delegate<OnProfileDataChanged> ProfileDataChangedDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(ProfileCache[int(LocalUserNum)].ProfileDataChangedDelegates.Find(ProfileDataChangedDelegate) == -1)
@@ -1791,7 +1791,7 @@ function ClearProfileDataChangedDelegate(byte LocalUserNum, delegate<OnProfileDa
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = ProfileCache[int(LocalUserNum)].ProfileDataChangedDelegates.Find(ProfileDataChangedDelegate);
 		// End:0xB0
@@ -1919,7 +1919,7 @@ delegate OnReadFriendsComplete(bool bWasSuccessful)
 function AddReadFriendsCompleteDelegate(byte LocalUserNum, delegate<OnReadFriendsComplete> ReadFriendsCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(FriendsCache[int(LocalUserNum)].ReadFriendsDelegates.Find(ReadFriendsCompleteDelegate) == -1)
@@ -1939,7 +1939,7 @@ function ClearReadFriendsCompleteDelegate(byte LocalUserNum, delegate<OnReadFrie
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = FriendsCache[int(LocalUserNum)].ReadFriendsDelegates.Find(ReadFriendsCompleteDelegate);
 		// End:0xB0
@@ -1966,7 +1966,7 @@ delegate OnGameInviteAccepted(const out OnlineGameSearchResult InviteResult)
 function AddGameInviteAcceptedDelegate(byte LocalUserNum, delegate<OnGameInviteAccepted> GameInviteAcceptedDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(InviteCache[int(LocalUserNum)].InviteDelegates.Find(GameInviteAcceptedDelegate) == -1)
@@ -1986,7 +1986,7 @@ function ClearGameInviteAcceptedDelegate(byte LocalUserNum, delegate<OnGameInvit
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = InviteCache[int(LocalUserNum)].InviteDelegates.Find(GameInviteAcceptedDelegate);
 		// End:0xB0
@@ -2010,7 +2010,7 @@ delegate OnContentChange()
 function AddContentChangeDelegate(delegate<OnContentChange> ContentDelegate, optional byte LocalUserNum = 255)
 {
 	// End:0x53
-	if(int(LocalUserNum) == int(255))
+	if(int(LocalUserNum) == 255)
 	{
 		// End:0x50
 		if(AnyContentChangeDelegates.Find(ContentDelegate) == -1)
@@ -2021,7 +2021,7 @@ function AddContentChangeDelegate(delegate<OnContentChange> ContentDelegate, opt
 	else
 	{
 		// End:0xF4
-		if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+		if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 		{
 			// End:0xF1
 			if(ContentCache[int(LocalUserNum)].ContentChangeDelegates.Find(ContentDelegate) == -1)
@@ -2042,7 +2042,7 @@ function ClearContentChangeDelegate(delegate<OnContentChange> ContentDelegate, o
 	local int RemoveIndex;
 
 	// End:0x65
-	if(int(LocalUserNum) == int(255))
+	if(int(LocalUserNum) == 255)
 	{
 		RemoveIndex = AnyContentChangeDelegates.Find(ContentDelegate);
 		// End:0x62
@@ -2054,7 +2054,7 @@ function ClearContentChangeDelegate(delegate<OnContentChange> ContentDelegate, o
 	else
 	{
 		// End:0x118
-		if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+		if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 		{
 			RemoveIndex = ContentCache[int(LocalUserNum)].ContentChangeDelegates.Find(ContentDelegate);
 			// End:0x115
@@ -2079,10 +2079,10 @@ delegate OnReadContentComplete(bool bWasSuccessful)
 function AddReadContentComplete(byte LocalUserNum, OnlineSubsystem.EOnlineContentType ContentType, delegate<OnReadContentComplete> ReadContentCompleteDelegate)
 {
 	// End:0x12C
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0xB5
-		if(int(ContentType) == int(0))
+		if(int(ContentType) == 0)
 		{
 			// End:0xB2
 			if(ContentCache[int(LocalUserNum)].ReadCompleteDelegates.Find(ReadContentCompleteDelegate) == -1)
@@ -2111,10 +2111,10 @@ function ClearReadContentComplete(byte LocalUserNum, OnlineSubsystem.EOnlineCont
 	local int RemoveIndex;
 
 	// End:0x150
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0xC7
-		if(int(ContentType) == int(0))
+		if(int(ContentType) == 0)
 		{
 			RemoveIndex = ContentCache[int(LocalUserNum)].ReadCompleteDelegates.Find(ReadContentCompleteDelegate);
 			// End:0xC4
@@ -2166,10 +2166,10 @@ delegate OnReadCrossTitleContentComplete(bool bWasSuccessful)
 function AddReadCrossTitleContentCompleteDelegate(byte LocalUserNum, OnlineSubsystem.EOnlineContentType ContentType, delegate<OnReadCrossTitleContentComplete> ReadCrossTitleContentCompleteDelegate)
 {
 	// End:0x12C
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0xB5
-		if(int(ContentType) == int(0))
+		if(int(ContentType) == 0)
 		{
 			// End:0xB2
 			if(ContentCache[int(LocalUserNum)].ReadCrossTitleCompleteDelegates.Find(ReadCrossTitleContentCompleteDelegate) == -1)
@@ -2198,10 +2198,10 @@ function ClearReadCrossTitleContentCompleteDelegate(byte LocalUserNum, OnlineSub
 	local int RemoveIndex;
 
 	// End:0x150
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0xC7
-		if(int(ContentType) == int(0))
+		if(int(ContentType) == 0)
 		{
 			RemoveIndex = ContentCache[int(LocalUserNum)].ReadCrossTitleCompleteDelegates.Find(ReadCrossTitleContentCompleteDelegate);
 			// End:0xC4
@@ -2241,7 +2241,7 @@ delegate OnReadCrossTitleSaveGameDataComplete(bool bWasSuccessful, byte LocalUse
 function AddReadCrossTitleSaveGameDataComplete(byte LocalUserNum, delegate<OnReadCrossTitleSaveGameDataComplete> ReadCrossTitleSaveGameDataCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(ContentCache[int(LocalUserNum)].ReadCrossTitleSaveGameDataCompleteDelegates.Find(ReadCrossTitleSaveGameDataCompleteDelegate) == -1)
@@ -2261,7 +2261,7 @@ function ClearReadCrossTitleSaveGameDataComplete(byte LocalUserNum, delegate<OnR
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = ContentCache[int(LocalUserNum)].ReadCrossTitleSaveGameDataCompleteDelegates.Find(ReadCrossTitleSaveGameDataCompleteDelegate);
 		// End:0xB0
@@ -2291,7 +2291,7 @@ delegate OnQueryAvailableDownloadsComplete(bool bWasSuccessful)
 function AddQueryAvailableDownloadsComplete(byte LocalUserNum, delegate<OnQueryAvailableDownloadsComplete> QueryDownloadsDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(ContentCache[int(LocalUserNum)].QueryDownloadsDelegates.Find(QueryDownloadsDelegate) == -1)
@@ -2311,7 +2311,7 @@ function ClearQueryAvailableDownloadsComplete(byte LocalUserNum, delegate<OnQuer
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = ContentCache[int(LocalUserNum)].QueryDownloadsDelegates.Find(QueryDownloadsDelegate);
 		// End:0xB0
@@ -2330,7 +2330,7 @@ function ClearQueryAvailableDownloadsComplete(byte LocalUserNum, delegate<OnQuer
 function GetAvailableDownloadCounts(byte LocalUserNum, out int NewDownloads, out int TotalDownloads)
 {
 	// End:0x91
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		NewDownloads = ContentCache[int(LocalUserNum)].NewDownloadCount;
 		TotalDownloads = ContentCache[int(LocalUserNum)].TotalDownloadCount;		
@@ -2356,7 +2356,7 @@ delegate OnReadSaveGameDataComplete(bool bWasSuccessful, byte LocalUserNum, int 
 function AddReadSaveGameDataComplete(byte LocalUserNum, delegate<OnReadSaveGameDataComplete> ReadSaveGameDataCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(ContentCache[int(LocalUserNum)].ReadSaveGameDataCompleteDelegates.Find(ReadSaveGameDataCompleteDelegate) == -1)
@@ -2376,7 +2376,7 @@ function ClearReadSaveGameDataComplete(byte LocalUserNum, delegate<OnReadSaveGam
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = ContentCache[int(LocalUserNum)].ReadSaveGameDataCompleteDelegates.Find(ReadSaveGameDataCompleteDelegate);
 		// End:0xB0
@@ -2403,7 +2403,7 @@ delegate OnWriteSaveGameDataComplete(bool bWasSuccessful, byte LocalUserNum, int
 function AddWriteSaveGameDataComplete(byte LocalUserNum, delegate<OnWriteSaveGameDataComplete> WriteSaveGameDataCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(ContentCache[int(LocalUserNum)].WriteSaveGameDataCompleteDelegates.Find(WriteSaveGameDataCompleteDelegate) == -1)
@@ -2423,7 +2423,7 @@ function ClearWriteSaveGameDataComplete(byte LocalUserNum, delegate<OnWriteSaveG
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = ContentCache[int(LocalUserNum)].WriteSaveGameDataCompleteDelegates.Find(WriteSaveGameDataCompleteDelegate);
 		// End:0xB0
@@ -2533,7 +2533,7 @@ delegate OnRecognitionComplete()
 function AddRecognitionCompleteDelegate(byte LocalUserNum, delegate<OnRecognitionComplete> RecognitionDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PerUserDelegates[int(LocalUserNum)].SpeechRecognitionDelegates.Find(RecognitionDelegate) == -1)
@@ -2553,7 +2553,7 @@ function ClearRecognitionCompleteDelegate(byte LocalUserNum, delegate<OnRecognit
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PerUserDelegates[int(LocalUserNum)].SpeechRecognitionDelegates.Find(RecognitionDelegate);
 		// End:0xB0
@@ -2876,7 +2876,7 @@ delegate OnReadAchievementsComplete(int TitleId)
 function AddReadAchievementsCompleteDelegate(byte LocalUserNum, delegate<OnReadAchievementsComplete> ReadAchievementsCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PerUserDelegates[int(LocalUserNum)].AchievementReadDelegates.Find(ReadAchievementsCompleteDelegate) == -1)
@@ -2896,7 +2896,7 @@ function ClearReadAchievementsCompleteDelegate(byte LocalUserNum, delegate<OnRea
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PerUserDelegates[int(LocalUserNum)].AchievementReadDelegates.Find(ReadAchievementsCompleteDelegate);
 		// End:0xB0
@@ -2932,7 +2932,7 @@ delegate OnReadCrossTitleProfileSettingsComplete(byte LocalUserNum, int TitleId,
 function AddReadCrossTitleProfileSettingsCompleteDelegate(byte LocalUserNum, delegate<OnReadCrossTitleProfileSettingsComplete> ReadProfileSettingsCompleteDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(ProfileCache[int(LocalUserNum)].CrossTitleReadDelegates.Find(ReadProfileSettingsCompleteDelegate) == -1)
@@ -2952,7 +2952,7 @@ function ClearReadCrossTitleProfileSettingsCompleteDelegate(byte LocalUserNum, d
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = ProfileCache[int(LocalUserNum)].CrossTitleReadDelegates.Find(ReadProfileSettingsCompleteDelegate);
 		// End:0xB0
@@ -2973,7 +2973,7 @@ function OnlineProfileSettings GetCrossTitleProfileSettings(byte LocalUserNum, i
 	local int ProfileIndex;
 
 	// End:0xCB
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		ProfileIndex = ProfileCache[int(LocalUserNum)].CrossTitleProfileCache.Find('TitleId', TitleId);
 		// End:0xCB
@@ -2991,7 +2991,7 @@ function ClearCrossTitleProfileSettings(byte LocalUserNum, int TitleId)
 	local int ProfileIndex;
 
 	// End:0xB9
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		ProfileIndex = ProfileCache[int(LocalUserNum)].CrossTitleProfileCache.Find('TitleId', TitleId);
 		// End:0xB9
@@ -3045,7 +3045,7 @@ delegate OnPostImageCompleted(byte LocalUserNum, bool bWasSuccessful)
 function AddPostImageCompleted(byte LocalUserNum, delegate<OnPostImageCompleted> PostImageDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PerUserDelegates[int(LocalUserNum)].PostImageDelegates.Find(PostImageDelegate) == -1)
@@ -3065,7 +3065,7 @@ function ClearPostImageCompleted(byte LocalUserNum, delegate<OnPostImageComplete
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PerUserDelegates[int(LocalUserNum)].PostImageDelegates.Find(PostImageDelegate);
 		// End:0xB0
@@ -3092,7 +3092,7 @@ delegate OnPostLinkCompleted(byte LocalUserNum, bool bWasSuccessful)
 function AddPostLinkCompleted(byte LocalUserNum, delegate<OnPostLinkCompleted> PostLinkDelegate)
 {
 	// End:0xA1
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PerUserDelegates[int(LocalUserNum)].PostLinkDelegates.Find(PostLinkDelegate) == -1)
@@ -3112,7 +3112,7 @@ function ClearPostLinkCompleted(byte LocalUserNum, delegate<OnPostLinkCompleted>
 	local int RemoveIndex;
 
 	// End:0xB3
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PerUserDelegates[int(LocalUserNum)].PostLinkDelegates.Find(PostLinkDelegate);
 		// End:0xB0

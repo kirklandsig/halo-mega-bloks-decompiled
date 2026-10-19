@@ -1428,7 +1428,7 @@ function Deserialize(JsonObject Data)
 
 defaultproperties
 {
-	CurrentHVCCType=HVCCType.HVCC_NONE
+	CurrentHVCCType=HVCC_NONE
 	SelectedWheelSetIdx=255
 	SelectedAddonIdx=255
 	SelectedVehicleIdx=255
@@ -1450,5 +1450,5 @@ defaultproperties
 	HVCC_MasterSkinArray[3]=(Name="Stealth Camo",Unlocked=true,IconPkgPath="MainHUD.VehicleCustomizationIcons.VCItem_Paint_WStealth",PreviewMesh=none,PreviewSocketName="None",TargetVehicleClassName="MegaHaloGameContent.HaloVehicle_ArcadeWarthog_Content",TargetVehicleClass=none,MagicMomentEventName="None",UnlockRemoteEventName="None",ArchetypeToSpawn=HVCCSkin'Warthog.Skins.StealthWarthogSkin',ClassToSpawnName="",ClassToSpawn=none,DefaultAddonIdx=255,DefaultWheelSetIdx=255,DefaultWeaponIdx=255,DefaultSkinIdx=0,DefaultDecalIdx=255)
 	HVCC_MasterSkinArray[4]=(Name="Covenant Colors",Unlocked=true,IconPkgPath="MainHUD.VehicleCustomizationIcons.VCItem_Paint_WCovenant",PreviewMesh=none,PreviewSocketName="None",TargetVehicleClassName="MegaHaloGameContent.HaloVehicle_ArcadeWarthog_Content",TargetVehicleClass=none,MagicMomentEventName="None",UnlockRemoteEventName="None",ArchetypeToSpawn=HVCCSkin'Warthog.Skins.CovenantWarthogSkin',ClassToSpawnName="",ClassToSpawn=none,DefaultAddonIdx=255,DefaultWheelSetIdx=255,DefaultWeaponIdx=255,DefaultSkinIdx=0,DefaultDecalIdx=255)
 	HVCC_MasterSkinArray[5]=(Name="Utility Colors",Unlocked=true,IconPkgPath="MainHUD.VehicleCustomizationIcons.VCItem_Paint_WUtility",PreviewMesh=none,PreviewSocketName="None",TargetVehicleClassName="MegaHaloGameContent.HaloVehicle_ArcadeWarthog_Content",TargetVehicleClass=none,MagicMomentEventName="None",UnlockRemoteEventName="None",ArchetypeToSpawn=HVCCSkin'Warthog.Skins.UtilityWarthogSkin',ClassToSpawnName="",ClassToSpawn=none,DefaultAddonIdx=255,DefaultWheelSetIdx=255,DefaultWeaponIdx=255,DefaultSkinIdx=0,DefaultDecalIdx=255)
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

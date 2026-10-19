@@ -18,8 +18,8 @@ struct DefendZone
 
 	structdefaultproperties
 	{
-		Zone=(Actor=none,Marker=EObjectiveMarker.OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
-		Status=EZoneStatus.DZS_Neutral
+		Zone=(Actor=none,Marker=OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
+		Status=DZS_Neutral
 		Value=0.0000000
 		PerimeterEffect=none
 	}
@@ -510,7 +510,7 @@ function CreateObjectiveMarkers()
 
 defaultproperties
 {
-	Zones[0]=(Zone=(Actor=none,Marker=EObjectiveMarker.OMN_Zone,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=true,bClampToScreen=true),Status=EZoneStatus.DZS_Neutral,Value=0.0000000,PerimeterEffect=none)
+	Zones[0]=(Zone=(Actor=none,Marker=OMN_Zone,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=true,bClampToScreen=true),Status=DZS_Neutral,Value=0.0000000,PerimeterEffect=none)
 	CaptureRate=1.0000000
 	NeutralizeRate=0.0100000
 	FriendlyZoneCountToComplete=1

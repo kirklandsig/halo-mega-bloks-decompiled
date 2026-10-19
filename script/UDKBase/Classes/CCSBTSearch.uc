@@ -3,7 +3,7 @@ class CCSBTSearch extends CCSBTMoveTo
 
 defaultproperties
 {
-	Alertness=ECCSAlertnessState.CCSAlertnessState_Alert
+	Alertness=CCSAlertnessState_Alert
 	NodeDescription="Search for the Target by moving to the Last Known Position, then to random locations."
 	DefaultTitle="Search"
 }

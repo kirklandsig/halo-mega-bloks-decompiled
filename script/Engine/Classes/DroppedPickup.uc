@@ -10,7 +10,7 @@ var repnotify bool bFadeOut;
 replication
 {
 	// Pos:0x000
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 		InventoryClass, bFadeOut;
 }
 
@@ -61,10 +61,10 @@ function Reset()
 
 simulated event SetPickupMesh(PrimitiveComponent PickupMesh)
 {
-	local editinline ActorComponent Comp;
+	local ActorComponent Comp;
 
 	// End:0x82
-	if((PickupMesh != none) && int(WorldInfo.NetMode) != int(NM_DedicatedServer))
+	if((PickupMesh != none) && WorldInfo.NetMode != NM_DedicatedServer)
 	{
 		Comp = new (self) PickupMesh.Class (PickupMesh);
 		AttachComponent(Comp);
@@ -74,10 +74,10 @@ simulated event SetPickupMesh(PrimitiveComponent PickupMesh)
 
 simulated event SetPickupParticles(ParticleSystemComponent PickupParticles)
 {
-	local editinline ParticleSystemComponent Comp;
+	local ParticleSystemComponent Comp;
 
 	// End:0xA3
-	if((PickupParticles != none) && int(WorldInfo.NetMode) != int(NM_DedicatedServer))
+	if((PickupParticles != none) && WorldInfo.NetMode != NM_DedicatedServer)
 	{
 		Comp = new (self) PickupParticles.Class (PickupParticles);
 		AttachComponent(Comp);
@@ -113,7 +113,7 @@ function GiveTo(Pawn P)
 	if(Inventory != none)
 	{
 		Inventory.AnnouncePickup(P);
-		Inventory.super(DroppedPickup).GiveTo(P);
+		Inventory.GiveTo(P);
 		Inventory = none;
 	}
 	PickedUpBy(P);
@@ -141,7 +141,7 @@ auto state Pickup
 			return false;
 		}
 		// End:0xD8
-		if(((int(Physics) == int(2)) && Other == Instigator) && Velocity.Z > float(0))
+		if(((int(Physics) == 2) && Other == Instigator) && Velocity.Z > float(0))
 		{
 			return false;
 		}
@@ -245,8 +245,8 @@ defaultproperties
 		CollideActors=true
 	end object
 	Components[1]=CollisionCylinder
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	RemoteRole=ROLE_SimulatedProxy
+	CollisionType=COLLIDE_CustomDefault
 	bIgnoreRigidBodyPawns=true
 	bOrientOnSlope=true
 	bUpdateSimulatedPosition=true

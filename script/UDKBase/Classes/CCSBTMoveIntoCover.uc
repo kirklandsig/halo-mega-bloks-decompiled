@@ -3,7 +3,7 @@ class CCSBTMoveIntoCover extends CCSBTMoveTo
 
 defaultproperties
 {
-	Speed=ECCSMovementSpeed.CCSMovementSpeed_Run
-	Alertness=ECCSAlertnessState.CCSAlertnessState_Alert
+	Speed=CCSMovementSpeed_Run
+	Alertness=CCSAlertnessState_Alert
 	NodeDescription="Move into cover"
 }

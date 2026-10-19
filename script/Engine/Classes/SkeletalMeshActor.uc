@@ -51,7 +51,7 @@ var private transient float SavedCurrentTime;
 replication
 {
 	// Pos:0x000
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 		ReplicatedMaterial0, ReplicatedMaterial1, 
 		ReplicatedMesh;
 }
@@ -59,7 +59,7 @@ replication
 simulated event PostBeginPlay()
 {
 	// End:0x4D
-	if((int(Role) == int(ROLE_Authority)) && SkeletalMeshComponent != none)
+	if((Role == ROLE_Authority) && SkeletalMeshComponent != none)
 	{
 		ReplicatedMesh = SkeletalMeshComponent.SkeletalMesh;
 	}
@@ -285,7 +285,7 @@ simulated function bool IsActorPlayingFaceFXAnim()
 event OnSetMesh(SeqAct_SetMesh Action)
 {
 	// End:0xF6
-	if(int(Action.MeshType) == int(1))
+	if(int(Action.MeshType) == 1)
 	{
 		// End:0xF6
 		if((Action.NewSkeletalMesh != none) && Action.NewSkeletalMesh != SkeletalMeshComponent.SkeletalMesh)
@@ -446,13 +446,13 @@ event TakeDamage(int Damage, Controller EventInstigator, Vector HitLocation, Vec
 
 function bool ShouldSaveForCheckpoint()
 {
-	return ((int(RemoteRole) != int(ROLE_None)) || bForceSaveInCheckpoint) || IsInPersistentLevel(true);
+	return ((RemoteRole != ROLE_None) || bForceSaveInCheckpoint) || IsInPersistentLevel(true);
 	//return ReturnValue;	
 }
 
 function CreateCheckpointRecord(out CheckpointRecord Record)
 {
-	Record.bReplicated = int(RemoteRole) != int(ROLE_None);
+	Record.bReplicated = RemoteRole != ROLE_None;
 	Record.bHidden = bHidden;
 	// End:0xDF
 	if(bForceSaveInCheckpoint || IsInPersistentLevel(true))
@@ -478,7 +478,7 @@ function ApplyCheckpointRecord(const out CheckpointRecord Record)
 	{
 		ForceNetRelevant();
 		// End:0xEC
-		if(int(RemoteRole) != int(ROLE_None))
+		if(RemoteRole != ROLE_None)
 		{
 			SetForcedInitialReplicatedProperty(BoolProperty'Engine.Actor.bHidden', bHidden == default.bHidden);
 		}
@@ -490,11 +490,11 @@ event bool PlayParticleEffect(const AnimNotify_PlayParticleEffect AnimNotifyData
 {
 	local Vector Loc;
 	local Rotator Rot;
-	local editinline ParticleSystemComponent PSC;
+	local ParticleSystemComponent PSC;
 	local bool bPlayNonExtreme;
 
 	// End:0x6C
-	if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if(WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		LogInternal("(SkeletalMeshActor): PlayParticleEffect on dedicated server!");
 		return true;
@@ -574,7 +574,7 @@ simulated function SkelMeshActorOnParticleSystemFinished(ParticleSystemComponent
 
 event bool CreateForceField(const AnimNotify_ForceField AnimNotifyData)
 {
-	local editinline NxForceFieldComponent NewForceFieldComponent;
+	local NxForceFieldComponent NewForceFieldComponent;
 
 	NewForceFieldComponent = new (SkeletalMeshComponent) AnimNotifyData.ForceFieldComponent.Class (AnimNotifyData.ForceFieldComponent);
 	NewForceFieldComponent.DoInitRBPhys();
@@ -606,7 +606,7 @@ defaultproperties
 		bUpdateSkelWhenNotRendered=false
 		ReplacementPrimitive=none
 		LightEnvironment=DynamicLightEnvironmentComponent'Engine.Default__SkeletalMeshActor.MyLightEnvironment'
-		RBChannel=ERBCollisionChannel.RBCC_GameplayPhysics
+		RBChannel=RBCC_GameplayPhysics
 		CollideActors=true
 		BlockZeroExtent=true
 		RBCollideWithChannels=(Default=true,GameplayPhysics=true,EffectPhysics=true,BlockingVolume=true)

@@ -122,7 +122,7 @@ struct HaloConstructionUIPrimitive
 
 	structdefaultproperties
 	{
-		Type=EHaloConstructionPrimitiveTypes.HCP_Panel
+		Type=HCP_Panel
 		IconPkgPath=""
 		Count=0
 	}
@@ -159,7 +159,7 @@ struct BuildableRecipePrimitive
 	structdefaultproperties
 	{
 		BoneIndex=0
-		PrimitiveType=EHaloConstructionPrimitiveTypes.HCP_Panel
+		PrimitiveType=HCP_Panel
 		bHasBeenPlaced=false
 	}
 };
@@ -177,7 +177,7 @@ struct BuildableRecipe
 	structdefaultproperties
 	{
 		NameId=""
-		Type=EHaloConstructionTypes.HCT_Footbridge
+		Type=HCT_Footbridge
 		PrimitiveInventory=(Panels=0,Beams=0,Pyramids=0,Cylinders=0,Wedges=0,Wheels=0,Pentagons=0)
 		ConstructionUIPrimitives=none
 		CurrentUIPrimitiveIndex=0
@@ -895,8 +895,8 @@ defaultproperties
 	ErrorSound=AkEvent'Builds.Play_Blok_Place_Wrong'
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloConstructionManager.ForceFeedbackWaveFormError1'
 	begin object name="ForceFeedbackWaveFormError1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=65,RightAmplitude=65,LeftFunction=EWaveformFunction.WF_Constant,RightFunction=EWaveformFunction.WF_Constant,Duration=0.2500000)
+		Samples[0]=(LeftAmplitude=65,RightAmplitude=65,LeftFunction=WF_Constant,RightFunction=WF_Constant,Duration=0.2500000)
 	end object
 	ErrorWaveForm=ForceFeedbackWaveFormError1
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

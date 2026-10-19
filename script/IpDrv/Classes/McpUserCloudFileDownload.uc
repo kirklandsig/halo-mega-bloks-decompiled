@@ -1,7 +1,8 @@
 class McpUserCloudFileDownload extends McpServiceBase
 	native
 	config(Engine)
-	implements(UserCloudFileInterface);
+	implements(UserCloudFileInterface)
+	dependson(OnlineSubsystem);
 
 struct native McpUserCloudFileInfo extends EmsFile
 {

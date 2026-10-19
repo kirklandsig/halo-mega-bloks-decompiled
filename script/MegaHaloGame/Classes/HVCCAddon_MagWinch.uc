@@ -340,7 +340,7 @@ defaultproperties
 	begin object name="SkeletalMeshComponent0" class=Engine.SkeletalMeshComponent
 		SkeletalMesh=SkeletalMesh'Winch_Addon.Winch_Addon'
 		ReplacementPrimitive=none
-		RBChannel=ERBCollisionChannel.RBCC_Untitled3
+		RBChannel=RBCC_Untitled3
 		ScriptRigidBodyCollisionThreshold=0.0010000
 	end object
 	BaseSkeletalMeshComponent=SkeletalMeshComponent0

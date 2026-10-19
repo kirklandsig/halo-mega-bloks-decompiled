@@ -186,7 +186,7 @@ simulated function Projectile ProjectileFire()
 
 defaultproperties
 {
-	PawnTypeOverride=PlayerPawnType.PPT_Turret
+	PawnTypeOverride=PPT_Turret
 	MaxFinalAimAdjustment=0.8500000
 	bCrosshairShouldHighlightOnValidTarget=true
 	WeaponFireWaveForm=none

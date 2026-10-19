@@ -1,6 +1,7 @@
 class FracturedStaticMeshActor extends Actor
 	native
-	placeable;
+	placeable
+	dependson(WorldInfo, FracturedStaticMeshComponent);
 
 struct native DeferredPartToSpawn
 {
@@ -61,7 +62,7 @@ simulated event PostBeginPlay()
 {
 	local PhysicalMaterial PhysMat;
 	local Class<ActorComponent> GwNavObstacleComponentClass;
-	local editinline ActorComponent GwNavObstacleComponent;
+	local ActorComponent GwNavObstacleComponent;
 
 	super.PostBeginPlay();
 	ResetHealth();
@@ -100,7 +101,7 @@ function bool ShouldSaveForCheckpoint()
 function CreateCheckpointRecord(out CheckpointRecord Record)
 {
 	// End:0x45
-	if((int(Physics) == int(0)) && bHidden)
+	if((int(Physics) == 0) && bHidden)
 	{
 		Record.bIsShutdown = true;		
 	}
@@ -177,12 +178,12 @@ simulated function bool FractureEffectIsRelevant(bool bForceDedicated, Pawn Effe
 	else
 	{
 		// End:0x60
-		if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+		if(WorldInfo.NetMode == NM_DedicatedServer)
 		{
 			return bForceDedicated;
 		}
 		// End:0x130
-		if((int(WorldInfo.NetMode) == int(NM_ListenServer)) && WorldInfo.Game.NumPlayers > 1)
+		if((WorldInfo.NetMode == NM_ListenServer) && WorldInfo.Game.NumPlayers > 1)
 		{
 			// End:0xD3
 			if(bForceDedicated)
@@ -332,7 +333,7 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 		FragmentVis = FracturedStaticMeshComponent.GetVisibleFragments();
 		TotalVisible = FracturedStaticMeshComponent.GetNumVisibleFragments();
 		// End:0x4A9
-		if(int(Physics) == int(10))
+		if(int(Physics) == 10)
 		{
 			// End:0x4A9
 			if(TotalVisible == 1)
@@ -357,12 +358,12 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 		ChunkDir.Z /= FracMesh.ChunkLinHorizontalScale;
 		ChunkDir = Normal(ChunkDir);
 		// End:0xA68
-		if(int(WorldInfo.NetMode) != int(NM_DedicatedServer))
+		if(WorldInfo.NetMode != NM_DedicatedServer)
 		{
 			PhysChance = ((FractureSettings.bEnableChanceOfPhysicsChunkOverride) ? FractureSettings.ChanceOfPhysicsChunkOverride : FracMesh.ChanceOfPhysicsChunk);
 			PhysChance *= WorldInfo.MyFractureManager.GetFSMDirectSpawnChanceScale();
 			// End:0x8CB
-			if((((int(bWantPhysChunksAndParticles) == int(1)) && FracMesh.bSpawnPhysicsChunks) && FRand() < PhysChance) && !FracturedStaticMeshComponent.IsNoPhysFragment(HitInfo.Item))
+			if((((int(bWantPhysChunksAndParticles) == 1) && FracMesh.bSpawnPhysicsChunks) && FRand() < PhysChance) && !FracturedStaticMeshComponent.IsNoPhysFragment(HitInfo.Item))
 			{
 				PartScale = FracMesh.NormalPhysicsChunkScaleMin + (FRand() * (FracMesh.NormalPhysicsChunkScaleMax - FracMesh.NormalPhysicsChunkScaleMin));
 				FracPart = SpawnPart(HitInfo.Item, (ChunkDir * FracMesh.ChunkLinVel) + Velocity, VRand() * FracMesh.ChunkAngVel, PartScale, false);
@@ -373,7 +374,7 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 				}
 			}
 			// End:0xA68
-			if(int(bWantPhysChunksAndParticles) == int(1))
+			if(int(bWantPhysChunksAndParticles) == 1)
 			{
 				// End:0x912
 				if(OverrideFragmentDestroyEffects.Length > 0)
@@ -405,11 +406,11 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, Vector HitLoc
 			{
 				NoCollParts[0] = FracPart;
 			}
-			BreakOffIsolatedIslands(FragmentVis, IgnoreFrags, ChunkDir, NoCollParts, ((int(bWantPhysChunksAndParticles) == int(1)) ? true : false));
+			BreakOffIsolatedIslands(FragmentVis, IgnoreFrags, ChunkDir, NoCollParts, ((int(bWantPhysChunksAndParticles) == 1) ? true : false));
 		}
 		FracturedStaticMeshComponent.SetVisibleFragments(FragmentVis);
 		// End:0xBC8
-		if(int(Physics) == int(10))
+		if(int(Physics) == 10)
 		{
 			FracturedStaticMeshComponent.RecreatePhysState();
 		}
@@ -435,7 +436,7 @@ simulated event Explode()
 	if(I < FragmentVis.Length)
 	{
 		// End:0x24F
-		if((int(FragmentVis[I]) != int(0)) && I != FracturedStaticMeshComponent.GetCoreFragmentIndex())
+		if((int(FragmentVis[I]) != 0) && I != FracturedStaticMeshComponent.GetCoreFragmentIndex())
 		{
 			SpawnDir = FracturedStaticMeshComponent.GetFragmentAverageExteriorNormal(I);
 			PartScale = FracMesh.ExplosionPhysicsChunkScaleMin + (FRand() * (FracMesh.ExplosionPhysicsChunkScaleMax - FracMesh.ExplosionPhysicsChunkScaleMin));
@@ -474,7 +475,7 @@ simulated event HideOneFragment()
 	if(I < FragmentVis.Length)
 	{
 		// End:0xD9
-		if((int(FragmentVis[I]) != int(0)) && I != FracturedStaticMeshComponent.GetCoreFragmentIndex())
+		if((int(FragmentVis[I]) != 0) && I != FracturedStaticMeshComponent.GetCoreFragmentIndex())
 		{
 			FragmentVis[I] = 0;
 			FracturedStaticMeshComponent.SetVisibleFragments(FragmentVis);
@@ -501,7 +502,7 @@ simulated event HideFragmentsToMaximizeMemoryUsage()
 	if(I < FragmentVis.Length)
 	{
 		// End:0xBB
-		if((int(FragmentVis[I]) != int(0)) && I != FracturedStaticMeshComponent.GetCoreFragmentIndex())
+		if((int(FragmentVis[I]) != 0) && I != FracturedStaticMeshComponent.GetCoreFragmentIndex())
 		{
 			FragmentVis[I] = 0;
 		}
@@ -604,7 +605,7 @@ defaultproperties
 	Components[0]=LightEnvironment0
 	Components[1]=FracturedSkinnedComponent0
 	Components[2]=FracturedStaticMeshComponent0
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 	bNoDelete=true
 	bWorldGeometry=true
 	bRouteBeginPlayEvenIfStatic=false

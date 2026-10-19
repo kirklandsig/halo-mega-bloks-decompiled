@@ -425,5 +425,5 @@ defaultproperties
 	Pools[18]=(MaxSize=9,Type=Class'MegaHaloGame.HaloProjectile_UnscRocket_Content',Recyclables=none)
 	Pools[19]=(MaxSize=4,Type=Class'MegaHaloGame.HaloProjectile_Grenade',Recyclables=none)
 	bFillingPools=true
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

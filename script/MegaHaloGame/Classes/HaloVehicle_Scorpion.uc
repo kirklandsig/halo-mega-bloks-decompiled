@@ -1118,10 +1118,10 @@ defaultproperties
 	SkidLoopEnabled=false
 	EngineBone="Hull"
 	ExhaustBone="B_Base_Armor_SB"
-	VehicleGears[0]=(MinPercent=0.0000000,MaxPercent=100.0000000,GearRatio=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=900.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear)),InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents))
+	VehicleGears[0]=(MinPercent=0.0000000,MaxPercent=100.0000000,GearRatio=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=900.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear)),InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents))
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloVehicle_Scorpion.SuspensionWaveform1'
 	begin object name="SuspensionWaveform1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=50,RightAmplitude=50,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=0.2000000)
+		Samples[0]=(LeftAmplitude=50,RightAmplitude=50,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=0.2000000)
 	end object
 	SuspensionWaveform=SuspensionWaveform1
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloVehicle_Scorpion.CrashWaveform1'

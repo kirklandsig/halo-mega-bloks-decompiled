@@ -1,5 +1,6 @@
 class CCSAFOrientToward extends GripAFActionHandle
-	native;
+	native
+	dependson(CCSPawn);
 
 var Vector Target;
 var CCSPawn.ECCSAlertnessState Alertness;

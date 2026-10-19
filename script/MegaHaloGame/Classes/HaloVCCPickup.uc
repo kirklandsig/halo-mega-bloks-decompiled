@@ -154,7 +154,7 @@ defaultproperties
 	Components[2]=DroppedPickupLightEnvironment
 	Components[3]=FloatingMeshComponent0
 	Components[4]=FloatingParticlesComponent0
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	CollisionType=COLLIDE_TouchAll
 	bIgnoreEncroachers=true
 	bNoEncroachCheck=true
 	bEdShouldSnap=true

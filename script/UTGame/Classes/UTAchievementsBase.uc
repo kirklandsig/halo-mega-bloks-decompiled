@@ -20,7 +20,7 @@ struct AchievementData
 	structdefaultproperties
 	{
 		Id=0
-		UnlockType=EAchievementUnlockType.EAUT_Count
+		UnlockType=EAUT_Count
 		UnlockCriteria=0
 		ProgressCriteria=0
 		bDoUnlock=false

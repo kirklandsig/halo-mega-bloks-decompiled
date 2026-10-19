@@ -61,7 +61,7 @@ defaultproperties
 	EndPointSocketNames[1]="Right_Side"
 	Components[0]=SkeletalMeshComponent0
 	Components[1]=CylinderComponent0
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 	bStatic=true
 	bHidden=true
 	bTickIsDisabled=true

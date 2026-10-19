@@ -164,7 +164,7 @@ defaultproperties
 	end object
 	StaticMeshComponent=StaticMeshComponent0
 	GroundSpeedPercentage=0.5000000
-	TrapType=HaloTrap_Type.TRAP_Ground_Slow
+	TrapType=TRAP_Ground_Slow
 	BaseMeshComponent=StaticMeshComponent0
 	// Reference: CylinderComponent'MegaHaloGame.Default__HaloTrap_Ground_Slow.CollisionCylinder'
 	// TemplateOwnerClass: none
@@ -178,7 +178,7 @@ defaultproperties
 	end object
 	Components[0]=CollisionCylinder
 	Components[1]=StaticMeshComponent0
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	CollisionType=COLLIDE_TouchAll
 	bCollideActors=true
 	CollisionComponent=CollisionCylinder
 }

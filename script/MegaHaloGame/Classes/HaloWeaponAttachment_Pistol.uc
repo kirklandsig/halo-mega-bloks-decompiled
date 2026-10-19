@@ -110,5 +110,5 @@ defaultproperties
 	MuzzleFlashColor=(R=222,G=222,B=255,A=0)
 	MuzzleFlashDuration=0.1000000
 	WeaponClass=Class'MegaHaloGame.HaloWeapon_Pistol'
-	WeapAnimType=EWeapAnimType.EWAT_Pistol
+	WeapAnimType=EWAT_Pistol
 }

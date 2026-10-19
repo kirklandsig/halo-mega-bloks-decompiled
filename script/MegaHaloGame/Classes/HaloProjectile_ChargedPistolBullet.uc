@@ -2,7 +2,7 @@ class HaloProjectile_ChargedPistolBullet extends HaloProjectile;
 
 defaultproperties
 {
-	TargetSearchMode=ETargetSearchMode.TargetSearchMode_Cone
+	TargetSearchMode=TargetSearchMode_Cone
 	TargetSearchRange=3000.0000000
 	TargetAngularSearchRange=10.0000000
 	SeekingTurnRate=32767.0000000

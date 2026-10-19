@@ -42,7 +42,7 @@ event GripBTNode.BTExecutionResult ExecutePass(GripBTInterface BTInterface, bool
 		ExecRes = Execute(BTInterface, PushToFinish);
 	}
 	// End:0xA1
-	if(int(ExecRes) != int(2))
+	if(int(ExecRes) != 2)
 	{
 		ExecutePost(BTInterface);
 	}

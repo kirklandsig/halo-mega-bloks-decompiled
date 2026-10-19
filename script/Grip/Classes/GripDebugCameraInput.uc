@@ -10,7 +10,7 @@ function bool InputKey(int ControllerId, name Key, Object.EInputEvent Event, opt
 		return super.InputKey(ControllerId, Key, Event, AmountDepressed, bGamepad);
 	}
 	// End:0x1C9
-	if(int(Event) == int(0))
+	if(int(Event) == 0)
 	{
 		// End:0xB7
 		if(Key == 'F2')
@@ -43,7 +43,7 @@ function bool InputKey(int ControllerId, name Key, Object.EInputEvent Event, opt
 		}
 	}
 	// End:0x24D
-	if(int(Event) == int(1))
+	if(int(Event) == 1)
 	{
 		// End:0x215
 		if(Key == 'F1')

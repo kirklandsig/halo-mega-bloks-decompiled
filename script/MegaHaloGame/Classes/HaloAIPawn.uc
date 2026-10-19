@@ -1077,6 +1077,6 @@ defaultproperties
 	Components[9]=CollectibleBlokSpawnerComponent
 	Components[10]=NeedleTarget
 	Components[11]=HaloCameraEncounterTargetableComponent0
-	Physics=EPhysics.PHYS_Falling
+	Physics=PHYS_Falling
 	CollisionComponent=CollisionCylinder
 }

@@ -5035,13 +5035,13 @@ defaultproperties
 	VehicleMaxThrottleToAutoBrake=0.0500000
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloPlayerPawnController.GrenadeWaveform1'
 	begin object name="GrenadeWaveform1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=60,RightAmplitude=60,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=0.5000000)
+		Samples[0]=(LeftAmplitude=60,RightAmplitude=60,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=0.5000000)
 	end object
 	GrenadeWaveform=GrenadeWaveform1
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloPlayerPawnController.EngineWaveform1'
 	begin object name="EngineWaveform1" class=Engine.ForceFeedbackWaveform
 		bIsLooping=true
-		Samples[0]=(LeftAmplitude=40,RightAmplitude=40,LeftFunction=EWaveformFunction.WF_Noise,RightFunction=EWaveformFunction.WF_Noise,Duration=0.2000000)
+		Samples[0]=(LeftAmplitude=40,RightAmplitude=40,LeftFunction=WF_Noise,RightFunction=WF_Noise,Duration=0.2000000)
 	end object
 	EngineWaveform=EngineWaveform1
 	MinBreadcrumbDistance=500.0000000

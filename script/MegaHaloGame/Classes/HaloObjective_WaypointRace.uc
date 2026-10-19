@@ -9,7 +9,7 @@ struct RaceWaypoint
 
 	structdefaultproperties
 	{
-		WayPoint=(Actor=none,Marker=EObjectiveMarker.OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
+		WayPoint=(Actor=none,Marker=OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
 		bWaypointIsTimed=true
 		WaypointTimeLimit=15.0000000
 	}

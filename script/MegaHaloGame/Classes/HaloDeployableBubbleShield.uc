@@ -227,9 +227,9 @@ defaultproperties
 		InnerThreatRadius=3000.0000000
 		OutterThreatRadius=100000.0000000
 		fAITargetHeight=50.0000000
-		AITargetType=HaloTargetType.TARGET_PASSIVE_SECONDARY
+		AITargetType=TARGET_PASSIVE_SECONDARY
 		bAITargetable=true
 	end object
 	Components[1]=targetableComponent
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

@@ -46,17 +46,17 @@ event Init()
 	if(OnlineSub != none)
 	{
 		// End:0xB3
-		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 		{
 			OnlineSub.PlayerInterface.AddLoginChangeDelegate(OnLoginChange);
 		}
 		// End:0x12E
-		if(NotEqual_InterfaceInterface(OnlineSub.SystemInterface, OnlineSystemInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.SystemInterface, none))
 		{
 			OnlineSub.SystemInterface.AddStorageDeviceChangeDelegate(OnStorageDeviceChange);
 		}
 		// End:0x1AA
-		if(NotEqual_InterfaceInterface(OnlineSub.ContentInterface, OnlineContentInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.ContentInterface, none))
 		{
 			OnlineSub.ContentInterface.AddContentChangeDelegate(OnContentChange);
 		}

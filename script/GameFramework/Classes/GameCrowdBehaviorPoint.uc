@@ -1,7 +1,8 @@
 class GameCrowdBehaviorPoint extends GameCrowdInteractionPoint
 	native
 	config(Crowd)
-	placeable;
+	placeable
+	dependson(GameCrowdAgentBehavior);
 
 var config float RadiusOfBehaviorEvent;
 var config float DurationOfBehaviorEvent;

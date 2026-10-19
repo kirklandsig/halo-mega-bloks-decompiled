@@ -61,8 +61,8 @@ function SetObjectiveProperties()
 
 defaultproperties
 {
-	Marker=EObjectiveMarker.OMN_Location
-	PlayerCount=EObjectivePlayerCount.OPC_All
+	Marker=OMN_Location
+	PlayerCount=OPC_All
 	bDraw=true
 	bShowDistance=true
 	bClampToScreen=true

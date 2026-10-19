@@ -1209,7 +1209,7 @@ defaultproperties
 		Template=ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_PoweredUp'
 		bAutoActivate=false
 		ReplacementPrimitive=none
-		DepthPriorityGroup=ESceneDepthPriorityGroup.SDPG_Foreground
+		DepthPriorityGroup=SDPG_Foreground
 	end object
 	PoweredUpEffect=PoweredUpComponent
 	PoweredUpEffectSocket="PowerEffectSocket"
@@ -1226,7 +1226,7 @@ defaultproperties
 	// Reference: ForceFeedbackWaveform'UTGame.Default__UTWeap_LinkGun.BeamForceFeedbackWaveform1'
 	begin object name="BeamForceFeedbackWaveform1" class=Engine.ForceFeedbackWaveform
 		bIsLooping=true
-		Samples[0]=(LeftAmplitude=20,RightAmplitude=10,LeftFunction=EWaveformFunction.WF_Constant,RightFunction=EWaveformFunction.WF_Constant,Duration=0.1000000)
+		Samples[0]=(LeftAmplitude=20,RightAmplitude=10,LeftFunction=WF_Constant,RightFunction=WF_Constant,Duration=0.1000000)
 	end object
 	BeamWeaponFireWaveForm=BeamForceFeedbackWaveform1
 	bShowAltMuzzlePSCWhenWeaponHidden=true

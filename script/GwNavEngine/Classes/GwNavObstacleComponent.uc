@@ -7,5 +7,5 @@ var native Pointer GwNavObstacle;
 
 defaultproperties
 {
-	TickGroup=ETickingGroup.TG_PostAsyncWork
+	TickGroup=TG_PostAsyncWork
 }

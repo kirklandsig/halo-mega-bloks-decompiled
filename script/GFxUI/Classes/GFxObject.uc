@@ -1,5 +1,6 @@
 class GFxObject extends Object within GFxMoviePlayer
-	native;
+	native
+	dependson(GFxMoviePlayer);
 
 struct native ASDisplayInfo
 {

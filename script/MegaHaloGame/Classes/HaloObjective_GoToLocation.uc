@@ -9,7 +9,7 @@ struct LocationData
 	structdefaultproperties
 	{
 		bHasBeenVisited=false
-		Location=(Actor=none,Marker=EObjectiveMarker.OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
+		Location=(Actor=none,Marker=OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
 	}
 };
 
@@ -295,7 +295,7 @@ function CreateObjectiveMarkers()
 
 defaultproperties
 {
-	PlayerCount=EObjectivePlayerCount.OPC_All
+	PlayerCount=OPC_All
 	PlayerPawnType=Class'Engine.Pawn'
 	ClosestTargetIndex=-1
 	RepathDelay=5.0000000

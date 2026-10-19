@@ -253,5 +253,5 @@ defaultproperties
 	SpotlightDimmingStepAmt=1.0000000
 	SpotlightValidTargetColor=(R=255,G=64,B=0,A=64)
 	SpotlightInvalidTargetColor=(R=64,G=255,B=0,A=64)
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

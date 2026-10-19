@@ -11,7 +11,7 @@ struct VIPData
 	structdefaultproperties
 	{
 		PrevHealth=0
-		VIP=(Actor=none,Marker=EObjectiveMarker.OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
+		VIP=(Actor=none,Marker=OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
 		DamageIndicatorTimer=0.0000000
 		bFlashMarker=false
 	}

@@ -1,7 +1,8 @@
 class PlayerReplicationInfo extends ReplicationInfo
 	native
 	nativereplication
-	notplaceable;
+	notplaceable
+	dependson(OnlineSubsystem, SoundNodeWave);
 
 struct native AutomatedTestingDatum
 {
@@ -87,7 +88,7 @@ simulated event PostBeginPlay()
 		WorldInfo.GRI.AddPRI(self);
 	}
 	// End:0x6F
-	if(int(Role) < int(ROLE_Authority))
+	if(Role < ROLE_Authority)
 	{
 		return;
 	}
@@ -252,7 +253,7 @@ native final function UpdatePing(float TimeStamp);
 
 simulated function bool ShouldBroadCastWelcomeMessage(optional bool bExiting)
 {
-	return !bIsInactive && int(WorldInfo.NetMode) != int(NM_Standalone);
+	return !bIsInactive && WorldInfo.NetMode != NM_Standalone;
 	//return ReturnValue;	
 }
 
@@ -348,7 +349,7 @@ event SetPlayerName(string S)
 {
 	PlayerName = S;
 	// End:0x7A
-	if((int(WorldInfo.NetMode) == int(NM_Standalone)) || int(WorldInfo.NetMode) == int(NM_ListenServer))
+	if((WorldInfo.NetMode == NM_Standalone) || WorldInfo.NetMode == NM_ListenServer)
 	{
 		ReplicatedEvent('PlayerName');
 	}
@@ -443,10 +444,10 @@ simulated function bool IsInvalidName()
 		{
 			LocPlayer = LocalPlayer(PC.Player);
 			// End:0x211
-			if(((LocPlayer != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none))) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+			if(((LocPlayer != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, none)) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 			{
 				// End:0x211
-				if(int(OnlineSub.PlayerInterface.GetLoginStatus(byte(LocPlayer.ControllerId))) == int(2))
+				if(int(OnlineSub.PlayerInterface.GetLoginStatus(byte(LocPlayer.ControllerId))) == 2)
 				{
 					ProfileName = OnlineSub.PlayerInterface.GetPlayerNickname(byte(LocPlayer.ControllerId));
 					// End:0x211
@@ -471,7 +472,7 @@ simulated function RegisterPlayerWithSession()
 
 	Online = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	// End:0x1B7
-	if((((UniqueId != ZeroId && Online != none) && NotEqual_InterfaceInterface(Online.GameInterface, OnlineGameInterface(none))) && SessionName != 'None') && Online.GameInterface.GetGameSettings(SessionName) != none)
+	if((((UniqueId != ZeroId && Online != none) && NotEqual_InterfaceInterface(Online.GameInterface, none)) && SessionName != 'None') && Online.GameInterface.GetGameSettings(SessionName) != none)
 	{
 		Online.GameInterface.RegisterPlayer(SessionName, UniqueId, false);
 		// End:0x1B7
@@ -494,11 +495,11 @@ simulated function UnregisterPlayerFromSession()
 	local UniqueNetId ZeroId;
 
 	// End:0x1D5
-	if((UniqueId != ZeroId && int(WorldInfo.NetMode) == int(NM_Client)) && SessionName != 'None')
+	if((UniqueId != ZeroId && WorldInfo.NetMode == NM_Client) && SessionName != 'None')
 	{
 		OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 		// End:0x1D5
-		if((((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none))) && OnlineSub.GameInterface.GetGameSettings(SessionName) != none) && !WorldInfo.PeerHostMigration.bHostMigrationEnabled && int(WorldInfo.PeerHostMigration.HostMigrationProgress) != int(0))
+		if((((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, none)) && OnlineSub.GameInterface.GetGameSettings(SessionName) != none) && !WorldInfo.PeerHostMigration.bHostMigrationEnabled && int(WorldInfo.PeerHostMigration.HostMigrationProgress) != 0)
 		{
 			OnlineSub.GameInterface.UnregisterPlayer(SessionName, UniqueId);
 		}
@@ -518,6 +519,6 @@ defaultproperties
 	StringUnknown="Unknown"
 	GameMessageClass=Class'Engine.GameMessage'
 	SessionName="Game"
-	TickGroup=ETickingGroup.TG_DuringAsyncWork
+	TickGroup=TG_DuringAsyncWork
 	NetUpdateFrequency=1.0000000
 }

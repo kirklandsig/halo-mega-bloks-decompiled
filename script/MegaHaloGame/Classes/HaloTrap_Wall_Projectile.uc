@@ -185,10 +185,10 @@ defaultproperties
 	NumberOfBursts=1
 	FireDelay=0.2500000
 	ForceTransfer=25000.0000000
-	TrapType=HaloTrap_Type.TRAP_Wall_Projectile
+	TrapType=TRAP_Wall_Projectile
 	BaseMeshComponent=SkeletalMeshComponent0
 	Components[0]=SkeletalMeshComponent0
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	CollisionType=COLLIDE_TouchAll
 	bCollideActors=true
 	CollisionComponent=SkeletalMeshComponent0
 }

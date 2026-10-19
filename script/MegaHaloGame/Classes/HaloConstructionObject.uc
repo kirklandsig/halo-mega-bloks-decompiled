@@ -32,9 +32,9 @@ struct HaloSocketPrimitive
 	structdefaultproperties
 	{
 		Actor=none
-		PrimitiveType=EHaloConstructionPrimitiveTypes.HCP_Panel
+		PrimitiveType=HCP_Panel
 		bHasBeenPlaced=false
-		PrimitiveState=EHaloSocketPrimitiveState.SPS_Distortion
+		PrimitiveState=SPS_Distortion
 		SocketIndex=0
 		bIsSliding_Z=false
 		bIsSliding_XY=false
@@ -62,7 +62,7 @@ struct HaloSocketErrorPrimitive
 	structdefaultproperties
 	{
 		Actor=none
-		PrimitiveType=EHaloConstructionPrimitiveTypes.HCP_Panel
+		PrimitiveType=HCP_Panel
 		bIsSliding_Z=false
 		bIsSliding_XY=false
 		SlidingHalfHeight=0.0000000
@@ -255,143 +255,130 @@ function InitSuccessSocketPrimitives()
 		{
 			continue;			
 		}
-		else
+		// End:0x39E
+		if(strs.Length > 2)
 		{
-			// End:0x39E
-			if(strs.Length > 2)
+			Params = SplitString(strs[2], "(", true);
+			Params = SplitString(Params[0], ")", true);
+			Params = SplitString(Params[0], ",", true);
+			I = 0;
+			// End:0x39E [Loop If]
+			while(I < Params.Length)
 			{
-				Params = SplitString(strs[2], "(", true);
-				Params = SplitString(Params[0], ")", true);
-				Params = SplitString(Params[0], ",", true);
-				I = 0;
-				J0x2C4:
-
-				// End:0x39E [Loop If]
-				if(I < Params.Length)
+				// End:0x390
+				if(Params[I] != "#")
 				{
-					// End:0x390
-					if(Params[I] != "#")
+					switch(I)
 					{
-						switch(I)
-						{
-							// End:0x34D
-							case 0:
-								SocketPrimitives[Index].MinCameraDegree = int(Params[I]);
-								// End:0x390
-								break;
-							// End:0x38D
-							case 1:
-								SocketPrimitives[Index].MaxCameraDegree = int(Params[I]);
-							// End:0xFFFF
-							default:
-								break;
-						}
+						// End:0x34D
+						case 0:
+							SocketPrimitives[Index].MinCameraDegree = int(Params[I]);
+							// End:0x390
+							break;
+						// End:0x38D
+						case 1:
+							SocketPrimitives[Index].MaxCameraDegree = int(Params[I]);
+						// End:0xFFFF
+						default:
+							break;
 					}
-					else
-					{
-						I++;
-						// [Loop Continue]
-						goto J0x2C4;
-					}/* !MISMATCHING REMOVE, tried Loop got Type:Else Position:0x390! */
-				}/* !MISMATCHING REMOVE, tried If got Type:Loop Position:0x2C4! */
-				SocketPrimitives[Index].Actor = Spawn(Class'Engine.SkeletalMeshActorSpawnable', self,,, Socket.RelativeRotation,, true);
-				SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetSkeletalMesh(CManager.GetPrimitiveMeshFromType(PrimitiveType));
-				SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetScale3D(Socket.RelativeScale);
-				SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetPhysicsAsset(CManager.GetPhysicsAssetFromType(PrimitiveType), true);
-				SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetLightingChannels(NewLightingChannels);
-				SocketPrimitives[Index].Actor.AttachComponent(ConstructionLightEnvironment);
-				SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetLightEnvironment(ConstructionLightEnvironment);
-				SocketPrimitives[Index].Actor.SetPhysics(7);
-				SocketPrimitives[Index].BaseScale = Socket.RelativeScale;
-				SocketPrimitives[Index].Actor.SetLocation(Socket.RelativeLocation);
-				primMat = MakeRotationTranslationMatrix(SocketPrimitives[Index].Actor.Location, SocketPrimitives[Index].Actor.Rotation);
-				meshMat = MakeRotationMatrix(SocketMesh.Rotation);
-				primMat = Multiply_MatrixMatrix(primMat, meshMat);
-				primRot = MatrixGetRotator(primMat);
-				SocketPrimitives[Index].Actor.SetRotation(primRot);
-				primLoc = MatrixGetOrigin(primMat);
-				SocketPrimitives[Index].Actor.SetLocation(primLoc);
-				primLoc = SocketPrimitives[Index].Actor.Location;
-				primLoc += SocketMesh.Location;
-				SocketPrimitives[Index].Actor.SetLocation(primLoc);
-				I = 0;
-				J0x976:
+				}
+				I++;
+			}
+		}
+		SocketPrimitives[Index].Actor = Spawn(Class'Engine.SkeletalMeshActorSpawnable', self,,, Socket.RelativeRotation,, true);
+		SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetSkeletalMesh(CManager.GetPrimitiveMeshFromType(PrimitiveType));
+		SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetScale3D(Socket.RelativeScale);
+		SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetPhysicsAsset(CManager.GetPhysicsAssetFromType(PrimitiveType), true);
+		SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetLightingChannels(NewLightingChannels);
+		SocketPrimitives[Index].Actor.AttachComponent(ConstructionLightEnvironment);
+		SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetLightEnvironment(ConstructionLightEnvironment);
+		SocketPrimitives[Index].Actor.SetPhysics(7);
+		SocketPrimitives[Index].BaseScale = Socket.RelativeScale;
+		SocketPrimitives[Index].Actor.SetLocation(Socket.RelativeLocation);
+		primMat = MakeRotationTranslationMatrix(SocketPrimitives[Index].Actor.Location, SocketPrimitives[Index].Actor.Rotation);
+		meshMat = MakeRotationMatrix(SocketMesh.Rotation);
+		primMat = Multiply_MatrixMatrix(primMat, meshMat);
+		primRot = MatrixGetRotator(primMat);
+		SocketPrimitives[Index].Actor.SetRotation(primRot);
+		primLoc = MatrixGetOrigin(primMat);
+		SocketPrimitives[Index].Actor.SetLocation(primLoc);
+		primLoc = SocketPrimitives[Index].Actor.Location;
+		primLoc += SocketMesh.Location;
+		SocketPrimitives[Index].Actor.SetLocation(primLoc);
+		I = 0;
+		J0x976:
 
-				// End:0xB52 [Loop If]
-				if(I < SocketPrimitives[Index].Actor.SkeletalMeshComponent.GetNumElements())
-				{
-					SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetMaterial(I, CManager.GetPrimitiveSelectedMaterial());
-					MIC = SocketPrimitives[Index].Actor.SkeletalMeshComponent.CreateAndSetMaterialInstanceConstant(I);
-					// End:0xB44
-					if(MIC != none)
-					{
-						MIC.SetTextureParameterValue('EMIS_Texture', CManager.GetPrimitiveTextureFromType(PrimitiveType));
-						SocketPrimitives[Index].PrimitiveClearMICs.AddItem(MIC);
-					}
-					I++;
-					// [Loop Continue]
-					goto J0x976;
-				}
-				SocketPrimitives[Index].SocketIndex = Index;
-				SocketPrimitives[Index].PrimitiveType = PrimitiveType;
-				SocketPrimitives[Index].Actor.SetHidden(true);
-				strs = SplitString(string(Socket.SocketName), "_", true);
-				Index = int(strs[0]);
-				Index--;
-				Type = strs[1];
-				PrimitiveType = CManager.GetConstructionPrimitiveTypeFromString(Type);
-				// End:0xCA8
-				if(int(PrimitiveType) == int(7))
-				{
-					continue;					
-				}
-				else
-				{
-					SocketPrimitivesSolid[Index].Actor = Spawn(Class'Engine.SkeletalMeshActorSpawnable', self,,, Socket.RelativeRotation,, true);
-					SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetSkeletalMesh(CManager.GetPrimitiveMeshFromType(PrimitiveType));
-					SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetScale3D(Socket.RelativeScale);
-					SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetPhysicsAsset(CManager.GetPhysicsAssetFromType(PrimitiveType), true);
-					SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetLightingChannels(NewLightingChannels);
-					SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetLightEnvironment(ConstructionLightEnvironment);
-					SocketPrimitivesSolid[Index].Actor.AttachComponent(ConstructionLightEnvironment);
-					SocketPrimitivesSolid[Index].Actor.SetPhysics(7);
-					SocketPrimitivesSolid[Index].Actor.SetLocation(Socket.RelativeLocation);
-					primMat = MakeRotationTranslationMatrix(SocketPrimitivesSolid[Index].Actor.Location, SocketPrimitivesSolid[Index].Actor.Rotation);
-					meshMat = MakeRotationMatrix(SocketMesh.Rotation);
-					primMat = Multiply_MatrixMatrix(primMat, meshMat);
-					primRot = MatrixGetRotator(primMat);
-					SocketPrimitivesSolid[Index].Actor.SetRotation(primRot);
-					primLoc = MatrixGetOrigin(primMat);
-					SocketPrimitivesSolid[Index].Actor.SetLocation(primLoc);
-					primLoc = SocketPrimitivesSolid[Index].Actor.Location;
-					primLoc += SocketMesh.Location;
-					SocketPrimitivesSolid[Index].Actor.SetLocation(primLoc);
-					I = 0;
-					J0x123B:
+		// End:0xB52 [Loop If]
+		if(I < SocketPrimitives[Index].Actor.SkeletalMeshComponent.GetNumElements())
+		{
+			SocketPrimitives[Index].Actor.SkeletalMeshComponent.SetMaterial(I, CManager.GetPrimitiveSelectedMaterial());
+			MIC = SocketPrimitives[Index].Actor.SkeletalMeshComponent.CreateAndSetMaterialInstanceConstant(I);
+			// End:0xB44
+			if(MIC != none)
+			{
+				MIC.SetTextureParameterValue('EMIS_Texture', CManager.GetPrimitiveTextureFromType(PrimitiveType));
+				SocketPrimitives[Index].PrimitiveClearMICs.AddItem(MIC);
+			}
+			I++;
+			// [Loop Continue]
+			goto J0x976;
+		}
+		SocketPrimitives[Index].SocketIndex = Index;
+		SocketPrimitives[Index].PrimitiveType = PrimitiveType;
+		SocketPrimitives[Index].Actor.SetHidden(true);
+		strs = SplitString(string(Socket.SocketName), "_", true);
+		Index = int(strs[0]);
+		Index--;
+		Type = strs[1];
+		PrimitiveType = CManager.GetConstructionPrimitiveTypeFromString(Type);
+		// End:0xCA8
+		if(int(PrimitiveType) == int(7))
+		{
+			continue;					
+		}
+		SocketPrimitivesSolid[Index].Actor = Spawn(Class'Engine.SkeletalMeshActorSpawnable', self,,, Socket.RelativeRotation,, true);
+		SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetSkeletalMesh(CManager.GetPrimitiveMeshFromType(PrimitiveType));
+		SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetScale3D(Socket.RelativeScale);
+		SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetPhysicsAsset(CManager.GetPhysicsAssetFromType(PrimitiveType), true);
+		SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetLightingChannels(NewLightingChannels);
+		SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetLightEnvironment(ConstructionLightEnvironment);
+		SocketPrimitivesSolid[Index].Actor.AttachComponent(ConstructionLightEnvironment);
+		SocketPrimitivesSolid[Index].Actor.SetPhysics(7);
+		SocketPrimitivesSolid[Index].Actor.SetLocation(Socket.RelativeLocation);
+		primMat = MakeRotationTranslationMatrix(SocketPrimitivesSolid[Index].Actor.Location, SocketPrimitivesSolid[Index].Actor.Rotation);
+		meshMat = MakeRotationMatrix(SocketMesh.Rotation);
+		primMat = Multiply_MatrixMatrix(primMat, meshMat);
+		primRot = MatrixGetRotator(primMat);
+		SocketPrimitivesSolid[Index].Actor.SetRotation(primRot);
+		primLoc = MatrixGetOrigin(primMat);
+		SocketPrimitivesSolid[Index].Actor.SetLocation(primLoc);
+		primLoc = SocketPrimitivesSolid[Index].Actor.Location;
+		primLoc += SocketMesh.Location;
+		SocketPrimitivesSolid[Index].Actor.SetLocation(primLoc);
+		I = 0;
+		J0x123B:
 
-					// End:0x1417 [Loop If]
-					if(I < SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.GetNumElements())
-					{
-						SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetMaterial(I, CManager.GetPrimitiveSolidMaterial());
-						MITV = SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.CreateAndSetMaterialInstanceTimeVarying(I);
-						// End:0x1409
-						if(MITV != none)
-						{
-							MITV.SetTextureParameterValue('EMIS_Texture', CManager.GetPrimitiveTextureFromType(PrimitiveType));
-							SocketPrimitivesSolid[Index].SuccessMITVs.AddItem(MITV);
-						}
-						I++;
-						// [Loop Continue]
-						goto J0x123B;
-					}
-					SocketPrimitivesSolid[Index].SocketIndex = Index;
-					SocketPrimitivesSolid[Index].PrimitiveType = PrimitiveType;
-					SocketPrimitivesSolid[Index].Actor.SetHidden(true);					
-				}
-			}/* !MISMATCHING REMOVE, tried Else got Type:If Position:0x23E! */
-		}/* !MISMATCHING REMOVE, tried ForEach got Type:Else Position:0x23E! */		
-		//return;		
-	}/* !MISMATCHING REMOVE, tried Else got Type:ForEach Position:0x12F! */
+		// End:0x1417 [Loop If]
+		if(I < SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.GetNumElements())
+		{
+			SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.SetMaterial(I, CManager.GetPrimitiveSolidMaterial());
+			MITV = SocketPrimitivesSolid[Index].Actor.SkeletalMeshComponent.CreateAndSetMaterialInstanceTimeVarying(I);
+			// End:0x1409
+			if(MITV != none)
+			{
+				MITV.SetTextureParameterValue('EMIS_Texture', CManager.GetPrimitiveTextureFromType(PrimitiveType));
+				SocketPrimitivesSolid[Index].SuccessMITVs.AddItem(MITV);
+			}
+			I++;
+			// [Loop Continue]
+			goto J0x123B;
+		}
+		SocketPrimitivesSolid[Index].SocketIndex = Index;
+		SocketPrimitivesSolid[Index].PrimitiveType = PrimitiveType;
+		SocketPrimitivesSolid[Index].Actor.SetHidden(true);					
+	}
+	//return;
 }
 
 function InitErrorSocketPrimitives()

@@ -740,7 +740,7 @@ defaultproperties
 		InnerThreatRadius=2000.0000000
 		OutterThreatRadius=5000.0000000
 		fAITargetHeight=50.0000000
-		AITargetType=HaloTargetType.TARGET_PASSIVE_SECONDARY
+		AITargetType=TARGET_PASSIVE_SECONDARY
 	end object
 	MyTargetableComponent=targetableComponent
 	// Reference: HaloTargetableComponent_Destructible'MegaHaloGame.Default__HaloDestructibleActor.HaloTargetableComponent'
@@ -789,7 +789,7 @@ defaultproperties
 	// TemplateOwnerClass: none
 	// TemplateOwnerName: 'HaloCameraEncounterTargetableComponent0'
 	begin object name="HaloCameraEncounterTargetableComponent0" class=MegaHaloGame.HaloCameraEncounterTargetableComponent
-		PriorityLevel=EEncounterPriorityLevel.EPL_Medium
+		PriorityLevel=EPL_Medium
 	end object
 	CameraEncounterTargetableComponent=HaloCameraEncounterTargetableComponent0
 	// Reference: SkeletalMeshComponent'MegaHaloGame.Default__HaloDestructibleActor.SkeletalMeshComponent0'
@@ -805,7 +805,7 @@ defaultproperties
 		LightEnvironment=DynamicLightEnvironmentComponent'MegaHaloGame.Default__HaloDestructibleActor.MyLightEnvironment'
 		MaxDrawDistance=25000.0000000
 		CachedMaxDrawDistance=25000.0000000
-		RBChannel=ERBCollisionChannel.RBCC_Untitled3
+		RBChannel=RBCC_Untitled3
 		CollideActors=true
 		BlockActors=true
 		BlockZeroExtent=true
@@ -838,7 +838,7 @@ defaultproperties
 	Components[7]=CollectibleBlokSpawnerComponent
 	Components[8]=DestructibleBlokSpawnerComponent
 	Components[9]=HaloCameraEncounterTargetableComponent0
-	CollisionType=ECollisionType.COLLIDE_BlockAll
+	CollisionType=COLLIDE_BlockAll
 	bNoDelete=false
 	bPushedByEncroachers=false
 	bHasAlternateTargetLocation=true

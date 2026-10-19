@@ -102,5 +102,5 @@ defaultproperties
 	bAutoPlay=true
 	bOnlyOwnerFocusable=true
 	bDiscardNonOwnerInput=true
-	TimingMode=GFxTimingMode.TM_Real
+	TimingMode=TM_Real
 }

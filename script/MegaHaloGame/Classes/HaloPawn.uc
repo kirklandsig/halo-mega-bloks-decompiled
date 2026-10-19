@@ -6493,7 +6493,7 @@ defaultproperties
 	// Reference: UDKTargetableComponent'MegaHaloGame.Default__HaloPawn.targetableComponent'
 	begin object name="targetableComponent" class=UDKBase.UDKTargetableComponent
 		BaseThreatVal=5000
-		AITargetType=HaloTargetType.TARGET_AGGRESSIVE_MOBILE
+		AITargetType=TARGET_AGGRESSIVE_MOBILE
 		bAITargetable=true
 	end object
 	MyTargetableComponent=targetableComponent
@@ -6501,7 +6501,7 @@ defaultproperties
 	begin object name="HaloTargetableComponent" class=MegaHaloGame.HaloTargetableComponent_Pawn
 	end object
 	MyHaloTargetableComponent=HaloTargetableComponent
-	PawnType=PlayerPawnType.PPT_Soldier
+	PawnType=PPT_Soldier
 	PassiveObjectivePrejudice=1.0000000
 	PassiveSecondaryPrejudice=1.0000000
 	AggressiveStationaryPrejudice=1.0000000

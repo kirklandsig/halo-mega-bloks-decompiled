@@ -1,5 +1,6 @@
 class CCSBTIdle extends GripBTNode
-	native;
+	native
+	dependson(CCSPawn);
 
 var CCSPawn.ECCSAlertnessState Alertness;
 

@@ -1,5 +1,6 @@
 class GripActionFramework extends Object
-	native;
+	native
+	dependson(GripAFActionHandle);
 
 var native Pointer NativeFramework;
 

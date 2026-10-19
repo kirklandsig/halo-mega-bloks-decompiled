@@ -192,5 +192,5 @@ defaultproperties
 	bMuzzleFlashPSCLoops=true
 	MuzzleFlashDuration=0.3300000
 	WeaponClass=Class'MegaHaloGame.HaloWeapon_TargetDesignator'
-	WeapAnimType=EWeapAnimType.EWAT_DualPistols
+	WeapAnimType=EWAT_DualPistols
 }

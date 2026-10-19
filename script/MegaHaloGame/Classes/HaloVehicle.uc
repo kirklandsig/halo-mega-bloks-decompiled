@@ -53,7 +53,7 @@ struct VehicleGear
 	{
 		MinPercent=0.0000000
 		MaxPercent=0.0000000
-		GearRatio=(Points=none,InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents)
+		GearRatio=(Points=none,InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents)
 	}
 };
 
@@ -2995,7 +2995,7 @@ state HighwayMode
 
 defaultproperties
 {
-	PawnType=PlayerPawnType.PPT_Warthog
+	PawnType=PPT_Warthog
 	// Reference: HaloCollectibleBlokSpawnerComponent'MegaHaloGame.Default__HaloVehicle.BlokSpawnerComponent'
 	// TemplateOwnerClass: none
 	// TemplateOwnerName: 'BlokSpawnerComponent'
@@ -3036,11 +3036,11 @@ defaultproperties
 	SuspensionExpandEvent=AkEvent'Vehicles.Play_Suspension_Expand'
 	EnterVehicleEvent=AkEvent'Vehicles.Play_Enter_Vehicle'
 	ExitVehicleEvent=AkEvent'Vehicles.Play_Exit_Vehicle'
-	VehicleGears[0]=(MinPercent=0.0000000,MaxPercent=100.0000000,GearRatio=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear),(InVal=4000.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=EInterpCurveMode.CIM_Linear)),InterpMethod=EInterpMethodType.IMT_UseFixedTangentEvalAndNewAutoTangents))
+	VehicleGears[0]=(MinPercent=0.0000000,MaxPercent=100.0000000,GearRatio=(Points=((InVal=0.0000000,OutVal=0.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear),(InVal=4000.0000000,OutVal=100.0000000,ArriveTangent=0.0000000,LeaveTangent=0.0000000,InterpMode=CIM_Linear)),InterpMethod=IMT_UseFixedTangentEvalAndNewAutoTangents))
 	MaxRPMChangeRatePerSecond=50.0000000
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloVehicle.CrashWaveform1'
 	begin object name="CrashWaveform1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=80,RightAmplitude=80,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=0.2000000)
+		Samples[0]=(LeftAmplitude=80,RightAmplitude=80,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=0.2000000)
 	end object
 	CrashWaveform=CrashWaveform1
 	EngineIdleForceFeedback=20.0000000

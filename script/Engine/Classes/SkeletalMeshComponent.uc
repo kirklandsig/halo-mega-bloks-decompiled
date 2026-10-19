@@ -2,7 +2,8 @@ class SkeletalMeshComponent extends MeshComponent
 	native
 	config(Engine)
 	editinlinenew
-	noexport;
+	noexport
+	dependson(AnimNode);
 
 enum EMaxDistanceScaleMode
 {
@@ -128,7 +129,7 @@ struct SkelMeshComponentLODInfo
 		HiddenMaterials=none
 		bNeedsInstanceWeightUpdate=false
 		bAlwaysUseInstanceWeights=false
-		InstanceWeightUsage=EInstanceWeightUsage.IWU_PartialSwap
+		InstanceWeightUsage=IWU_PartialSwap
 		InstanceWeightIdx=0
 	}
 };
@@ -764,7 +765,7 @@ function StopAnim()
 
 event bool CreateForceField(const AnimNotify_ForceField AnimNotifyData)
 {
-	local editinline NxForceFieldComponent NewForceFieldComponent;
+	local NxForceFieldComponent NewForceFieldComponent;
 
 	NewForceFieldComponent = new (self) AnimNotifyData.ForceFieldComponent.Class (AnimNotifyData.ForceFieldComponent);
 	NewForceFieldComponent.DoInitRBPhys();
@@ -790,12 +791,12 @@ event bool PlayParticleEffect(const AnimNotify_PlayParticleEffect AnimNotifyData
 	local Vector Loc;
 	local Rotator Rot;
 	local WorldInfo WI;
-	local editinline ParticleSystemComponent PSC;
+	local ParticleSystemComponent PSC;
 	local bool bPlayNonExtreme;
 
 	WI = Class'Engine.WorldInfo'.static.GetWorldInfo();
 	// End:0x99
-	if(int(WI.NetMode) == int(NM_DedicatedServer))
+	if(WI.NetMode == NM_DedicatedServer)
 	{
 		LogInternal("(SkeletalMeshComponent): PlayParticleEffect on dedicated server!");
 		return true;
@@ -961,7 +962,7 @@ final simulated function BreakConstraint(Vector Impulse, Vector HitLocation, nam
 	if(LODIdx < LODInfo.Length)
 	{
 		// End:0xF1
-		if(int(LODInfo[LODIdx].InstanceWeightUsage) == int(0))
+		if(int(LODInfo[LODIdx].InstanceWeightUsage) == 0)
 		{
 			ToggleInstanceVertexWeights(true, LODIdx);
 		}
@@ -1008,23 +1009,23 @@ defaultproperties
 	bCacheAnimSequenceNodes=true
 	ClothBlendWeight=1.0000000
 	ClothBlendMinDistanceFactor=-1.0000000
-	ClothRBChannel=ERBCollisionChannel.RBCC_Cloth
+	ClothRBChannel=RBCC_Cloth
 	ClothImpulseScale=1.0000000
 	ClothAttachmentTearFactor=-1.0000000
 	MinDistanceForClothReset=256.0000000
-	ApexClothingRBChannel=ERBCollisionChannel.RBCC_Clothing
+	ApexClothingRBChannel=RBCC_Clothing
 	ApexClothingRBCollideWithChannels=(Default=true,Nothing=false,Pawn=false,Vehicle=false,Water=false,GameplayPhysics=true,EffectPhysics=true,Untitled1=false,Untitled2=false,Untitled3=false,Untitled4=false,Cloth=false,FluidDrain=false,SoftBody=false,FracturedMeshPart=false,BlockingVolume=true,DeadPawn=false,Clothing=false,ClothingCollision=true)
-	ApexClothingCollisionRBChannel=ERBCollisionChannel.RBCC_ClothingCollision
+	ApexClothingCollisionRBChannel=RBCC_ClothingCollision
 	bAutoFreezeApexClothingWhenNotRendered=true
 	SoftBodyImpulseScale=1.0000000
 	bSoftBodyUseCompartment=true
-	SoftBodyRBChannel=ERBCollisionChannel.RBCC_SoftBody
+	SoftBodyRBChannel=RBCC_SoftBody
 	RootMotionAccelScale=(X=1.0000000,Y=1.0000000,Z=1.0000000)
-	RootMotionMode=ERootMotionMode.RMM_Ignore
-	PreviousRMM=ERootMotionMode.RMM_Ignore
-	FaceFXBlendMode=EFaceFXBlendMode.FXBM_Additive
+	RootMotionMode=RMM_Ignore
+	PreviousRMM=RMM_Ignore
+	FaceFXBlendMode=FXBM_Additive
 	ProgressiveDrawingFraction=1.0000000
 	ReplacementPrimitive=none
 	bAcceptsDynamicDecals=false
-	TickGroup=ETickingGroup.TG_PreAsyncWork
+	TickGroup=TG_PreAsyncWork
 }

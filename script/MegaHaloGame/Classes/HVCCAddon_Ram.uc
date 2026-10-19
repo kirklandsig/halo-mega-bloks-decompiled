@@ -75,7 +75,7 @@ defaultproperties
 		PhysicsAsset=PhysicsAsset'Warthog.Addon.Ram_Physics'
 		bHasPhysicsAssetInstance=true
 		ReplacementPrimitive=none
-		RBChannel=ERBCollisionChannel.RBCC_Untitled3
+		RBChannel=RBCC_Untitled3
 		CollideActors=true
 		AlwaysCheckCollision=true
 		BlockRigidBody=true

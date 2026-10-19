@@ -1,7 +1,8 @@
 class GameInfo extends Info
 	native
 	config(Game)
-	notplaceable;
+	notplaceable
+	dependson(OnlineSubsystem);
 
 enum EStandbyType
 {
@@ -169,7 +170,7 @@ event PreBeginPlay()
 function CoverReplicator GetCoverReplicator()
 {
 	// End:0x5E
-	if((CoverReplicatorBase == none) && int(WorldInfo.NetMode) != int(NM_Standalone))
+	if((CoverReplicatorBase == none) && WorldInfo.NetMode != NM_Standalone)
 	{
 		CoverReplicatorBase = Spawn(Class'Engine.CoverReplicator');
 	}
@@ -185,7 +186,7 @@ event PostBeginPlay()
 		MaxIdleTime = FMax(MaxIdleTime, 20.0000000);
 	}
 	// End:0x5E
-	if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if(WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		UpdateGameSettings();
 	}
@@ -502,7 +503,7 @@ static function string ParseOption(string Options, string InKey)
 	{
 		GetKeyValue(Pair, Key, Value);
 		// End:0x65
-		if(Key ComplementEqual InKey)
+		if(Key ~= InKey)
 		{
 			return Value;
 		}
@@ -523,7 +524,7 @@ static function bool HasOption(string Options, string InKey)
 	{
 		GetKeyValue(Pair, Key, Value);
 		// End:0x5D
-		if(Key ComplementEqual InKey)
+		if(Key ~= InKey)
 		{
 			return true;
 		}
@@ -594,7 +595,7 @@ event InitGame(string Options, out string ErrorMessage)
 	LeftOpt = ParseOption(Options, "AdminName");
 	InOpt = ParseOption(Options, "AdminPassword");
 	// End:0x37F
-	if((int(WorldInfo.NetMode) == int(NM_ListenServer)) || int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if((WorldInfo.NetMode == NM_ListenServer) || WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		// End:0x303
 		if(WorldInfo.IsInSeamlessTravel())
@@ -652,10 +653,10 @@ event InitGame(string Options, out string ErrorMessage)
 		AccessControl.SetGamePassword(InOpt);
 		LogInternal("GamePassword" @ InOpt);
 	}
-	bFixedPlayerStart = (ParseOption(Options, "FixedPlayerStart")) ComplementEqual "1";
+	bFixedPlayerStart = (ParseOption(Options, "FixedPlayerStart")) ~= "1";
 	CauseEventCommand = ParseOption(Options, "causeevent");
 	// End:0x5FB
-	if((ParseOption(Options, "AutoTests")) ComplementEqual "1")
+	if((ParseOption(Options, "AutoTests")) ~= "1")
 	{
 		// End:0x5D3
 		if(MyAutoTestManager == none)
@@ -677,7 +678,7 @@ event InitGame(string Options, out string ErrorMessage)
 	{
 		GameInterface = OnlineSub.GameInterface;
 		// End:0x786
-		if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+		if(NotEqual_InterfaceInterface(GameInterface, none))
 		{
 			GameSettings = GameInterface.GetGameSettings(PlayerReplicationInfoClass.default.SessionName);
 			// End:0x786
@@ -688,7 +689,7 @@ event InitGame(string Options, out string ErrorMessage)
 		}
 	}
 	// End:0x815
-	if(((WorldInfo.IsConsoleBuild(0) == false) && int(WorldInfo.NetMode) != int(NM_Standalone)) && GameSettings == none)
+	if(((WorldInfo.IsConsoleBuild(0) == false) && WorldInfo.NetMode != NM_Standalone) && GameSettings == none)
 	{
 		ServerOptions = Options;
 		// End:0x815
@@ -859,7 +860,7 @@ function ProcessServerTravel(string URL, optional bool bAbsolute)
 	LogInternal("ProcessServerTravel:" @ URL);
 	WorldInfo.NextURL = URL;
 	// End:0x2EC
-	if((int(WorldInfo.NetMode) == int(NM_ListenServer)) && LocalPlayer != none)
+	if((WorldInfo.NetMode == NM_ListenServer) && LocalPlayer != none)
 	{		
 		WorldInfo.NextURL $= ((((((("?Team=" $ LocalPlayer.GetDefaultURL("Team")) $ "?Name=") $ LocalPlayer.GetDefaultURL("Name")) $ "?Class=") $ LocalPlayer.GetDefaultURL("Class")) $ "?Character=") $ LocalPlayer.GetDefaultURL("Character"));
 	}
@@ -878,7 +879,7 @@ function ProcessServerTravel(string URL, optional bool bAbsolute)
 	else
 	{
 		// End:0x41F
-		if((int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && int(WorldInfo.NetMode) != int(NM_ListenServer))
+		if((WorldInfo.NetMode != NM_DedicatedServer) && WorldInfo.NetMode != NM_ListenServer)
 		{
 			WorldInfo.NextSwitchCountdown = 0.0000000;
 		}
@@ -918,7 +919,7 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 	local bool bSpectator, bPerfTesting;
 
 	// End:0xA7
-	if(((int(WorldInfo.NetMode) != int(NM_Standalone)) && bUsingArbitration) && bHasArbitratedHandshakeBegun)
+	if(((WorldInfo.NetMode != NM_Standalone) && bUsingArbitration) && bHasArbitratedHandshakeBegun)
 	{
 		ErrorMessage = PathName(WorldInfo.Game.GameMessageClass) $ ".ArbitrationMessage";
 		return;
@@ -930,8 +931,8 @@ event PreLogin(string Options, string Address, const UniqueNetId UniqueId, bool 
 		ErrorMessage = "Engine.AccessControl.SessionBanned";
 		return;
 	}
-	bPerfTesting = (ParseOption(Options, "AutomatedPerfTesting")) ComplementEqual "1";
-	bSpectator = (bPerfTesting || (ParseOption(Options, "SpectatorOnly")) ComplementEqual "1") || (ParseOption(Options, "CauseEvent")) ComplementEqual "FlyThrough";
+	bPerfTesting = (ParseOption(Options, "AutomatedPerfTesting")) ~= "1";
+	bSpectator = (bPerfTesting || (ParseOption(Options, "SpectatorOnly")) ~= "1") || (ParseOption(Options, "CauseEvent")) ~= "FlyThrough";
 	// End:0x24C
 	if(AccessControl != none)
 	{
@@ -952,14 +953,14 @@ native static final function RejectLogin(Player InPlayer, string Error);
 function bool AtCapacity(bool bSpectator)
 {
 	// End:0x2B
-	if(int(WorldInfo.NetMode) == int(NM_Standalone))
+	if(WorldInfo.NetMode == NM_Standalone)
 	{
 		return false;
 	}
 	// End:0x8C
 	if(bSpectator)
 	{
-		return (NumSpectators >= MaxSpectators) && (int(WorldInfo.NetMode) != int(NM_ListenServer)) || NumPlayers > 0;		
+		return (NumSpectators >= MaxSpectators) && (WorldInfo.NetMode != NM_ListenServer) || NumPlayers > 0;		
 	}
 	else
 	{
@@ -999,8 +1000,8 @@ event PlayerController Login(string Portal, string Options, const UniqueNetId Un
 	{
 		BaseMutator.ModifyLogin(Portal, Options);
 	}
-	bPerfTesting = (ParseOption(Options, "AutomatedPerfTesting")) ComplementEqual "1";
-	bSpectator = bPerfTesting || (ParseOption(Options, "SpectatorOnly")) ComplementEqual "1";
+	bPerfTesting = (ParseOption(Options, "AutomatedPerfTesting")) ~= "1";
+	bSpectator = bPerfTesting || (ParseOption(Options, "SpectatorOnly")) ~= "1";
 	InName = Left(ParseOption(Options, "Name"), 20);
 	InTeam = byte(GetIntOption(Options, "Team", 255));
 	InPassword = ParseOption(Options, "Password");
@@ -1052,7 +1053,7 @@ event PlayerController Login(string Portal, string Options, const UniqueNetId Un
 		NewPlayer.PlayerReplicationInfo.SetUniqueId(UniqueId);
 	}
 	// End:0x766
-	if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none))) && UniqueId != ZeroId)
+	if(((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, none)) && UniqueId != ZeroId)
 	{
 		WorldInfo.Game.OnlineSub.GameInterface.RegisterPlayer(PlayerReplicationInfoClass.default.SessionName, UniqueId, HasOption(Options, "bIsFromInvite"));
 	}
@@ -1116,7 +1117,7 @@ function StartOnlineGame()
 	local PlayerController PC;
 
 	// End:0x139
-	if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+	if(NotEqual_InterfaceInterface(GameInterface, none))
 	{
 		// End:0x98
 		foreach WorldInfo.AllControllers(Class'Engine.PlayerController', PC)
@@ -1149,7 +1150,7 @@ function OnStartOnlineGameComplete(name SessionName, bool bWasSuccessful)
 
 	GameInterface.ClearStartOnlineGameCompleteDelegate(OnStartOnlineGameComplete);
 	// End:0x147
-	if(bWasSuccessful && NotEqual_InterfaceInterface(OnlineSub.StatsInterface, OnlineStatsInterface(none)))
+	if(bWasSuccessful && NotEqual_InterfaceInterface(OnlineSub.StatsInterface, none))
 	{
 		StatGuid = OnlineSub.StatsInterface.GetHostStatGuid();
 		// End:0x147
@@ -1208,7 +1209,7 @@ function StartBots()
 		if(P.bIsPlayer && !P.IsA('PlayerController'))
 		{
 			// End:0xBC
-			if(int(WorldInfo.NetMode) == int(NM_Standalone))
+			if(WorldInfo.NetMode == NM_Standalone)
 			{
 				RestartPlayer(P);
 				// End:0xE7
@@ -1230,7 +1231,7 @@ function RestartPlayer(Controller NewPlayer)
 	local PlayerController PC;
 
 	// End:0xBD
-	if((bRestartLevel && int(WorldInfo.NetMode) != int(NM_DedicatedServer)) && int(WorldInfo.NetMode) != int(NM_ListenServer))
+	if((bRestartLevel && WorldInfo.NetMode != NM_DedicatedServer) && WorldInfo.NetMode != NM_ListenServer)
 	{
 		WarnInternal("bRestartLevel && !server, abort from RestartPlayer" @ string(WorldInfo.NetMode));
 		return;
@@ -1550,7 +1551,7 @@ event PostLogin(PlayerController NewPlayer)
 	UpdateNetSpeeds();
 	GenericPlayerInitialization(NewPlayer);
 	// End:0x39F
-	if((GameReplicationInfo.bMatchHasBegun && OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.StatsInterface, OnlineStatsInterface(none)))
+	if((GameReplicationInfo.bMatchHasBegun && OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.StatsInterface, none))
 	{
 		StatGuid = OnlineSub.StatsInterface.GetHostStatGuid();
 		// End:0x39F
@@ -1605,12 +1606,12 @@ function UpdateNetSpeeds()
 	local OnlineGameSettings GameSettings;
 
 	// End:0x68
-	if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+	if(NotEqual_InterfaceInterface(GameInterface, none))
 	{
 		GameSettings = GameInterface.GetGameSettings(PlayerReplicationInfoClass.default.SessionName);
 	}
 	// End:0xF3
-	if(((int(WorldInfo.NetMode) == int(NM_DedicatedServer)) || int(WorldInfo.NetMode) == int(NM_Standalone)) || (GameSettings != none) && GameSettings.bIsLanMatch)
+	if(((WorldInfo.NetMode == NM_DedicatedServer) || WorldInfo.NetMode == NM_Standalone) || (GameSettings != none) && GameSettings.bIsLanMatch)
 	{
 		return;
 	}
@@ -1720,7 +1721,7 @@ function UnregisterPlayer(PlayerController PC)
 	local UniqueNetId ZeroId;
 
 	// End:0x176
-	if((((int(WorldInfo.NetMode) != int(NM_Standalone)) && NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none))) && PC.PlayerReplicationInfo.UniqueId != ZeroId) && GameInterface.GetGameSettings(PC.PlayerReplicationInfo.SessionName) != none)
+	if((((WorldInfo.NetMode != NM_Standalone) && NotEqual_InterfaceInterface(GameInterface, none)) && PC.PlayerReplicationInfo.UniqueId != ZeroId) && GameInterface.GetGameSettings(PC.PlayerReplicationInfo.SessionName) != none)
 	{
 		GameInterface.UnregisterPlayer(PC.PlayerReplicationInfo.SessionName, PC.PlayerReplicationInfo.UniqueId);
 	}
@@ -1884,7 +1885,7 @@ function bool CheckRelevance(Actor Other)
 
 function bool ShouldRespawn(PickupFactory Other)
 {
-	return int(WorldInfo.NetMode) != int(NM_Standalone);
+	return WorldInfo.NetMode != NM_Standalone;
 	//return ReturnValue;	
 }
 
@@ -2091,7 +2092,7 @@ function WriteOnlineStats()
 	local OnlineGameSettings CurrentSettings;
 
 	// End:0x1A0
-	if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+	if(NotEqual_InterfaceInterface(GameInterface, none))
 	{
 		CurrentSettings = GameInterface.GetGameSettings(PlayerReplicationInfoClass.default.SessionName);
 		// End:0x1A0
@@ -2167,7 +2168,7 @@ function EndGame(PlayerReplicationInfo Winner, string Reason)
 function PerformEndGameHandling()
 {
 	// End:0x6D
-	if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+	if(NotEqual_InterfaceInterface(GameInterface, none))
 	{
 		WriteOnlineStats();
 		WriteOnlinePlayerScores();
@@ -2189,7 +2190,7 @@ function EndOnlineGame()
 
 	GameReplicationInfo.EndGame();
 	// End:0xF6
-	if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+	if(NotEqual_InterfaceInterface(GameInterface, none))
 	{
 		// End:0xB7
 		foreach WorldInfo.AllControllers(Class'Engine.PlayerController', PC)
@@ -2217,7 +2218,7 @@ function EndLogging(string Reason)
 
 function bool ShouldSpawnAtStartSpot(Controller Player)
 {
-	return (((int(WorldInfo.NetMode) == int(NM_Standalone)) && Player != none) && Player.StartSpot != none) && bWaitingToStartMatch || (Player.PlayerReplicationInfo != none) && Player.PlayerReplicationInfo.bWaitingPlayer;
+	return (((WorldInfo.NetMode == NM_Standalone) && Player != none) && Player.StartSpot != none) && bWaitingToStartMatch || (Player.PlayerReplicationInfo != none) && Player.PlayerReplicationInfo.bWaitingPlayer;
 	//return ReturnValue;	
 }
 
@@ -2243,7 +2244,7 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
 		foreach WorldInfo.AllNavigationPoints(Class'Engine.Teleporter', Tel)
 		{
 			// End:0xF6
-			if(string(Tel.Tag) ComplementEqual IncomingName)
+			if(string(Tel.Tag) ~= IncomingName)
 			{				
 				return Tel;
 			}			
@@ -2440,13 +2441,13 @@ static function bool AllowMutator(string MutatorClassName)
 
 function bool AllowCheats(PlayerController P)
 {
-	return int(WorldInfo.NetMode) == int(NM_Standalone);
+	return WorldInfo.NetMode == NM_Standalone;
 	//return ReturnValue;	
 }
 
 function bool AllowPausing(optional PlayerController PC)
 {
-	return (bPauseable || int(WorldInfo.NetMode) == int(NM_Standalone)) || bAdminCanPause && AccessControl.IsAdmin(PC);
+	return (bPauseable || WorldInfo.NetMode == NM_Standalone) || bAdminCanPause && AccessControl.IsAdmin(PC);
 	//return ReturnValue;	
 }
 
@@ -2534,7 +2535,7 @@ function bool FindInactivePRI(PlayerController PC)
 		else
 		{
 			// End:0x400
-			if((bIsConsole && CurrentPRI.UniqueId == PC.PlayerReplicationInfo.UniqueId) || (!bIsConsole && CurrentPRI.SavedNetworkAddress ComplementEqual NewNetworkAddress) && CurrentPRI.PlayerName ComplementEqual NewName)
+			if((bIsConsole && CurrentPRI.UniqueId == PC.PlayerReplicationInfo.UniqueId) || (!bIsConsole && CurrentPRI.SavedNetworkAddress ~= NewNetworkAddress) && CurrentPRI.PlayerName ~= NewName)
 			{
 				OldPRI = PC.PlayerReplicationInfo;
 				PC.PlayerReplicationInfo = CurrentPRI;
@@ -2646,7 +2647,7 @@ event PostSeamlessTravel()
 		StartMatch();
 	}
 	// End:0x17F
-	if(int(WorldInfo.NetMode) == int(NM_DedicatedServer))
+	if(WorldInfo.NetMode == NM_DedicatedServer)
 	{
 		UpdateGameSettings();
 	}
@@ -2765,7 +2766,7 @@ function UpdateGameSettingsCounts()
 	local OnlineGameSettings GameSettings;
 
 	// End:0x128
-	if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+	if(NotEqual_InterfaceInterface(GameInterface, none))
 	{
 		GameSettings = GameInterface.GetGameSettings(PlayerReplicationInfoClass.default.SessionName);
 		// End:0x128
@@ -2852,7 +2853,7 @@ function RecalculateSkillRating()
 	local UniqueNetId ZeroId;
 
 	// End:0x1C7
-	if(((int(WorldInfo.NetMode) != int(NM_Standalone)) && OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none)))
+	if(((WorldInfo.NetMode != NM_Standalone) && OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, none))
 	{
 		Index = 0;
 		J0x7C:
@@ -2889,7 +2890,7 @@ function bool ProcessServerLogin()
 	if(OnlineSub != none)
 	{
 		// End:0x11B
-		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+		if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 		{
 			OnlineSub.PlayerInterface.AddLoginChangeDelegate(OnLoginChange);
 			OnlineSub.PlayerInterface.AddLoginFailedDelegate(0, OnLoginFailed);
@@ -2909,7 +2910,7 @@ function bool ProcessServerLogin()
 function ClearAutoLoginDelegates()
 {
 	// End:0xC3
-	if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+	if(NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 	{
 		OnlineSub.PlayerInterface.ClearLoginChangeDelegate(OnLoginChange);
 		OnlineSub.PlayerInterface.ClearLoginFailedDelegate(0, OnLoginFailed);
@@ -2935,12 +2936,12 @@ function RegisterServer()
 	local OnlineGameSettings GameSettings;
 
 	// End:0x27A
-	if(((OnlineGameSettingsClass != none) && OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, OnlineGameInterface(none)))
+	if(((OnlineGameSettingsClass != none) && OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.GameInterface, none))
 	{
 		GameSettings = new OnlineGameSettingsClass;
 		GameSettings.UpdateFromURL(ServerOptions, self);
 		// End:0x188
-		if(((AccessControl != none) && (int(WorldInfo.NetMode) == int(NM_DedicatedServer)) || int(WorldInfo.NetMode) == int(NM_ListenServer)) && GameSettings.bIsLanMatch)
+		if(((AccessControl != none) && (WorldInfo.NetMode == NM_DedicatedServer) || WorldInfo.NetMode == NM_ListenServer) && GameSettings.bIsLanMatch)
 		{
 			LogInternal("Disabling all authentication, due to bIsLanMatch being set to true");
 			AccessControl.ClearAuthDelegates(false);
@@ -2988,7 +2989,7 @@ function OnServerCreateComplete(name SessionName, bool bWasSuccessful)
 	else
 	{
 		// End:0x2DC
-		if(((OnlineSub.Class.Name == 'OnlineSubsystemSteamworks') && AccessControl != none) && EqualEqual_InterfaceInterface(AccessControl.CachedAuthInt, OnlineAuthInterface(none)))
+		if(((OnlineSub.Class.Name == 'OnlineSubsystemSteamworks') && AccessControl != none) && EqualEqual_InterfaceInterface(AccessControl.CachedAuthInt, none))
 		{
 			AccessControl.InitAuthHooks();
 			AccessControl.OnAuthReady();
@@ -3010,7 +3011,7 @@ function TellClientsToReturnToPartyHost()
 	{
 		GameInterface = OnlineSub.GameInterface;
 		// End:0x2BF
-		if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+		if(NotEqual_InterfaceInterface(GameInterface, none))
 		{
 			GameSettings = GameInterface.GetGameSettings(PlayerReplicationInfoClass.default.SessionName);
 			// End:0x102
@@ -3291,7 +3292,7 @@ auto state PendingMatch
 	function RegisterServerForArbitration()
 	{
 		// End:0x92
-		if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+		if(NotEqual_InterfaceInterface(GameInterface, none))
 		{
 			GameInterface.AddArbitrationRegistrationCompleteDelegate(ArbitrationRegistrationComplete);
 			GameInterface.RegisterForArbitration(PlayerReplicationInfoClass.default.SessionName);			
@@ -3377,7 +3378,7 @@ auto state PendingMatch
 	{
 		SetTimer(0.0000000, false, 'ArbitrationTimeout');
 		// End:0x64
-		if(NotEqual_InterfaceInterface(GameInterface, OnlineGameInterface(none)))
+		if(NotEqual_InterfaceInterface(GameInterface, none))
 		{
 			GameInterface.ClearArbitrationRegistrationCompleteDelegate(ArbitrationRegistrationComplete);
 		}

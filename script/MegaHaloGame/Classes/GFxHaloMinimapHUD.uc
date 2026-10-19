@@ -2951,7 +2951,7 @@ function Project(Vector WorldLocation, out Vector ScreenLocation)
 	// End:0x89
 	if(Canvas != none)
 	{
-		ScreenLocation = Canvas.super(GFxHaloMinimapHUD).Project(WorldLocation);
+		ScreenLocation = Canvas.Project(WorldLocation);
 	}
 	//return;	
 }

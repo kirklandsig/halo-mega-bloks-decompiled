@@ -114,7 +114,7 @@ function CreateObjectiveMarkers()
 
 defaultproperties
 {
-	FleeTarget=(Actor=none,Marker=EObjectiveMarker.OMN_Flee,bDraw=true,bDrawTagSymbol=false,bShowHealth=true,bShowDistance=true,bClampToScreen=true)
+	FleeTarget=(Actor=none,Marker=OMN_Flee,bDraw=true,bDrawTagSymbol=false,bShowHealth=true,bShowDistance=true,bClampToScreen=true)
 	InnerRadius=100.0000000
 	OuterRadius=500.0000000
 	GracePeriod=3.0000000

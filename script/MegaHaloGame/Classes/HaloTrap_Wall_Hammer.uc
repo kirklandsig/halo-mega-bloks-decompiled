@@ -107,10 +107,10 @@ defaultproperties
 		BlockNonZeroExtent=true
 	end object
 	SkeletalMeshComponent=SkeletalMeshComponent0
-	TrapType=HaloTrap_Type.TRAP_Wall_Hammer
+	TrapType=TRAP_Wall_Hammer
 	BaseMeshComponent=SkeletalMeshComponent0
 	Components[0]=SkeletalMeshComponent0
-	CollisionType=ECollisionType.COLLIDE_TouchAll
+	CollisionType=COLLIDE_TouchAll
 	bCollideActors=true
 	CollisionComponent=SkeletalMeshComponent0
 }

@@ -29,7 +29,7 @@ replication
 event PostBeginPlay()
 {
 	local Class<ActorComponent> GwNavObstacleComponentClass;
-	local editinline ActorComponent GwNavObstacleComponent;
+	local ActorComponent GwNavObstacleComponent;
 
 	super.PostBeginPlay();
 	// End:0x6B
@@ -125,7 +125,7 @@ function OnSetMesh(SeqAct_SetMesh Action)
 	local bool bForce;
 
 	// End:0x292
-	if(int(Action.MeshType) == int(0))
+	if(int(Action.MeshType) == 0)
 	{
 		bForce = (Action.bIsAllowedToMove == StaticMeshComponent.bForceStaticDecals) || Action.bAllowDecalsToReattach;
 		// End:0x292
@@ -285,7 +285,7 @@ defaultproperties
 	GwNavObstacleComponentClassPath="GwNavEngine.GwNavObstacleComponent"
 	Components[0]=MyLightEnvironment
 	Components[1]=StaticMeshComponent0
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
+	RemoteRole=ROLE_SimulatedProxy
 	bShadowParented=true
 	bGameRelevant=true
 	bEdShouldSnap=true

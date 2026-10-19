@@ -663,19 +663,16 @@ function SetCurrentFlightNode()
 						break;
 				}
 			}
-			else
-			{
-				SetCurrentSplineDetails();				
-			}/* !MISMATCHING REMOVE, tried If got Type:Else Position:0x0EF! */
-			else
-			{
-				Index = Max(ScriptedRouteIndex - 1, 0);
-				CurrentFlightNode = HaloAIFlightNode(ScriptedRoute.RouteList[Index].Actor);
-				SetCurrentRouteDetails();
-			}
+			SetCurrentSplineDetails();
 		}
-		//return;		
-	}/* !MISMATCHING REMOVE, tried Else got Type:If Position:0x000! */
+		else
+		{
+			Index = Max(ScriptedRouteIndex - 1, 0);
+			CurrentFlightNode = HaloAIFlightNode(ScriptedRoute.RouteList[Index].Actor);
+			SetCurrentRouteDetails();
+		}
+		//return;
+	}
 }
 
 function SetCurrentSplineDetails()

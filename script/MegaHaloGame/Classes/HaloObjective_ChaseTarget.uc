@@ -117,7 +117,7 @@ function CreateObjectiveMarkers()
 
 defaultproperties
 {
-	ChaseTarget=(Actor=none,Marker=EObjectiveMarker.OMN_Chase,bDraw=true,bDrawTagSymbol=false,bShowHealth=true,bShowDistance=true,bClampToScreen=true)
+	ChaseTarget=(Actor=none,Marker=OMN_Chase,bDraw=true,bDrawTagSymbol=false,bShowHealth=true,bShowDistance=true,bClampToScreen=true)
 	InnerRadius=100.0000000
 	OuterRadius=500.0000000
 	GracePeriod=3.0000000

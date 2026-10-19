@@ -52,7 +52,7 @@ function SetObjectiveProperties()
 
 defaultproperties
 {
-	Marker=EObjectiveMarker.OMN_Use
+	Marker=OMN_Use
 	bDraw=true
 	bShowDistance=true
 	bClampToScreen=true

@@ -133,7 +133,7 @@ struct LocationMaskStruct
 	structdefaultproperties
 	{
 		Name="None"
-		MaskFunction=ELocationMaskFunction.LMF_Angular
+		MaskFunction=LMF_Angular
 		Width=0.0000000
 		Height=0.0000000
 		Depth=0.0000000
@@ -243,5 +243,5 @@ defaultproperties
 	OrbitArray[0]=(Name="Default",Distance=600.0000000,Pitch=5.0000000,FOV=90.0000000,AimYawSpeed=130.0000000,AimPitchSpeed=60.0000000,FocusOffset=(X=180.0000000,Y=0.0000000,Z=0.0000000),RotationBlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),LocationBlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),FOVBlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),Priority=-10)
 	OrbitArray[1]=(Name="HaloWeapon_TargetDesignator",Distance=500.0000000,Pitch=5.0000000,FOV=90.0000000,AimYawSpeed=115.0000000,AimPitchSpeed=60.0000000,FocusOffset=(X=200.0000000,Y=50.0000000,Z=0.0000000),RotationBlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),LocationBlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),FOVBlendRange=(Min=(Time=1.5000000,Distance=0.0000000),Max=(Time=1.5000000,Distance=0.0000000),OnBlendInEventName="None",OnBlendOutEventName="None"),Priority=-10)
 	OrbitDefaultName="Default"
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

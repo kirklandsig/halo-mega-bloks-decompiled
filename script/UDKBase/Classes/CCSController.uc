@@ -1,6 +1,7 @@
 class CCSController extends GameAIController
 	native
-	config(Game);
+	config(Game)
+	dependson(CCSSystemConfig);
 
 struct native EnemyThreatInfo
 {
@@ -565,7 +566,7 @@ function UpdateThreatInformation(Controller EnemyController, int EnemyDamage, op
 	local int I;
 	local bool Found;
 	local EnemyThreatInfo enemyInfo;
-	local editinline UDKTargetableComponent targetableComponent;
+	local UDKTargetableComponent targetableComponent;
 	local int ThreatOverpowerAmount;
 
 	ThreatOverpowerAmount = int(float(EnemyDamage) * ThreatOverpowerPct);
@@ -756,7 +757,7 @@ defaultproperties
 	begin object name="BTInterface0" class=Grip.GripBTInterface
 	end object
 	BTInterface=BTInterface0
-	SystemConfig=(MaxAwareRadius=10000.0000000,MaxSightRadius=4300.0000000,MaxBehindSightRadius=400.0000000,MaxHearingRadius=4300.0000000,VisionCone=180.0000000,PassiveObjectiveWeight=-1.0000000,PassiveSecondaryWeight=-1.0000000,AggressiveMobileWeight=-1.0000000,AggressiveStationaryWeight=-1.0000000,CoverQueryRadius=5000.0000000,TargetSelection=ECCSTargetSelectionConfig.CCSTargetPlayer,Movement=ECCSMovementConfig.CCSMovementGwNav)
+	SystemConfig=(MaxAwareRadius=10000.0000000,MaxSightRadius=4300.0000000,MaxBehindSightRadius=400.0000000,MaxHearingRadius=4300.0000000,VisionCone=180.0000000,PassiveObjectiveWeight=-1.0000000,PassiveSecondaryWeight=-1.0000000,AggressiveMobileWeight=-1.0000000,AggressiveStationaryWeight=-1.0000000,CoverQueryRadius=5000.0000000,TargetSelection=CCSTargetPlayer,Movement=CCSMovementGwNav)
 	CCSTeam=255
 	AIHeatValue=10
 	AccurateChance=1.0000000

@@ -30,7 +30,7 @@ struct native CCSTargetData
 	{
 		Pawn=none
 		Actor=none
-		AITargetType=EAITargetType.AITargetType_NONE
+		AITargetType=AITargetType_NONE
 		Position=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 		LKP=(X=0.0000000,Y=0.0000000,Z=0.0000000)
 		LKPAge=0.0000000

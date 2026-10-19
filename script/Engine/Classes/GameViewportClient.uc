@@ -196,7 +196,7 @@ event LocalPlayer CreatePlayer(int ControllerId, out string OutError, bool bSpaw
 	if(bSpawnActor && InsertIndex != -1)
 	{
 		// End:0x1EC
-		if(int(Outer.GetCurrentWorldInfo().NetMode) != int(NM_Client))
+		if(Outer.GetCurrentWorldInfo().NetMode != NM_Client)
 		{
 			// End:0x1E9
 			if(!NewPlayer.SpawnPlayActor("", OutError))
@@ -234,7 +234,7 @@ event bool RemovePlayer(LocalPlayer ExPlayer)
 	local array<int> IDMappings;
 
 	// End:0x37A
-	if(int(ExPlayer.Actor.Role) == int(ROLE_Authority))
+	if(ExPlayer.Actor.Role == ROLE_Authority)
 	{
 		LogInternal(((((((("Removing player" @ string(ExPlayer)) @ " with ControllerId") @ string(ExPlayer.ControllerId)) @ "at index") @ string(Outer.GamePlayers.Find(ExPlayer))) @ "(") $ string(Outer.GamePlayers.Length)) @ "existing players)", 'PlayerManagement');
 		ExPlayer.ViewportClient = none;
@@ -354,7 +354,7 @@ exec function DebugRemovePlayer(int ControllerId)
 
 exec function SetSplit(int Mode)
 {
-	SetSplitscreenConfiguration(byte(Mode));
+	SetSplitscreenConfiguration(ESplitScreenType(Mode));
 	//return;	
 }
 
@@ -581,7 +581,7 @@ function UpdateActiveSplitscreenType()
 		// End:0x98
 		case 2:
 			// End:0x95
-			if((int(SplitType) != int(1)) && int(SplitType) != int(2))
+			if((int(SplitType) != 1) && int(SplitType) != 2)
 			{
 				SplitType = Default2PSplitType;
 			}
@@ -590,7 +590,7 @@ function UpdateActiveSplitscreenType()
 		// End:0xDD
 		case 3:
 			// End:0xDA
-			if((int(SplitType) != int(3)) && int(SplitType) != int(4))
+			if((int(SplitType) != 3) && int(SplitType) != 4)
 			{
 				SplitType = Default3PSplitType;
 			}
@@ -1125,17 +1125,17 @@ event SetProgressMessage(PlayerController.EProgressMessageType MessageType, stri
 
 	WI = Class'Engine.Engine'.static.GetCurrentWorldInfo();
 	// End:0x4C
-	if(int(MessageType) == int(0))
+	if(int(MessageType) == 0)
 	{
 		ClearProgressMessages();		
 	}
 	else
 	{
 		// End:0x2E6
-		if((int(MessageType) == int(4)) || int(MessageType) == int(7))
+		if((int(MessageType) == 4) || int(MessageType) == 7)
 		{
 			// End:0x1AE
-			if(((WI != none) && int(WI.NetMode) == int(NM_Client)) && WI.BeginHostMigration())
+			if(((WI != none) && WI.NetMode == NM_Client) && WI.BeginHostMigration())
 			{
 				LogInternal((((((((((("(" $ string(Name)) $ ") GameViewportClient::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "MessageType=") $ string(MessageType)) @ "Message=") $ Message) @ ": host migration started.. ") $ string(WI.PeerHostMigration.HostMigrationProgress), 'DevNet');				
 			}
@@ -1152,7 +1152,7 @@ event SetProgressMessage(PlayerController.EProgressMessageType MessageType, stri
 		else
 		{
 			// End:0x36F
-			if(int(MessageType) == int(6))
+			if(int(MessageType) == 6)
 			{
 				Outer.GamePlayers[0].Actor.bIgnoreNetworkMessages = false;
 				NotifyConnectionError(MessageType, Message, Title);				
@@ -1188,7 +1188,7 @@ function NotifyConnectionError(PlayerController.EProgressMessageType MessageType
 	WI = Class'Engine.Engine'.static.GetCurrentWorldInfo();
 	LogInternal((((((((((((((((("(" $ string(Name)) $ ") GameViewportClient::") $ string(GetStateName())) $ ":") $ string(GetFuncName())) @ "Title:'") $ Title) $ "'") @ "Message:'") $ Message) $ "'") @ "NetMode:'") $ string(GetEnum(Enum'Engine.WorldInfo.ENetMode', int(WI.NetMode)))) $ "'") @ "Map:'") $ WI.GetURLMap()) $ "'", 'DevNet');
 	// End:0x22C
-	if(int(WI.NetMode) != int(NM_Standalone))
+	if(WI.NetMode != NM_Standalone)
 	{
 		// End:0x20A
 		if(WI.Game != none)
@@ -1344,8 +1344,8 @@ defaultproperties
 	SplitscreenInfo[3]=(PlayerData=((SizeX=1.0000000,SizeY=0.5000000,OriginX=0.0000000,OriginY=0.0000000),(SizeX=0.5000000,SizeY=0.5000000,OriginX=0.0000000,OriginY=0.5000000),(SizeX=0.5000000,SizeY=0.5000000,OriginX=0.5000000,OriginY=0.5000000)))
 	SplitscreenInfo[4]=(PlayerData=((SizeX=0.5000000,SizeY=0.5000000,OriginX=0.0000000,OriginY=0.0000000),(SizeX=0.5000000,SizeY=0.5000000,OriginX=0.5000000,OriginY=0.0000000),(SizeX=1.0000000,SizeY=0.5000000,OriginX=0.0000000,OriginY=0.5000000)))
 	SplitscreenInfo[5]=(PlayerData=((SizeX=0.5000000,SizeY=0.5000000,OriginX=0.0000000,OriginY=0.0000000),(SizeX=0.5000000,SizeY=0.5000000,OriginX=0.5000000,OriginY=0.0000000),(SizeX=0.5000000,SizeY=0.5000000,OriginX=0.0000000,OriginY=0.5000000),(SizeX=0.5000000,SizeY=0.5000000,OriginX=0.5000000,OriginY=0.5000000)))
-	Default2PSplitType=ESplitScreenType.eSST_2P_HORIZONTAL
-	Default3PSplitType=ESplitScreenType.eSST_3P_FAVOR_TOP
+	Default2PSplitType=eSST_2P_HORIZONTAL
+	Default3PSplitType=eSST_3P_FAVOR_TOP
 	ProgressTimeOut=8.0000000
 	ProgressFadeTime=1.0000000
 }

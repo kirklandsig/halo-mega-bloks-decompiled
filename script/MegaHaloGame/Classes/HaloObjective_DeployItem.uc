@@ -9,7 +9,7 @@ struct DeployableObjective
 
 	structdefaultproperties
 	{
-		DeployMarker=(Actor=none,Marker=EObjectiveMarker.OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
+		DeployMarker=(Actor=none,Marker=OMN_None,bDraw=true,bDrawTagSymbol=false,bShowHealth=false,bShowDistance=false,bClampToScreen=true)
 		HDM=none
 		bHasBeenDeployed=false
 	}

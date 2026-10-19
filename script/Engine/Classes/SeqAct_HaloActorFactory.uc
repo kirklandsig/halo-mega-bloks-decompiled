@@ -15,7 +15,7 @@ struct native HaloActorFactoryLaunchpoint
 		Factory=none
 		SpawnCount=1
 		bStartHidden=false
-		StartingPhysics=EPhysics.PHYS_Falling
+		StartingPhysics=PHYS_Falling
 		bCheckSpawnCollision=true
 		SpawnedCount=0
 	}

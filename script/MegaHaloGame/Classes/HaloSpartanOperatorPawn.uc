@@ -34,7 +34,7 @@ defaultproperties
 	begin object name="HaloTargetableComponent"
 	end object
 	MyHaloTargetableComponent=HaloTargetableComponent
-	CharacterRole=ECharacterRole.CR_HEAVY
+	CharacterRole=CR_HEAVY
 	AkCharacterType="Spartan_Operator"
 	// Reference: HaloJumpComponent'MegaHaloGame.Default__HaloSpartanOperatorPawn.MyJumpComponent'
 	// TemplateOwnerClass: none

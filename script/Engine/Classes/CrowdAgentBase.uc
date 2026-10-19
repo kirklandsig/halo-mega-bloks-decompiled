@@ -2,9 +2,9 @@ class CrowdAgentBase extends Actor
 	abstract
 	native
 	notplaceable
-	implements(Interface_NavigationHandle);
+	implements(Interface_NavigationHandle)
+	dependson(CoverLink);
 
-var private native const noexport Pointer VfTable_IInterface_NavigationHandle;
 
 event NotifyPathChanged()
 {
@@ -13,5 +13,5 @@ event NotifyPathChanged()
 
 defaultproperties
 {
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

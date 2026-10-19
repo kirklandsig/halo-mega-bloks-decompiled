@@ -51,7 +51,7 @@ function SetObjectiveProperties()
 
 defaultproperties
 {
-	Marker=EObjectiveMarker.OMN_Defend
+	Marker=OMN_Defend
 	bDraw=true
 	bShowHealth=true
 	bClampToScreen=true

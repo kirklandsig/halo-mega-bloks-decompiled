@@ -54,7 +54,7 @@ simulated event PostBeginPlay()
 	super.PostBeginPlay();
 	BACKUP_bPainCausing = bPainCausing;
 	// End:0x35
-	if(int(Role) < int(ROLE_Authority))
+	if(Role < ROLE_Authority)
 	{
 		return;
 	}
@@ -91,7 +91,7 @@ event ActorLeavingVolume(Actor Other)
 event PawnEnteredVolume(Pawn Other)
 {
 	// End:0x6F
-	if((bForceVelocityOnWalkingPawns && ZoneVelocity != vect(0.0000000, 0.0000000, 0.0000000)) && int(Other.Physics) == int(1))
+	if((bForceVelocityOnWalkingPawns && ZoneVelocity != vect(0.0000000, 0.0000000, 0.0000000)) && int(Other.Physics) == 1)
 	{
 		Other.SetPhysics(2);
 	}
@@ -106,7 +106,7 @@ event PawnLeavingVolume(Pawn Other)
 simulated function OnToggle(SeqAct_Toggle inAction)
 {
 	// End:0x38
-	if(!bStatic || int(RemoteRole) > int(ROLE_None))
+	if(!bStatic || RemoteRole > ROLE_None)
 	{
 		super.OnToggle(inAction);
 	}
@@ -182,14 +182,14 @@ simulated event Touch(Actor Other, PrimitiveComponent OtherComp, Vector HitLocat
 	if(bMoveProjectiles && ZoneVelocity != vect(0.0000000, 0.0000000, 0.0000000))
 	{
 		// End:0x155
-		if(int(Other.Physics) == int(6))
+		if(int(Other.Physics) == 6)
 		{
 			Other.Velocity += ZoneVelocity;			
 		}
 		else
 		{
 			// End:0x20C
-			if(((Other.Base == none) && Other.IsA('Emitter')) && int(Other.Physics) == int(0))
+			if(((Other.Base == none) && Other.IsA('Emitter')) && int(Other.Physics) == 0)
 			{
 				Other.SetPhysics(6);
 				Other.Velocity += ZoneVelocity;
@@ -220,7 +220,7 @@ function CausePainTo(Actor Other)
 	if(DamagePerSec > float(0))
 	{
 		// End:0x60
-		if(WorldInfo.bSoftKillZ && int(Other.Physics) != int(1))
+		if(WorldInfo.bSoftKillZ && int(Other.Physics) != 1)
 		{
 			return;
 		}

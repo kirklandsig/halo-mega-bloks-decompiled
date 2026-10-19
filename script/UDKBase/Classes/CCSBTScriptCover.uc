@@ -1,5 +1,6 @@
 class CCSBTScriptCover extends CCSBTScriptBehavior
-	native;
+	native
+	dependson(CCSCover, CCSTarget);
 
 enum ScriptCoverState
 {

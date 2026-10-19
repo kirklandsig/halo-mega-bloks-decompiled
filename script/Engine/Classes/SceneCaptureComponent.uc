@@ -1,6 +1,7 @@
 class SceneCaptureComponent extends ActorComponent
 	abstract
-	native;
+	native
+	dependson(PostProcessVolume);
 
 enum ESceneCaptureViewMode
 {
@@ -51,6 +52,6 @@ defaultproperties
 	bSkipRenderingDepthPrepass=true
 	bCaptureMainScene=true
 	ClearColor=(R=0,G=0,B=255,A=0)
-	ViewMode=ESceneCaptureViewMode.SceneCapView_LitNoShadows
+	ViewMode=SceneCapView_LitNoShadows
 	FrameRate=30.0000000
 }

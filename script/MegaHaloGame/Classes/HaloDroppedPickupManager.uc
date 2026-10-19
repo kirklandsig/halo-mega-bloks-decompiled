@@ -261,5 +261,5 @@ defaultproperties
 	Trackers[9]=(InvClass=Class'MegaHaloGame.HaloWeapon_UnscPistol',Rank=1,MaxCount=3,Pickups=none)
 	Trackers[10]=(InvClass=Class'MegaHaloGame.HaloWeapon_UnscRocketLauncher_Content',Rank=10,MaxCount=3,Pickups=none)
 	MaxPickupCount=10
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

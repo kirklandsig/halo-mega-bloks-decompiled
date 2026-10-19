@@ -1,5 +1,6 @@
 class GameCrowdBehavior_PlayAnimation extends GameCrowdAgentBehavior
-	native;
+	native
+	dependson(GameCrowdAgent);
 
 var array<name> AnimationList;
 var float BlendInTime;

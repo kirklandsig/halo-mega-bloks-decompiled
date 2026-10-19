@@ -23,7 +23,7 @@ var export editinline ParticleSystemComponent DroppedPickupParticles;
 replication
 {
 	// Pos:0x000
-	if(((int(Role) == int(ROLE_Authority)) && bNetDirty) && bNetOwner)
+	if(((Role == ROLE_Authority) && bNetDirty) && bNetOwner)
 		InvManager, Inventory;
 }
 
@@ -173,8 +173,8 @@ defaultproperties
 	PickupMessage="Snagged an item."
 	DroppedPickupClass=Class'Engine.DroppedPickup'
 	Components[0]=none
-	RemoteRole=ENetRole.ROLE_SimulatedProxy
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	RemoteRole=ROLE_SimulatedProxy
+	CollisionType=COLLIDE_CustomDefault
 	bHidden=true
 	bOnlyRelevantToOwner=true
 	bReplicateMovement=false

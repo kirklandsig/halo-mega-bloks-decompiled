@@ -1,5 +1,4 @@
 interface CCSPawn extends Interface
-	abstract
 	native;
 
 enum ECCSMovementType

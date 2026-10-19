@@ -14,5 +14,5 @@ defaultproperties
 	NavdataFamilies[0]=GwNavNavdataFamily'EngineGwNav.DefaultFamily'
 	IsBidirectional=true
 	Components[0]=none
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

@@ -28,7 +28,7 @@ event SubscriberAttached(UIDataStoreSubscriber Subscriber)
 	local int SubscriberNotifyIndex;
 
 	// End:0xC0
-	if(NotEqual_InterfaceInterface(Subscriber, UIDataStoreSubscriber(none)))
+	if(NotEqual_InterfaceInterface(Subscriber, none))
 	{
 		SubscriberNotifyIndex = RefreshSubscriberNotifies.Find(Subscriber.NotifyDataStoreValueUpdated);
 		// End:0xC0
@@ -46,7 +46,7 @@ event SubscriberDetached(UIDataStoreSubscriber Subscriber)
 	local int SubscriberNotifyIndex;
 
 	// End:0x86
-	if(NotEqual_InterfaceInterface(Subscriber, UIDataStoreSubscriber(none)))
+	if(NotEqual_InterfaceInterface(Subscriber, none))
 	{
 		SubscriberNotifyIndex = RefreshSubscriberNotifies.Find(Subscriber.NotifyDataStoreValueUpdated);
 		// End:0x86

@@ -1,6 +1,7 @@
 class UTVehicleWeapon extends UTWeapon
 	abstract
-	config(Weapon);
+	config(Weapon)
+	dependson(UTVehicle);
 
 var int SeatIndex;
 var repnotify UTVehicle MyVehicle;
@@ -554,5 +555,5 @@ defaultproperties
 	end object
 	DroppedPickupMesh=PickupMesh
 	PickupFactoryMesh=PickupMesh
-	TickGroup=ETickingGroup.TG_PostAsyncWork
+	TickGroup=TG_PostAsyncWork
 }

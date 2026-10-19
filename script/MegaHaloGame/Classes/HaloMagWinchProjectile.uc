@@ -164,6 +164,6 @@ defaultproperties
 		ReplacementPrimitive=none
 	end object
 	Components[3]=SkeletalMeshComponent
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 	CollisionComponent=SkeletalMeshComponent0
 }

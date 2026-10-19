@@ -197,5 +197,5 @@ simulated function RemovePlayerController(HaloPlayerPawnController HPPC)
 
 defaultproperties
 {
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }

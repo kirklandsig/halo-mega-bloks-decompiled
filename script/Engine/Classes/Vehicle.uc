@@ -44,11 +44,11 @@ var float TurnTime;
 replication
 {
 	// Pos:0x000
-	if(bNetDirty && int(Role) == int(ROLE_Authority))
+	if(bNetDirty && Role == ROLE_Authority)
 		bDriving;
 
 	// Pos:0x020
-	if((bNetDirty && (bNetOwner || Driver == none) || !Driver.bHidden) && int(Role) == int(ROLE_Authority))
+	if((bNetDirty && (bNetOwner || Driver == none) || !Driver.bHidden) && Role == ROLE_Authority)
 		Driver;
 }
 
@@ -112,7 +112,7 @@ native simulated function Vector GetTargetLocation(optional Actor RequestedBy, o
 simulated function TakeRadiusDamage(Controller InstigatedBy, float BaseDamage, float DamageRadius, Class<DamageType> DamageType, float Momentum, Vector HurtOrigin, bool bFullDamage, Actor DamageCauser, optional float DamageFalloffExponent = 1.0000000)
 {
 	// End:0xD2
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		super(Actor).TakeRadiusDamage(InstigatedBy, BaseDamage, DamageRadius, DamageType, Momentum, HurtOrigin, bFullDamage, DamageCauser, DamageFalloffExponent);
 		// End:0xD2
@@ -201,7 +201,7 @@ simulated function Destroyed_HandleDriver()
 
 	Driver.LastRenderTime = LastRenderTime;
 	// End:0x95
-	if(int(Role) == int(ROLE_Authority))
+	if(Role == ROLE_Authority)
 	{
 		OldDriver = Driver;
 		Driver = none;
@@ -359,7 +359,7 @@ event bool DriverLeave(bool bForceLeave)
 	local Rotator ExitRotation;
 
 	// End:0x42
-	if(int(Role) < int(ROLE_Authority))
+	if(Role < ROLE_Authority)
 	{
 		WarnInternal("DriverLeave() called on client");
 		ScriptTrace();
@@ -739,7 +739,7 @@ event bool EncroachingOn(Actor Other)
 		bDeepEncroach = PointCheckComponent(CollisionComponent, P.Location, CheckExtent);
 	}
 	// End:0x353
-	if((((((Other == Instigator) && !bDeepEncroach) || Vehicle(Other) != none) || int(Other.Role) != int(ROLE_Authority)) || !Other.bCollideActors && !Other.bBlockActors) || bSlowEncroach && !bDeepEncroach)
+	if((((((Other == Instigator) && !bDeepEncroach) || Vehicle(Other) != none) || Other.Role != ROLE_Authority) || !Other.bCollideActors && !Other.bBlockActors) || bSlowEncroach && !bDeepEncroach)
 	{
 		// End:0x351
 		if((P.Velocity Dot (Location - P.Location)) > float(0))

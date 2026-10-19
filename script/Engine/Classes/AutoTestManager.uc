@@ -60,10 +60,10 @@ function InitializeOptions(string Options)
 	local string InOpt;
 
 	AutomatedPerfRemainingTime = 60 * WorldInfo.Game.TimeLimit;
-	bAutomatedPerfTesting = (WorldInfo.Game.ParseOption(Options, "AutomatedPerfTesting") ComplementEqual "1") || WorldInfo.Game.ParseOption(Options, "gAPT") ComplementEqual "1";
-	bCheckingForFragmentation = (WorldInfo.Game.ParseOption(Options, "CheckingForFragmentation") ComplementEqual "1") || WorldInfo.Game.ParseOption(Options, "gCFF") ComplementEqual "1";
-	bCheckingForMemLeaks = (WorldInfo.Game.ParseOption(Options, "CheckingForMemLeaks") ComplementEqual "1") || WorldInfo.Game.ParseOption(Options, "gCFML") ComplementEqual "1";
-	bDoingASentinelRun = (WorldInfo.Game.ParseOption(Options, "DoingASentinelRun") ComplementEqual "1") || WorldInfo.Game.ParseOption(Options, "gDASR") ComplementEqual "1";
+	bAutomatedPerfTesting = (WorldInfo.Game.ParseOption(Options, "AutomatedPerfTesting") ~= "1") || WorldInfo.Game.ParseOption(Options, "gAPT") ~= "1";
+	bCheckingForFragmentation = (WorldInfo.Game.ParseOption(Options, "CheckingForFragmentation") ~= "1") || WorldInfo.Game.ParseOption(Options, "gCFF") ~= "1";
+	bCheckingForMemLeaks = (WorldInfo.Game.ParseOption(Options, "CheckingForMemLeaks") ~= "1") || WorldInfo.Game.ParseOption(Options, "gCFML") ~= "1";
+	bDoingASentinelRun = (WorldInfo.Game.ParseOption(Options, "DoingASentinelRun") ~= "1") || WorldInfo.Game.ParseOption(Options, "gDASR") ~= "1";
 	SentinelTaskDescription = WorldInfo.Game.ParseOption(Options, "SentinelTaskDescription");
 	// End:0x3C0
 	if(SentinelTaskDescription == "")
@@ -226,10 +226,9 @@ function StartAutomatedMapTestTimerWorker()
 	if(WorldInfo != none)
 	{
 		LevelIdx = 0;
-		J0x1A:
 
 		// End:0xC6 [Loop If]
-		if(LevelIdx < WorldInfo.StreamingLevels.Length)
+		while(LevelIdx < WorldInfo.StreamingLevels.Length)
 		{
 			// End:0xB8
 			if(WorldInfo.StreamingLevels[LevelIdx].bHasLoadRequestPending == true)
@@ -238,8 +237,6 @@ function StartAutomatedMapTestTimerWorker()
 				return;
 			}
 			++LevelIdx;
-			// [Loop Continue]
-			goto J0x1A;
 		}
 		// End:0xDD
 		if(bCheckingForMemLeaks)
@@ -424,7 +421,7 @@ function bool CheckForSentinelRun()
 	{
 		LogInternal("DoingASentinelRun! task " $ SentinelTaskDescription);
 		// End:0x8C
-		if(SentinelTaskDescription ComplementEqual "TravelTheWorld")
+		if(SentinelTaskDescription ~= "TravelTheWorld")
 		{
 			WorldInfo.Game.DoTravelTheWorld();
 			return true;			
@@ -523,24 +520,20 @@ Begin:
 
 	SentinelPC.Sentinel_PreAcquireTravelTheWorldPoints();
 	SentinelIdx = 0;
-	J0x2A:
 
 	// End:0x11A [Loop If]
-	if(SentinelIdx < WorldInfo.StreamingLevels.Length)
+	while(SentinelIdx < WorldInfo.StreamingLevels.Length)
 	{
 		LogInternal("StreamLevelOut: " $ string(WorldInfo.StreamingLevels[SentinelIdx].PackageName));
 		SentinelPC.ClientUpdateLevelStreamingStatus(WorldInfo.StreamingLevels[SentinelIdx].PackageName, false, false, true);
 		++SentinelIdx;
-		// [Loop Continue]
-		goto J0x2A;
 	}
 	Sleep(10.0000000);
 	WorldInfo.ForceGarbageCollection(true);
 	SentinelIdx = 0;
-	J0x14D:
 
 	// End:0x421 [Loop If]
-	if(SentinelIdx < WorldInfo.StreamingLevels.Length)
+	while(SentinelIdx < WorldInfo.StreamingLevels.Length)
 	{
 		LogInternal("Gathering locations for: " $ string(WorldInfo.StreamingLevels[SentinelIdx].PackageName));
 		SentinelPC.ClientUpdateLevelStreamingStatus(WorldInfo.StreamingLevels[SentinelIdx].PackageName, true, true, true);
@@ -556,8 +549,6 @@ Begin:
 		Sleep(3.0000000);
 		WorldInfo.ForceGarbageCollection(true);
 		++SentinelIdx;
-		// [Loop Continue]
-		goto J0x14D;
 	}
 	// End:0x5BA
 	if(WorldInfo.StreamingLevels.Length == 0)
@@ -575,10 +566,9 @@ Begin:
 	LogInternal((WorldInfo.GetMapName() $ " COMPLETED LEVEL INTEROGATION!! Total TravelPoints: ") $ string(SentinelTravelArray.Length));
 	SetIncrementsForLoops(float(SentinelTravelArray.Length));
 	SentinelIdx = 0;
-	J0x644:
 
 	// End:0x780 [Loop If]
-	if(SentinelIdx < WorldInfo.StreamingLevels.Length)
+	while(SentinelIdx < WorldInfo.StreamingLevels.Length)
 	{
 		// End:0x772
 		if(LevelStreamingAlwaysLoaded(WorldInfo.StreamingLevels[SentinelIdx]) != none)
@@ -587,8 +577,6 @@ Begin:
 			SentinelPC.ClientUpdateLevelStreamingStatus(WorldInfo.StreamingLevels[SentinelIdx].PackageName, true, true, true);
 		}
 		++SentinelIdx;
-		// [Loop Continue]
-		goto J0x644;
 	}
 	SentinelPC.bIsUsingStreamingVolumes = true;
 	Sleep(10.0000000);
@@ -598,42 +586,37 @@ Begin:
 	LogInternal("Starting Traversal");
 	LogInternal("   SentinelTravelArray.length " $ string(SentinelTravelArray.Length));
 	SentinelNavigationIdx = 0;
-	J0x83B:
 
 	// End:0xDA5 [Loop If]
-	if(SentinelNavigationIdx < SentinelTravelArray.Length)
+	while(SentinelNavigationIdx < SentinelTravelArray.Length)
 	{
 		LogInternal(((("Going to:" @ string(SentinelTravelArray[SentinelNavigationIdx])) @ string(SentinelNavigationIdx)) $ " of ") $ string(SentinelTravelArray.Length));
 		SentinelPC.SetLocation(SentinelTravelArray[SentinelNavigationIdx]);
 		SentinelPC.SetRotation(rot(0, 0, 0));
 		Sleep(0.5000000);
-		J0x8F3:
-
-		bSentinelStreamingLevelStillLoading = false;
-		SentinelIdx = 0;
-		J0x90A:
-
-		// End:0x9CB [Loop If]
-		if(SentinelIdx < WorldInfo.StreamingLevels.Length)
+		do
 		{
-			// End:0x9BD
-			if(WorldInfo.StreamingLevels[SentinelIdx].bHasLoadRequestPending == true)
-			{
-				LogInternal("levels not streamed in yet sleeping 1s");
-				bSentinelStreamingLevelStillLoading = true;
-				Sleep(1.0000000);
-				// [Explicit Break]
-				goto J0x9CB;
-			}
-			++SentinelIdx;
-			// [Loop Continue]
-			goto J0x90A;
-		}
-		J0x9CB:
 
-		// End:0x8F3
-		if(!(bSentinelStreamingLevelStillLoading == false))
-			goto J0x8F3;
+			bSentinelStreamingLevelStillLoading = false;
+			SentinelIdx = 0;
+
+			// End:0x9CB [Loop If]
+			while(SentinelIdx < WorldInfo.StreamingLevels.Length)
+			{
+				// End:0x9BD
+				if(WorldInfo.StreamingLevels[SentinelIdx].bHasLoadRequestPending == true)
+				{
+					LogInternal("levels not streamed in yet sleeping 1s");
+					bSentinelStreamingLevelStillLoading = true;
+					Sleep(1.0000000);
+					break;
+				}
+				++SentinelIdx;
+			}
+
+			// End:0x8F3
+		}
+		until(bSentinelStreamingLevelStillLoading == false);
 		WorldInfo.ForceGarbageCollection(true);
 		Sleep(1.0000000);
 		// End:0xA34
@@ -649,32 +632,26 @@ Begin:
 		SentinelPC.ConsoleCommand("stat streaming");
 		Sleep(1.0000000);
 		SentinelIdx = 0;
-		J0xB78:
 
 		// End:0xC27 [Loop If]
-		if(SentinelIdx < 8)
+		while(SentinelIdx < 8)
 		{
 			SentinelPC.SetRotation(rot(0, 1, 0) * float(8192 * SentinelIdx));
 			Sleep(1.5000000);
 			DoSentinel_ViewDependentMemoryAtSpecificLocation(SentinelPC.Location, SentinelPC.Rotation);
 			SentinelIdx += NumRotationsIncrement;
-			// [Loop Continue]
-			goto J0xB78;
 		}		
 		SentinelPC.ConsoleCommand("stat scenerendering");		
 		SentinelPC.ConsoleCommand("stat streaming");
 		SentinelIdx = 0;
-		J0xCA9:
 
 		// End:0xD58 [Loop If]
-		if(SentinelIdx < 8)
+		while(SentinelIdx < 8)
 		{
 			SentinelPC.SetRotation(rot(0, 1, 0) * float(8192 * SentinelIdx));
 			Sleep(1.5000000);
 			DoSentinel_PerfAtSpecificLocation(SentinelPC.Location, SentinelPC.Rotation);
 			SentinelIdx += NumRotationsIncrement;
-			// [Loop Continue]
-			goto J0xCA9;
 		}
 		// End:0xD8D
 		foreach CommandsToRunAtEachTravelTheWorldNode(CommandStringToExec)
@@ -682,8 +659,6 @@ Begin:
 			ConsoleCommand(CommandStringToExec);			
 		}		
 		SentinelNavigationIdx += TravelPointsIncrement;
-		// [Loop Continue]
-		goto J0x83B;
 	}	
 	ConsoleCommand("MemLeakCheck");
 	LogInternal("COMPLETED!!!!!!!");	
@@ -692,32 +667,30 @@ Begin:
 }
 
 state SentinelHandleCauseEventCommand
-{	J0x00:
-	bSentinelStreamingLevelStillLoading = false;
-	SentinelIdx = 0;
-	J0x17:
-
-	// End:0xD8 [Loop If]
-	if(SentinelIdx < WorldInfo.StreamingLevels.Length)
+{
+	Begin:
+	do
 	{
-		// End:0xCA
-		if(WorldInfo.StreamingLevels[SentinelIdx].bHasLoadRequestPending == true)
-		{
-			LogInternal("levels not streamed in yet sleeping 1s");
-			bSentinelStreamingLevelStillLoading = true;
-			Sleep(1.0000000);
-			// [Explicit Break]
-			goto J0xD8;
-		}
-		++SentinelIdx;
-		// [Loop Continue]
-		goto J0x17;
-	}
-	J0xD8:
+		bSentinelStreamingLevelStillLoading = false;
+		SentinelIdx = 0;
 
-	// End:0x00
-	if(!(bSentinelStreamingLevelStillLoading == false))
-		goto J0x00;
+		// End:0xD8 [Loop If]
+		while(SentinelIdx < WorldInfo.StreamingLevels.Length)
+		{
+			// End:0xCA
+			if(WorldInfo.StreamingLevels[SentinelIdx].bHasLoadRequestPending == true)
+			{
+				LogInternal("levels not streamed in yet sleeping 1s");
+				bSentinelStreamingLevelStillLoading = true;
+				Sleep(1.0000000);
+				break;
+			}
+			++SentinelIdx;
+		}
+
+		// End:0x00
+	}
+	until(bSentinelStreamingLevelStillLoading == false);
 	// End:0x1BE
 	if(WorldInfo.Game.CauseEventCommand != "")
 	{

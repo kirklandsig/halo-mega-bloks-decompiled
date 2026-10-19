@@ -20,7 +20,7 @@ function StartMatch()
 event InitGame(string Options, out string ErrorMessage)
 {
 	// End:0x88
-	if((ParseOption(Options, "PerformUnitTests")) ComplementEqual "1")
+	if((ParseOption(Options, "PerformUnitTests")) ~= "1")
 	{
 		// End:0x60
 		if(MyAutoTestManager == none)

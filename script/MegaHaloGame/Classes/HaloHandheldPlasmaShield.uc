@@ -45,7 +45,7 @@ defaultproperties
 		Animations=AnimNodeSeq0
 		ReplacementPrimitive=none
 		LightEnvironment=DynamicLightEnvironmentComponent'MegaHaloGame.Default__HaloHandheldPlasmaShield.MyLightEnvironment'
-		RBChannel=ERBCollisionChannel.RBCC_Nothing
+		RBChannel=RBCC_Nothing
 		Scale=1.5500000
 	end object
 	SkeletalMeshComponent=SkeletalMeshComponent0
@@ -66,7 +66,7 @@ defaultproperties
 	Components[0]=MyLightEnvironment
 	Components[1]=SkeletalMeshComponent0
 	Components[2]=FaceAudioComponent
-	CollisionType=ECollisionType.COLLIDE_BlockWeapons
+	CollisionType=COLLIDE_BlockWeapons
 	bNoDelete=false
 	bCollideActors=true
 	CollisionComponent=SkeletalMeshComponent0

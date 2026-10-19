@@ -356,18 +356,18 @@ defaultproperties
 	// Reference: CameraShake'MegaHaloGame.Default__HaloWeapon_Pistol.ChargeShotCameraShake1'
 	begin object name="ChargeShotCameraShake1" class=Engine.CameraShake
 		OscillationDuration=0.2000000
-		RotOscillation=(Pitch=(Amplitude=7500.0000000,Frequency=1.0000000,InitialOffset=EInitialOscillatorOffset.EOO_OffsetZero),Yaw=(Amplitude=1500.0000000,Frequency=2.0000000))
+		RotOscillation=(Pitch=(Amplitude=7500.0000000,Frequency=1.0000000,InitialOffset=EOO_OffsetZero),Yaw=(Amplitude=1500.0000000,Frequency=2.0000000))
 	end object
 	ChargeShotCameraShake=ChargeShotCameraShake1
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloWeapon_Pistol.ChargeWaveform1'
 	begin object name="ChargeWaveform1" class=Engine.ForceFeedbackWaveform
 		bIsLooping=true
-		Samples[0]=(LeftAmplitude=60,RightAmplitude=60,LeftFunction=EWaveformFunction.WF_Noise,RightFunction=EWaveformFunction.WF_Noise,Duration=0.2000000)
+		Samples[0]=(LeftAmplitude=60,RightAmplitude=60,LeftFunction=WF_Noise,RightFunction=WF_Noise,Duration=0.2000000)
 	end object
 	ChargeWaveform=ChargeWaveform1
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloWeapon_Pistol.ChargeShotWaveform1'
 	begin object name="ChargeShotWaveform1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=90,RightAmplitude=90,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=1.0000000)
+		Samples[0]=(LeftAmplitude=90,RightAmplitude=90,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=1.0000000)
 	end object
 	ChargeShotWaveform=ChargeShotWaveform1
 	HUDIcon="plasmaPistol"
@@ -395,19 +395,19 @@ defaultproperties
 	RelaxPawnAnimName="Relax_Pistol"
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloWeapon_Pistol.FireWaveform1'
 	begin object name="FireWaveform1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=30,RightAmplitude=30,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=0.1500000)
+		Samples[0]=(LeftAmplitude=30,RightAmplitude=30,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=0.1500000)
 	end object
 	FireWaveform=FireWaveform1
 	// Reference: ForceFeedbackWaveform'MegaHaloGame.Default__HaloWeapon_Pistol.MeleeWaveform1'
 	begin object name="MeleeWaveform1" class=Engine.ForceFeedbackWaveform
-		Samples[0]=(LeftAmplitude=60,RightAmplitude=60,LeftFunction=EWaveformFunction.WF_LinearDecreasing,RightFunction=EWaveformFunction.WF_LinearDecreasing,Duration=0.2000000)
+		Samples[0]=(LeftAmplitude=60,RightAmplitude=60,LeftFunction=WF_LinearDecreasing,RightFunction=WF_LinearDecreasing,Duration=0.2000000)
 	end object
 	MeleeWaveform=MeleeWaveform1
 	MeleeFeedbackDelay=0.1000000
 	// Reference: CameraShake'MegaHaloGame.Default__HaloWeapon_Pistol.FireCameraShake1'
 	begin object name="FireCameraShake1" class=Engine.CameraShake
 		OscillationDuration=0.1000000
-		RotOscillation=(Pitch=(Amplitude=10.0000000,Frequency=1.0000000,InitialOffset=EInitialOscillatorOffset.EOO_OffsetZero),Yaw=(Amplitude=10.0000000,Frequency=1.0000000,InitialOffset=EInitialOscillatorOffset.EOO_OffsetZero))
+		RotOscillation=(Pitch=(Amplitude=10.0000000,Frequency=1.0000000,InitialOffset=EOO_OffsetZero),Yaw=(Amplitude=10.0000000,Frequency=1.0000000,InitialOffset=EOO_OffsetZero))
 	end object
 	FireCameraShake=FireCameraShake1
 	// Reference: CameraShake'MegaHaloGame.Default__HaloWeapon_Pistol.MeleeCameraShake1'

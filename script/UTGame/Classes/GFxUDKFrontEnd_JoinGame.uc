@@ -1103,7 +1103,7 @@ function OnGameTypeChanged(optional int PlayerIndex)
 	if(GameTypeClassName != "")
 	{
 		// End:0x5DC
-		if((GameTypeClassName ComplementEqual "All Gametypes") || GameTypeClassName ComplementEqual "Unlisted Gametypes")
+		if((GameTypeClassName ~= "All Gametypes") || GameTypeClassName ~= "Unlisted Gametypes")
 		{
 			I = SearchDataStore.FindSearchConfigurationIndex('UTGameSearchCustom');
 			// End:0x59B
@@ -1112,7 +1112,7 @@ function OnGameTypeChanged(optional int PlayerIndex)
 				CustomSearch = UTGameSearchCustom(SearchDataStore.GameSearchCfgList[I].Search);
 				CustomSearch.ResetFilters();
 				// End:0x56F
-				if(GameTypeClassName ComplementEqual "Unlisted Gametypes")
+				if(GameTypeClassName ~= "Unlisted Gametypes")
 				{
 					// End:0x521
 					if(Class'Engine.GameEngine'.static.GetOnlineSubsystem().Class.Name == 'OnlineSubsystemSteamworks')

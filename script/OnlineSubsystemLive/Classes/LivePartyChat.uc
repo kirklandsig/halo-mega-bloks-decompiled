@@ -39,7 +39,7 @@ delegate OnSendPartyGameInvitesComplete(bool bWasSuccessful)
 function AddSendPartyGameInvitesCompleteDelegate(byte LocalUserNum, delegate<OnSendPartyGameInvitesComplete> SendPartyGameInvitesCompleteDelegate)
 {
 	// End:0x9E
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PartyChatDelegates[int(LocalUserNum)].GameInviteDelegates.Find(SendPartyGameInvitesCompleteDelegate) == -1)
@@ -55,7 +55,7 @@ function ClearSendPartyGameInvitesCompleteDelegate(byte LocalUserNum, delegate<O
 	local int RemoveIndex;
 
 	// End:0xB0
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PartyChatDelegates[int(LocalUserNum)].GameInviteDelegates.Find(SendPartyGameInvitesCompleteDelegate);
 		// End:0xB0
@@ -81,7 +81,7 @@ delegate OnPartyMemberListChanged(bool bJoinedOrLeft, string PlayerName, UniqueN
 function AddPartyMemberListChangedDelegate(byte LocalUserNum, delegate<OnPartyMemberListChanged> PartyMemberListChangedDelegate)
 {
 	// End:0x9E
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PartyChatDelegates[int(LocalUserNum)].PartyMemberDelegates.Find(PartyMemberListChangedDelegate) == -1)
@@ -97,7 +97,7 @@ function ClearPartyMemberListChangedDelegate(byte LocalUserNum, delegate<OnParty
 	local int RemoveIndex;
 
 	// End:0xB0
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PartyChatDelegates[int(LocalUserNum)].PartyMemberDelegates.Find(PartyMemberListChangedDelegate);
 		// End:0xB0
@@ -117,7 +117,7 @@ delegate OnPartyMembersInfoChanged(string PlayerName, UniqueNetId PlayerID, int 
 function AddPartyMembersInfoChangedDelegate(byte LocalUserNum, delegate<OnPartyMembersInfoChanged> PartyMembersInfoChangedDelegate)
 {
 	// End:0x9E
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		// End:0x9E
 		if(PartyChatDelegates[int(LocalUserNum)].PartyMemberInfoDelegates.Find(PartyMembersInfoChangedDelegate) == -1)
@@ -133,7 +133,7 @@ function ClearPartyMembersInfoChangedDelegate(byte LocalUserNum, delegate<OnPart
 	local int RemoveIndex;
 
 	// End:0xB0
-	if((int(LocalUserNum) >= int(0)) && int(LocalUserNum) < int(4))
+	if((int(LocalUserNum) >= 0) && int(LocalUserNum) < 4)
 	{
 		RemoveIndex = PartyChatDelegates[int(LocalUserNum)].PartyMemberInfoDelegates.Find(PartyMembersInfoChangedDelegate);
 		// End:0xB0

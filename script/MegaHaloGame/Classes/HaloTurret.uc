@@ -1005,7 +1005,7 @@ simulated state DyingVehicle
 
 defaultproperties
 {
-	PawnType=PlayerPawnType.PPT_Turret
+	PawnType=PPT_Turret
 	AttackHorizontalRange=5000.0000000
 	AttackVerticalRange=5000.0000000
 	TargetInterpTime=5.0000000
@@ -1092,7 +1092,7 @@ defaultproperties
 		MaxAIHeat=40.0000000
 		OutterThreatRadius=10000.0000000
 		fAITargetHeight=1000.0000000
-		AITargetType=HaloTargetType.TARGET_AGGRESSIVE_STATIONARY
+		AITargetType=TARGET_AGGRESSIVE_STATIONARY
 		bAITargetable=true
 	end object
 	Components[4]=targetableComponent

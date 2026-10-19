@@ -221,7 +221,7 @@ defaultproperties
 	begin object name="targetableComponent" class=UDKBase.UDKTargetableComponent
 		InnerThreatRadius=2000.0000000
 		OutterThreatRadius=5000.0000000
-		AITargetType=HaloTargetType.TARGET_PASSIVE_SECONDARY
+		AITargetType=TARGET_PASSIVE_SECONDARY
 		bAITargetable=true
 	end object
 	Components[0]=targetableComponent

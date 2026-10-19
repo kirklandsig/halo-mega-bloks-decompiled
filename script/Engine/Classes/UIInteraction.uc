@@ -146,7 +146,7 @@ static final event OnlineSubsystem.ELoginStatus GetLoginStatus(int ControllerId)
 		{
 			PlayerInterface = OnlineSub.PlayerInterface;
 			// End:0xD4
-			if(NotEqual_InterfaceInterface(PlayerInterface, OnlinePlayerInterface(none)))
+			if(NotEqual_InterfaceInterface(PlayerInterface, none))
 			{
 				Result = PlayerInterface.GetLoginStatus(byte(ControllerId));
 			}
@@ -194,7 +194,7 @@ static final event bool HasLinkConnection()
 	{
 		SystemInterface = OnlineSub.SystemInterface;
 		// End:0xAB
-		if(NotEqual_InterfaceInterface(SystemInterface, OnlineSystemInterface(none)))
+		if(NotEqual_InterfaceInterface(SystemInterface, none))
 		{
 			bResult = SystemInterface.HasLinkConnection();
 		}
@@ -209,7 +209,7 @@ static final event bool IsLoggedIn(int ControllerId, optional bool bRequireOnlin
 	local OnlineSubsystem.ELoginStatus LoginStatus;
 
 	LoginStatus = GetLoginStatus(ControllerId);
-	bResult = (int(LoginStatus) == int(2)) || (int(LoginStatus) == int(1)) && !bRequireOnlineLogin;
+	bResult = (int(LoginStatus) == 2) || (int(LoginStatus) == 1) && !bRequireOnlineLogin;
 	return bResult;
 	//return ReturnValue;	
 }
@@ -244,7 +244,7 @@ static final function int GetNumGuestsLoggedIn()
 
 	OnlineSub = Class'Engine.GameEngine'.static.GetOnlineSubsystem();
 	// End:0xE6
-	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, OnlinePlayerInterface(none)))
+	if((OnlineSub != none) && NotEqual_InterfaceInterface(OnlineSub.PlayerInterface, none))
 	{
 		ControllerId = 0;
 		J0x7A:
@@ -278,7 +278,7 @@ static final function bool IsGamepadConnected(int ControllerId)
 	{
 		SystemInterface = OnlineSub.SystemInterface;
 		// End:0xB4
-		if(NotEqual_InterfaceInterface(SystemInterface, OnlineSystemInterface(none)))
+		if(NotEqual_InterfaceInterface(SystemInterface, none))
 		{
 			bResult = SystemInterface.IsControllerConnected(ControllerId);
 		}
@@ -334,7 +334,7 @@ static final event OnlineSubsystem.ENATType GetNATType()
 	{
 		SystemInterface = OnlineSub.SystemInterface;
 		// End:0xAA
-		if(NotEqual_InterfaceInterface(SystemInterface, OnlineSystemInterface(none)))
+		if(NotEqual_InterfaceInterface(SystemInterface, none))
 		{
 			Result = SystemInterface.GetNATType();
 		}
@@ -353,7 +353,7 @@ function NotifyGameSessionEnded()
 	// End:0x5C
 	if(DataStoreManager != none)
 	{
-		DataStoreManager.super(DataStoreClient).NotifyGameSessionEnded();
+		DataStoreManager.NotifyGameSessionEnded();
 	}
 	//return;	
 }

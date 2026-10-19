@@ -36,5 +36,5 @@ defaultproperties
 	end object
 	LightingComponent=LightingComponent0
 	Components[0]=LightingComponent0
-	CollisionType=ECollisionType.COLLIDE_CustomDefault
+	CollisionType=COLLIDE_CustomDefault
 }
