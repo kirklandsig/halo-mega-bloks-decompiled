@@ -4,7 +4,40 @@
 
 // Out-of-line copies, as in retail.
 #pragma inline_depth(0)
+extern decltype(&ACCSController::execActuallySetDesiredPosition) const EmitACCSController_execActuallySetDesiredPosition = &ACCSController::execActuallySetDesiredPosition;
+extern decltype(&ACCSController::execCalcAccuracyAngles) const EmitACCSController_execCalcAccuracyAngles = &ACCSController::execCalcAccuracyAngles;
+extern decltype(&ACCSController::execDisableBrain) const EmitACCSController_execDisableBrain = &ACCSController::execDisableBrain;
+extern decltype(&ACCSController::execSetDesiredPosition) const EmitACCSController_execSetDesiredPosition = &ACCSController::execSetDesiredPosition;
+extern decltype(&ACCSController::execSetInitialCover) const EmitACCSController_execSetInitialCover = &ACCSController::execSetInitialCover;
+extern decltype(&ACCSController::execTakePossession) const EmitACCSController_execTakePossession = &ACCSController::execTakePossession;
 extern UClass *(*const EmitAUDKCoverStaticClass)() = &AUDKCover::StaticClass;
+extern decltype(&AUDKCover::execAddCoverLink) const EmitAUDKCover_execAddCoverLink = &AUDKCover::execAddCoverLink;
+extern decltype(&AUDKCover::execKillCoverLinks) const EmitAUDKCover_execKillCoverLinks = &AUDKCover::execKillCoverLinks;
+extern decltype(&AUDKCover::execRemoveCoverLink) const EmitAUDKCover_execRemoveCoverLink = &AUDKCover::execRemoveCoverLink;
+extern decltype(&AUSSPawn::execCanAim) const EmitAUSSPawn_execCanAim = &AUSSPawn::execCanAim;
+extern decltype(&AUSSPawn::execCoverPoseTransitionOver) const EmitAUSSPawn_execCoverPoseTransitionOver = &AUSSPawn::execCoverPoseTransitionOver;
+extern decltype(&AUSSPawn::execGetAlertness) const EmitAUSSPawn_execGetAlertness = &AUSSPawn::execGetAlertness;
+extern decltype(&AUSSPawn::execGetDefaultBehaviorTree) const EmitAUSSPawn_execGetDefaultBehaviorTree = &AUSSPawn::execGetDefaultBehaviorTree;
+extern decltype(&AUSSPawn::execGetIsPanicking) const EmitAUSSPawn_execGetIsPanicking = &AUSSPawn::execGetIsPanicking;
+extern decltype(&AUSSPawn::execGetMovementType) const EmitAUSSPawn_execGetMovementType = &AUSSPawn::execGetMovementType;
+extern decltype(&AUSSPawn::execGetSpeed) const EmitAUSSPawn_execGetSpeed = &AUSSPawn::execGetSpeed;
+extern decltype(&AUSSPawn::execGetYellingDistance) const EmitAUSSPawn_execGetYellingDistance = &AUSSPawn::execGetYellingDistance;
+extern decltype(&AUSSPawn::execIsCrouched) const EmitAUSSPawn_execIsCrouched = &AUSSPawn::execIsCrouched;
+extern decltype(&AUSSPawn::execIsInCover) const EmitAUSSPawn_execIsInCover = &AUSSPawn::execIsInCover;
+extern decltype(&AUSSPawn::execMoveToInCover) const EmitAUSSPawn_execMoveToInCover = &AUSSPawn::execMoveToInCover;
+extern decltype(&AUSSPawn::execPostureTransitionOver) const EmitAUSSPawn_execPostureTransitionOver = &AUSSPawn::execPostureTransitionOver;
+extern decltype(&AUSSPawn::execSetAlertness) const EmitAUSSPawn_execSetAlertness = &AUSSPawn::execSetAlertness;
+extern decltype(&AUSSPawn::execSetAlertnessDefault) const EmitAUSSPawn_execSetAlertnessDefault = &AUSSPawn::execSetAlertnessDefault;
+extern decltype(&AUSSPawn::execSetCoverPose) const EmitAUSSPawn_execSetCoverPose = &AUSSPawn::execSetCoverPose;
+extern decltype(&AUSSPawn::execSetCrouched) const EmitAUSSPawn_execSetCrouched = &AUSSPawn::execSetCrouched;
+extern decltype(&AUSSPawn::execSetDefaultBehaviorTree) const EmitAUSSPawn_execSetDefaultBehaviorTree = &AUSSPawn::execSetDefaultBehaviorTree;
+extern decltype(&AUSSPawn::execSetIsPanicking) const EmitAUSSPawn_execSetIsPanicking = &AUSSPawn::execSetIsPanicking;
+extern decltype(&AUSSPawn::execSetMovementSpeedDefault) const EmitAUSSPawn_execSetMovementSpeedDefault = &AUSSPawn::execSetMovementSpeedDefault;
+extern decltype(&AUSSPawn::execSetMovementType) const EmitAUSSPawn_execSetMovementType = &AUSSPawn::execSetMovementType;
+extern decltype(&AUSSPawn::execSetMovementTypeDefault) const EmitAUSSPawn_execSetMovementTypeDefault = &AUSSPawn::execSetMovementTypeDefault;
+extern decltype(&AUSSPawn::execSetNoCoverPose) const EmitAUSSPawn_execSetNoCoverPose = &AUSSPawn::execSetNoCoverPose;
+extern decltype(&AUSSPawn::execSetPostureDefault) const EmitAUSSPawn_execSetPostureDefault = &AUSSPawn::execSetPostureDefault;
+extern decltype(&AUSSPawn::execSetSpeed) const EmitAUSSPawn_execSetSpeed = &AUSSPawn::execSetSpeed;
 extern UClass *(*const EmitUCCSAFEncircleTargetStaticClass)() = &UCCSAFEncircleTarget::StaticClass;
 extern UClass *(*const EmitUCCSAFEnterCoverStaticClass)() = &UCCSAFEnterCover::StaticClass;
 extern UClass *(*const EmitUCCSAFExitCoverStaticClass)() = &UCCSAFExitCover::StaticClass;
@@ -19,6 +52,7 @@ extern UClass *(*const EmitUCCSAFOrientTowardStaticClass)() = &UCCSAFOrientTowar
 extern UClass *(*const EmitUCCSAFStrafeTargetStaticClass)() = &UCCSAFStrafeTarget::StaticClass;
 extern UClass *(*const EmitUCCSAFStrafeToStaticClass)() = &UCCSAFStrafeTo::StaticClass;
 extern UClass *(*const EmitUCCSATAnimNodeSlotStaticClass)() = &UCCSATAnimNodeSlot::StaticClass;
+extern decltype(&UCCSATAnimNodeSlot::execActivateChild) const EmitUCCSATAnimNodeSlot_execActivateChild = &UCCSATAnimNodeSlot::execActivateChild;
 extern UClass *(*const EmitUCCSActorFactoryStaticClass)() = &UCCSActorFactory::StaticClass;
 extern UClass *(*const EmitUCCSBTEncircleTargetStaticClass)() = &UCCSBTEncircleTarget::StaticClass;
 extern UClass *(*const EmitUCCSBTEnemyAwareStaticClass)() = &UCCSBTEnemyAware::StaticClass;
@@ -59,6 +93,24 @@ extern UClass *(*const EmitUCCSBTTimeSinceThreatChangedStaticClass)() = &UCCSBTT
 extern UClass *(*const EmitUCCSBTTimeSinceThreatenedStaticClass)() = &UCCSBTTimeSinceThreatened::StaticClass;
 extern UClass *(*const EmitUCCSBTVisibleToPlayerCameraStaticClass)() = &UCCSBTVisibleToPlayerCamera::StaticClass;
 extern UClass *(*const EmitUCCSBTWaitInCoverStaticClass)() = &UCCSBTWaitInCover::StaticClass;
+extern decltype(&UCCSBlackboard::execClearMoveCommand) const EmitUCCSBlackboard_execClearMoveCommand = &UCCSBlackboard::execClearMoveCommand;
+extern decltype(&UCCSBlackboard::execFlagClosestVisibleEnemyAsUsed) const EmitUCCSBlackboard_execFlagClosestVisibleEnemyAsUsed = &UCCSBlackboard::execFlagClosestVisibleEnemyAsUsed;
+extern decltype(&UCCSBlackboard::execFlagCoversAsUsed) const EmitUCCSBlackboard_execFlagCoversAsUsed = &UCCSBlackboard::execFlagCoversAsUsed;
+extern decltype(&UCCSBlackboard::execFlagHealthAsUsed) const EmitUCCSBlackboard_execFlagHealthAsUsed = &UCCSBlackboard::execFlagHealthAsUsed;
+extern decltype(&UCCSBlackboard::execFlagHeatGeneratedAsUsed) const EmitUCCSBlackboard_execFlagHeatGeneratedAsUsed = &UCCSBlackboard::execFlagHeatGeneratedAsUsed;
+extern decltype(&UCCSBlackboard::execFlagTargetsAsUsed) const EmitUCCSBlackboard_execFlagTargetsAsUsed = &UCCSBlackboard::execFlagTargetsAsUsed;
+extern decltype(&UCCSBlackboard::execFlagTetherAsUsed) const EmitUCCSBlackboard_execFlagTetherAsUsed = &UCCSBlackboard::execFlagTetherAsUsed;
+extern decltype(&UCCSBlackboard::execFlagThreatDirectionAsUsed) const EmitUCCSBlackboard_execFlagThreatDirectionAsUsed = &UCCSBlackboard::execFlagThreatDirectionAsUsed;
+extern decltype(&UCCSBlackboard::execFlagThreatLocationAsUsed) const EmitUCCSBlackboard_execFlagThreatLocationAsUsed = &UCCSBlackboard::execFlagThreatLocationAsUsed;
+extern decltype(&UCCSBlackboard::execGetCurrentTether) const EmitUCCSBlackboard_execGetCurrentTether = &UCCSBlackboard::execGetCurrentTether;
+extern decltype(&UCCSBlackboard::execGetHealth) const EmitUCCSBlackboard_execGetHealth = &UCCSBlackboard::execGetHealth;
+extern decltype(&UCCSBlackboard::execGetHeatGenerated) const EmitUCCSBlackboard_execGetHeatGenerated = &UCCSBlackboard::execGetHeatGenerated;
+extern decltype(&UCCSBlackboard::execGetThreatDirection) const EmitUCCSBlackboard_execGetThreatDirection = &UCCSBlackboard::execGetThreatDirection;
+extern decltype(&UCCSBlackboard::execGetThreatLocation) const EmitUCCSBlackboard_execGetThreatLocation = &UCCSBlackboard::execGetThreatLocation;
+extern decltype(&UCCSBlackboard::execGetThreatType) const EmitUCCSBlackboard_execGetThreatType = &UCCSBlackboard::execGetThreatType;
+extern decltype(&UCCSBlackboard::execSetCurrentTether) const EmitUCCSBlackboard_execSetCurrentTether = &UCCSBlackboard::execSetCurrentTether;
+extern decltype(&UCCSBlackboard::execSetHealth) const EmitUCCSBlackboard_execSetHealth = &UCCSBlackboard::execSetHealth;
+extern decltype(&UCCSBlackboard::execSetHeatGenerated) const EmitUCCSBlackboard_execSetHeatGenerated = &UCCSBlackboard::execSetHeatGenerated;
 extern UClass *(*const EmitUCCSCoverStaticClass)() = &UCCSCover::StaticClass;
 extern UClass *(*const EmitUCCSPawnStaticClass)() = &UCCSPawn::StaticClass;
 extern UClass *(*const EmitUCCSSystemConfigStaticClass)() = &UCCSSystemConfig::StaticClass;
@@ -73,6 +125,7 @@ extern void (*const EmitUHaloAnimBlendByForwardMomentumInternalConstructor)(void
 extern void *(*const EmitUHaloAnimBlendByJumpTypeNew)(const unsigned int, EInternal *) = &UHaloAnimBlendByJumpType::operator new;
 extern UClass *(*const EmitUHaloAnimBlendByJumpTypeStaticClass)() = &UHaloAnimBlendByJumpType::StaticClass;
 extern void (*const EmitUHaloAnimBlendByJumpTypeInternalConstructor)(void *) = &UHaloAnimBlendByJumpType::InternalConstructor;
+extern decltype(&UHaloAnimBlendByJumpType::execOnChangeJumpType) const EmitUHaloAnimBlendByJumpType_execOnChangeJumpType = &UHaloAnimBlendByJumpType::execOnChangeJumpType;
 extern void *(*const EmitUHaloAnimBlendByPhysicsNew)(const unsigned int, EInternal *) = &UHaloAnimBlendByPhysics::operator new;
 extern UClass *(*const EmitUHaloAnimBlendByPhysicsStaticClass)() = &UHaloAnimBlendByPhysics::StaticClass;
 extern void (*const EmitUHaloAnimBlendByPhysicsInternalConstructor)(void *) = &UHaloAnimBlendByPhysics::InternalConstructor;
@@ -83,6 +136,7 @@ extern void *(*const EmitUHaloAnimNodeCopyBoneTranslationNew)(const unsigned int
 extern UClass *(*const EmitUHaloAnimNodeCopyBoneTranslationStaticClass)() = &UHaloAnimNodeCopyBoneTranslation::StaticClass;
 extern void (*const EmitUHaloAnimNodeCopyBoneTranslationInternalConstructor)(void *) = &UHaloAnimNodeCopyBoneTranslation::InternalConstructor;
 extern UClass *(*const EmitUHaloBTKamikazeStaticClass)() = &UHaloBTKamikaze::StaticClass;
+extern decltype(&UUDKTargetableComponent::execBeginDeath) const EmitUUDKTargetableComponent_execBeginDeath = &UUDKTargetableComponent::execBeginDeath;
 extern UClass *(*const EmitUUSSATBlendByAlertnessStaticClass)() = &UUSSATBlendByAlertness::StaticClass;
 extern UClass *(*const EmitUUSSATBlendByCoverStaticClass)() = &UUSSATBlendByCover::StaticClass;
 extern UClass *(*const EmitUUSSATBlendByCoverPoseStaticClass)() = &UUSSATBlendByCoverPose::StaticClass;
@@ -90,8 +144,85 @@ extern UClass *(*const EmitUUSSATBlendByMoveStaticClass)() = &UUSSATBlendByMove:
 extern UClass *(*const EmitUUSSATBlendByPostureStaticClass)() = &UUSSATBlendByPosture::StaticClass;
 #pragma inline_depth()
 
+// @retail 0x833753E0
+// ACCSController::execActuallySetDesiredPosition (in the header)
+// @retail 0x83375470
+// ACCSController::execCalcAccuracyAngles (in the header)
+// @retail 0x833755B0
+// ACCSController::execDisableBrain (in the header)
+// @retail 0x8338DEC8
+// ACCSController::execRemoveState (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x83375350
+// ACCSController::execSetDesiredPosition (in the header)
+// @retail 0x83375520
+// ACCSController::execSetInitialCover (in the header)
+// @retail 0x8338DE30
+// ACCSController::execSetState (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x83375500
+// ACCSController::execTakePossession (in the header)
+// @retail 0x8338DF60
+// ACCSController::execTriggerEvent (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+
 // @retail 0x83376790
 // AUDKCover::StaticClass (in the header)
+// @retail 0x83376650
+// AUDKCover::execAddCoverLink (in the header)
+// @retail 0x83376770
+// AUDKCover::execKillCoverLinks (in the header)
+// @retail 0x833766E0
+// AUDKCover::execRemoveCoverLink (in the header)
+
+// @retail 0x8337B1D0
+// AUSSPawn::execCanAim (in the header)
+// @retail 0x8337B340
+// AUSSPawn::execCoverPoseTransitionOver (in the header)
+// @retail 0x8337AE58
+// AUSSPawn::execGetAlertness (in the header)
+// @retail 0x8337B560
+// AUSSPawn::execGetDefaultBehaviorTree (in the header)
+// @retail 0x8337B510
+// AUSSPawn::execGetIsPanicking (in the header)
+// @retail 0x8337AD50
+// AUSSPawn::execGetMovementType (in the header)
+// @retail 0x8337AF60
+// AUSSPawn::execGetSpeed (in the header)
+// @retail 0x8337B640
+// AUSSPawn::execGetYellingDistance (in the header)
+// @retail 0x8337B068
+// AUSSPawn::execIsCrouched (in the header)
+// @retail 0x8337B420
+// AUSSPawn::execIsInCover (in the header)
+// @retail 0x8337B390
+// AUSSPawn::execMoveToInCover (in the header)
+// @retail 0x8337B180
+// AUSSPawn::execPostureTransitionOver (in the header)
+// @retail 0x8337AEA8
+// AUSSPawn::execSetAlertness (in the header)
+// @retail 0x8337AF38
+// AUSSPawn::execSetAlertnessDefault (in the header)
+// @retail 0x8337B250
+// AUSSPawn::execSetCoverPose (in the header)
+// @retail 0x8337B0B8
+// AUSSPawn::execSetCrouched (in the header)
+// @retail 0x8337B5B0
+// AUSSPawn::execSetDefaultBehaviorTree (in the header)
+// @retail 0x8337B470
+// AUSSPawn::execSetIsPanicking (in the header)
+// @retail 0x8337B040
+// AUSSPawn::execSetMovementSpeedDefault (in the header)
+// @retail 0x8337ADA0
+// AUSSPawn::execSetMovementType (in the header)
+// @retail 0x8337AE30
+// AUSSPawn::execSetMovementTypeDefault (in the header)
+// @retail 0x8337B318
+// AUSSPawn::execSetNoCoverPose (in the header)
+// @retail 0x8337B158
+// AUSSPawn::execSetPostureDefault (in the header)
+// @retail 0x8337AFB0
+// AUSSPawn::execSetSpeed (in the header)
 
 // @retail 0x83374140
 // UCCSAFEncircleTarget::StaticClass (in the header)
@@ -134,6 +265,8 @@ extern UClass *(*const EmitUUSSATBlendByPostureStaticClass)() = &UUSSATBlendByPo
 
 // @retail 0x83374608
 // UCCSATAnimNodeSlot::StaticClass (in the header)
+// @retail 0x83374550
+// UCCSATAnimNodeSlot::execActivateChild (in the header)
 
 // @retail 0x833740A0
 // UCCSActorFactory::StaticClass (in the header)
@@ -255,6 +388,58 @@ extern UClass *(*const EmitUUSSATBlendByPostureStaticClass)() = &UUSSATBlendByPo
 // @retail 0x83375DD0
 // UCCSBTWaitInCover::StaticClass (in the header)
 
+// @retail 0x83374B28
+// UCCSBlackboard::execClearMoveCommand (in the header)
+// @retail 0x83374E80
+// UCCSBlackboard::execFlagClosestVisibleEnemyAsUsed (in the header)
+// @retail 0x83374E20
+// UCCSBlackboard::execFlagCoversAsUsed (in the header)
+// @retail 0x83374E00
+// UCCSBlackboard::execFlagHealthAsUsed (in the header)
+// @retail 0x83374D80
+// UCCSBlackboard::execFlagHeatGeneratedAsUsed (in the header)
+// @retail 0x83374E40
+// UCCSBlackboard::execFlagTargetsAsUsed (in the header)
+// @retail 0x83374E60
+// UCCSBlackboard::execFlagTetherAsUsed (in the header)
+// @retail 0x83374B68
+// UCCSBlackboard::execFlagThreatDirectionAsUsed (in the header)
+// @retail 0x83374B48
+// UCCSBlackboard::execFlagThreatLocationAsUsed (in the header)
+// @retail 0x83374DA0
+// UCCSBlackboard::execGetClosestVisibleEnemy (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x8339C738
+// UCCSBlackboard::execGetCovers (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x83374960
+// UCCSBlackboard::execGetCurrentTarget (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x83374A50
+// UCCSBlackboard::execGetCurrentTether (in the header)
+// @retail 0x83374888
+// UCCSBlackboard::execGetHealth (in the header)
+// @retail 0x83374D38
+// UCCSBlackboard::execGetHeatGenerated (in the header)
+// @retail 0x83374AB8
+// UCCSBlackboard::execGetMoveCommand (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x8339C810
+// UCCSBlackboard::execGetTargets (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x83374BF0
+// UCCSBlackboard::execGetThreatDirection (in the header)
+// @retail 0x83374B88
+// UCCSBlackboard::execGetThreatLocation (in the header)
+// @retail 0x83374C58
+// UCCSBlackboard::execGetThreatType (in the header)
+// @retail 0x833749C0
+// UCCSBlackboard::execSetCurrentTether (in the header)
+// @retail 0x833748D0
+// UCCSBlackboard::execSetHealth (in the header)
+// @retail 0x83374CA0
+// UCCSBlackboard::execSetHeatGenerated (in the header)
+
 // @retail 0x833747E8
 // UCCSCover::StaticClass (in the header)
 
@@ -352,6 +537,8 @@ void UHaloAnimBlendByForwardMomentum::InitializePrivateStaticClassUHaloAnimBlend
 // UHaloAnimBlendByJumpType::InternalConstructor (in the header)
 // @retail 0x833B0568
 // UHaloAnimBlendByJumpType::StaticClass (in the header)
+// @retail 0x8337B718
+// UHaloAnimBlendByJumpType::execOnChangeJumpType (in the header)
 
 UClass *UHaloAnimBlendByJumpType::PrivateStaticClass = 0;
 
@@ -484,6 +671,9 @@ void UHaloAnimNodeCopyBoneTranslation::InitializePrivateStaticClassUHaloAnimNode
 
 // @retail 0x833752B0
 // UHaloBTKamikaze::StaticClass (in the header)
+
+// @retail 0x83377FA0
+// UUDKTargetableComponent::execBeginDeath (in the header)
 
 // @retail 0x83374658
 // UUSSATBlendByAlertness::StaticClass (in the header)

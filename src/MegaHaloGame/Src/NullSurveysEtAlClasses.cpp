@@ -23,6 +23,12 @@ extern void (*const EmitUHaloSaveGameInternalConstructor)(void *) = &UHaloSaveGa
 // UHaloSaveGame::InternalConstructor (in the header)
 // @retail 0x833CA480
 // UHaloSaveGame::StaticClass (in the header)
+// @retail 0x833CA138
+// UHaloSaveGame::execBasicDeserializeObject (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x833CA068
+// UHaloSaveGame::execBasicSerializeObject (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 
 UClass *UHaloSaveGame::PrivateStaticClass = 0;
 

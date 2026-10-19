@@ -77,6 +77,8 @@ def kind(row):
         return 'init'
     if re.match(r'event[A-Z]', member):
         return 'event'
+    if re.match(r'exec[A-Z]', member):
+        return 'exec'
     return None
 
 
@@ -89,16 +91,17 @@ class Classes:
         all_rows = rows
         rows = [r for r in rows if r['package'] == package.lower() and kind(r)]
         self.events = [r for r in rows if kind(r) == 'event']
-        rows = [r for r in rows if kind(r) != 'event']
+        self.execs = [r for r in rows if kind(r) == 'exec']
+        rows = [r for r in rows if kind(r) not in ('event', 'exec')]
         self.classes = sorted(c for c in {r['name'].rsplit('::', 1)[0] for r in rows} if self.is_uobject(c))
-        self.rows = [r for r in rows if r['name'].rsplit('::', 1)[0] in self.classes] + self.events
+        self.rows = [r for r in rows if r['name'].rsplit('::', 1)[0] in self.classes] + self.events + self.execs
         self.events_all = self.events + [{'name': n} for n in EVENTS.get(package, [])]
-        event_classes = sorted({r['name'].rsplit('::', 1)[0] for r in self.events_all})
+        event_classes = sorted({r['name'].rsplit('::', 1)[0] for r in self.events_all + self.execs})
         self.tiny = [(r, shape) for r in all_rows if r['package'] == package.lower() and not kind(r)
                      and (shape := tiny_shape(r)) and self._exists(r['name'].rsplit('::', 1)[0])]
         event_classes += sorted({r['name'].rsplit('::', 1)[0] for r, _s in self.tiny})
         self.parms = [self.parms_name(r) for r in self.events_all if self._exists(self.parms_name(r))]
-        self.header = gen_header.Header(types, self.parms + TARGETS.get(package, []),
+        self.header = gen_header.Header(types, self.parms + TARGETS.get(package, []) + (['FFrame'] if self.execs else []),
                                         self.classes + event_classes + ['UClass'] + OPAQUE.get(package, []))
         self.packages = script_packages()
         for name, ti in self.header.classes.items():  # DECLARE_CLASS's typedef Super
@@ -228,6 +231,39 @@ class Classes:
             body = f' return {(ret.rsplit("::", 1)[0] + "::" if "::" in ret else "") + name if name else value}; '
         return [f'// @retail {row["address"]}', f'{decl}', '{' + body + '}', '']
 
+    def exec_bodies(self):
+        """The script compiler's exec<Name> thunks it can write; the names
+        it wrote go to self.exec_done."""
+        self.exec_done, out = set(), []
+        for r in self.execs:
+            text = self.exec_thunk(r)
+            if text:
+                self.exec_done.add(r['name'].rsplit('::', 1)[1])
+                out += text + ['']
+        return out
+
+    def exec_thunk(self, row):
+        """DECLARE_FUNCTION(exec<Name>): read each parameter with
+        Stack.Step, P_FINISH, call <Name>, store its result."""
+        cls, member = row['name'].rsplit('::', 1)
+        native = [m for m in self.header.methods(self.t.find(cls)) if m['name'] == member[4:]]
+        if len(native) != 1:
+            return None
+        ret, params = self.signature(native[0]['type'])
+        if not all(simple_parameter(p) for p in params) or not (ret == 'void' or simple_parameter(ret)):
+            return None
+        lines = [f'inline void {cls}::{member}(FFrame &Stack, void *const{"" if ret == "void" else " Result"})', '{']
+        for i, p in enumerate(params):
+            init = '' if p in STRUCT_PARAMETERS else ' = 0'
+            lines += [f'    {p} {"" if p.endswith("*") else ""}A{i}{init};'.replace('* A', '*A'),
+                      f'    Stack.Step(Stack.Object, &A{i});']
+            if p == UBOOL:  # P_GET_UBOOL: script's bitfield bit becomes 1
+                lines.append(f'    A{i} = A{i} ? 1 : 0;')
+        lines.append('    Stack.Code++;')
+        call = f'{member[4:]}({", ".join(f"A{i}" for i in range(len(params)))})'
+        lines.append(f'    {call};' if ret == 'void' else f'    *({ret}{"" if ret.endswith("*") else " "}*)Result = {call};')
+        return lines + ['}']
+
     def event_bodies(self):
         names = sorted({f'{self.package.upper()}_{r["name"].rsplit("::", 1)[1][5:]}' for r in self.events_all})
         out = [f'extern FName {n};' for n in names] + ['']
@@ -326,6 +362,15 @@ class Classes:
 
 
 UBOOL = 'unsigned int'
+# The script VM's parameter kinds exec thunks read by value (P_GET_INT, _FLOAT,
+# _UBOOL, _BYTE, _NAME, _OBJECT, _STRUCT); the structs have empty constructors.
+SCALAR_PARAMETERS = ('int', 'float', 'unsigned int', 'unsigned char')
+STRUCT_PARAMETERS = ('FVector', 'FRotator')
+
+
+def simple_parameter(ptype):
+    return ptype in SCALAR_PARAMETERS + STRUCT_PARAMETERS or (
+        re.fullmatch(r'[AU]\w+ \*', ptype) is not None)
 # UE3 math types whose default constructor leaves them uninitialised
 EMPTY_CONSTRUCTORS = ('FVector', 'FRotator', 'FVector2D', 'FVector4', 'FPlane', 'FQuat', 'FLinearColor', 'FColor', 'FMatrix')
 
@@ -452,7 +497,8 @@ def main(argv=None):
         old = header.read_text(encoding='utf-8') if header.exists() else ''
         tail = old.split(gen_header.HAND, 1)[1] if gen_header.HAND in old else '\n'
         text = '\n'.join([f'// Generated from the PDB by: python tools/gen_classes.py {package}',
-                          c.header.render(), '#include "Core/Inc/UnObjBas.h"', ''] + c.inline_bodies() + c.event_bodies())
+                          c.header.render(), '#include "Core/Inc/UnObjBas.h"']
+                         + (['#include "Core/Inc/UnScript.h"'] if c.execs else []) + [''] + c.inline_bodies() + c.event_bodies() + c.exec_bodies())
         header.parent.mkdir(parents=True, exist_ok=True)
         header.write_text(f'{text}\n{gen_header.HAND}{tail}', encoding='utf-8', newline='\n')
         by_object = {}
@@ -482,7 +528,7 @@ def write_source(c, package, obj, rows):
     kinds = {}
     for r in rows:
         member = r['name'].rsplit('::', 1)[1]
-        kinds.setdefault(r['name'].rsplit('::', 1)[0], {})[member if kind(r) == 'event' else kind(r)] = r
+        kinds.setdefault(r['name'].rsplit('::', 1)[0], {})[member if kind(r) in ('event', 'exec') else kind(r)] = r
     emit = []
     for cls in sorted(kinds):
         k = kinds[cls]
@@ -493,15 +539,17 @@ def write_source(c, package, obj, rows):
         if 'internal' in k:
             emit.append(f'extern void (*const Emit{cls}InternalConstructor)(void *) = &{cls}::InternalConstructor;')
         for name, r in sorted(k.items()):
-            if name.startswith('event'):
+            if name.startswith(('event', 'exec')) and (name.startswith('event') or name in c.exec_done):
                 emit.append(f'extern decltype(&{cls}::{name}) const Emit{cls}_{name} = &{cls}::{name};')
     lines += ['// Out-of-line copies, as in retail.', '#pragma inline_depth(0)'] + emit + ['#pragma inline_depth()', '']
     for cls in sorted(kinds):
         k = kinds[cls]
-        for name in ['new', 'ctor', 'dtor', 'sdd', 'internal', 'static'] + sorted(n for n in k if n.startswith('event')):
+        for name in ['new', 'ctor', 'dtor', 'sdd', 'internal', 'static'] + sorted(n for n in k if n.startswith(('event', 'exec'))):
             if name in k:
                 lines += [f'// @retail {k[name]["address"]}', f'// {k[name]["name"]} (in the header)']
                 note = c.known_cause(cls, name)
+                if name.startswith('exec') and name not in c.exec_done:
+                    note = 'its parameters are of a kind the generator does not read yet (references, strings, arrays)'
                 if note:
                     lines.append(f'//   not matched yet: {note}')
         if 'get' in k or 'init' in k:

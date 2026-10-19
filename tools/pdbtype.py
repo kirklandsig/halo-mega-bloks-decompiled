@@ -167,6 +167,8 @@ class Types:
             star = '&' if mode in (1, 4) else '*'
             if mode in (2, 3):  # pointer to member: the class follows the attributes
                 star = f'{self.name(struct.unpack_from("<I", d, p + 8)[0])}::*'
+            if attr & 0x400:  # the pointer itself is const
+                star += 'const' + (' ' if name else '')
             inner = star + name
             ukind = self.record(utype)[0] if utype >= self.begin else None
             if ukind in (LF_ARRAY, LF_PROCEDURE, LF_MFUNCTION):

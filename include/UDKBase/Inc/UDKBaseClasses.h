@@ -154,6 +154,7 @@ struct FNavMeshMantleEdge;
 struct FNavMeshPathParams;
 struct FObjectDuplicationParameters;
 struct FObjectInstancingGraph;
+struct FOutParmRec;
 class FOutputDevice;
 class FPlane;
 class FPrimitiveSceneProxy;
@@ -1483,27 +1484,27 @@ public:
     TArray(ENoInit);
     TArray();
     ~TArray();
-    AActor **GetTypedData() const;
+    AActor *const *GetTypedData() const;
     AActor **GetTypedData();
-    AActor **GetData() const;
+    AActor *const *GetData() const;
     AActor **GetData();
     unsigned long GetTypeSize() const;
     unsigned long GetAllocatedSize() const;
     int GetSlack() const;
     unsigned int IsValidIndex(int) const;
     int Num() const;
-    AActor *&operator()(int) const;
+    AActor *const &operator()(int) const;
     AActor *&operator()(int);
     AActor *Pop();
-    void Push(AActor *&);
-    AActor *&Top() const;
+    void Push(AActor *const &);
+    AActor *const &Top() const;
     AActor *&Top();
-    AActor *&Last(int) const;
+    AActor *const &Last(int) const;
     AActor *&Last(int);
     void Shrink();
-    unsigned int FindItem(AActor *&, int &) const;
-    int FindItemIndex(AActor *&) const;
-    unsigned int ContainsItem(AActor *&) const;
+    unsigned int FindItem(AActor *const &, int &) const;
+    int FindItemIndex(AActor *const &) const;
+    unsigned int ContainsItem(AActor *const &) const;
     unsigned int operator==(const TArray<AActor *,FDefaultAllocator> &) const;
     unsigned int operator!=(const TArray<AActor *,FDefaultAllocator> &) const;
     void BulkSerialize(FArchive &, int);
@@ -1511,7 +1512,7 @@ public:
     int Add(int);
     void Insert(int, int);
     void InsertZeroed(int, int);
-    int InsertItem(AActor *&, int);
+    int InsertItem(AActor *const &, int);
     void Remove(int, int);
     void RemoveSwap(int, int);
     void Empty(int);
@@ -1519,21 +1520,21 @@ public:
     void Append(const TArray<AActor *,FDefaultAllocator> &);
     TArray<AActor *,FDefaultAllocator> &operator+=(const TArray<AActor *,FDefaultAllocator> &);
     TArray<AActor *,FDefaultAllocator> &operator=(const TArray<AActor *,FDefaultAllocator> &);
-    int AddItem(AActor *&);
+    int AddItem(AActor *const &);
     int AddZeroed(int);
-    int AddUniqueItem(AActor *&);
+    int AddUniqueItem(AActor *const &);
     void Reserve(int);
-    void Init(AActor *&, int);
+    void Init(AActor *const &, int);
     void Init(int);
-    int RemoveSingleItem(AActor *&);
-    int RemoveItem(AActor *&);
-    int RemoveSingleItemSwap(AActor *&);
-    int RemoveItemSwap(AActor *&);
+    int RemoveSingleItem(AActor *const &);
+    int RemoveItem(AActor *const &);
+    int RemoveSingleItemSwap(AActor *const &);
+    int RemoveItemSwap(AActor *const &);
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
 private:
-    AActor *&DebugGet(int) const;
+    AActor *const &DebugGet(int) const;
 protected:
     void DestructItems(int, int);
 private:
@@ -1647,27 +1648,27 @@ public:
     TArray(ENoInit);
     TArray();
     ~TArray();
-    UActorComponent **GetTypedData() const;
+    UActorComponent *const *GetTypedData() const;
     UActorComponent **GetTypedData();
-    UActorComponent **GetData() const;
+    UActorComponent *const *GetData() const;
     UActorComponent **GetData();
     unsigned long GetTypeSize() const;
     unsigned long GetAllocatedSize() const;
     int GetSlack() const;
     unsigned int IsValidIndex(int) const;
     int Num() const;
-    UActorComponent *&operator()(int) const;
+    UActorComponent *const &operator()(int) const;
     UActorComponent *&operator()(int);
     UActorComponent *Pop();
-    void Push(UActorComponent *&);
-    UActorComponent *&Top() const;
+    void Push(UActorComponent *const &);
+    UActorComponent *const &Top() const;
     UActorComponent *&Top();
-    UActorComponent *&Last(int) const;
+    UActorComponent *const &Last(int) const;
     UActorComponent *&Last(int);
     void Shrink();
-    unsigned int FindItem(UActorComponent *&, int &) const;
-    int FindItemIndex(UActorComponent *&) const;
-    unsigned int ContainsItem(UActorComponent *&) const;
+    unsigned int FindItem(UActorComponent *const &, int &) const;
+    int FindItemIndex(UActorComponent *const &) const;
+    unsigned int ContainsItem(UActorComponent *const &) const;
     unsigned int operator==(const TArray<UActorComponent *,FDefaultAllocator> &) const;
     unsigned int operator!=(const TArray<UActorComponent *,FDefaultAllocator> &) const;
     void BulkSerialize(FArchive &, int);
@@ -1675,7 +1676,7 @@ public:
     int Add(int);
     void Insert(int, int);
     void InsertZeroed(int, int);
-    int InsertItem(UActorComponent *&, int);
+    int InsertItem(UActorComponent *const &, int);
     void Remove(int, int);
     void RemoveSwap(int, int);
     void Empty(int);
@@ -1683,21 +1684,21 @@ public:
     void Append(const TArray<UActorComponent *,FDefaultAllocator> &);
     TArray<UActorComponent *,FDefaultAllocator> &operator+=(const TArray<UActorComponent *,FDefaultAllocator> &);
     TArray<UActorComponent *,FDefaultAllocator> &operator=(const TArray<UActorComponent *,FDefaultAllocator> &);
-    int AddItem(UActorComponent *&);
+    int AddItem(UActorComponent *const &);
     int AddZeroed(int);
-    int AddUniqueItem(UActorComponent *&);
+    int AddUniqueItem(UActorComponent *const &);
     void Reserve(int);
-    void Init(UActorComponent *&, int);
+    void Init(UActorComponent *const &, int);
     void Init(int);
-    int RemoveSingleItem(UActorComponent *&);
-    int RemoveItem(UActorComponent *&);
-    int RemoveSingleItemSwap(UActorComponent *&);
-    int RemoveItemSwap(UActorComponent *&);
+    int RemoveSingleItem(UActorComponent *const &);
+    int RemoveItem(UActorComponent *const &);
+    int RemoveSingleItemSwap(UActorComponent *const &);
+    int RemoveItemSwap(UActorComponent *const &);
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
 private:
-    UActorComponent *&DebugGet(int) const;
+    UActorComponent *const &DebugGet(int) const;
 protected:
     void DestructItems(int, int);
 private:
@@ -1725,27 +1726,27 @@ public:
     TArray(ENoInit);
     TArray();
     ~TArray();
-    UClass **GetTypedData() const;
+    UClass *const *GetTypedData() const;
     UClass **GetTypedData();
-    UClass **GetData() const;
+    UClass *const *GetData() const;
     UClass **GetData();
     unsigned long GetTypeSize() const;
     unsigned long GetAllocatedSize() const;
     int GetSlack() const;
     unsigned int IsValidIndex(int) const;
     int Num() const;
-    UClass *&operator()(int) const;
+    UClass *const &operator()(int) const;
     UClass *&operator()(int);
     UClass *Pop();
-    void Push(UClass *&);
-    UClass *&Top() const;
+    void Push(UClass *const &);
+    UClass *const &Top() const;
     UClass *&Top();
-    UClass *&Last(int) const;
+    UClass *const &Last(int) const;
     UClass *&Last(int);
     void Shrink();
-    unsigned int FindItem(UClass *&, int &) const;
-    int FindItemIndex(UClass *&) const;
-    unsigned int ContainsItem(UClass *&) const;
+    unsigned int FindItem(UClass *const &, int &) const;
+    int FindItemIndex(UClass *const &) const;
+    unsigned int ContainsItem(UClass *const &) const;
     unsigned int operator==(const TArray<UClass *,FDefaultAllocator> &) const;
     unsigned int operator!=(const TArray<UClass *,FDefaultAllocator> &) const;
     void BulkSerialize(FArchive &, int);
@@ -1753,7 +1754,7 @@ public:
     int Add(int);
     void Insert(int, int);
     void InsertZeroed(int, int);
-    int InsertItem(UClass *&, int);
+    int InsertItem(UClass *const &, int);
     void Remove(int, int);
     void RemoveSwap(int, int);
     void Empty(int);
@@ -1761,21 +1762,21 @@ public:
     void Append(const TArray<UClass *,FDefaultAllocator> &);
     TArray<UClass *,FDefaultAllocator> &operator+=(const TArray<UClass *,FDefaultAllocator> &);
     TArray<UClass *,FDefaultAllocator> &operator=(const TArray<UClass *,FDefaultAllocator> &);
-    int AddItem(UClass *&);
+    int AddItem(UClass *const &);
     int AddZeroed(int);
-    int AddUniqueItem(UClass *&);
+    int AddUniqueItem(UClass *const &);
     void Reserve(int);
-    void Init(UClass *&, int);
+    void Init(UClass *const &, int);
     void Init(int);
-    int RemoveSingleItem(UClass *&);
-    int RemoveItem(UClass *&);
-    int RemoveSingleItemSwap(UClass *&);
-    int RemoveItemSwap(UClass *&);
+    int RemoveSingleItem(UClass *const &);
+    int RemoveItem(UClass *const &);
+    int RemoveSingleItemSwap(UClass *const &);
+    int RemoveItemSwap(UClass *const &);
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
 private:
-    UClass *&DebugGet(int) const;
+    UClass *const &DebugGet(int) const;
 protected:
     void DestructItems(int, int);
 private:
@@ -1803,27 +1804,27 @@ public:
     TArray(ENoInit);
     TArray();
     ~TArray();
-    USeqAct_Latent **GetTypedData() const;
+    USeqAct_Latent *const *GetTypedData() const;
     USeqAct_Latent **GetTypedData();
-    USeqAct_Latent **GetData() const;
+    USeqAct_Latent *const *GetData() const;
     USeqAct_Latent **GetData();
     unsigned long GetTypeSize() const;
     unsigned long GetAllocatedSize() const;
     int GetSlack() const;
     unsigned int IsValidIndex(int) const;
     int Num() const;
-    USeqAct_Latent *&operator()(int) const;
+    USeqAct_Latent *const &operator()(int) const;
     USeqAct_Latent *&operator()(int);
     USeqAct_Latent *Pop();
-    void Push(USeqAct_Latent *&);
-    USeqAct_Latent *&Top() const;
+    void Push(USeqAct_Latent *const &);
+    USeqAct_Latent *const &Top() const;
     USeqAct_Latent *&Top();
-    USeqAct_Latent *&Last(int) const;
+    USeqAct_Latent *const &Last(int) const;
     USeqAct_Latent *&Last(int);
     void Shrink();
-    unsigned int FindItem(USeqAct_Latent *&, int &) const;
-    int FindItemIndex(USeqAct_Latent *&) const;
-    unsigned int ContainsItem(USeqAct_Latent *&) const;
+    unsigned int FindItem(USeqAct_Latent *const &, int &) const;
+    int FindItemIndex(USeqAct_Latent *const &) const;
+    unsigned int ContainsItem(USeqAct_Latent *const &) const;
     unsigned int operator==(const TArray<USeqAct_Latent *,FDefaultAllocator> &) const;
     unsigned int operator!=(const TArray<USeqAct_Latent *,FDefaultAllocator> &) const;
     void BulkSerialize(FArchive &, int);
@@ -1831,7 +1832,7 @@ public:
     int Add(int);
     void Insert(int, int);
     void InsertZeroed(int, int);
-    int InsertItem(USeqAct_Latent *&, int);
+    int InsertItem(USeqAct_Latent *const &, int);
     void Remove(int, int);
     void RemoveSwap(int, int);
     void Empty(int);
@@ -1839,21 +1840,21 @@ public:
     void Append(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
     TArray<USeqAct_Latent *,FDefaultAllocator> &operator+=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
     TArray<USeqAct_Latent *,FDefaultAllocator> &operator=(const TArray<USeqAct_Latent *,FDefaultAllocator> &);
-    int AddItem(USeqAct_Latent *&);
+    int AddItem(USeqAct_Latent *const &);
     int AddZeroed(int);
-    int AddUniqueItem(USeqAct_Latent *&);
+    int AddUniqueItem(USeqAct_Latent *const &);
     void Reserve(int);
-    void Init(USeqAct_Latent *&, int);
+    void Init(USeqAct_Latent *const &, int);
     void Init(int);
-    int RemoveSingleItem(USeqAct_Latent *&);
-    int RemoveItem(USeqAct_Latent *&);
-    int RemoveSingleItemSwap(USeqAct_Latent *&);
-    int RemoveItemSwap(USeqAct_Latent *&);
+    int RemoveSingleItem(USeqAct_Latent *const &);
+    int RemoveItem(USeqAct_Latent *const &);
+    int RemoveSingleItemSwap(USeqAct_Latent *const &);
+    int RemoveItemSwap(USeqAct_Latent *const &);
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
 private:
-    USeqAct_Latent *&DebugGet(int) const;
+    USeqAct_Latent *const &DebugGet(int) const;
 protected:
     void DestructItems(int, int);
 private:
@@ -1881,27 +1882,27 @@ public:
     TArray(ENoInit);
     TArray();
     ~TArray();
-    USequenceEvent **GetTypedData() const;
+    USequenceEvent *const *GetTypedData() const;
     USequenceEvent **GetTypedData();
-    USequenceEvent **GetData() const;
+    USequenceEvent *const *GetData() const;
     USequenceEvent **GetData();
     unsigned long GetTypeSize() const;
     unsigned long GetAllocatedSize() const;
     int GetSlack() const;
     unsigned int IsValidIndex(int) const;
     int Num() const;
-    USequenceEvent *&operator()(int) const;
+    USequenceEvent *const &operator()(int) const;
     USequenceEvent *&operator()(int);
     USequenceEvent *Pop();
-    void Push(USequenceEvent *&);
-    USequenceEvent *&Top() const;
+    void Push(USequenceEvent *const &);
+    USequenceEvent *const &Top() const;
     USequenceEvent *&Top();
-    USequenceEvent *&Last(int) const;
+    USequenceEvent *const &Last(int) const;
     USequenceEvent *&Last(int);
     void Shrink();
-    unsigned int FindItem(USequenceEvent *&, int &) const;
-    int FindItemIndex(USequenceEvent *&) const;
-    unsigned int ContainsItem(USequenceEvent *&) const;
+    unsigned int FindItem(USequenceEvent *const &, int &) const;
+    int FindItemIndex(USequenceEvent *const &) const;
+    unsigned int ContainsItem(USequenceEvent *const &) const;
     unsigned int operator==(const TArray<USequenceEvent *,FDefaultAllocator> &) const;
     unsigned int operator!=(const TArray<USequenceEvent *,FDefaultAllocator> &) const;
     void BulkSerialize(FArchive &, int);
@@ -1909,7 +1910,7 @@ public:
     int Add(int);
     void Insert(int, int);
     void InsertZeroed(int, int);
-    int InsertItem(USequenceEvent *&, int);
+    int InsertItem(USequenceEvent *const &, int);
     void Remove(int, int);
     void RemoveSwap(int, int);
     void Empty(int);
@@ -1917,21 +1918,21 @@ public:
     void Append(const TArray<USequenceEvent *,FDefaultAllocator> &);
     TArray<USequenceEvent *,FDefaultAllocator> &operator+=(const TArray<USequenceEvent *,FDefaultAllocator> &);
     TArray<USequenceEvent *,FDefaultAllocator> &operator=(const TArray<USequenceEvent *,FDefaultAllocator> &);
-    int AddItem(USequenceEvent *&);
+    int AddItem(USequenceEvent *const &);
     int AddZeroed(int);
-    int AddUniqueItem(USequenceEvent *&);
+    int AddUniqueItem(USequenceEvent *const &);
     void Reserve(int);
-    void Init(USequenceEvent *&, int);
+    void Init(USequenceEvent *const &, int);
     void Init(int);
-    int RemoveSingleItem(USequenceEvent *&);
-    int RemoveItem(USequenceEvent *&);
-    int RemoveSingleItemSwap(USequenceEvent *&);
-    int RemoveItemSwap(USequenceEvent *&);
+    int RemoveSingleItem(USequenceEvent *const &);
+    int RemoveItem(USequenceEvent *const &);
+    int RemoveSingleItemSwap(USequenceEvent *const &);
+    int RemoveItemSwap(USequenceEvent *const &);
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
 private:
-    USequenceEvent *&DebugGet(int) const;
+    USequenceEvent *const &DebugGet(int) const;
 protected:
     void DestructItems(int, int);
 private:
@@ -2388,7 +2389,7 @@ public:
     unsigned int IsInPIEPackage() const;
     unsigned int ResidesInPermanentPool() const;
     unsigned int IsDisregardedForGC() const;
-    unsigned int IsBasedOnArchetype(const UObject *) const;
+    unsigned int IsBasedOnArchetype(const UObject *const) const;
     UField *FindObjectField(FName, unsigned int);
     UFunction *FindFunction(FName, unsigned int) const;
     UFunction *FindFunctionChecked(FName, unsigned int) const;
@@ -2436,410 +2437,410 @@ public:
     static void AddReferencedObject(TArray<UObject *,FDefaultAllocator> &, UObject *);
     void AddReferencedObjectsViaSerialization(TArray<UObject *,FDefaultAllocator> &);
     unsigned int IsInState(FName, unsigned int);
-    void CallFunction(FFrame &, void *, UFunction *);
-    void ProcessInternal(FFrame &, void *);
-    void SkipFunction(FFrame &, void *, UFunction *);
+    void CallFunction(FFrame &, void *const, UFunction *);
+    void ProcessInternal(FFrame &, void *const);
+    void SkipFunction(FFrame &, void *const, UFunction *);
     unsigned int IsProbing(FName);
     void PushState(FName, FName);
     void PopState(FFrame &, unsigned int);
-    void execUndefined(FFrame &, void *);
-    void execLocalVariable(FFrame &, void *);
-    void execInstanceVariable(FFrame &, void *);
-    void execDefaultVariable(FFrame &, void *);
-    void execLocalOutVariable(FFrame &, void *);
-    void execStateVariable(FFrame &, void *);
-    void execInterfaceVariable(FFrame &, void *);
-    void execInterfaceContext(FFrame &, void *);
-    void execDefaultParmValue(FFrame &, void *);
-    void execArrayElement(FFrame &, void *);
-    void execDynArrayElement(FFrame &, void *);
-    void execDynArrayLength(FFrame &, void *);
-    void execDynArrayInsert(FFrame &, void *);
-    void execDynArrayRemove(FFrame &, void *);
-    void execDynArrayFind(FFrame &, void *);
-    void execDynArrayFindStruct(FFrame &, void *);
-    void execDynArrayAdd(FFrame &, void *);
-    void execDynArrayAddItem(FFrame &, void *);
-    void execDynArrayInsertItem(FFrame &, void *);
-    void execDynArrayRemoveItem(FFrame &, void *);
-    void execDynArrayIterator(FFrame &, void *);
-    void execDynArraySort(FFrame &, void *);
-    void execBoolVariable(FFrame &, void *);
-    void execClassDefaultVariable(FFrame &, void *);
-    void execEndFunctionParms(FFrame &, void *);
-    void execNothing(FFrame &, void *);
-    void execEndOfScript(FFrame &, void *);
-    void execReturnNothing(FFrame &, void *);
-    void execIteratorPop(FFrame &, void *);
-    void execEmptyParmValue(FFrame &, void *);
-    void execStop(FFrame &, void *);
-    void execEndCode(FFrame &, void *);
-    void execSwitch(FFrame &, void *);
-    void execCase(FFrame &, void *);
-    void execJump(FFrame &, void *);
-    void execJumpIfNot(FFrame &, void *);
-    void execAssert(FFrame &, void *);
-    void execGotoLabel(FFrame &, void *);
-    void execLet(FFrame &, void *);
-    void execLetBool(FFrame &, void *);
-    void execLetDelegate(FFrame &, void *);
-    void execEatReturnValue(FFrame &, void *);
-    void execSelf(FFrame &, void *);
-    void execContext(FFrame &, void *);
-    void execVirtualFunction(FFrame &, void *);
-    void execFinalFunction(FFrame &, void *);
-    void execGlobalFunction(FFrame &, void *);
-    void execDelegateFunction(FFrame &, void *);
-    void execDelegateProperty(FFrame &, void *);
-    void execStructCmpEq(FFrame &, void *);
-    void execStructCmpNe(FFrame &, void *);
-    void execStructMember(FFrame &, void *);
-    void execEqualEqual_DelegateDelegate(FFrame &, void *);
-    void execNotEqual_DelegateDelegate(FFrame &, void *);
-    void execEqualEqual_DelegateFunction(FFrame &, void *);
-    void execNotEqual_DelegateFunction(FFrame &, void *);
-    void execIntConst(FFrame &, void *);
-    void execFloatConst(FFrame &, void *);
-    void execStringConst(FFrame &, void *);
-    void execUnicodeStringConst(FFrame &, void *);
-    void execObjectConst(FFrame &, void *);
-    void execInstanceDelegate(FFrame &, void *);
-    void execNameConst(FFrame &, void *);
-    void execByteConst(FFrame &, void *);
-    void execIntZero(FFrame &, void *);
-    void execIntOne(FFrame &, void *);
-    void execTrue(FFrame &, void *);
-    void execFalse(FFrame &, void *);
-    void execNoObject(FFrame &, void *);
-    void execEmptyDelegate(FFrame &, void *);
-    void execIntConstByte(FFrame &, void *);
-    void execDynamicCast(FFrame &, void *);
-    void execMetaCast(FFrame &, void *);
-    void execPrimitiveCast(FFrame &, void *);
-    void execInterfaceCast(FFrame &, void *);
-    void execByteToInt(FFrame &, void *);
-    void execByteToBool(FFrame &, void *);
-    void execByteToFloat(FFrame &, void *);
-    void execByteToString(FFrame &, void *);
-    void execIntToByte(FFrame &, void *);
-    void execIntToBool(FFrame &, void *);
-    void execIntToFloat(FFrame &, void *);
-    void execIntToString(FFrame &, void *);
-    void execBoolToByte(FFrame &, void *);
-    void execBoolToInt(FFrame &, void *);
-    void execBoolToFloat(FFrame &, void *);
-    void execBoolToString(FFrame &, void *);
-    void execFloatToByte(FFrame &, void *);
-    void execFloatToInt(FFrame &, void *);
-    void execFloatToBool(FFrame &, void *);
-    void execFloatToString(FFrame &, void *);
-    void execRotationConst(FFrame &, void *);
-    void execVectorConst(FFrame &, void *);
-    void execPointDistToLine(FFrame &, void *);
-    void execPointDistToSegment(FFrame &, void *);
-    void execPointProjectToPlane(FFrame &, void *);
-    void execGetDotDistance(FFrame &, void *);
-    void execGetAngularDistance(FFrame &, void *);
-    void execGetAngularFromDotDist(FFrame &, void *);
-    void execStringToVector(FFrame &, void *);
-    void execStringToRotator(FFrame &, void *);
-    void execVectorToBool(FFrame &, void *);
-    void execVectorToString(FFrame &, void *);
-    void execVectorToRotator(FFrame &, void *);
-    void execRotatorToBool(FFrame &, void *);
-    void execRotatorToVector(FFrame &, void *);
-    void execRotatorToString(FFrame &, void *);
-    void execRotRand(FFrame &, void *);
-    void execGetRotatorAxis(FFrame &, void *);
-    void execGetUnAxes(FFrame &, void *);
-    void execGetAxes(FFrame &, void *);
-    void execSubtractEqual_RotatorRotator(FFrame &, void *);
-    void execAddEqual_RotatorRotator(FFrame &, void *);
-    void execSubtract_RotatorRotator(FFrame &, void *);
-    void execAdd_RotatorRotator(FFrame &, void *);
-    void execDivideEqual_RotatorFloat(FFrame &, void *);
-    void execMultiplyEqual_RotatorFloat(FFrame &, void *);
-    void execDivide_RotatorFloat(FFrame &, void *);
-    void execMultiply_FloatRotator(FFrame &, void *);
-    void execMultiply_RotatorFloat(FFrame &, void *);
-    void execNotEqual_RotatorRotator(FFrame &, void *);
-    void execEqualEqual_RotatorRotator(FFrame &, void *);
-    void execGetRand(FFrame &, void *);
-    void execRSize(FFrame &, void *);
-    void execRMin(FFrame &, void *);
-    void execRMax(FFrame &, void *);
-    void execMirrorVectorByNormal(FFrame &, void *);
-    void execVRand(FFrame &, void *);
-    void execVRandCone(FFrame &, void *);
-    void execVRandCone2(FFrame &, void *);
-    void execVLerp(FFrame &, void *);
-    void execVInterpTo(FFrame &, void *);
-    void execClampLength(FFrame &, void *);
-    void execNoZDot(FFrame &, void *);
-    void execNormal(FFrame &, void *);
-    void execNormal2D(FFrame &, void *);
-    void execVSize(FFrame &, void *);
-    void execVSize2D(FFrame &, void *);
-    void execVSizeSq(FFrame &, void *);
-    void execVSizeSq2D(FFrame &, void *);
-    void execSubtractEqual_VectorVector(FFrame &, void *);
-    void execAddEqual_VectorVector(FFrame &, void *);
-    void execDivideEqual_VectorFloat(FFrame &, void *);
-    void execMultiplyEqual_VectorVector(FFrame &, void *);
-    void execMultiplyEqual_VectorFloat(FFrame &, void *);
-    void execCross_VectorVector(FFrame &, void *);
-    void execDot_VectorVector(FFrame &, void *);
-    void execNotEqual_VectorVector(FFrame &, void *);
-    void execEqualEqual_VectorVector(FFrame &, void *);
-    void execGreaterGreater_VectorRotator(FFrame &, void *);
-    void execLessLess_VectorRotator(FFrame &, void *);
-    void execSubtract_VectorVector(FFrame &, void *);
-    void execAdd_VectorVector(FFrame &, void *);
-    void execDivide_VectorFloat(FFrame &, void *);
-    void execMultiply_VectorVector(FFrame &, void *);
-    void execMultiply_FloatVector(FFrame &, void *);
-    void execMultiply_VectorFloat(FFrame &, void *);
-    void execSubtract_PreVector(FFrame &, void *);
-    void execOrthoRotation(FFrame &, void *);
-    void execNormalize(FFrame &, void *);
-    void execRLerp(FFrame &, void *);
-    void execRTransform(FFrame &, void *);
-    void execRInterpTo(FFrame &, void *);
-    void execNormalizeRotAxis(FFrame &, void *);
-    void execRDiff(FFrame &, void *);
-    void execClockwiseFrom_IntInt(FFrame &, void *);
-    void execObjectToBool(FFrame &, void *);
-    void execObjectToInterface(FFrame &, void *);
-    void execObjectToString(FFrame &, void *);
-    void execInterfaceToString(FFrame &, void *);
-    void execInterfaceToBool(FFrame &, void *);
-    void execInterfaceToObject(FFrame &, void *);
-    void execDelegateToString(FFrame &, void *);
-    void execNameToBool(FFrame &, void *);
-    void execNameToString(FFrame &, void *);
-    void execStringToName(FFrame &, void *);
-    void execStringToByte(FFrame &, void *);
-    void execStringToInt(FFrame &, void *);
-    void execStringToBool(FFrame &, void *);
-    void execStringToFloat(FFrame &, void *);
-    void execNot_PreBool(FFrame &, void *);
-    void execEqualEqual_BoolBool(FFrame &, void *);
-    void execNotEqual_BoolBool(FFrame &, void *);
-    void execAndAnd_BoolBool(FFrame &, void *);
-    void execXorXor_BoolBool(FFrame &, void *);
-    void execOrOr_BoolBool(FFrame &, void *);
-    void execMultiplyEqual_ByteByte(FFrame &, void *);
-    void execMultiplyEqual_ByteFloat(FFrame &, void *);
-    void execDivideEqual_ByteByte(FFrame &, void *);
-    void execAddEqual_ByteByte(FFrame &, void *);
-    void execSubtractEqual_ByteByte(FFrame &, void *);
-    void execAddAdd_PreByte(FFrame &, void *);
-    void execSubtractSubtract_PreByte(FFrame &, void *);
-    void execAddAdd_Byte(FFrame &, void *);
-    void execSubtractSubtract_Byte(FFrame &, void *);
-    void execComplement_PreInt(FFrame &, void *);
-    void execSubtract_PreInt(FFrame &, void *);
-    void execMultiply_IntInt(FFrame &, void *);
-    void execDivide_IntInt(FFrame &, void *);
-    void execPercent_IntInt(FFrame &, void *);
-    void execAdd_IntInt(FFrame &, void *);
-    void execSubtract_IntInt(FFrame &, void *);
-    void execLessLess_IntInt(FFrame &, void *);
-    void execGreaterGreater_IntInt(FFrame &, void *);
-    void execGreaterGreaterGreater_IntInt(FFrame &, void *);
-    void execLess_IntInt(FFrame &, void *);
-    void execGreater_IntInt(FFrame &, void *);
-    void execLessEqual_IntInt(FFrame &, void *);
-    void execGreaterEqual_IntInt(FFrame &, void *);
-    void execEqualEqual_IntInt(FFrame &, void *);
-    void execNotEqual_IntInt(FFrame &, void *);
-    void execAnd_IntInt(FFrame &, void *);
-    void execXor_IntInt(FFrame &, void *);
-    void execOr_IntInt(FFrame &, void *);
-    void execMultiplyEqual_IntFloat(FFrame &, void *);
-    void execDivideEqual_IntFloat(FFrame &, void *);
-    void execAddEqual_IntInt(FFrame &, void *);
-    void execSubtractEqual_IntInt(FFrame &, void *);
-    void execAddAdd_PreInt(FFrame &, void *);
-    void execSubtractSubtract_PreInt(FFrame &, void *);
-    void execAddAdd_Int(FFrame &, void *);
-    void execSubtractSubtract_Int(FFrame &, void *);
-    void execRand(FFrame &, void *);
-    void execMin(FFrame &, void *);
-    void execMax(FFrame &, void *);
-    void execClamp(FFrame &, void *);
-    void execToHex(FFrame &, void *);
-    void execSubtract_PreFloat(FFrame &, void *);
-    void execMultiplyMultiply_FloatFloat(FFrame &, void *);
-    void execMultiply_FloatFloat(FFrame &, void *);
-    void execDivide_FloatFloat(FFrame &, void *);
-    void execPercent_FloatFloat(FFrame &, void *);
-    void execAdd_FloatFloat(FFrame &, void *);
-    void execSubtract_FloatFloat(FFrame &, void *);
-    void execLess_FloatFloat(FFrame &, void *);
-    void execGreater_FloatFloat(FFrame &, void *);
-    void execLessEqual_FloatFloat(FFrame &, void *);
-    void execGreaterEqual_FloatFloat(FFrame &, void *);
-    void execEqualEqual_FloatFloat(FFrame &, void *);
-    void execNotEqual_FloatFloat(FFrame &, void *);
-    void execComplementEqual_FloatFloat(FFrame &, void *);
-    void execMultiplyEqual_FloatFloat(FFrame &, void *);
-    void execDivideEqual_FloatFloat(FFrame &, void *);
-    void execAddEqual_FloatFloat(FFrame &, void *);
-    void execSubtractEqual_FloatFloat(FFrame &, void *);
-    void execAbs(FFrame &, void *);
-    void execDebugInfo(FFrame &, void *);
-    void execSin(FFrame &, void *);
-    void execAsin(FFrame &, void *);
-    void execCos(FFrame &, void *);
-    void execAcos(FFrame &, void *);
-    void execTan(FFrame &, void *);
-    void execAtan(FFrame &, void *);
-    void execAtan2(FFrame &, void *);
-    void execExp(FFrame &, void *);
-    void execLoge(FFrame &, void *);
-    void execSqrt(FFrame &, void *);
-    void execSquare(FFrame &, void *);
-    void execRound(FFrame &, void *);
-    void execFFloor(FFrame &, void *);
-    void execFCeil(FFrame &, void *);
-    void execFRand(FFrame &, void *);
-    void execFMin(FFrame &, void *);
-    void execFMax(FFrame &, void *);
-    void execFClamp(FFrame &, void *);
-    void execLerp(FFrame &, void *);
-    void execFCubicInterp(FFrame &, void *);
-    void execFInterpEaseInOut(FFrame &, void *);
-    void execFInterpTo(FFrame &, void *);
-    void execFInterpConstantTo(FFrame &, void *);
-    void execConcat_StrStr(FFrame &, void *);
-    void execAt_StrStr(FFrame &, void *);
-    void execLess_StrStr(FFrame &, void *);
-    void execGreater_StrStr(FFrame &, void *);
-    void execLessEqual_StrStr(FFrame &, void *);
-    void execGreaterEqual_StrStr(FFrame &, void *);
-    void execEqualEqual_StrStr(FFrame &, void *);
-    void execNotEqual_StrStr(FFrame &, void *);
-    void execComplementEqual_StrStr(FFrame &, void *);
-    void execConcatEqual_StrStr(FFrame &, void *);
-    void execAtEqual_StrStr(FFrame &, void *);
-    void execSubtractEqual_StrStr(FFrame &, void *);
-    void execLen(FFrame &, void *);
-    void execInStr(FFrame &, void *);
-    void execMid(FFrame &, void *);
-    void execLeft(FFrame &, void *);
-    void execRight(FFrame &, void *);
-    void execCaps(FFrame &, void *);
-    void execLocs(FFrame &, void *);
-    void execChr(FFrame &, void *);
-    void execAsc(FFrame &, void *);
-    void execRepl(FFrame &, void *);
-    void execParseStringIntoArray(FFrame &, void *);
-    void execMatrixGetOrigin(FFrame &, void *);
-    void execMatrixGetAxis(FFrame &, void *);
-    void execMatrixGetRotator(FFrame &, void *);
-    void execMakeRotationMatrix(FFrame &, void *);
-    void execMakeRotationTranslationMatrix(FFrame &, void *);
-    void execInverseTransformNormal(FFrame &, void *);
-    void execTransformNormal(FFrame &, void *);
-    void execInverseTransformVector(FFrame &, void *);
-    void execTransformVector(FFrame &, void *);
-    void execMultiply_MatrixMatrix(FFrame &, void *);
-    void execQuatProduct(FFrame &, void *);
-    void execQuatDot(FFrame &, void *);
-    void execQuatInvert(FFrame &, void *);
-    void execQuatRotateVector(FFrame &, void *);
-    void execQuatFindBetween(FFrame &, void *);
-    void execQuatFromAxisAndAngle(FFrame &, void *);
-    void execQuatFromRotator(FFrame &, void *);
-    void execQuatToRotator(FFrame &, void *);
-    void execQuatSlerp(FFrame &, void *);
-    void execAdd_QuatQuat(FFrame &, void *);
-    void execSubtract_QuatQuat(FFrame &, void *);
-    void execAdd_Vector2DVector2D(FFrame &, void *);
-    void execSubtract_Vector2DVector2D(FFrame &, void *);
-    void execMultiply_Vector2DFloat(FFrame &, void *);
-    void execDivide_Vector2DFloat(FFrame &, void *);
-    void execMultiplyEqual_Vector2DFloat(FFrame &, void *);
-    void execDivideEqual_Vector2DFloat(FFrame &, void *);
-    void execAddEqual_Vector2DVector2D(FFrame &, void *);
-    void execSubtractEqual_Vector2DVector2D(FFrame &, void *);
-    void execGetMappedRangeValue(FFrame &, void *);
-    void execEvalInterpCurveVector2D(FFrame &, void *);
-    void execEvalInterpCurveVector(FFrame &, void *);
-    void execEvalInterpCurveFloat(FFrame &, void *);
-    void execEqualEqual_ObjectObject(FFrame &, void *);
-    void execNotEqual_ObjectObject(FFrame &, void *);
-    void execEqualEqual_InterfaceInterface(FFrame &, void *);
-    void execNotEqual_InterfaceInterface(FFrame &, void *);
-    void execEqualEqual_NameName(FFrame &, void *);
-    void execNotEqual_NameName(FFrame &, void *);
-    void execLogInternal(FFrame &, void *);
-    void execWarnInternal(FFrame &, void *);
-    void execConditional(FFrame &, void *);
-    void execNew(FFrame &, void *);
-    void execClassIsChildOf(FFrame &, void *);
-    void execClassContext(FFrame &, void *);
-    void execGoto(FFrame &, void *);
-    void execGotoState(FFrame &, void *);
-    void execPushState(FFrame &, void *);
-    void execPopState(FFrame &, void *);
-    void execDumpStateStack(FFrame &, void *);
-    void execIsA(FFrame &, void *);
-    void execEnable(FFrame &, void *);
-    void execDisable(FFrame &, void *);
-    void execIterator(FFrame &, void *);
-    void execLocalize(FFrame &, void *);
-    void execNativeParm(FFrame &, void *);
-    void execSaveConfig(FFrame &, void *);
-    void execStaticSaveConfig(FFrame &, void *);
-    void execImportJSON(FFrame &, void *);
-    void execGetPerObjectConfigSections(FFrame &, void *);
-    void execGetEnum(FFrame &, void *);
-    void execDynamicLoadObject(FFrame &, void *);
-    void execFindObject(FFrame &, void *);
-    void execIsAsyncLoadingActive(FFrame &, void *);
-    void execIsInState(FFrame &, void *);
-    void execIsChildState(FFrame &, void *);
-    void execGetStateName(FFrame &, void *);
-    void execGetFuncName(FFrame &, void *);
-    void execDebugBreak(FFrame &, void *);
-    void execScriptTrace(FFrame &, void *);
-    void execGetScriptTrace(FFrame &, void *);
-    void execSetUTracing(FFrame &, void *);
-    void execIsUTracing(FFrame &, void *);
-    void execHighNative0(FFrame &, void *);
-    void execHighNative1(FFrame &, void *);
-    void execHighNative2(FFrame &, void *);
-    void execHighNative3(FFrame &, void *);
-    void execHighNative4(FFrame &, void *);
-    void execHighNative5(FFrame &, void *);
-    void execHighNative6(FFrame &, void *);
-    void execHighNative7(FFrame &, void *);
-    void execHighNative8(FFrame &, void *);
-    void execHighNative9(FFrame &, void *);
-    void execHighNative10(FFrame &, void *);
-    void execHighNative11(FFrame &, void *);
-    void execHighNative12(FFrame &, void *);
-    void execHighNative13(FFrame &, void *);
-    void execHighNative14(FFrame &, void *);
-    void execHighNative15(FFrame &, void *);
-    void execProjectOnTo(FFrame &, void *);
-    void execIsZero(FFrame &, void *);
-    void execPathName(FFrame &, void *);
-    void execTimeStamp(FFrame &, void *);
-    void execGetSystemTime(FFrame &, void *);
-    void execIsPendingKill(FFrame &, void *);
-    void execTransformVectorByRotation(FFrame &, void *);
-    void execGetEngineVersion(FFrame &, void *);
-    void execGetBuildChangelistNumber(FFrame &, void *);
-    void execJumpIfNotEditorOnly(FFrame &, void *);
-    void execGetLanguage(FFrame &, void *);
-    void execInvalidateGuid(FFrame &, void *);
-    void execIsGuidValid(FFrame &, void *);
-    void execCreateGuid(FFrame &, void *);
-    void execGetGuidFromString(FFrame &, void *);
-    void execGetStringFromGuid(FFrame &, void *);
+    void execUndefined(FFrame &, void *const);
+    void execLocalVariable(FFrame &, void *const);
+    void execInstanceVariable(FFrame &, void *const);
+    void execDefaultVariable(FFrame &, void *const);
+    void execLocalOutVariable(FFrame &, void *const);
+    void execStateVariable(FFrame &, void *const);
+    void execInterfaceVariable(FFrame &, void *const);
+    void execInterfaceContext(FFrame &, void *const);
+    void execDefaultParmValue(FFrame &, void *const);
+    void execArrayElement(FFrame &, void *const);
+    void execDynArrayElement(FFrame &, void *const);
+    void execDynArrayLength(FFrame &, void *const);
+    void execDynArrayInsert(FFrame &, void *const);
+    void execDynArrayRemove(FFrame &, void *const);
+    void execDynArrayFind(FFrame &, void *const);
+    void execDynArrayFindStruct(FFrame &, void *const);
+    void execDynArrayAdd(FFrame &, void *const);
+    void execDynArrayAddItem(FFrame &, void *const);
+    void execDynArrayInsertItem(FFrame &, void *const);
+    void execDynArrayRemoveItem(FFrame &, void *const);
+    void execDynArrayIterator(FFrame &, void *const);
+    void execDynArraySort(FFrame &, void *const);
+    void execBoolVariable(FFrame &, void *const);
+    void execClassDefaultVariable(FFrame &, void *const);
+    void execEndFunctionParms(FFrame &, void *const);
+    void execNothing(FFrame &, void *const);
+    void execEndOfScript(FFrame &, void *const);
+    void execReturnNothing(FFrame &, void *const);
+    void execIteratorPop(FFrame &, void *const);
+    void execEmptyParmValue(FFrame &, void *const);
+    void execStop(FFrame &, void *const);
+    void execEndCode(FFrame &, void *const);
+    void execSwitch(FFrame &, void *const);
+    void execCase(FFrame &, void *const);
+    void execJump(FFrame &, void *const);
+    void execJumpIfNot(FFrame &, void *const);
+    void execAssert(FFrame &, void *const);
+    void execGotoLabel(FFrame &, void *const);
+    void execLet(FFrame &, void *const);
+    void execLetBool(FFrame &, void *const);
+    void execLetDelegate(FFrame &, void *const);
+    void execEatReturnValue(FFrame &, void *const);
+    void execSelf(FFrame &, void *const);
+    void execContext(FFrame &, void *const);
+    void execVirtualFunction(FFrame &, void *const);
+    void execFinalFunction(FFrame &, void *const);
+    void execGlobalFunction(FFrame &, void *const);
+    void execDelegateFunction(FFrame &, void *const);
+    void execDelegateProperty(FFrame &, void *const);
+    void execStructCmpEq(FFrame &, void *const);
+    void execStructCmpNe(FFrame &, void *const);
+    void execStructMember(FFrame &, void *const);
+    void execEqualEqual_DelegateDelegate(FFrame &, void *const);
+    void execNotEqual_DelegateDelegate(FFrame &, void *const);
+    void execEqualEqual_DelegateFunction(FFrame &, void *const);
+    void execNotEqual_DelegateFunction(FFrame &, void *const);
+    void execIntConst(FFrame &, void *const);
+    void execFloatConst(FFrame &, void *const);
+    void execStringConst(FFrame &, void *const);
+    void execUnicodeStringConst(FFrame &, void *const);
+    void execObjectConst(FFrame &, void *const);
+    void execInstanceDelegate(FFrame &, void *const);
+    void execNameConst(FFrame &, void *const);
+    void execByteConst(FFrame &, void *const);
+    void execIntZero(FFrame &, void *const);
+    void execIntOne(FFrame &, void *const);
+    void execTrue(FFrame &, void *const);
+    void execFalse(FFrame &, void *const);
+    void execNoObject(FFrame &, void *const);
+    void execEmptyDelegate(FFrame &, void *const);
+    void execIntConstByte(FFrame &, void *const);
+    void execDynamicCast(FFrame &, void *const);
+    void execMetaCast(FFrame &, void *const);
+    void execPrimitiveCast(FFrame &, void *const);
+    void execInterfaceCast(FFrame &, void *const);
+    void execByteToInt(FFrame &, void *const);
+    void execByteToBool(FFrame &, void *const);
+    void execByteToFloat(FFrame &, void *const);
+    void execByteToString(FFrame &, void *const);
+    void execIntToByte(FFrame &, void *const);
+    void execIntToBool(FFrame &, void *const);
+    void execIntToFloat(FFrame &, void *const);
+    void execIntToString(FFrame &, void *const);
+    void execBoolToByte(FFrame &, void *const);
+    void execBoolToInt(FFrame &, void *const);
+    void execBoolToFloat(FFrame &, void *const);
+    void execBoolToString(FFrame &, void *const);
+    void execFloatToByte(FFrame &, void *const);
+    void execFloatToInt(FFrame &, void *const);
+    void execFloatToBool(FFrame &, void *const);
+    void execFloatToString(FFrame &, void *const);
+    void execRotationConst(FFrame &, void *const);
+    void execVectorConst(FFrame &, void *const);
+    void execPointDistToLine(FFrame &, void *const);
+    void execPointDistToSegment(FFrame &, void *const);
+    void execPointProjectToPlane(FFrame &, void *const);
+    void execGetDotDistance(FFrame &, void *const);
+    void execGetAngularDistance(FFrame &, void *const);
+    void execGetAngularFromDotDist(FFrame &, void *const);
+    void execStringToVector(FFrame &, void *const);
+    void execStringToRotator(FFrame &, void *const);
+    void execVectorToBool(FFrame &, void *const);
+    void execVectorToString(FFrame &, void *const);
+    void execVectorToRotator(FFrame &, void *const);
+    void execRotatorToBool(FFrame &, void *const);
+    void execRotatorToVector(FFrame &, void *const);
+    void execRotatorToString(FFrame &, void *const);
+    void execRotRand(FFrame &, void *const);
+    void execGetRotatorAxis(FFrame &, void *const);
+    void execGetUnAxes(FFrame &, void *const);
+    void execGetAxes(FFrame &, void *const);
+    void execSubtractEqual_RotatorRotator(FFrame &, void *const);
+    void execAddEqual_RotatorRotator(FFrame &, void *const);
+    void execSubtract_RotatorRotator(FFrame &, void *const);
+    void execAdd_RotatorRotator(FFrame &, void *const);
+    void execDivideEqual_RotatorFloat(FFrame &, void *const);
+    void execMultiplyEqual_RotatorFloat(FFrame &, void *const);
+    void execDivide_RotatorFloat(FFrame &, void *const);
+    void execMultiply_FloatRotator(FFrame &, void *const);
+    void execMultiply_RotatorFloat(FFrame &, void *const);
+    void execNotEqual_RotatorRotator(FFrame &, void *const);
+    void execEqualEqual_RotatorRotator(FFrame &, void *const);
+    void execGetRand(FFrame &, void *const);
+    void execRSize(FFrame &, void *const);
+    void execRMin(FFrame &, void *const);
+    void execRMax(FFrame &, void *const);
+    void execMirrorVectorByNormal(FFrame &, void *const);
+    void execVRand(FFrame &, void *const);
+    void execVRandCone(FFrame &, void *const);
+    void execVRandCone2(FFrame &, void *const);
+    void execVLerp(FFrame &, void *const);
+    void execVInterpTo(FFrame &, void *const);
+    void execClampLength(FFrame &, void *const);
+    void execNoZDot(FFrame &, void *const);
+    void execNormal(FFrame &, void *const);
+    void execNormal2D(FFrame &, void *const);
+    void execVSize(FFrame &, void *const);
+    void execVSize2D(FFrame &, void *const);
+    void execVSizeSq(FFrame &, void *const);
+    void execVSizeSq2D(FFrame &, void *const);
+    void execSubtractEqual_VectorVector(FFrame &, void *const);
+    void execAddEqual_VectorVector(FFrame &, void *const);
+    void execDivideEqual_VectorFloat(FFrame &, void *const);
+    void execMultiplyEqual_VectorVector(FFrame &, void *const);
+    void execMultiplyEqual_VectorFloat(FFrame &, void *const);
+    void execCross_VectorVector(FFrame &, void *const);
+    void execDot_VectorVector(FFrame &, void *const);
+    void execNotEqual_VectorVector(FFrame &, void *const);
+    void execEqualEqual_VectorVector(FFrame &, void *const);
+    void execGreaterGreater_VectorRotator(FFrame &, void *const);
+    void execLessLess_VectorRotator(FFrame &, void *const);
+    void execSubtract_VectorVector(FFrame &, void *const);
+    void execAdd_VectorVector(FFrame &, void *const);
+    void execDivide_VectorFloat(FFrame &, void *const);
+    void execMultiply_VectorVector(FFrame &, void *const);
+    void execMultiply_FloatVector(FFrame &, void *const);
+    void execMultiply_VectorFloat(FFrame &, void *const);
+    void execSubtract_PreVector(FFrame &, void *const);
+    void execOrthoRotation(FFrame &, void *const);
+    void execNormalize(FFrame &, void *const);
+    void execRLerp(FFrame &, void *const);
+    void execRTransform(FFrame &, void *const);
+    void execRInterpTo(FFrame &, void *const);
+    void execNormalizeRotAxis(FFrame &, void *const);
+    void execRDiff(FFrame &, void *const);
+    void execClockwiseFrom_IntInt(FFrame &, void *const);
+    void execObjectToBool(FFrame &, void *const);
+    void execObjectToInterface(FFrame &, void *const);
+    void execObjectToString(FFrame &, void *const);
+    void execInterfaceToString(FFrame &, void *const);
+    void execInterfaceToBool(FFrame &, void *const);
+    void execInterfaceToObject(FFrame &, void *const);
+    void execDelegateToString(FFrame &, void *const);
+    void execNameToBool(FFrame &, void *const);
+    void execNameToString(FFrame &, void *const);
+    void execStringToName(FFrame &, void *const);
+    void execStringToByte(FFrame &, void *const);
+    void execStringToInt(FFrame &, void *const);
+    void execStringToBool(FFrame &, void *const);
+    void execStringToFloat(FFrame &, void *const);
+    void execNot_PreBool(FFrame &, void *const);
+    void execEqualEqual_BoolBool(FFrame &, void *const);
+    void execNotEqual_BoolBool(FFrame &, void *const);
+    void execAndAnd_BoolBool(FFrame &, void *const);
+    void execXorXor_BoolBool(FFrame &, void *const);
+    void execOrOr_BoolBool(FFrame &, void *const);
+    void execMultiplyEqual_ByteByte(FFrame &, void *const);
+    void execMultiplyEqual_ByteFloat(FFrame &, void *const);
+    void execDivideEqual_ByteByte(FFrame &, void *const);
+    void execAddEqual_ByteByte(FFrame &, void *const);
+    void execSubtractEqual_ByteByte(FFrame &, void *const);
+    void execAddAdd_PreByte(FFrame &, void *const);
+    void execSubtractSubtract_PreByte(FFrame &, void *const);
+    void execAddAdd_Byte(FFrame &, void *const);
+    void execSubtractSubtract_Byte(FFrame &, void *const);
+    void execComplement_PreInt(FFrame &, void *const);
+    void execSubtract_PreInt(FFrame &, void *const);
+    void execMultiply_IntInt(FFrame &, void *const);
+    void execDivide_IntInt(FFrame &, void *const);
+    void execPercent_IntInt(FFrame &, void *const);
+    void execAdd_IntInt(FFrame &, void *const);
+    void execSubtract_IntInt(FFrame &, void *const);
+    void execLessLess_IntInt(FFrame &, void *const);
+    void execGreaterGreater_IntInt(FFrame &, void *const);
+    void execGreaterGreaterGreater_IntInt(FFrame &, void *const);
+    void execLess_IntInt(FFrame &, void *const);
+    void execGreater_IntInt(FFrame &, void *const);
+    void execLessEqual_IntInt(FFrame &, void *const);
+    void execGreaterEqual_IntInt(FFrame &, void *const);
+    void execEqualEqual_IntInt(FFrame &, void *const);
+    void execNotEqual_IntInt(FFrame &, void *const);
+    void execAnd_IntInt(FFrame &, void *const);
+    void execXor_IntInt(FFrame &, void *const);
+    void execOr_IntInt(FFrame &, void *const);
+    void execMultiplyEqual_IntFloat(FFrame &, void *const);
+    void execDivideEqual_IntFloat(FFrame &, void *const);
+    void execAddEqual_IntInt(FFrame &, void *const);
+    void execSubtractEqual_IntInt(FFrame &, void *const);
+    void execAddAdd_PreInt(FFrame &, void *const);
+    void execSubtractSubtract_PreInt(FFrame &, void *const);
+    void execAddAdd_Int(FFrame &, void *const);
+    void execSubtractSubtract_Int(FFrame &, void *const);
+    void execRand(FFrame &, void *const);
+    void execMin(FFrame &, void *const);
+    void execMax(FFrame &, void *const);
+    void execClamp(FFrame &, void *const);
+    void execToHex(FFrame &, void *const);
+    void execSubtract_PreFloat(FFrame &, void *const);
+    void execMultiplyMultiply_FloatFloat(FFrame &, void *const);
+    void execMultiply_FloatFloat(FFrame &, void *const);
+    void execDivide_FloatFloat(FFrame &, void *const);
+    void execPercent_FloatFloat(FFrame &, void *const);
+    void execAdd_FloatFloat(FFrame &, void *const);
+    void execSubtract_FloatFloat(FFrame &, void *const);
+    void execLess_FloatFloat(FFrame &, void *const);
+    void execGreater_FloatFloat(FFrame &, void *const);
+    void execLessEqual_FloatFloat(FFrame &, void *const);
+    void execGreaterEqual_FloatFloat(FFrame &, void *const);
+    void execEqualEqual_FloatFloat(FFrame &, void *const);
+    void execNotEqual_FloatFloat(FFrame &, void *const);
+    void execComplementEqual_FloatFloat(FFrame &, void *const);
+    void execMultiplyEqual_FloatFloat(FFrame &, void *const);
+    void execDivideEqual_FloatFloat(FFrame &, void *const);
+    void execAddEqual_FloatFloat(FFrame &, void *const);
+    void execSubtractEqual_FloatFloat(FFrame &, void *const);
+    void execAbs(FFrame &, void *const);
+    void execDebugInfo(FFrame &, void *const);
+    void execSin(FFrame &, void *const);
+    void execAsin(FFrame &, void *const);
+    void execCos(FFrame &, void *const);
+    void execAcos(FFrame &, void *const);
+    void execTan(FFrame &, void *const);
+    void execAtan(FFrame &, void *const);
+    void execAtan2(FFrame &, void *const);
+    void execExp(FFrame &, void *const);
+    void execLoge(FFrame &, void *const);
+    void execSqrt(FFrame &, void *const);
+    void execSquare(FFrame &, void *const);
+    void execRound(FFrame &, void *const);
+    void execFFloor(FFrame &, void *const);
+    void execFCeil(FFrame &, void *const);
+    void execFRand(FFrame &, void *const);
+    void execFMin(FFrame &, void *const);
+    void execFMax(FFrame &, void *const);
+    void execFClamp(FFrame &, void *const);
+    void execLerp(FFrame &, void *const);
+    void execFCubicInterp(FFrame &, void *const);
+    void execFInterpEaseInOut(FFrame &, void *const);
+    void execFInterpTo(FFrame &, void *const);
+    void execFInterpConstantTo(FFrame &, void *const);
+    void execConcat_StrStr(FFrame &, void *const);
+    void execAt_StrStr(FFrame &, void *const);
+    void execLess_StrStr(FFrame &, void *const);
+    void execGreater_StrStr(FFrame &, void *const);
+    void execLessEqual_StrStr(FFrame &, void *const);
+    void execGreaterEqual_StrStr(FFrame &, void *const);
+    void execEqualEqual_StrStr(FFrame &, void *const);
+    void execNotEqual_StrStr(FFrame &, void *const);
+    void execComplementEqual_StrStr(FFrame &, void *const);
+    void execConcatEqual_StrStr(FFrame &, void *const);
+    void execAtEqual_StrStr(FFrame &, void *const);
+    void execSubtractEqual_StrStr(FFrame &, void *const);
+    void execLen(FFrame &, void *const);
+    void execInStr(FFrame &, void *const);
+    void execMid(FFrame &, void *const);
+    void execLeft(FFrame &, void *const);
+    void execRight(FFrame &, void *const);
+    void execCaps(FFrame &, void *const);
+    void execLocs(FFrame &, void *const);
+    void execChr(FFrame &, void *const);
+    void execAsc(FFrame &, void *const);
+    void execRepl(FFrame &, void *const);
+    void execParseStringIntoArray(FFrame &, void *const);
+    void execMatrixGetOrigin(FFrame &, void *const);
+    void execMatrixGetAxis(FFrame &, void *const);
+    void execMatrixGetRotator(FFrame &, void *const);
+    void execMakeRotationMatrix(FFrame &, void *const);
+    void execMakeRotationTranslationMatrix(FFrame &, void *const);
+    void execInverseTransformNormal(FFrame &, void *const);
+    void execTransformNormal(FFrame &, void *const);
+    void execInverseTransformVector(FFrame &, void *const);
+    void execTransformVector(FFrame &, void *const);
+    void execMultiply_MatrixMatrix(FFrame &, void *const);
+    void execQuatProduct(FFrame &, void *const);
+    void execQuatDot(FFrame &, void *const);
+    void execQuatInvert(FFrame &, void *const);
+    void execQuatRotateVector(FFrame &, void *const);
+    void execQuatFindBetween(FFrame &, void *const);
+    void execQuatFromAxisAndAngle(FFrame &, void *const);
+    void execQuatFromRotator(FFrame &, void *const);
+    void execQuatToRotator(FFrame &, void *const);
+    void execQuatSlerp(FFrame &, void *const);
+    void execAdd_QuatQuat(FFrame &, void *const);
+    void execSubtract_QuatQuat(FFrame &, void *const);
+    void execAdd_Vector2DVector2D(FFrame &, void *const);
+    void execSubtract_Vector2DVector2D(FFrame &, void *const);
+    void execMultiply_Vector2DFloat(FFrame &, void *const);
+    void execDivide_Vector2DFloat(FFrame &, void *const);
+    void execMultiplyEqual_Vector2DFloat(FFrame &, void *const);
+    void execDivideEqual_Vector2DFloat(FFrame &, void *const);
+    void execAddEqual_Vector2DVector2D(FFrame &, void *const);
+    void execSubtractEqual_Vector2DVector2D(FFrame &, void *const);
+    void execGetMappedRangeValue(FFrame &, void *const);
+    void execEvalInterpCurveVector2D(FFrame &, void *const);
+    void execEvalInterpCurveVector(FFrame &, void *const);
+    void execEvalInterpCurveFloat(FFrame &, void *const);
+    void execEqualEqual_ObjectObject(FFrame &, void *const);
+    void execNotEqual_ObjectObject(FFrame &, void *const);
+    void execEqualEqual_InterfaceInterface(FFrame &, void *const);
+    void execNotEqual_InterfaceInterface(FFrame &, void *const);
+    void execEqualEqual_NameName(FFrame &, void *const);
+    void execNotEqual_NameName(FFrame &, void *const);
+    void execLogInternal(FFrame &, void *const);
+    void execWarnInternal(FFrame &, void *const);
+    void execConditional(FFrame &, void *const);
+    void execNew(FFrame &, void *const);
+    void execClassIsChildOf(FFrame &, void *const);
+    void execClassContext(FFrame &, void *const);
+    void execGoto(FFrame &, void *const);
+    void execGotoState(FFrame &, void *const);
+    void execPushState(FFrame &, void *const);
+    void execPopState(FFrame &, void *const);
+    void execDumpStateStack(FFrame &, void *const);
+    void execIsA(FFrame &, void *const);
+    void execEnable(FFrame &, void *const);
+    void execDisable(FFrame &, void *const);
+    void execIterator(FFrame &, void *const);
+    void execLocalize(FFrame &, void *const);
+    void execNativeParm(FFrame &, void *const);
+    void execSaveConfig(FFrame &, void *const);
+    void execStaticSaveConfig(FFrame &, void *const);
+    void execImportJSON(FFrame &, void *const);
+    void execGetPerObjectConfigSections(FFrame &, void *const);
+    void execGetEnum(FFrame &, void *const);
+    void execDynamicLoadObject(FFrame &, void *const);
+    void execFindObject(FFrame &, void *const);
+    void execIsAsyncLoadingActive(FFrame &, void *const);
+    void execIsInState(FFrame &, void *const);
+    void execIsChildState(FFrame &, void *const);
+    void execGetStateName(FFrame &, void *const);
+    void execGetFuncName(FFrame &, void *const);
+    void execDebugBreak(FFrame &, void *const);
+    void execScriptTrace(FFrame &, void *const);
+    void execGetScriptTrace(FFrame &, void *const);
+    void execSetUTracing(FFrame &, void *const);
+    void execIsUTracing(FFrame &, void *const);
+    void execHighNative0(FFrame &, void *const);
+    void execHighNative1(FFrame &, void *const);
+    void execHighNative2(FFrame &, void *const);
+    void execHighNative3(FFrame &, void *const);
+    void execHighNative4(FFrame &, void *const);
+    void execHighNative5(FFrame &, void *const);
+    void execHighNative6(FFrame &, void *const);
+    void execHighNative7(FFrame &, void *const);
+    void execHighNative8(FFrame &, void *const);
+    void execHighNative9(FFrame &, void *const);
+    void execHighNative10(FFrame &, void *const);
+    void execHighNative11(FFrame &, void *const);
+    void execHighNative12(FFrame &, void *const);
+    void execHighNative13(FFrame &, void *const);
+    void execHighNative14(FFrame &, void *const);
+    void execHighNative15(FFrame &, void *const);
+    void execProjectOnTo(FFrame &, void *const);
+    void execIsZero(FFrame &, void *const);
+    void execPathName(FFrame &, void *const);
+    void execTimeStamp(FFrame &, void *const);
+    void execGetSystemTime(FFrame &, void *const);
+    void execIsPendingKill(FFrame &, void *const);
+    void execTransformVectorByRotation(FFrame &, void *const);
+    void execGetEngineVersion(FFrame &, void *const);
+    void execGetBuildChangelistNumber(FFrame &, void *const);
+    void execJumpIfNotEditorOnly(FFrame &, void *const);
+    void execGetLanguage(FFrame &, void *const);
+    void execInvalidateGuid(FFrame &, void *const);
+    void execIsGuidValid(FFrame &, void *const);
+    void execCreateGuid(FFrame &, void *const);
+    void execGetGuidFromString(FFrame &, void *const);
+    void execGetStringFromGuid(FFrame &, void *const);
     void eventBeginState(FName);
     void eventEndState(FName);
     void eventPushedState();
@@ -3126,141 +3127,141 @@ public:
     unsigned int IsInPersistentLevel(unsigned int) const;
     FVector GetAvoidanceVector(const TArray<AActor *,FDefaultAllocator> &, FVector, float, float, int, float, float);
     unsigned int WillOverlap(FVector, FVector, FVector, FVector, float, float, float &);
-    void execForceUpdateComponents(FFrame &, void *);
-    void execConsoleCommand(FFrame &, void *);
-    void execSleep(FFrame &, void *);
-    void execFinishAnim(FFrame &, void *);
-    void execSetCollision(FFrame &, void *);
-    void execSetCollisionSize(FFrame &, void *);
-    void execSetCollisionType(FFrame &, void *);
-    void execSetDrawScale(FFrame &, void *);
-    void execSetDrawScale3D(FFrame &, void *);
-    void execMove(FFrame &, void *);
-    void execSetLocation(FFrame &, void *);
-    void execSetRotation(FFrame &, void *);
-    void execMovingWhichWay(FFrame &, void *);
-    void execSetZone(FFrame &, void *);
-    void execSetRelativeRotation(FFrame &, void *);
-    void execSetRelativeLocation(FFrame &, void *);
-    void execSetHardAttach(FFrame &, void *);
-    void execSetShadowParentOnAllAttachedComponents(FFrame &, void *);
-    void execfixedTurn(FFrame &, void *);
-    void execMoveSmooth(FFrame &, void *);
-    void execAutonomousPhysics(FFrame &, void *);
-    void execGetTerminalVelocity(FFrame &, void *);
-    void execSetBase(FFrame &, void *);
-    void execSetOwner(FFrame &, void *);
-    void execFindBase(FFrame &, void *);
-    void execSearchForBaseBelow(FFrame &, void *);
-    void execIsBasedOn(FFrame &, void *);
-    void execGetBaseMost(FFrame &, void *);
-    void execIsOwnedBy(FFrame &, void *);
-    void execGetAggregateBaseVelocity(FFrame &, void *);
-    void execSetForcedInitialReplicatedProperty(FFrame &, void *);
-    void execVect2BP(FFrame &, void *);
-    void execBP2Vect(FFrame &, void *);
-    void execSetBasedPosition(FFrame &, void *);
-    void execGetBasedPosition(FFrame &, void *);
-    void execFlushPersistentDebugLines(FFrame &, void *);
-    void execDrawDebugLine(FFrame &, void *);
-    void execDrawDebugPoint(FFrame &, void *);
-    void execDrawDebugBox(FFrame &, void *);
-    void execDrawDebugStar(FFrame &, void *);
-    void execDrawDebugCoordinateSystem(FFrame &, void *);
-    void execDrawDebugSphere(FFrame &, void *);
-    void execDrawDebugCylinder(FFrame &, void *);
-    void execDrawDebugCone(FFrame &, void *);
-    void execDrawDebugString(FFrame &, void *);
-    void execDrawDebugFrustrum(FFrame &, void *);
-    void execFlushDebugStrings(FFrame &, void *);
-    void execChartData(FFrame &, void *);
-    void execSetHidden(FFrame &, void *);
-    void execSetOnlyOwnerSee(FFrame &, void *);
-    void execSetPhysics(FFrame &, void *);
-    void execClock(FFrame &, void *);
-    void execUnClock(FFrame &, void *);
-    void execAttachComponent(FFrame &, void *);
-    void execDetachComponent(FFrame &, void *);
-    void execReattachComponent(FFrame &, void *);
-    void execSetTickGroup(FFrame &, void *);
-    void execSetTickIsDisabled(FFrame &, void *);
-    void execClampRotation(FFrame &, void *);
-    void execTrace(FFrame &, void *);
-    void execTraceComponent(FFrame &, void *);
-    void execPointCheckComponent(FFrame &, void *);
-    void execFastTrace(FFrame &, void *);
-    void execTraceAllPhysicsAssetInteractions(FFrame &, void *);
-    void execFindSpot(FFrame &, void *);
-    void execContainsPoint(FFrame &, void *);
-    void execIsOverlapping(FFrame &, void *);
-    void execGetComponentsBoundingBox(FFrame &, void *);
-    void execGetBoundingCylinder(FFrame &, void *);
-    void execIsBlockedBy(FFrame &, void *);
-    void execSpawn(FFrame &, void *);
-    void execDestroy(FFrame &, void *);
-    void execSetTimer(FFrame &, void *);
-    void execClearTimer(FFrame &, void *);
-    void execClearAllTimers(FFrame &, void *);
-    void execPauseTimer(FFrame &, void *);
-    void execIsTimerActive(FFrame &, void *);
-    void execGetTimerCount(FFrame &, void *);
-    void execGetTimerRate(FFrame &, void *);
-    void execModifyTimerTimeDilation(FFrame &, void *);
-    void execResetTimerTimeDilation(FFrame &, void *);
-    void execCreateAudioComponent(FFrame &, void *);
-    void execPlaySound(FFrame &, void *);
-    void execPlayAkEvent(FFrame &, void *);
-    void execPlaySoundBase(FFrame &, void *);
-    void execPostAkEvent(FFrame &, void *);
-    void execPostGlobalAkEvent(FFrame &, void *);
-    void execPostAkEventOnBone(FFrame &, void *);
-    void execSetRTPCValue(FFrame &, void *);
-    void execSetAkState(FFrame &, void *);
-    void execSetSwitch(FFrame &, void *);
-    void execPostTrigger(FFrame &, void *);
-    void execActivateOcclusion(FFrame &, void *);
-    void execMakeNoise(FFrame &, void *);
-    void execPlayerCanSeeMe(FFrame &, void *);
-    void execSuggestTossVelocity(FFrame &, void *);
-    void execCalculateMinSpeedTrajectory(FFrame &, void *);
-    void execGetDestination(FFrame &, void *);
-    void execGetURLMap(FFrame &, void *);
-    void execAllActors(FFrame &, void *);
-    void execDynamicActors(FFrame &, void *);
-    void execChildActors(FFrame &, void *);
-    void execBasedActors(FFrame &, void *);
-    void execTouchingActors(FFrame &, void *);
-    void execTraceActors(FFrame &, void *);
-    void execVisibleActors(FFrame &, void *);
-    void execVisibleCollidingActors(FFrame &, void *);
-    void execCollidingActors(FFrame &, void *);
-    void execOverlappingActors(FFrame &, void *);
-    void execComponentList(FFrame &, void *);
-    void execGetComponentOfType(FFrame &, void *);
-    void execAllOwnedComponents(FFrame &, void *);
-    void execLocalPlayerControllers(FFrame &, void *);
-    void execGetALocalPlayerController(FFrame &, void *);
-    void execGetGravityZ(FFrame &, void *);
-    void execSetNetUpdateTime(FFrame &, void *);
-    void execPrestreamTextures(FFrame &, void *);
-    void execIsPlayerOwned(FFrame &, void *);
-    void execGetTeamNum(FFrame &, void *);
-    void execSetTeamNum(FFrame &, void *);
-    void execGetTargetLocation(FFrame &, void *);
-    void execSetHUDLocation(FFrame &, void *);
-    void execNativePostRenderFor(FFrame &, void *);
-    void execGetPackageGuid(FFrame &, void *);
-    void execIsInPersistentLevel(FFrame &, void *);
-    void execGetAnimTrailParticleSystem(FFrame &, void *);
-    void execSupportsKismetModification(FFrame &, void *);
-    void execGetAvoidanceVector(FFrame &, void *);
-    void execWillOverlap(FFrame &, void *);
-    void execShouldBeHiddenBySHOW_NavigationNodes(FFrame &, void *);
-    void execGetActorMetrics(FFrame &, void *);
-    void execGetActorSpriteComponent(FFrame &, void *);
-    void execGetPawnViewLocation(FFrame &, void *);
-    void execGetNavAdjustedLocation(FFrame &, void *);
-    void execIsInvisible(FFrame &, void *);
+    void execForceUpdateComponents(FFrame &, void *const);
+    void execConsoleCommand(FFrame &, void *const);
+    void execSleep(FFrame &, void *const);
+    void execFinishAnim(FFrame &, void *const);
+    void execSetCollision(FFrame &, void *const);
+    void execSetCollisionSize(FFrame &, void *const);
+    void execSetCollisionType(FFrame &, void *const);
+    void execSetDrawScale(FFrame &, void *const);
+    void execSetDrawScale3D(FFrame &, void *const);
+    void execMove(FFrame &, void *const);
+    void execSetLocation(FFrame &, void *const);
+    void execSetRotation(FFrame &, void *const);
+    void execMovingWhichWay(FFrame &, void *const);
+    void execSetZone(FFrame &, void *const);
+    void execSetRelativeRotation(FFrame &, void *const);
+    void execSetRelativeLocation(FFrame &, void *const);
+    void execSetHardAttach(FFrame &, void *const);
+    void execSetShadowParentOnAllAttachedComponents(FFrame &, void *const);
+    void execfixedTurn(FFrame &, void *const);
+    void execMoveSmooth(FFrame &, void *const);
+    void execAutonomousPhysics(FFrame &, void *const);
+    void execGetTerminalVelocity(FFrame &, void *const);
+    void execSetBase(FFrame &, void *const);
+    void execSetOwner(FFrame &, void *const);
+    void execFindBase(FFrame &, void *const);
+    void execSearchForBaseBelow(FFrame &, void *const);
+    void execIsBasedOn(FFrame &, void *const);
+    void execGetBaseMost(FFrame &, void *const);
+    void execIsOwnedBy(FFrame &, void *const);
+    void execGetAggregateBaseVelocity(FFrame &, void *const);
+    void execSetForcedInitialReplicatedProperty(FFrame &, void *const);
+    void execVect2BP(FFrame &, void *const);
+    void execBP2Vect(FFrame &, void *const);
+    void execSetBasedPosition(FFrame &, void *const);
+    void execGetBasedPosition(FFrame &, void *const);
+    void execFlushPersistentDebugLines(FFrame &, void *const);
+    void execDrawDebugLine(FFrame &, void *const);
+    void execDrawDebugPoint(FFrame &, void *const);
+    void execDrawDebugBox(FFrame &, void *const);
+    void execDrawDebugStar(FFrame &, void *const);
+    void execDrawDebugCoordinateSystem(FFrame &, void *const);
+    void execDrawDebugSphere(FFrame &, void *const);
+    void execDrawDebugCylinder(FFrame &, void *const);
+    void execDrawDebugCone(FFrame &, void *const);
+    void execDrawDebugString(FFrame &, void *const);
+    void execDrawDebugFrustrum(FFrame &, void *const);
+    void execFlushDebugStrings(FFrame &, void *const);
+    void execChartData(FFrame &, void *const);
+    void execSetHidden(FFrame &, void *const);
+    void execSetOnlyOwnerSee(FFrame &, void *const);
+    void execSetPhysics(FFrame &, void *const);
+    void execClock(FFrame &, void *const);
+    void execUnClock(FFrame &, void *const);
+    void execAttachComponent(FFrame &, void *const);
+    void execDetachComponent(FFrame &, void *const);
+    void execReattachComponent(FFrame &, void *const);
+    void execSetTickGroup(FFrame &, void *const);
+    void execSetTickIsDisabled(FFrame &, void *const);
+    void execClampRotation(FFrame &, void *const);
+    void execTrace(FFrame &, void *const);
+    void execTraceComponent(FFrame &, void *const);
+    void execPointCheckComponent(FFrame &, void *const);
+    void execFastTrace(FFrame &, void *const);
+    void execTraceAllPhysicsAssetInteractions(FFrame &, void *const);
+    void execFindSpot(FFrame &, void *const);
+    void execContainsPoint(FFrame &, void *const);
+    void execIsOverlapping(FFrame &, void *const);
+    void execGetComponentsBoundingBox(FFrame &, void *const);
+    void execGetBoundingCylinder(FFrame &, void *const);
+    void execIsBlockedBy(FFrame &, void *const);
+    void execSpawn(FFrame &, void *const);
+    void execDestroy(FFrame &, void *const);
+    void execSetTimer(FFrame &, void *const);
+    void execClearTimer(FFrame &, void *const);
+    void execClearAllTimers(FFrame &, void *const);
+    void execPauseTimer(FFrame &, void *const);
+    void execIsTimerActive(FFrame &, void *const);
+    void execGetTimerCount(FFrame &, void *const);
+    void execGetTimerRate(FFrame &, void *const);
+    void execModifyTimerTimeDilation(FFrame &, void *const);
+    void execResetTimerTimeDilation(FFrame &, void *const);
+    void execCreateAudioComponent(FFrame &, void *const);
+    void execPlaySound(FFrame &, void *const);
+    void execPlayAkEvent(FFrame &, void *const);
+    void execPlaySoundBase(FFrame &, void *const);
+    void execPostAkEvent(FFrame &, void *const);
+    void execPostGlobalAkEvent(FFrame &, void *const);
+    void execPostAkEventOnBone(FFrame &, void *const);
+    void execSetRTPCValue(FFrame &, void *const);
+    void execSetAkState(FFrame &, void *const);
+    void execSetSwitch(FFrame &, void *const);
+    void execPostTrigger(FFrame &, void *const);
+    void execActivateOcclusion(FFrame &, void *const);
+    void execMakeNoise(FFrame &, void *const);
+    void execPlayerCanSeeMe(FFrame &, void *const);
+    void execSuggestTossVelocity(FFrame &, void *const);
+    void execCalculateMinSpeedTrajectory(FFrame &, void *const);
+    void execGetDestination(FFrame &, void *const);
+    void execGetURLMap(FFrame &, void *const);
+    void execAllActors(FFrame &, void *const);
+    void execDynamicActors(FFrame &, void *const);
+    void execChildActors(FFrame &, void *const);
+    void execBasedActors(FFrame &, void *const);
+    void execTouchingActors(FFrame &, void *const);
+    void execTraceActors(FFrame &, void *const);
+    void execVisibleActors(FFrame &, void *const);
+    void execVisibleCollidingActors(FFrame &, void *const);
+    void execCollidingActors(FFrame &, void *const);
+    void execOverlappingActors(FFrame &, void *const);
+    void execComponentList(FFrame &, void *const);
+    void execGetComponentOfType(FFrame &, void *const);
+    void execAllOwnedComponents(FFrame &, void *const);
+    void execLocalPlayerControllers(FFrame &, void *const);
+    void execGetALocalPlayerController(FFrame &, void *const);
+    void execGetGravityZ(FFrame &, void *const);
+    void execSetNetUpdateTime(FFrame &, void *const);
+    void execPrestreamTextures(FFrame &, void *const);
+    void execIsPlayerOwned(FFrame &, void *const);
+    void execGetTeamNum(FFrame &, void *const);
+    void execSetTeamNum(FFrame &, void *const);
+    void execGetTargetLocation(FFrame &, void *const);
+    void execSetHUDLocation(FFrame &, void *const);
+    void execNativePostRenderFor(FFrame &, void *const);
+    void execGetPackageGuid(FFrame &, void *const);
+    void execIsInPersistentLevel(FFrame &, void *const);
+    void execGetAnimTrailParticleSystem(FFrame &, void *const);
+    void execSupportsKismetModification(FFrame &, void *const);
+    void execGetAvoidanceVector(FFrame &, void *const);
+    void execWillOverlap(FFrame &, void *const);
+    void execShouldBeHiddenBySHOW_NavigationNodes(FFrame &, void *const);
+    void execGetActorMetrics(FFrame &, void *const);
+    void execGetActorSpriteComponent(FFrame &, void *const);
+    void execGetPawnViewLocation(FFrame &, void *const);
+    void execGetNavAdjustedLocation(FFrame &, void *const);
+    void execIsInvisible(FFrame &, void *const);
     FVector eventGetPawnViewLocation();
     unsigned int eventOnMobileTouch(APlayerController *, FVector2D);
     void eventReplicationEnded();
@@ -3417,8 +3418,8 @@ public:
     AActor *GetHitActor();
     void ConditionalUpdateComponents(unsigned int);
     void MarkComponentsAsDirty(unsigned int);
-    void execPollSleep(FFrame &, void *);
-    void execPollFinishAnim(FFrame &, void *);
+    void execPollSleep(FFrame &, void *const);
+    void execPollFinishAnim(FFrame &, void *const);
     void GetInterpFloatPropertyNames(TArray<FName,FDefaultAllocator> &);
     void GetInterpVectorPropertyNames(TArray<FName,FDefaultAllocator> &);
     void GetInterpColorPropertyNames(TArray<FName,FDefaultAllocator> &);
@@ -3662,8 +3663,8 @@ public:
     virtual unsigned int AirControlFromWall(float, FVector &);
     virtual void NotifyJumpApex();
     virtual void ClearCrossLevelPaths(ULevel *);
-    virtual void execPollMoveTo(FFrame &, void *);
-    virtual void execPollMoveToward(FFrame &, void *);
+    virtual void execPollMoveTo(FFrame &, void *const);
+    virtual void execPollMoveToward(FFrame &, void *const);
     virtual unsigned int ShouldOffsetCorners();
     virtual unsigned int ShouldUsePathLanes();
     virtual unsigned int ShouldIgnoreNavigationBlockingFor(const AActor *);
@@ -3691,40 +3692,40 @@ public:
     unsigned int PickWallAdjust(FVector);
     unsigned int InLatentExecution(int);
     void StopLatentExecution();
-    void execIsLocalPlayerController(FFrame &, void *);
-    void execIsLocalController(FFrame &, void *);
-    void execRouteCache_Empty(FFrame &, void *);
-    void execRouteCache_AddItem(FFrame &, void *);
-    void execRouteCache_InsertItem(FFrame &, void *);
-    void execRouteCache_RemoveItem(FFrame &, void *);
-    void execRouteCache_RemoveIndex(FFrame &, void *);
-    void execSetFocalPoint(FFrame &, void *);
-    void execGetFocalPoint(FFrame &, void *);
-    void execSetDestinationPosition(FFrame &, void *);
-    void execGetDestinationPosition(FFrame &, void *);
-    void execSetAdjustLocation(FFrame &, void *);
-    void execGetAdjustLocation(FFrame &, void *);
-    void execBeyondFogDistance(FFrame &, void *);
-    void execLineOfSightTo(FFrame &, void *);
-    void execCanSee(FFrame &, void *);
-    void execCanSeeByPoints(FFrame &, void *);
-    void execPickTarget(FFrame &, void *);
-    void execMoveTo(FFrame &, void *);
-    void execMoveToDirectNonPathPos(FFrame &, void *);
-    void execMoveToward(FFrame &, void *);
-    void execFinishRotation(FFrame &, void *);
-    void execFindPathTo(FFrame &, void *);
-    void execFindPathToward(FFrame &, void *);
-    void execFindPathTowardNearest(FFrame &, void *);
-    void execFindRandomDest(FFrame &, void *);
-    void execFindPathToIntercept(FFrame &, void *);
-    void execPointReachable(FFrame &, void *);
-    void execActorReachable(FFrame &, void *);
-    void execPickWallAdjust(FFrame &, void *);
-    void execWaitForLanding(FFrame &, void *);
-    void execEndClimbLadder(FFrame &, void *);
-    void execInLatentExecution(FFrame &, void *);
-    void execStopLatentExecution(FFrame &, void *);
+    void execIsLocalPlayerController(FFrame &, void *const);
+    void execIsLocalController(FFrame &, void *const);
+    void execRouteCache_Empty(FFrame &, void *const);
+    void execRouteCache_AddItem(FFrame &, void *const);
+    void execRouteCache_InsertItem(FFrame &, void *const);
+    void execRouteCache_RemoveItem(FFrame &, void *const);
+    void execRouteCache_RemoveIndex(FFrame &, void *const);
+    void execSetFocalPoint(FFrame &, void *const);
+    void execGetFocalPoint(FFrame &, void *const);
+    void execSetDestinationPosition(FFrame &, void *const);
+    void execGetDestinationPosition(FFrame &, void *const);
+    void execSetAdjustLocation(FFrame &, void *const);
+    void execGetAdjustLocation(FFrame &, void *const);
+    void execBeyondFogDistance(FFrame &, void *const);
+    void execLineOfSightTo(FFrame &, void *const);
+    void execCanSee(FFrame &, void *const);
+    void execCanSeeByPoints(FFrame &, void *const);
+    void execPickTarget(FFrame &, void *const);
+    void execMoveTo(FFrame &, void *const);
+    void execMoveToDirectNonPathPos(FFrame &, void *const);
+    void execMoveToward(FFrame &, void *const);
+    void execFinishRotation(FFrame &, void *const);
+    void execFindPathTo(FFrame &, void *const);
+    void execFindPathToward(FFrame &, void *const);
+    void execFindPathTowardNearest(FFrame &, void *const);
+    void execFindRandomDest(FFrame &, void *const);
+    void execFindPathToIntercept(FFrame &, void *const);
+    void execPointReachable(FFrame &, void *const);
+    void execActorReachable(FFrame &, void *const);
+    void execPickWallAdjust(FFrame &, void *const);
+    void execWaitForLanding(FFrame &, void *const);
+    void execEndClimbLadder(FFrame &, void *const);
+    void execInLatentExecution(FFrame &, void *const);
+    void execStopLatentExecution(FFrame &, void *const);
     unsigned int eventGeneratePathToLocation(FVector, float, unsigned int);
     unsigned int eventGeneratePathToActor(AActor *, float, unsigned int);
     void eventCurrentLevelUnloaded();
@@ -3786,8 +3787,8 @@ public:
     void SetPathLane(float);
     virtual void PostBeginPlay();
     virtual void PostScriptDestroyed();
-    void execPollWaitForLanding(FFrame &, void *);
-    void execPollFinishRotation(FFrame &, void *);
+    void execPollWaitForLanding(FFrame &, void *const);
+    void execPollFinishRotation(FFrame &, void *const);
     virtual void GetAnimControlSlotDesc(TArray<FAnimSlotDesc,FDefaultAllocator> &);
     virtual void PreviewBeginAnimControl(UInterpGroup *);
     virtual void PreviewSetAnimPosition(FName, int, FName, float, unsigned int, unsigned int, unsigned int, float);
@@ -3887,15 +3888,15 @@ public:
     void CheckCommandCount();
     void DumpCommandStack();
     UGameAICommand *FindCommandOfClass(UClass *) const;
-    void execAllCommands(FFrame &, void *);
-    void execPushCommand(FFrame &, void *);
-    void execPopCommand(FFrame &, void *);
-    void execAbortCommand(FFrame &, void *);
-    void execGetActiveCommand(FFrame &, void *);
-    void execCheckCommandCount(FFrame &, void *);
-    void execDumpCommandStack(FFrame &, void *);
-    void execFindCommandOfClass(FFrame &, void *);
-    void execGetAICommandInStack(FFrame &, void *);
+    void execAllCommands(FFrame &, void *const);
+    void execPushCommand(FFrame &, void *const);
+    void execPopCommand(FFrame &, void *const);
+    void execAbortCommand(FFrame &, void *const);
+    void execGetActiveCommand(FFrame &, void *const);
+    void execCheckCommandCount(FFrame &, void *const);
+    void execDumpCommandStack(FFrame &, void *const);
+    void execFindCommandOfClass(FFrame &, void *const);
+    void execGetAICommandInStack(FFrame &, void *const);
     FString eventGetActionString();
     void eventAILog_Internal(const FString &, FName, unsigned int);
 private:
@@ -3944,15 +3945,15 @@ public:
     virtual void UpdateOnlyPawnRotation();
     virtual void DrawHUD(GripHUDRenderer *, int &);
     virtual unsigned char GetTeamNum();
-    void execSetDesiredPosition(FFrame &, void *);
-    void execActuallySetDesiredPosition(FFrame &, void *);
-    void execCalcAccuracyAngles(FFrame &, void *);
-    void execTakePossession(FFrame &, void *);
-    void execSetState(FFrame &, void *);
-    void execRemoveState(FFrame &, void *);
-    void execSetInitialCover(FFrame &, void *);
-    void execTriggerEvent(FFrame &, void *);
-    void execDisableBrain(FFrame &, void *);
+    void execSetDesiredPosition(FFrame &, void *const);
+    void execActuallySetDesiredPosition(FFrame &, void *const);
+    void execCalcAccuracyAngles(FFrame &, void *const);
+    void execTakePossession(FFrame &, void *const);
+    void execSetState(FFrame &, void *const);
+    void execRemoveState(FFrame &, void *const);
+    void execSetInitialCover(FFrame &, void *const);
+    void execTriggerEvent(FFrame &, void *const);
+    void execDisableBrain(FFrame &, void *const);
     void eventCreateDebugVizComponent();
     unsigned int eventFindNavMeshDistance(FVector, float &);
     unsigned int eventFindNavMeshPath(FVector);
@@ -4017,11 +4018,11 @@ public:
     UReachSpec *GetReachSpecTo(ANavigationPoint *, UClass *);
     unsigned int GetAllNavInRadius(AActor *, FVector, float, TArray<ANavigationPoint *,FDefaultAllocator> &, unsigned int, int, FCylinder);
     unsigned int IsOnDifferentNetwork(ANavigationPoint *);
-    void execGetReachSpecTo(FFrame &, void *);
-    void execIsUsableAnchorFor(FFrame &, void *);
-    void execCanTeleport(FFrame &, void *);
-    void execGetAllNavInRadius(FFrame &, void *);
-    void execIsOnDifferentNetwork(FFrame &, void *);
+    void execGetReachSpecTo(FFrame &, void *const);
+    void execIsUsableAnchorFor(FFrame &, void *const);
+    void execCanTeleport(FFrame &, void *const);
+    void execGetAllNavInRadius(FFrame &, void *const);
+    void execIsOnDifferentNetwork(FFrame &, void *const);
     FString eventGetDebugAbbrev();
     unsigned int eventSuggestMovePreparation(APawn *);
     float eventDetourWeight(APawn *, float);
@@ -4078,27 +4079,27 @@ public:
     TArray(ENoInit);
     TArray();
     ~TArray();
-    APawn **GetTypedData() const;
+    APawn *const *GetTypedData() const;
     APawn **GetTypedData();
-    APawn **GetData() const;
+    APawn *const *GetData() const;
     APawn **GetData();
     unsigned long GetTypeSize() const;
     unsigned long GetAllocatedSize() const;
     int GetSlack() const;
     unsigned int IsValidIndex(int) const;
     int Num() const;
-    APawn *&operator()(int) const;
+    APawn *const &operator()(int) const;
     APawn *&operator()(int);
     APawn *Pop();
-    void Push(APawn *&);
-    APawn *&Top() const;
+    void Push(APawn *const &);
+    APawn *const &Top() const;
     APawn *&Top();
-    APawn *&Last(int) const;
+    APawn *const &Last(int) const;
     APawn *&Last(int);
     void Shrink();
-    unsigned int FindItem(APawn *&, int &) const;
-    int FindItemIndex(APawn *&) const;
-    unsigned int ContainsItem(APawn *&) const;
+    unsigned int FindItem(APawn *const &, int &) const;
+    int FindItemIndex(APawn *const &) const;
+    unsigned int ContainsItem(APawn *const &) const;
     unsigned int operator==(const TArray<APawn *,FDefaultAllocator> &) const;
     unsigned int operator!=(const TArray<APawn *,FDefaultAllocator> &) const;
     void BulkSerialize(FArchive &, int);
@@ -4106,7 +4107,7 @@ public:
     int Add(int);
     void Insert(int, int);
     void InsertZeroed(int, int);
-    int InsertItem(APawn *&, int);
+    int InsertItem(APawn *const &, int);
     void Remove(int, int);
     void RemoveSwap(int, int);
     void Empty(int);
@@ -4114,21 +4115,21 @@ public:
     void Append(const TArray<APawn *,FDefaultAllocator> &);
     TArray<APawn *,FDefaultAllocator> &operator+=(const TArray<APawn *,FDefaultAllocator> &);
     TArray<APawn *,FDefaultAllocator> &operator=(const TArray<APawn *,FDefaultAllocator> &);
-    int AddItem(APawn *&);
+    int AddItem(APawn *const &);
     int AddZeroed(int);
-    int AddUniqueItem(APawn *&);
+    int AddUniqueItem(APawn *const &);
     void Reserve(int);
-    void Init(APawn *&, int);
+    void Init(APawn *const &, int);
     void Init(int);
-    int RemoveSingleItem(APawn *&);
-    int RemoveItem(APawn *&);
-    int RemoveSingleItemSwap(APawn *&);
-    int RemoveItemSwap(APawn *&);
+    int RemoveSingleItem(APawn *const &);
+    int RemoveItem(APawn *const &);
+    int RemoveSingleItemSwap(APawn *const &);
+    int RemoveItemSwap(APawn *const &);
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
 private:
-    APawn *&DebugGet(int) const;
+    APawn *const &DebugGet(int) const;
 protected:
     void DestructItems(int, int);
 private:
@@ -4365,31 +4366,31 @@ public:
     unsigned char GetLocationDescription(int);
     void AddToNorman();
     void RemoveFromNorman();
-    void execGetFireLinkTargetCoverInfo(FFrame &, void *);
-    void execPackFireLinkInteractionInfo(FFrame &, void *);
-    void execUnPackFireLinkInteractionInfo(FFrame &, void *);
-    void execGetSlotLocation(FFrame &, void *);
-    void execGetSlotRotation(FFrame &, void *);
-    void execGetSlotViewPoint(FFrame &, void *);
-    void execIsExposedTo(FFrame &, void *);
-    void execIsValidClaim(FFrame &, void *);
-    void execIsValidClaimBetween(FFrame &, void *);
-    void execFindSlots(FFrame &, void *);
-    void execIsEdgeSlot(FFrame &, void *);
-    void execIsLeftEdgeSlot(FFrame &, void *);
-    void execIsRightEdgeSlot(FFrame &, void *);
-    void execGetSlotIdxToLeft(FFrame &, void *);
-    void execGetSlotIdxToRight(FFrame &, void *);
-    void execGetFireLinkTo(FFrame &, void *);
-    void execHasFireLinkTo(FFrame &, void *);
-    void execGetSlotActions(FFrame &, void *);
-    void execAutoAdjustSlot(FFrame &, void *);
-    void execIsEnabled(FFrame &, void *);
-    void execGetSwatTurnTarget(FFrame &, void *);
-    void execAddCoverSlot(FFrame &, void *);
-    void execGetLocationDescription(FFrame &, void *);
-    void execAddToNorman(FFrame &, void *);
-    void execRemoveFromNorman(FFrame &, void *);
+    void execGetFireLinkTargetCoverInfo(FFrame &, void *const);
+    void execPackFireLinkInteractionInfo(FFrame &, void *const);
+    void execUnPackFireLinkInteractionInfo(FFrame &, void *const);
+    void execGetSlotLocation(FFrame &, void *const);
+    void execGetSlotRotation(FFrame &, void *const);
+    void execGetSlotViewPoint(FFrame &, void *const);
+    void execIsExposedTo(FFrame &, void *const);
+    void execIsValidClaim(FFrame &, void *const);
+    void execIsValidClaimBetween(FFrame &, void *const);
+    void execFindSlots(FFrame &, void *const);
+    void execIsEdgeSlot(FFrame &, void *const);
+    void execIsLeftEdgeSlot(FFrame &, void *const);
+    void execIsRightEdgeSlot(FFrame &, void *const);
+    void execGetSlotIdxToLeft(FFrame &, void *const);
+    void execGetSlotIdxToRight(FFrame &, void *const);
+    void execGetFireLinkTo(FFrame &, void *const);
+    void execHasFireLinkTo(FFrame &, void *const);
+    void execGetSlotActions(FFrame &, void *const);
+    void execAutoAdjustSlot(FFrame &, void *const);
+    void execIsEnabled(FFrame &, void *const);
+    void execGetSwatTurnTarget(FFrame &, void *const);
+    void execAddCoverSlot(FFrame &, void *const);
+    void execGetLocationDescription(FFrame &, void *const);
+    void execAddToNorman(FFrame &, void *const);
+    void execRemoveFromNorman(FFrame &, void *const);
     FString eventGetDebugString(int);
     void eventSetSlotPlayerOnly(int, unsigned int);
     void eventSetSlotEnabled(int, unsigned int);
@@ -4610,53 +4611,53 @@ public:
     virtual FVector GetPawnViewLocation();
     virtual unsigned char GetTeamNum();
     void SetScalarParameterInterp(const FScalarParameterInterpStruct &);
-    void execPickWallAdjust(FFrame &, void *);
-    void execSetDesiredRotation(FFrame &, void *);
-    void execLockDesiredRotation(FFrame &, void *);
-    void execResetDesiredRotation(FFrame &, void *);
-    void execCheckDesiredRotation(FFrame &, void *);
-    void execIsDesiredRotationInUse(FFrame &, void *);
-    void execIsDesiredRotationLocked(FFrame &, void *);
-    void execCacheAnimNodes(FFrame &, void *);
-    void execUpdateAnimSetList(FFrame &, void *);
-    void execAddAnimSets(FFrame &, void *);
-    void execMAT_BeginAnimControl(FFrame &, void *);
-    void execMAT_FinishAnimControl(FFrame &, void *);
-    void execMAT_SetAnimPosition(FFrame &, void *);
-    void execMAT_SetAnimWeights(FFrame &, void *);
-    void execMAT_SetMorphWeight(FFrame &, void *);
-    void execMAT_SetSkelControlScale(FFrame &, void *);
-    void execMAT_SetSkelControlStrength(FFrame &, void *);
-    void execIsAliveAndWell(FFrame &, void *);
-    void execAdjustDestination(FFrame &, void *);
-    void execValidAnchor(FFrame &, void *);
-    void execSuggestJumpVelocity(FFrame &, void *);
-    void execGetFallDuration(FFrame &, void *);
-    void execIsValidEnemyTargetFor(FFrame &, void *);
-    void execSetRemoteViewPitch(FFrame &, void *);
-    void execSetAnchor(FFrame &, void *);
-    void execGetBestAnchor(FFrame &, void *);
-    void execReachedDestination(FFrame &, void *);
-    void execReachedPoint(FFrame &, void *);
-    void execForceCrouch(FFrame &, void *);
-    void execSetPushesRigidBodies(FFrame &, void *);
-    void execReachedDesiredRotation(FFrame &, void *);
-    void execInitRagdoll(FFrame &, void *);
-    void execTermRagdoll(FFrame &, void *);
-    void execIsHumanControlled(FFrame &, void *);
-    void execIsLocallyControlled(FFrame &, void *);
-    void execIsPlayerPawn(FFrame &, void *);
-    void execGetViewRotation(FFrame &, void *);
-    void execGetVehicleBase(FFrame &, void *);
-    void execClearConstraints(FFrame &, void *);
-    void execAddPathConstraint(FFrame &, void *);
-    void execAddGoalEvaluator(FFrame &, void *);
-    void execIncrementPathStep(FFrame &, void *);
-    void execIncrementPathChild(FFrame &, void *);
-    void execDrawPathStep(FFrame &, void *);
-    void execClearPathStep(FFrame &, void *);
-    void execSetRootMotionInterpCurrentTime(FFrame &, void *);
-    void execSetScalarParameterInterp(FFrame &, void *);
+    void execPickWallAdjust(FFrame &, void *const);
+    void execSetDesiredRotation(FFrame &, void *const);
+    void execLockDesiredRotation(FFrame &, void *const);
+    void execResetDesiredRotation(FFrame &, void *const);
+    void execCheckDesiredRotation(FFrame &, void *const);
+    void execIsDesiredRotationInUse(FFrame &, void *const);
+    void execIsDesiredRotationLocked(FFrame &, void *const);
+    void execCacheAnimNodes(FFrame &, void *const);
+    void execUpdateAnimSetList(FFrame &, void *const);
+    void execAddAnimSets(FFrame &, void *const);
+    void execMAT_BeginAnimControl(FFrame &, void *const);
+    void execMAT_FinishAnimControl(FFrame &, void *const);
+    void execMAT_SetAnimPosition(FFrame &, void *const);
+    void execMAT_SetAnimWeights(FFrame &, void *const);
+    void execMAT_SetMorphWeight(FFrame &, void *const);
+    void execMAT_SetSkelControlScale(FFrame &, void *const);
+    void execMAT_SetSkelControlStrength(FFrame &, void *const);
+    void execIsAliveAndWell(FFrame &, void *const);
+    void execAdjustDestination(FFrame &, void *const);
+    void execValidAnchor(FFrame &, void *const);
+    void execSuggestJumpVelocity(FFrame &, void *const);
+    void execGetFallDuration(FFrame &, void *const);
+    void execIsValidEnemyTargetFor(FFrame &, void *const);
+    void execSetRemoteViewPitch(FFrame &, void *const);
+    void execSetAnchor(FFrame &, void *const);
+    void execGetBestAnchor(FFrame &, void *const);
+    void execReachedDestination(FFrame &, void *const);
+    void execReachedPoint(FFrame &, void *const);
+    void execForceCrouch(FFrame &, void *const);
+    void execSetPushesRigidBodies(FFrame &, void *const);
+    void execReachedDesiredRotation(FFrame &, void *const);
+    void execInitRagdoll(FFrame &, void *const);
+    void execTermRagdoll(FFrame &, void *const);
+    void execIsHumanControlled(FFrame &, void *const);
+    void execIsLocallyControlled(FFrame &, void *const);
+    void execIsPlayerPawn(FFrame &, void *const);
+    void execGetViewRotation(FFrame &, void *const);
+    void execGetVehicleBase(FFrame &, void *const);
+    void execClearConstraints(FFrame &, void *const);
+    void execAddPathConstraint(FFrame &, void *const);
+    void execAddGoalEvaluator(FFrame &, void *const);
+    void execIncrementPathStep(FFrame &, void *const);
+    void execIncrementPathChild(FFrame &, void *const);
+    void execDrawPathStep(FFrame &, void *const);
+    void execClearPathStep(FFrame &, void *const);
+    void execSetRootMotionInterpCurrentTime(FFrame &, void *const);
+    void execSetScalarParameterInterp(FFrame &, void *const);
     void eventOnRootMotionCollision(FVector);
     void eventNotifyGrenadeStuck();
     virtual void eventSpeak(USoundCue *);
@@ -4818,7 +4819,7 @@ public:
     virtual unsigned int JumpOutCheck(AActor *, float, float);
     virtual void moveTowardGwNav(const FVector &);
     virtual FVector GetTargetLocation(AActor *, unsigned int) const;
-    void execGetMaxRiseForce(FFrame &, void *);
+    void execGetMaxRiseForce(FFrame &, void *const);
     unsigned int eventGwNavBotExitVehicle(APawn *);
     unsigned int eventGwNavBotEnterVehicle(APawn *);
     FVector eventGetEntryLocation();
@@ -4874,13 +4875,13 @@ public:
     virtual void UpdateVehicle(ASVehicle *, float);
     virtual void SetWheelEffectParams(USVehicleWheel *, float);
     void SetWheelCollision(int, unsigned int);
-    void execAddForce(FFrame &, void *);
-    void execAddImpulse(FFrame &, void *);
-    void execAddTorque(FFrame &, void *);
-    void execIsSleeping(FFrame &, void *);
-    void execSetWheelCollision(FFrame &, void *);
-    void execInitVehicleRagdoll(FFrame &, void *);
-    void execHasWheelsOnGround(FFrame &, void *);
+    void execAddForce(FFrame &, void *const);
+    void execAddImpulse(FFrame &, void *const);
+    void execAddTorque(FFrame &, void *const);
+    void execIsSleeping(FFrame &, void *const);
+    void execSetWheelCollision(FFrame &, void *const);
+    void execInitVehicleRagdoll(FFrame &, void *const);
+    void execHasWheelsOnGround(FFrame &, void *const);
     void eventSuspensionHeavyShift(float);
 private:
     ASVehicle &operator=(const ASVehicle &);
@@ -4922,9 +4923,9 @@ public:
     virtual void MoveToPosition(FVector);
     virtual unsigned int IsArrived();
     virtual void IntializeNavigationBot(UGwNavNavdataFamily *, unsigned int, unsigned int, int);
-    void execMoveToPosition(FFrame &, void *);
-    void execIsArrived(FFrame &, void *);
-    void execIntializeNavigationBot(FFrame &, void *);
+    void execMoveToPosition(FFrame &, void *const);
+    void execIsArrived(FFrame &, void *const);
+    void execIntializeNavigationBot(FFrame &, void *const);
     void eventExecuteVehicleCommand(unsigned char);
 private:
     AGwNavVehicle &operator=(const AGwNavVehicle &);
@@ -4986,9 +4987,9 @@ public:
     virtual void RemoveCoverLink(ACoverLink *);
     virtual void KillCoverLinks();
     virtual FVector GetPawnViewLocation();
-    void execAddCoverLink(FFrame &, void *);
-    void execRemoveCoverLink(FFrame &, void *);
-    void execKillCoverLinks(FFrame &, void *);
+    void execAddCoverLink(FFrame &, void *const);
+    void execRemoveCoverLink(FFrame &, void *const);
+    void execKillCoverLinks(FFrame &, void *const);
 private:
     AUDKCover &operator=(const AUDKCover &);
 public:
@@ -5102,30 +5103,30 @@ public:
     virtual UCCSBTTree *GetDefaultBehaviorTree();
     virtual void SetDefaultBehaviorTree(UCCSBTTree *);
     virtual float GetYellingDistance();
-    void execGetMovementType(FFrame &, void *);
-    void execSetMovementType(FFrame &, void *);
-    void execSetMovementTypeDefault(FFrame &, void *);
-    void execGetAlertness(FFrame &, void *);
-    void execSetAlertness(FFrame &, void *);
-    void execSetAlertnessDefault(FFrame &, void *);
-    void execGetSpeed(FFrame &, void *);
-    void execSetSpeed(FFrame &, void *);
-    void execSetMovementSpeedDefault(FFrame &, void *);
-    void execIsCrouched(FFrame &, void *);
-    void execSetCrouched(FFrame &, void *);
-    void execSetPostureDefault(FFrame &, void *);
-    void execPostureTransitionOver(FFrame &, void *);
-    void execCanAim(FFrame &, void *);
-    void execSetCoverPose(FFrame &, void *);
-    void execSetNoCoverPose(FFrame &, void *);
-    void execCoverPoseTransitionOver(FFrame &, void *);
-    void execMoveToInCover(FFrame &, void *);
-    void execIsInCover(FFrame &, void *);
-    void execSetIsPanicking(FFrame &, void *);
-    void execGetIsPanicking(FFrame &, void *);
-    void execGetDefaultBehaviorTree(FFrame &, void *);
-    void execSetDefaultBehaviorTree(FFrame &, void *);
-    void execGetYellingDistance(FFrame &, void *);
+    void execGetMovementType(FFrame &, void *const);
+    void execSetMovementType(FFrame &, void *const);
+    void execSetMovementTypeDefault(FFrame &, void *const);
+    void execGetAlertness(FFrame &, void *const);
+    void execSetAlertness(FFrame &, void *const);
+    void execSetAlertnessDefault(FFrame &, void *const);
+    void execGetSpeed(FFrame &, void *const);
+    void execSetSpeed(FFrame &, void *const);
+    void execSetMovementSpeedDefault(FFrame &, void *const);
+    void execIsCrouched(FFrame &, void *const);
+    void execSetCrouched(FFrame &, void *const);
+    void execSetPostureDefault(FFrame &, void *const);
+    void execPostureTransitionOver(FFrame &, void *const);
+    void execCanAim(FFrame &, void *const);
+    void execSetCoverPose(FFrame &, void *const);
+    void execSetNoCoverPose(FFrame &, void *const);
+    void execCoverPoseTransitionOver(FFrame &, void *const);
+    void execMoveToInCover(FFrame &, void *const);
+    void execIsInCover(FFrame &, void *const);
+    void execSetIsPanicking(FFrame &, void *const);
+    void execGetIsPanicking(FFrame &, void *const);
+    void execGetDefaultBehaviorTree(FFrame &, void *const);
+    void execSetDefaultBehaviorTree(FFrame &, void *const);
+    void execGetYellingDistance(FFrame &, void *const);
 private:
     AUSSPawn &operator=(const AUSSPawn &);
 public:
@@ -5821,27 +5822,27 @@ public:
     TArray(ENoInit);
     TArray();
     ~TArray();
-    ActorWrapper **GetTypedData() const;
+    ActorWrapper *const *GetTypedData() const;
     ActorWrapper **GetTypedData();
-    ActorWrapper **GetData() const;
+    ActorWrapper *const *GetData() const;
     ActorWrapper **GetData();
     unsigned long GetTypeSize() const;
     unsigned long GetAllocatedSize() const;
     int GetSlack() const;
     unsigned int IsValidIndex(int) const;
     int Num() const;
-    ActorWrapper *&operator()(int) const;
+    ActorWrapper *const &operator()(int) const;
     ActorWrapper *&operator()(int);
     ActorWrapper *Pop();
-    void Push(ActorWrapper *&);
-    ActorWrapper *&Top() const;
+    void Push(ActorWrapper *const &);
+    ActorWrapper *const &Top() const;
     ActorWrapper *&Top();
-    ActorWrapper *&Last(int) const;
+    ActorWrapper *const &Last(int) const;
     ActorWrapper *&Last(int);
     void Shrink();
-    unsigned int FindItem(ActorWrapper *&, int &) const;
-    int FindItemIndex(ActorWrapper *&) const;
-    unsigned int ContainsItem(ActorWrapper *&) const;
+    unsigned int FindItem(ActorWrapper *const &, int &) const;
+    int FindItemIndex(ActorWrapper *const &) const;
+    unsigned int ContainsItem(ActorWrapper *const &) const;
     unsigned int operator==(const TArray<ActorWrapper *,FDefaultAllocator> &) const;
     unsigned int operator!=(const TArray<ActorWrapper *,FDefaultAllocator> &) const;
     void BulkSerialize(FArchive &, int);
@@ -5849,7 +5850,7 @@ public:
     int Add(int);
     void Insert(int, int);
     void InsertZeroed(int, int);
-    int InsertItem(ActorWrapper *&, int);
+    int InsertItem(ActorWrapper *const &, int);
     void Remove(int, int);
     void RemoveSwap(int, int);
     void Empty(int);
@@ -5857,21 +5858,21 @@ public:
     void Append(const TArray<ActorWrapper *,FDefaultAllocator> &);
     TArray<ActorWrapper *,FDefaultAllocator> &operator+=(const TArray<ActorWrapper *,FDefaultAllocator> &);
     TArray<ActorWrapper *,FDefaultAllocator> &operator=(const TArray<ActorWrapper *,FDefaultAllocator> &);
-    int AddItem(ActorWrapper *&);
+    int AddItem(ActorWrapper *const &);
     int AddZeroed(int);
-    int AddUniqueItem(ActorWrapper *&);
+    int AddUniqueItem(ActorWrapper *const &);
     void Reserve(int);
-    void Init(ActorWrapper *&, int);
+    void Init(ActorWrapper *const &, int);
     void Init(int);
-    int RemoveSingleItem(ActorWrapper *&);
-    int RemoveItem(ActorWrapper *&);
-    int RemoveSingleItemSwap(ActorWrapper *&);
-    int RemoveItemSwap(ActorWrapper *&);
+    int RemoveSingleItem(ActorWrapper *const &);
+    int RemoveItem(ActorWrapper *const &);
+    int RemoveSingleItemSwap(ActorWrapper *const &);
+    int RemoveItemSwap(ActorWrapper *const &);
     void Swap(int, int);
     void SwapItems(int, int);
     void Reset(int);
 private:
-    ActorWrapper *&DebugGet(int) const;
+    ActorWrapper *const &DebugGet(int) const;
 protected:
     void DestructItems(int, int);
 private:
@@ -6316,6 +6317,54 @@ private:
     unsigned int FCurveKeyData[0x3];
 };
 
+class FOutputDevice  // size 0x10, opaque
+{
+public:
+    virtual ~FOutputDevice();
+    virtual void Serialize(const wchar_t *, EName);
+    virtual void Flush();
+    virtual void TearDown();
+    FOutputDevice(unsigned int);
+    void SetSuppressEventTag(unsigned int);
+    unsigned int GetSuppressEventTag();
+    void SetAutoEmitLineTerminator(unsigned int);
+    unsigned int GetAutoEmitLineTerminator();
+    void Log(EName, const FString &);
+    void Log(const FString &);
+    void Log(EName, const wchar_t *);
+    void Log(const wchar_t *);
+    void Logf__VA(EName, const wchar_t *, ...);
+    void Logf__VA(const wchar_t *, ...);
+    void Logf(EName, const wchar_t *);
+    void Logf(const wchar_t *);
+private:
+    unsigned int FOutputDeviceData[0x3];
+};
+
+struct FFrame : public FOutputDevice  // size 0x28
+{
+public:
+    FFrame(UObject *, UStruct *, int, void *, FFrame *);
+    FFrame(UObject *);
+    virtual ~FFrame();
+    void Step(UObject *, void *const);
+    virtual void Serialize(const wchar_t *, EName);
+    int ReadInt();
+    float ReadFloat();
+    FName ReadName();
+    UObject *ReadObject();
+    int ReadWord();
+    unsigned short ReadCodeSkipCount();
+    unsigned short ReadVariableSize(UField **);
+    FString GetStackTrace() const;
+    UStruct *Node;  // 0x10
+    UObject *Object;  // 0x14
+    unsigned char *Code;  // 0x18
+    unsigned char *Locals;  // 0x1C
+    FFrame *PreviousFrame;  // 0x20
+    FOutParmRec *OutParms;  // 0x24
+};
+
 struct FMeshBone  // size 0x50, opaque
 {
 public:
@@ -6527,11 +6576,11 @@ public:
     virtual unsigned int NeedsLoadForServer() const;
     virtual void PreEditChange(UProperty *);
     virtual void PostEditChangeProperty(FPropertyChangedEvent &);
-    void execSetComponentRBFixed(FFrame &, void *);
-    void execSetTickGroup(FFrame &, void *);
+    void execSetComponentRBFixed(FFrame &, void *const);
+    void execSetTickGroup(FFrame &, void *const);
     void SetTickGroup(unsigned char);
-    void execForceUpdate(FFrame &, void *);
-    void execDetachFromAny(FFrame &, void *);
+    void execForceUpdate(FFrame &, void *const);
+    void execDetachFromAny(FFrame &, void *const);
     typedef UComponent Super;
 private:
     static UClass *PrivateStaticClass;
@@ -6545,7 +6594,7 @@ public:
     {
         IsIntrinsic = 0,
     };
-    virtual AActor *CreateActor(const FVector *, const FRotator *, const USeqAct_ActorFactory *);
+    virtual AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
     virtual unsigned int CanCreateActor(FString &, unsigned int);
     virtual void AutoFillFields(USelection *);
     virtual void ClearFields();
@@ -6566,7 +6615,7 @@ public:
     static void InternalConstructor(void *);
     static const wchar_t *StaticConfigName();
 protected:
-    unsigned int IsEnoughRoomToSpawnPawn(const FVector *, const USeqAct_ActorFactory *) const;
+    unsigned int IsEnoughRoomToSpawnPawn(const FVector *const, const USeqAct_ActorFactory *const) const;
 public:
     typedef UObject Super;
 private:
@@ -6593,7 +6642,7 @@ protected:
     virtual ~UActorFactoryAI();
 public:
     static void InternalConstructor(void *);
-    virtual AActor *CreateActor(const FVector *, const FRotator *, const USeqAct_ActorFactory *);
+    virtual AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
     virtual unsigned int CanCreateActor(FString &, unsigned int);
     virtual AActor *GetDefaultActor();
     typedef UActorFactory Super;
@@ -6676,10 +6725,10 @@ public:
     virtual UAnimNodeAimOffset *GetAnimNodeAimOffset();
     virtual UAnimNodeSequence *GetAnimNodeSequence();
     UAnimNode *FindAnimNode(FName);
-    void execFindAnimNode(FFrame &, void *);
-    void execPlayAnim(FFrame &, void *);
-    void execStopAnim(FFrame &, void *);
-    void execReplayAnim(FFrame &, void *);
+    void execFindAnimNode(FFrame &, void *const);
+    void execPlayAnim(FFrame &, void *const);
+    void execStopAnim(FFrame &, void *const);
+    void execReplayAnim(FFrame &, void *const);
     void eventOnCeaseRelevant();
     void eventOnBecomeRelevant();
     void eventOnInit();
@@ -6782,7 +6831,7 @@ public:
         IsIntrinsic = 0,
     };
     virtual void SetActiveChild(int, float);
-    void execSetActiveChild(FFrame &, void *);
+    void execSetActiveChild(FFrame &, void *const);
 private:
     UAnimNodeBlendList &operator=(const UAnimNodeBlendList &);
 public:
@@ -6833,17 +6882,17 @@ public:
     void SetRootBoneAxisOption(unsigned char, unsigned char, unsigned char);
     void SetRootBoneRotationOption(unsigned char, unsigned char, unsigned char);
     void TickChildWeights(float);
-    void execPlayCustomAnim(FFrame &, void *);
-    void execPlayCustomAnimByDuration(FFrame &, void *);
-    void execGetPlayedAnimation(FFrame &, void *);
-    void execStopCustomAnim(FFrame &, void *);
-    void execSetAllowPauseAnims(FFrame &, void *);
-    void execSetCustomAnim(FFrame &, void *);
-    void execSetActorAnimEndNotification(FFrame &, void *);
-    void execGetCustomAnimNodeSeq(FFrame &, void *);
-    void execSetRootBoneAxisOption(FFrame &, void *);
-    void execSetRootBoneRotationOption(FFrame &, void *);
-    void execTickChildWeights(FFrame &, void *);
+    void execPlayCustomAnim(FFrame &, void *const);
+    void execPlayCustomAnimByDuration(FFrame &, void *const);
+    void execGetPlayedAnimation(FFrame &, void *const);
+    void execStopCustomAnim(FFrame &, void *const);
+    void execSetAllowPauseAnims(FFrame &, void *const);
+    void execSetCustomAnim(FFrame &, void *const);
+    void execSetActorAnimEndNotification(FFrame &, void *const);
+    void execGetCustomAnimNodeSeq(FFrame &, void *const);
+    void execSetRootBoneAxisOption(FFrame &, void *const);
+    void execSetRootBoneRotationOption(FFrame &, void *const);
+    void execTickChildWeights(FFrame &, void *const);
 private:
     UAnimNodeSlot &operator=(const UAnimNodeSlot &);
 public:
@@ -7255,7 +7304,7 @@ public:
         IsIntrinsic = 0,
     };
     virtual void ActivateChild(int, float);
-    void execActivateChild(FFrame &, void *);
+    void execActivateChild(FFrame &, void *const);
     float eventActivateInput(FName, float, float, float, unsigned int, unsigned int, float);
 private:
     UCCSATAnimNodeSlot &operator=(const UCCSATAnimNodeSlot &);
@@ -7324,7 +7373,7 @@ protected:
     virtual ~UGwNavActorFactoryAI();
 public:
     static void InternalConstructor(void *);
-    virtual AActor *CreateActor(const FVector *, const FRotator *, const USeqAct_ActorFactory *);
+    virtual AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
     typedef UActorFactoryAI Super;
 private:
     static UClass *PrivateStaticClass;
@@ -7350,7 +7399,7 @@ protected:
     virtual ~UCCSActorFactory();
 public:
     static void InternalConstructor(void *);
-    virtual AActor *CreateActor(const FVector *, const FRotator *, const USeqAct_ActorFactory *);
+    virtual AActor *CreateActor(const FVector *const, const FRotator *const, const USeqAct_ActorFactory *const);
     virtual unsigned int CanCreateActor(FString &, unsigned int);
     virtual AActor *GetDefaultActor();
     typedef UGwNavActorFactoryAI Super;
@@ -8764,8 +8813,8 @@ public:
     };
     virtual unsigned int ContainState(const FString &) const;
     virtual void FlagStatesAsUsed();
-    void execContainState(FFrame &, void *);
-    void execFlagStatesAsUsed(FFrame &, void *);
+    void execContainState(FFrame &, void *const);
+    void execFlagStatesAsUsed(FFrame &, void *const);
 private:
     UGripBlackboard &operator=(const UGripBlackboard &);
 public:
@@ -8815,29 +8864,29 @@ public:
     virtual void FlagTargetsAsUsed();
     virtual void FlagTetherAsUsed();
     virtual void FlagClosestVisibleEnemyAsUsed();
-    void execGetHealth(FFrame &, void *);
-    void execSetHealth(FFrame &, void *);
-    void execGetCovers(FFrame &, void *);
-    void execGetCurrentTarget(FFrame &, void *);
-    void execSetCurrentTether(FFrame &, void *);
-    void execGetCurrentTether(FFrame &, void *);
-    void execGetTargets(FFrame &, void *);
-    void execGetMoveCommand(FFrame &, void *);
-    void execClearMoveCommand(FFrame &, void *);
-    void execFlagThreatLocationAsUsed(FFrame &, void *);
-    void execFlagThreatDirectionAsUsed(FFrame &, void *);
-    void execGetThreatLocation(FFrame &, void *);
-    void execGetThreatDirection(FFrame &, void *);
-    void execGetThreatType(FFrame &, void *);
-    void execSetHeatGenerated(FFrame &, void *);
-    void execGetHeatGenerated(FFrame &, void *);
-    void execFlagHeatGeneratedAsUsed(FFrame &, void *);
-    void execGetClosestVisibleEnemy(FFrame &, void *);
-    void execFlagHealthAsUsed(FFrame &, void *);
-    void execFlagCoversAsUsed(FFrame &, void *);
-    void execFlagTargetsAsUsed(FFrame &, void *);
-    void execFlagTetherAsUsed(FFrame &, void *);
-    void execFlagClosestVisibleEnemyAsUsed(FFrame &, void *);
+    void execGetHealth(FFrame &, void *const);
+    void execSetHealth(FFrame &, void *const);
+    void execGetCovers(FFrame &, void *const);
+    void execGetCurrentTarget(FFrame &, void *const);
+    void execSetCurrentTether(FFrame &, void *const);
+    void execGetCurrentTether(FFrame &, void *const);
+    void execGetTargets(FFrame &, void *const);
+    void execGetMoveCommand(FFrame &, void *const);
+    void execClearMoveCommand(FFrame &, void *const);
+    void execFlagThreatLocationAsUsed(FFrame &, void *const);
+    void execFlagThreatDirectionAsUsed(FFrame &, void *const);
+    void execGetThreatLocation(FFrame &, void *const);
+    void execGetThreatDirection(FFrame &, void *const);
+    void execGetThreatType(FFrame &, void *const);
+    void execSetHeatGenerated(FFrame &, void *const);
+    void execGetHeatGenerated(FFrame &, void *const);
+    void execFlagHeatGeneratedAsUsed(FFrame &, void *const);
+    void execGetClosestVisibleEnemy(FFrame &, void *const);
+    void execFlagHealthAsUsed(FFrame &, void *const);
+    void execFlagCoversAsUsed(FFrame &, void *const);
+    void execFlagTargetsAsUsed(FFrame &, void *const);
+    void execFlagTetherAsUsed(FFrame &, void *const);
+    void execFlagClosestVisibleEnemyAsUsed(FFrame &, void *const);
 private:
     UCCSBlackboard &operator=(const UCCSBlackboard &);
 public:
@@ -9109,49 +9158,49 @@ public:
     void SetRBChannel(ERBCollisionChannel);
     unsigned char ClosestPointOnComponentToPoint(const FVector &, const FVector &, FVector &, FVector &);
     unsigned int IsOverlapping(UPrimitiveComponent *, FCheckResult *, const FVector &, unsigned long, unsigned long);
-    void execAddImpulse(FFrame &, void *);
-    void execAddRadialImpulse(FFrame &, void *);
-    void execAddForce(FFrame &, void *);
-    void execAddRadialForce(FFrame &, void *);
-    void execAddTorque(FFrame &, void *);
-    void execSetRBLinearVelocity(FFrame &, void *);
-    void execSetRBAngularVelocity(FFrame &, void *);
-    void execRetardRBLinearVelocity(FFrame &, void *);
-    void execSetRBPosition(FFrame &, void *);
-    void execSetRBRotation(FFrame &, void *);
-    void execWakeRigidBody(FFrame &, void *);
-    void execPutRigidBodyToSleep(FFrame &, void *);
-    void execRigidBodyIsAwake(FFrame &, void *);
-    void execSetBlockRigidBody(FFrame &, void *);
-    void execSetRBCollidesWithChannel(FFrame &, void *);
-    void execSetRBCollisionChannels(FFrame &, void *);
-    void execSetRBChannel(FFrame &, void *);
-    void execSetNotifyRigidBodyCollision(FFrame &, void *);
-    void execInitRBPhys(FFrame &, void *);
-    void execSetPhysMaterialOverride(FFrame &, void *);
-    void execSetRBDominanceGroup(FFrame &, void *);
-    void execSetHidden(FFrame &, void *);
-    void execSetOwnerNoSee(FFrame &, void *);
-    void execSetOnlyOwnerSee(FFrame &, void *);
-    void execSetIgnoreOwnerHidden(FFrame &, void *);
-    void execSetShadowParent(FFrame &, void *);
-    void execSetLightEnvironment(FFrame &, void *);
-    void execSetCullDistance(FFrame &, void *);
-    void execSetLightingChannels(FFrame &, void *);
-    void execSetDepthPriorityGroup(FFrame &, void *);
-    void execSetViewOwnerDepthPriorityGroup(FFrame &, void *);
-    void execSetTraceBlocking(FFrame &, void *);
-    void execSetActorCollision(FFrame &, void *);
-    void execGetRootBodyInstance(FFrame &, void *);
-    void execSetTranslation(FFrame &, void *);
-    void execSetRotation(FFrame &, void *);
-    void execSetScale(FFrame &, void *);
-    void execSetScale3D(FFrame &, void *);
-    void execSetAbsolute(FFrame &, void *);
-    void execGetPosition(FFrame &, void *);
-    void execGetRotation(FFrame &, void *);
-    void execClosestPointOnComponentToPoint(FFrame &, void *);
-    void execClosestPointOnComponentToComponent(FFrame &, void *);
+    void execAddImpulse(FFrame &, void *const);
+    void execAddRadialImpulse(FFrame &, void *const);
+    void execAddForce(FFrame &, void *const);
+    void execAddRadialForce(FFrame &, void *const);
+    void execAddTorque(FFrame &, void *const);
+    void execSetRBLinearVelocity(FFrame &, void *const);
+    void execSetRBAngularVelocity(FFrame &, void *const);
+    void execRetardRBLinearVelocity(FFrame &, void *const);
+    void execSetRBPosition(FFrame &, void *const);
+    void execSetRBRotation(FFrame &, void *const);
+    void execWakeRigidBody(FFrame &, void *const);
+    void execPutRigidBodyToSleep(FFrame &, void *const);
+    void execRigidBodyIsAwake(FFrame &, void *const);
+    void execSetBlockRigidBody(FFrame &, void *const);
+    void execSetRBCollidesWithChannel(FFrame &, void *const);
+    void execSetRBCollisionChannels(FFrame &, void *const);
+    void execSetRBChannel(FFrame &, void *const);
+    void execSetNotifyRigidBodyCollision(FFrame &, void *const);
+    void execInitRBPhys(FFrame &, void *const);
+    void execSetPhysMaterialOverride(FFrame &, void *const);
+    void execSetRBDominanceGroup(FFrame &, void *const);
+    void execSetHidden(FFrame &, void *const);
+    void execSetOwnerNoSee(FFrame &, void *const);
+    void execSetOnlyOwnerSee(FFrame &, void *const);
+    void execSetIgnoreOwnerHidden(FFrame &, void *const);
+    void execSetShadowParent(FFrame &, void *const);
+    void execSetLightEnvironment(FFrame &, void *const);
+    void execSetCullDistance(FFrame &, void *const);
+    void execSetLightingChannels(FFrame &, void *const);
+    void execSetDepthPriorityGroup(FFrame &, void *const);
+    void execSetViewOwnerDepthPriorityGroup(FFrame &, void *const);
+    void execSetTraceBlocking(FFrame &, void *const);
+    void execSetActorCollision(FFrame &, void *const);
+    void execGetRootBodyInstance(FFrame &, void *const);
+    void execSetTranslation(FFrame &, void *const);
+    void execSetRotation(FFrame &, void *const);
+    void execSetScale(FFrame &, void *const);
+    void execSetScale3D(FFrame &, void *const);
+    void execSetAbsolute(FFrame &, void *const);
+    void execGetPosition(FFrame &, void *const);
+    void execGetRotation(FFrame &, void *const);
+    void execClosestPointOnComponentToPoint(FFrame &, void *const);
+    void execClosestPointOnComponentToComponent(FFrame &, void *const);
 protected:
     virtual void SetParentToWorld(const FMatrix &);
     virtual void Attach();
@@ -9166,7 +9215,7 @@ public:
     virtual unsigned int NeedsLoadForClient() const;
     virtual unsigned int NeedsLoadForServer() const;
     virtual void PostCrossLevelFixup();
-    void execShouldComponentAddToScene(FFrame &, void *);
+    void execShouldComponentAddToScene(FFrame &, void *const);
     void PushSelectionToProxy(const unsigned int);
     void PushHoveredToProxy(const unsigned int);
     void PushEditorVisibilityToProxy(unsigned __int64);
@@ -9449,8 +9498,8 @@ public:
     };
     float GetBlendTime(int, unsigned int);
     float GetAnimDuration(int);
-    void execGetBlendTime(FFrame &, void *);
-    void execGetAnimDuration(FFrame &, void *);
+    void execGetBlendTime(FFrame &, void *const);
+    void execGetAnimDuration(FFrame &, void *const);
     void eventTickAnim(float);
 private:
     UUDKAnimBlendBase &operator=(const UUDKAnimBlendBase &);
@@ -9536,7 +9585,7 @@ public:
         IsIntrinsic = 0,
     };
     virtual void OnChangeJumpType(int, unsigned int);
-    void execOnChangeJumpType(FFrame &, void *);
+    void execOnChangeJumpType(FFrame &, void *const);
 private:
     UHaloAnimBlendByJumpType &operator=(const UHaloAnimBlendByJumpType &);
 public:
@@ -9756,7 +9805,7 @@ public:
         IsIntrinsic = 0,
     };
     void BeginDeath();
-    void execBeginDeath(FFrame &, void *);
+    void execBeginDeath(FFrame &, void *const);
 private:
     UUDKTargetableComponent &operator=(const UUDKTargetableComponent &);
 public:
@@ -9918,6 +9967,7 @@ private:
 };
 
 #include "Core/Inc/UnObjBas.h"
+#include "Core/Inc/UnScript.h"
 
 inline UClass *AActor::StaticClass()
 {
@@ -11503,6 +11553,382 @@ inline void ACoverLink::eventSetDisabled(unsigned int bNewDisabled)
     CoverLink_eventSetDisabled_Parms Parms(EC_EventParm);
     Parms.bNewDisabled = bNewDisabled ? FIRST_BITFIELD : 0;
     ProcessEvent(FindFunctionChecked(UDKBASE_SetDisabled, 0), &Parms, 0);
+}
+
+inline void UCCSATAnimNodeSlot::execActivateChild(FFrame &Stack, void *const)
+{
+    int A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    float A1 = 0;
+    Stack.Step(Stack.Object, &A1);
+    Stack.Code++;
+    ActivateChild(A0, A1);
+}
+
+inline void UCCSBlackboard::execGetHealth(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(int *)Result = GetHealth();
+}
+
+inline void UCCSBlackboard::execSetHealth(FFrame &Stack, void *const)
+{
+    int A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetHealth(A0);
+}
+
+inline void UCCSBlackboard::execSetCurrentTether(FFrame &Stack, void *const)
+{
+    AActor *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetCurrentTether(A0);
+}
+
+inline void UCCSBlackboard::execGetCurrentTether(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(FVector *)Result = GetCurrentTether();
+}
+
+inline void UCCSBlackboard::execClearMoveCommand(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    ClearMoveCommand();
+}
+
+inline void UCCSBlackboard::execFlagThreatLocationAsUsed(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    FlagThreatLocationAsUsed();
+}
+
+inline void UCCSBlackboard::execFlagThreatDirectionAsUsed(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    FlagThreatDirectionAsUsed();
+}
+
+inline void UCCSBlackboard::execGetThreatLocation(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(FVector *)Result = GetThreatLocation();
+}
+
+inline void UCCSBlackboard::execGetThreatDirection(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(FVector *)Result = GetThreatDirection();
+}
+
+inline void UCCSBlackboard::execGetThreatType(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned char *)Result = GetThreatType();
+}
+
+inline void UCCSBlackboard::execSetHeatGenerated(FFrame &Stack, void *const)
+{
+    float A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetHeatGenerated(A0);
+}
+
+inline void UCCSBlackboard::execGetHeatGenerated(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(float *)Result = GetHeatGenerated();
+}
+
+inline void UCCSBlackboard::execFlagHeatGeneratedAsUsed(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    FlagHeatGeneratedAsUsed();
+}
+
+inline void UCCSBlackboard::execFlagHealthAsUsed(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    FlagHealthAsUsed();
+}
+
+inline void UCCSBlackboard::execFlagCoversAsUsed(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    FlagCoversAsUsed();
+}
+
+inline void UCCSBlackboard::execFlagTargetsAsUsed(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    FlagTargetsAsUsed();
+}
+
+inline void UCCSBlackboard::execFlagTetherAsUsed(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    FlagTetherAsUsed();
+}
+
+inline void UCCSBlackboard::execFlagClosestVisibleEnemyAsUsed(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    FlagClosestVisibleEnemyAsUsed();
+}
+
+inline void ACCSController::execSetDesiredPosition(FFrame &Stack, void *const)
+{
+    AActor *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetDesiredPosition(A0);
+}
+
+inline void ACCSController::execActuallySetDesiredPosition(FFrame &Stack, void *const)
+{
+    FVector A0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    ActuallySetDesiredPosition(A0);
+}
+
+inline void ACCSController::execCalcAccuracyAngles(FFrame &Stack, void *const)
+{
+    AActor *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    CalcAccuracyAngles(A0);
+}
+
+inline void ACCSController::execTakePossession(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    TakePossession();
+}
+
+inline void ACCSController::execSetInitialCover(FFrame &Stack, void *const)
+{
+    AActor *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetInitialCover(A0);
+}
+
+inline void ACCSController::execDisableBrain(FFrame &Stack, void *const)
+{
+    unsigned int A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    A0 = A0 ? 1 : 0;
+    Stack.Code++;
+    DisableBrain(A0);
+}
+
+inline void AUDKCover::execAddCoverLink(FFrame &Stack, void *const)
+{
+    ACoverLink *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    AddCoverLink(A0);
+}
+
+inline void AUDKCover::execRemoveCoverLink(FFrame &Stack, void *const)
+{
+    ACoverLink *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    RemoveCoverLink(A0);
+}
+
+inline void AUDKCover::execKillCoverLinks(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    KillCoverLinks();
+}
+
+inline void UUDKTargetableComponent::execBeginDeath(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    BeginDeath();
+}
+
+inline void AUSSPawn::execGetMovementType(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned char *)Result = GetMovementType();
+}
+
+inline void AUSSPawn::execSetMovementType(FFrame &Stack, void *const)
+{
+    unsigned char A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetMovementType(A0);
+}
+
+inline void AUSSPawn::execSetMovementTypeDefault(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    SetMovementTypeDefault();
+}
+
+inline void AUSSPawn::execGetAlertness(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned char *)Result = GetAlertness();
+}
+
+inline void AUSSPawn::execSetAlertness(FFrame &Stack, void *const)
+{
+    unsigned char A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetAlertness(A0);
+}
+
+inline void AUSSPawn::execSetAlertnessDefault(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    SetAlertnessDefault();
+}
+
+inline void AUSSPawn::execGetSpeed(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned char *)Result = GetSpeed();
+}
+
+inline void AUSSPawn::execSetSpeed(FFrame &Stack, void *const)
+{
+    unsigned char A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetSpeed(A0);
+}
+
+inline void AUSSPawn::execSetMovementSpeedDefault(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    SetMovementSpeedDefault();
+}
+
+inline void AUSSPawn::execIsCrouched(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned int *)Result = IsCrouched();
+}
+
+inline void AUSSPawn::execSetCrouched(FFrame &Stack, void *const)
+{
+    unsigned int A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    A0 = A0 ? 1 : 0;
+    Stack.Code++;
+    SetCrouched(A0);
+}
+
+inline void AUSSPawn::execSetPostureDefault(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    SetPostureDefault();
+}
+
+inline void AUSSPawn::execPostureTransitionOver(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned int *)Result = PostureTransitionOver();
+}
+
+inline void AUSSPawn::execCanAim(FFrame &Stack, void *const Result)
+{
+    FRotator A0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    *(unsigned int *)Result = CanAim(A0);
+}
+
+inline void AUSSPawn::execSetCoverPose(FFrame &Stack, void *const)
+{
+    unsigned char A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    float A1 = 0;
+    Stack.Step(Stack.Object, &A1);
+    Stack.Code++;
+    SetCoverPose(A0, A1);
+}
+
+inline void AUSSPawn::execSetNoCoverPose(FFrame &Stack, void *const)
+{
+    Stack.Code++;
+    SetNoCoverPose();
+}
+
+inline void AUSSPawn::execCoverPoseTransitionOver(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned int *)Result = CoverPoseTransitionOver();
+}
+
+inline void AUSSPawn::execMoveToInCover(FFrame &Stack, void *const)
+{
+    FVector A0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    MoveToInCover(A0);
+}
+
+inline void AUSSPawn::execIsInCover(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned int *)Result = IsInCover();
+}
+
+inline void AUSSPawn::execSetIsPanicking(FFrame &Stack, void *const)
+{
+    unsigned int A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    A0 = A0 ? 1 : 0;
+    Stack.Code++;
+    SetIsPanicking(A0);
+}
+
+inline void AUSSPawn::execGetIsPanicking(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(unsigned int *)Result = GetIsPanicking();
+}
+
+inline void AUSSPawn::execGetDefaultBehaviorTree(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(UCCSBTTree **)Result = GetDefaultBehaviorTree();
+}
+
+inline void AUSSPawn::execSetDefaultBehaviorTree(FFrame &Stack, void *const)
+{
+    UCCSBTTree *A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    Stack.Code++;
+    SetDefaultBehaviorTree(A0);
+}
+
+inline void AUSSPawn::execGetYellingDistance(FFrame &Stack, void *const Result)
+{
+    Stack.Code++;
+    *(float *)Result = GetYellingDistance();
+}
+
+inline void UHaloAnimBlendByJumpType::execOnChangeJumpType(FFrame &Stack, void *const)
+{
+    int A0 = 0;
+    Stack.Step(Stack.Object, &A0);
+    unsigned int A1 = 0;
+    Stack.Step(Stack.Object, &A1);
+    A1 = A1 ? 1 : 0;
+    Stack.Code++;
+    OnChangeJumpType(A0, A1);
 }
 
 // ---- written by hand below this line (gen_header.py keeps it) ----

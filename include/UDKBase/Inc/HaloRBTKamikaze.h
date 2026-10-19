@@ -1789,8 +1789,8 @@ template <> class GripBBProperty<CCSTarget *> : public GripBBMember  // size 0x2
 public:
     GripBBProperty();
     CCSTarget *&GetReference();
-    CCSTarget *&Get() const;
-    void Set(CCSTarget *&);
+    CCSTarget *const &Get() const;
+    void Set(CCSTarget *const &);
     CCSTarget *m_value;  // 0x1C
 };
 
@@ -1897,8 +1897,8 @@ template <> class GripBBProperty<UClass *> : public GripBBMember  // size 0x20, 
 public:
     GripBBProperty();
     UClass *&GetReference();
-    UClass *&Get() const;
-    void Set(UClass *&);
+    UClass *const &Get() const;
+    void Set(UClass *const &);
 private:
     unsigned int GripBBPropertyData[0x1];
 };
@@ -2250,15 +2250,15 @@ namespace Grip {
 template <> class ConstructorMov<GripBrainSystem *>  // size 0x1, opaque
 {
 public:
-    static void Construct(void *, GripBrainSystem *&);
+    static void Construct(void *, GripBrainSystem *const &);
     static void Construct(void *);
-    static void ConstructArray(void *, unsigned int, GripBrainSystem **);
-    static void ConstructArray(void *, unsigned int, GripBrainSystem *&);
+    static void ConstructArray(void *, unsigned int, GripBrainSystem *const *);
+    static void ConstructArray(void *, unsigned int, GripBrainSystem *const &);
     static void ConstructArray(void *, unsigned int);
     static void Destruct(GripBrainSystem **);
     static void DestructArray(GripBrainSystem **, unsigned int);
-    static void CopyArrayForward(GripBrainSystem **, GripBrainSystem **, unsigned int);
-    static void CopyArrayBackward(GripBrainSystem **, GripBrainSystem **, unsigned int);
+    static void CopyArrayForward(GripBrainSystem **, GripBrainSystem *const *, unsigned int);
+    static void CopyArrayBackward(GripBrainSystem **, GripBrainSystem *const *, unsigned int);
     static bool IsMovable();
 };
 }
