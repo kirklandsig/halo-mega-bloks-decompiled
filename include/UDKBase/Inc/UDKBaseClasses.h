@@ -7,11 +7,7 @@
 
 template <class T0, int T1> struct DefaultKeyFuncs;
 template <class T0> class FInterpCurve;
-template <class T0, class T1> class GripBBArray;
-template <class T0> class GripBBProperty;
 template <class T0> class GripRBTNumericCondition;
-template <class T0, class T1> class Grip_Array;
-template <class T0, int T1> class Grip_ArrayPOD;
 template <class T0, class T1> class Grip_Map;
 template <class T0> class Grip_Set;
 template <class T0, class T1> class NxArray;
@@ -2785,8 +2781,6 @@ enum NxMemoryType
 };
 
 namespace Grip {
-template <class T0, int T1> struct AllocatorGH;
-template <class T0, int T1> struct AllocatorGH_POD;
 template <class T0, class T1> class List;
 template <class T0> struct ListNode;
 struct AllocInfo;
@@ -10985,56 +10979,54 @@ public:
     #endif
 };
 
-template <> class Grip_Array<GripAFModifier *,Grip::AllocatorGH_POD<GripAFModifier *,2> > : public GripVHeapObject  // size 0x10, opaque
+class GripBTSystemFlags : public GripVHeapObject  // size 0x8
 {
 public:
-    Grip_Array<GripAFModifier *,Grip::AllocatorGH<GripAFModifier *,2> > &operator=(const Grip_Array<GripAFModifier *,Grip::AllocatorGH<GripAFModifier *,2> > &);
-    void Clone(const Grip_Array<GripAFModifier *,Grip::AllocatorGH<GripAFModifier *,2> > &);
-    void Empty();
+    void ClearFlag(int);
+    bool TestFlag(int) const;
+    void SetFlag(int);
     void Reset();
-    void Reserve(int);
-    int FindObject(GripAFModifier *const &) const;
-    bool ContainsItem(GripAFModifier *const &) const;
-    int Num() const;
-    GripAFModifier *const &operator[](int) const;
-    GripAFModifier *&operator[](int);
-    void AddItem(GripAFModifier *const &);
-    void AddUniqueItem(GripAFModifier *const &);
-    void InsertItemAt(GripAFModifier *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(GripAFModifier *const &);
-    GripAFModifier **GetData();
-HG_PROTECTED:
-    void CloneContainer(GripAFModifier **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
+    GripBTSystemFlags &operator|=(const GripBTSystemFlags &);
     #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<GripAFModifier *,Grip::AllocatorGH<GripAFModifier *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
+    GripBTSystemFlags();
     #endif
     #ifndef HAGGAR_HOST
-    static const int increment;
+    int m_flags;  // 0x4
     #else
-    static const hg::be<int> (&increment);
+    hg::be<int> m_flags;
     #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
 };
 
-template <> class Grip_ArrayPOD<GripAFModifier *,2> : public Grip_Array<GripAFModifier *,Grip::AllocatorGH_POD<GripAFModifier *,2> >  // size 0x10, opaque
+class GripBBMember : public GripVHeapObject  // size 0x1C
 {
 public:
-    Grip_ArrayPOD<GripAFModifier *,2> &operator=(const Grip_ArrayPOD<GripAFModifier *,2> &);
-    void Clone(const Grip_ArrayPOD<GripAFModifier *,2> &);
+    void FlagAsUsed();
+    bool IsUsed() const;
+    void GetUsedPerceptionSystems(GripBTSystemFlags &, GripBTSystemFlags &);
+    void AddUsedSensorSystems(const int);
+    void AddUsedAnalysisSystems(const int);
+    void SetBlackboard(GripBlackboard *);
+    void DirtyBlackboard();
     #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<GripAFModifier *,2> &);
-    Grip_ArrayPOD(const int);
+    GripBBMember();
+    HG_VIRTUAL ~GripBBMember();
+    #endif
+    #ifndef HAGGAR_HOST
+    GripBlackboard *m_blackboard;  // 0x4
+    GripBTSystemFlags m_ssFlags;  // 0x8
+    GripBTSystemFlags m_asFlags;  // 0x10
+    bool m_used;  // 0x18
+    char _pad0[0x3];
+    #else
+    hg::gptr<GripBlackboard> m_blackboard;
+    GripBTSystemFlags m_ssFlags;
+    GripBTSystemFlags m_asFlags;
+    bool m_used;
+    char _pad0[0x3];
     #endif
 };
+
+#include "Grip/Inc/GripContainers.h"
 
 class GripAFAction : public GripVHeapObject  // size 0x1C
 {
@@ -11989,57 +11981,6 @@ public:
     #endif
 };
 
-template <> class Grip_Array<GripSystemTickGroup *,Grip::AllocatorGH_POD<GripSystemTickGroup *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<GripSystemTickGroup *,Grip::AllocatorGH<GripSystemTickGroup *,2> > &operator=(const Grip_Array<GripSystemTickGroup *,Grip::AllocatorGH<GripSystemTickGroup *,2> > &);
-    void Clone(const Grip_Array<GripSystemTickGroup *,Grip::AllocatorGH<GripSystemTickGroup *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(GripSystemTickGroup *const &) const;
-    bool ContainsItem(GripSystemTickGroup *const &) const;
-    int Num() const;
-    GripSystemTickGroup *const &operator[](int) const;
-    GripSystemTickGroup *&operator[](int);
-    void AddItem(GripSystemTickGroup *const &);
-    void AddUniqueItem(GripSystemTickGroup *const &);
-    void InsertItemAt(GripSystemTickGroup *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(GripSystemTickGroup *const &);
-    GripSystemTickGroup **GetData();
-HG_PROTECTED:
-    void CloneContainer(GripSystemTickGroup **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<GripSystemTickGroup *,Grip::AllocatorGH<GripSystemTickGroup *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<GripSystemTickGroup *,2> : public Grip_Array<GripSystemTickGroup *,Grip::AllocatorGH_POD<GripSystemTickGroup *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<GripSystemTickGroup *,2> &operator=(const Grip_ArrayPOD<GripSystemTickGroup *,2> &);
-    void Clone(const Grip_ArrayPOD<GripSystemTickGroup *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<GripSystemTickGroup *,2> &);
-    Grip_ArrayPOD(const int);
-    #endif
-};
-
 class GripSystemScheduler : public GripVHeapObject  // size 0x14
 {
 public:
@@ -12266,44 +12207,19 @@ public:
     #endif
 };
 
-template <> class Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > : public GripVHeapObject  // size 0x10, opaque
+struct GripSerializationMember : public GripHeapObject  // size 0xC, opaque
 {
 public:
-    Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > &operator=(const Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > &);
-    void Clone(const Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(const GripSerializationMember &) const;
-    bool ContainsItem(const GripSerializationMember &) const;
-    int Num() const;
-    const GripSerializationMember &operator[](int) const;
-    GripSerializationMember &operator[](int);
-    void AddItem(const GripSerializationMember &);
-    void AddUniqueItem(const GripSerializationMember &);
-    void InsertItemAt(const GripSerializationMember &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(const GripSerializationMember &);
-    GripSerializationMember *GetData();
-HG_PROTECTED:
-    void CloneContainer(GripSerializationMember *, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
+    void Serialize(GripSerializer *);
     #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<GripSerializationMember,Grip::AllocatorGH<GripSerializationMember,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
+    GripSerializationMember(const char *, const char *, const char *);
+    GripSerializationMember(const char *, const char *);
+    GripSerializationMember(const Grip::String &, const Grip::String &, const Grip::String &);
+    GripSerializationMember(const Grip::String &, const Grip::String &);
+    GripSerializationMember();
     #endif
 HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
+    unsigned int GripSerializationMemberData[0x3];
 };
 
 class GripBBVisualization : public GripVHeapObject  // size 0x18
@@ -12350,316 +12266,272 @@ public:
     HG_VIRTUAL void Refresh();
 };
 
-class GripBTSystemFlags : public GripVHeapObject  // size 0x8
+namespace Kaim {
+template <> class Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >  // size 0x4, opaque
 {
 public:
-    void ClearFlag(int);
-    bool TestFlag(int) const;
-    void SetFlag(int);
-    void Reset();
-    GripBTSystemFlags &operator|=(const GripBTSystemFlags &);
+    bool operator==(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
+    bool operator==(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
+    bool operator!=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
+    bool operator!=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
+    bool operator<(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
+    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+    void NullWithoutRelease();
+    void Clear();
+    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *&GetRawRef();
+    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *GetPtr() const;
+    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &operator*() const;
+    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *operator->() const;
+    operator class Kaim::AStarQuery<class Kaim::DefaultTraverseLogic> *() const;
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
     #ifndef HAGGAR_HOST
-    GripBTSystemFlags();
+    Ptr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
+    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
+    Ptr(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &, Kaim::PickType);
+    Ptr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
+    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
+    Ptr();
+    ~Ptr();
+    #endif
+HG_PRIVATE:
+    unsigned int PtrData[0x1];
+};
+}
+
+struct CCSTarget : public GripHeapObject  // size 0x64
+{
+public:
+    Grip_Vector GetDefaultShootLocation() const;
+    bool IsValid() const;
+    void ResetAwareness();
+    float CurrentCamo() const;
+    void FindDestinationReachable(Grip_Vector);
+    void UpdateDestinationReachable();
+    bool CanFindPath();
+    #ifndef HAGGAR_HOST
+    CCSTarget(CCSBrain *);
+    CCSTarget();
     #endif
     #ifndef HAGGAR_HOST
-    int m_flags;  // 0x4
+    CCSCharacter character;  // 0x0
+    int teamNum;  // 0x14
+    Grip_Vector position;  // 0x18
+    Grip_Vector LKP;  // 0x24
+    float LKPAge;  // 0x30
+    float CNTAge;  // 0x34
+    float range2D;  // 0x38
+    float rangeNavMesh;  // 0x3C
+    float currentThreat;  // 0x40
+    bool canShoot;  // 0x44
+    bool ClearOfFriendlies;  // 0x45
+    bool isAware;  // 0x46
+    bool isFiring;  // 0x47
+    bool isVisible;  // 0x48
+    bool isHeard;  // 0x49
+    bool isAvailableVehicle;  // 0x4A
+    bool isBehindCover;  // 0x4B
+    float forwardDot;  // 0x4C
+    float rightDot;  // 0x50
+    EAITargetType m_aiTargetType;  // 0x54
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > m_asyncAStarQuery;  // 0x58
+    UGwNavBotHandle *m_pGwNavBotHandle;  // 0x5C
+    Kaim::AStarQueryResult pathResult;  // 0x60
     #else
-    hg::be<int> m_flags;
+    CCSCharacter character;
+    hg::be<int> teamNum;
+    Grip_Vector position;
+    Grip_Vector LKP;
+    hg::be<float> LKPAge;
+    hg::be<float> CNTAge;
+    hg::be<float> range2D;
+    hg::be<float> rangeNavMesh;
+    hg::be<float> currentThreat;
+    bool canShoot;
+    bool ClearOfFriendlies;
+    bool isAware;
+    bool isFiring;
+    bool isVisible;
+    bool isHeard;
+    bool isAvailableVehicle;
+    bool isBehindCover;
+    hg::be<float> forwardDot;
+    hg::be<float> rightDot;
+    hg::be<EAITargetType> m_aiTargetType;
+    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > m_asyncAStarQuery;
+    hg::gptr<UGwNavBotHandle> m_pGwNavBotHandle;
+    hg::be<Kaim::AStarQueryResult> pathResult;
     #endif
 };
 
-class GripBBMember : public GripVHeapObject  // size 0x1C
+namespace Grip {
+class String  // size 0x4
 {
 public:
-    void FlagAsUsed();
-    bool IsUsed() const;
-    void GetUsedPerceptionSystems(GripBTSystemFlags &, GripBTSystemFlags &);
-    void AddUsedSensorSystems(const int);
-    void AddUsedAnalysisSystems(const int);
-    void SetBlackboard(GripBlackboard *);
-    void DirtyBlackboard();
-    #ifndef HAGGAR_HOST
-    GripBBMember();
-    HG_VIRTUAL ~GripBBMember();
-    #endif
-    #ifndef HAGGAR_HOST
-    GripBlackboard *m_blackboard;  // 0x4
-    GripBTSystemFlags m_ssFlags;  // 0x8
-    GripBTSystemFlags m_asFlags;  // 0x10
-    bool m_used;  // 0x18
-    char _pad0[0x3];
-    #else
-    hg::gptr<GripBlackboard> m_blackboard;
-    GripBTSystemFlags m_ssFlags;
-    GripBTSystemFlags m_asFlags;
-    bool m_used;
-    char _pad0[0x3];
-    #endif
-};
-
-template <> class GripBBArray<CCSCover,Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > > : public GripBBMember  // size 0x2C, opaque
-{
-public:
-    void AddItem(const CCSCover &);
-    void AddUniqueItem(const CCSCover &);
-    void Remove(int);
-    void RemoveItem(const CCSCover &);
-    void RemoveItemSwap(int);
-    void Empty();
-    void Reset();
-    bool ContainsItem(const CCSCover &) const;
-    int FindObject(const CCSCover &) const;
-    int Num() const;
-    const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &GetArray() const;
-    Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &GetArray();
-    const CCSCover &operator[](int) const;
-    CCSCover &operator[](int);
-    #ifndef HAGGAR_HOST
-    GripBBArray();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBArrayData[0x4];
-};
-
-template <> class GripBBArray<CCSTarget,Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > > : public GripBBMember  // size 0x2C, opaque
-{
-public:
-    void AddItem(const CCSTarget &);
-    void AddUniqueItem(const CCSTarget &);
-    void Remove(int);
-    void RemoveItem(const CCSTarget &);
-    void RemoveItemSwap(int);
-    void Empty();
-    void Reset();
-    bool ContainsItem(const CCSTarget &) const;
-    int FindObject(const CCSTarget &) const;
-    int Num() const;
-    const Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > &GetArray() const;
-    Grip_Array<CCSTarget,Grip::AllocatorGH<CCSTarget,2> > &GetArray();
-    const CCSTarget &operator[](int) const;
-    CCSTarget &operator[](int);
-    #ifndef HAGGAR_HOST
-    GripBBArray();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBArrayData[0x4];
-};
-
-template <> class GripBBProperty<CCSCover> : public GripBBMember  // size 0x3C, opaque
-{
-public:
-    CCSCover &GetReference();
-    const CCSCover &Get() const;
-    void Set(const CCSCover &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x8];
-};
-
-template <> class GripBBProperty<CCSTarget *> : public GripBBMember  // size 0x20, opaque
-{
-public:
-    CCSTarget *&GetReference();
-    CCSTarget *const &Get() const;
-    void Set(CCSTarget *const &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x1];
-};
-
-template <> class GripBBProperty<FVector> : public GripBBMember  // size 0x28, opaque
-{
-public:
-    FVector &GetReference();
-    const FVector &Get() const;
-    void Set(const FVector &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x3];
-};
-
-template <> class GripBBProperty<Grip_Vector> : public GripBBMember  // size 0x28, opaque
-{
-public:
-    Grip_Vector &GetReference();
-    const Grip_Vector &Get() const;
-    void Set(const Grip_Vector &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x3];
-};
-
-template <> class GripBBProperty<UClass *> : public GripBBMember  // size 0x20, opaque
-{
-public:
-    UClass *&GetReference();
-    UClass *const &Get() const;
-    void Set(UClass *const &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x1];
-};
-
-template <> class GripBBProperty<bool> : public GripBBMember  // size 0x20, opaque
-{
-public:
-    bool &GetReference();
-    const bool &Get() const;
-    void Set(const bool &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x1];
-};
-
-template <> class GripBBProperty<enum EEventType> : public GripBBMember  // size 0x20, opaque
-{
-public:
-    EEventType &GetReference();
-    const EEventType &Get() const;
-    void Set(const EEventType &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x1];
-};
-
-template <> class GripBBProperty<enum EThreatType> : public GripBBMember  // size 0x20, opaque
-{
-public:
-    EThreatType &GetReference();
-    const EThreatType &Get() const;
-    void Set(const EThreatType &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x1];
-};
-
-template <> class GripBBProperty<float> : public GripBBMember  // size 0x20, opaque
-{
-public:
-    float &GetReference();
-    const float &Get() const;
-    void Set(const float &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x1];
-};
-
-template <> class GripBBProperty<int> : public GripBBMember  // size 0x20, opaque
-{
-public:
-    int &GetReference();
-    const int &Get() const;
-    void Set(const int &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0x1];
-};
-
-template <> class GripBBArray<Grip::String,Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > > : public GripBBMember  // size 0x2C, opaque
-{
-public:
-    void AddItem(const Grip::String &);
-    void AddUniqueItem(const Grip::String &);
-    void Remove(int);
-    void RemoveItem(const Grip::String &);
-    void RemoveItemSwap(int);
-    void Empty();
-    void Reset();
-    bool ContainsItem(const Grip::String &) const;
-    int FindObject(const Grip::String &) const;
-    int Num() const;
-    const Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > &GetArray() const;
-    Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > &GetArray();
-    const Grip::String &operator[](int) const;
-    Grip::String &operator[](int);
-    #ifndef HAGGAR_HOST
-    GripBBArray();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBArrayData[0x4];
-};
-
-template <> class GripBBProperty<GripEvent> : public GripBBMember  // size 0x48, opaque
-{
-public:
-    GripEvent &GetReference();
-    const GripEvent &Get() const;
-    void Set(const GripEvent &);
-    #ifndef HAGGAR_HOST
-    GripBBProperty();
-    #endif
-HG_PRIVATE:
-    unsigned int GripBBPropertyData[0xB];
-};
-
-template <> class Grip_Array<GripBBMember *,Grip::AllocatorGH_POD<GripBBMember *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<GripBBMember *,Grip::AllocatorGH<GripBBMember *,2> > &operator=(const Grip_Array<GripBBMember *,Grip::AllocatorGH<GripBBMember *,2> > &);
-    void Clone(const Grip_Array<GripBBMember *,Grip::AllocatorGH<GripBBMember *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(GripBBMember *const &) const;
-    bool ContainsItem(GripBBMember *const &) const;
-    int Num() const;
-    GripBBMember *const &operator[](int) const;
-    GripBBMember *&operator[](int);
-    void AddItem(GripBBMember *const &);
-    void AddUniqueItem(GripBBMember *const &);
-    void InsertItemAt(GripBBMember *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(GripBBMember *const &);
-    GripBBMember **GetData();
+    enum FlagConstants
+    {
+        Flag_LengthIsSizeShift = 31,
+    };
+    struct DataDesc;
+    enum HeapType
+    {
+        HT_Global = 0,
+        HT_Local = 1,
+        HT_Dynamic = 2,
+        HT_Mask = 3,
+    };
+    struct NoConstructor;
+    struct InitStruct;
+    struct NoCaseKey;
 HG_PROTECTED:
-    void CloneContainer(GripBBMember **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
+    Grip::String::HeapType GetHeapType() const;
+    Grip::String::DataDesc *GetData() const;
+    void SetData(Grip::String::DataDesc *);
+    Grip::String::DataDesc *AllocData(Grip::MemoryHeap *, unsigned int, unsigned int);
+    Grip::String::DataDesc *AllocDataCopy1(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int);
+    Grip::String::DataDesc *AllocDataCopy2(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int, const char *, unsigned int);
 public:
+    Grip::MemoryHeap *GetHeap() const;
+    void Clear();
+    operator const char *() const;
+    const char *ToCStr() const;
+    unsigned int GetSize() const;
+    bool IsEmpty() const;
+    unsigned int GetLength() const;
+    unsigned long GetCharAt(unsigned int) const;
+    unsigned long GetFirstCharAt(unsigned int, const char **) const;
+    unsigned long GetNextChar(const char **) const;
+    void AppendChar(unsigned long);
+    void AppendString(const char *, int);
+    void AppendString(const wchar_t *, int);
+    void AssignString(const char *, unsigned int);
+    void AssignString(const Grip::String::InitStruct &, unsigned int);
+    void Remove(unsigned int, int);
+    Grip::String Substring(unsigned int, unsigned int) const;
+    Grip::String ToUpper() const;
+    Grip::String ToLower() const;
+    Grip::String &Insert(const char *, unsigned int, int);
+    unsigned int InsertCharAt(unsigned long, unsigned int);
+    unsigned int GetByteIndex(unsigned int) const;
+    int CompareNoCase(const Grip::String &) const;
+    int CompareNoCase(const char *) const;
+    static int CompareNoCase(const char *, const char *, int);
+    static int CompareNoCase(const char *, const char *);
+    static unsigned int BernsteinHashFunctionCIS(const void *, unsigned int, unsigned int);
+    static unsigned int BernsteinHashFunction(const void *, unsigned int, unsigned int);
+    static void EscapeSpecialHTML(const char *, unsigned int, Grip::String *);
+    static void UnescapeSpecialHTML(const char *, unsigned int, Grip::String *);
+    bool HasAbsolutePath() const;
+    static bool HasAbsolutePath(const char *);
+    bool HasExtension() const;
+    static bool HasExtension(const char *);
+    bool HasProtocol() const;
+    static bool HasProtocol(const char *);
+    Grip::String GetProtocol() const;
+    Grip::String GetPath() const;
+    Grip::String GetFilename() const;
+    Grip::String GetExtension() const;
+    void StripProtocol();
+    void StripExtension();
+    void operator=(const Grip::StringBuffer &);
+    void operator=(const Grip::String &);
+    void operator=(const wchar_t *);
+    void operator=(const char *);
+    void operator+=(char);
+    void operator+=(const wchar_t *);
+    void operator+=(const char *);
+    void operator+=(const Grip::String &);
+    Grip::String operator+(const Grip::String &) const;
+    Grip::String operator+(const char *) const;
+    bool operator==(const Grip::String::NoCaseKey &) const;
+    bool operator==(const char *) const;
+    bool operator==(const Grip::String &) const;
+    bool operator!=(const Grip::String::NoCaseKey &) const;
+    bool operator!=(const char *) const;
+    bool operator!=(const Grip::String &) const;
+    bool operator<(const Grip::String &) const;
+    bool operator<(const char *) const;
+    bool operator>(const Grip::String &) const;
+    bool operator>(const char *) const;
+    const char &operator[](unsigned int) const;
+    const char &operator[](int) const;
     #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<GripBBMember *,Grip::AllocatorGH<GripBBMember *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
+    static void *operator new(unsigned int, void *);
+    static void operator delete(void *, void *);
+    String(const wchar_t *);
+    String(const Grip::String::InitStruct &, unsigned int);
+    String(const Grip::StringBuffer &);
+    String(const Grip::String &);
+    String(const char *, unsigned int);
+    String(const char *, const char *, const char *);
+    String(const char *);
+    String();
+HG_PROTECTED:
+    String(const Grip::String::NoConstructor &);
+public:
+    ~String();
     #endif
     #ifndef HAGGAR_HOST
-    static const int increment;
+    static Grip::String::DataDesc NullData;
+    union
+    {
+        Grip::String::DataDesc *pData;  // 0x0
+        unsigned int HeapTypeBits;  // 0x0
+    };
     #else
-    static const hg::be<int> (&increment);
+    static Grip::String::DataDesc (&NullData);
+    union
+    {
+        hg::gptr<Grip::String::DataDesc> pData;
+        hg::be<unsigned int> HeapTypeBits;
+    };
     #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
 };
+}
 
-template <> class Grip_ArrayPOD<GripBBMember *,2> : public Grip_Array<GripBBMember *,Grip::AllocatorGH_POD<GripBBMember *,2> >  // size 0x10, opaque
+struct GripEvent : public GripVHeapObject  // size 0x2C
 {
 public:
-    Grip_ArrayPOD<GripBBMember *,2> &operator=(const Grip_ArrayPOD<GripBBMember *,2> &);
-    void Clone(const Grip_ArrayPOD<GripBBMember *,2> &);
+    bool operator==(const GripEvent &);
+    bool operator!=(const GripEvent &);
     #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<GripBBMember *,2> &);
-    Grip_ArrayPOD(const int);
+    GripEvent();
+    HG_VIRTUAL ~GripEvent();
+    #endif
+    #ifndef HAGGAR_HOST
+    static const char *DES_EXTRA_KILLED_TYPE;
+    static const char *GLOBAL_EVENT_TYPE;
+    static const GripEvent NONE;
+    Grip_Vector origin;  // 0x4
+    Grip::String type;  // 0x10
+    float triggerTime;  // 0x14
+    float delayedTime;  // 0x18
+    float speed;  // 0x1C
+    float radius;  // 0x20
+    int age;  // 0x24
+    bool consumed;  // 0x28
+    char _pad0[0x3];
+    #else
+    static hg::gptr<const char> (&DES_EXTRA_KILLED_TYPE);
+    static hg::gptr<const char> (&GLOBAL_EVENT_TYPE);
+    static const GripEvent (&NONE);
+    Grip_Vector origin;
+    Grip::String type;
+    hg::be<float> triggerTime;
+    hg::be<float> delayedTime;
+    hg::be<float> speed;
+    hg::be<float> radius;
+    hg::be<int> age;
+    bool consumed;
+    char _pad0[0x3];
     #endif
 };
 
@@ -12982,57 +12854,6 @@ HG_PRIVATE:
     unsigned int GripGameEventVisualizerData[0xC];
 };
 
-template <> class Grip_Array<IGripGameEventListener *,Grip::AllocatorGH_POD<IGripGameEventListener *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<IGripGameEventListener *,Grip::AllocatorGH<IGripGameEventListener *,2> > &operator=(const Grip_Array<IGripGameEventListener *,Grip::AllocatorGH<IGripGameEventListener *,2> > &);
-    void Clone(const Grip_Array<IGripGameEventListener *,Grip::AllocatorGH<IGripGameEventListener *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(IGripGameEventListener *const &) const;
-    bool ContainsItem(IGripGameEventListener *const &) const;
-    int Num() const;
-    IGripGameEventListener *const &operator[](int) const;
-    IGripGameEventListener *&operator[](int);
-    void AddItem(IGripGameEventListener *const &);
-    void AddUniqueItem(IGripGameEventListener *const &);
-    void InsertItemAt(IGripGameEventListener *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(IGripGameEventListener *const &);
-    IGripGameEventListener **GetData();
-HG_PROTECTED:
-    void CloneContainer(IGripGameEventListener **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<IGripGameEventListener *,Grip::AllocatorGH<IGripGameEventListener *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<IGripGameEventListener *,2> : public Grip_Array<IGripGameEventListener *,Grip::AllocatorGH_POD<IGripGameEventListener *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<IGripGameEventListener *,2> &operator=(const Grip_ArrayPOD<IGripGameEventListener *,2> &);
-    void Clone(const Grip_ArrayPOD<IGripGameEventListener *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<IGripGameEventListener *,2> &);
-    Grip_ArrayPOD(const int);
-    #endif
-};
-
 class IGripRBTTreeListener  // size 0x4
 {
     HG_VFPTR
@@ -13073,57 +12894,6 @@ public:
     hg::gptr<GripBrain> m_owner;
     Grip_ArrayPOD<IGripGameEventListener *,2> m_listeners;
     GripGameEventVisualizer m_visualizer;
-    #endif
-};
-
-template <> class Grip_Array<IGripSRComponent *,Grip::AllocatorGH_POD<IGripSRComponent *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<IGripSRComponent *,Grip::AllocatorGH<IGripSRComponent *,2> > &operator=(const Grip_Array<IGripSRComponent *,Grip::AllocatorGH<IGripSRComponent *,2> > &);
-    void Clone(const Grip_Array<IGripSRComponent *,Grip::AllocatorGH<IGripSRComponent *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(IGripSRComponent *const &) const;
-    bool ContainsItem(IGripSRComponent *const &) const;
-    int Num() const;
-    IGripSRComponent *const &operator[](int) const;
-    IGripSRComponent *&operator[](int);
-    void AddItem(IGripSRComponent *const &);
-    void AddUniqueItem(IGripSRComponent *const &);
-    void InsertItemAt(IGripSRComponent *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(IGripSRComponent *const &);
-    IGripSRComponent **GetData();
-HG_PROTECTED:
-    void CloneContainer(IGripSRComponent **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<IGripSRComponent *,Grip::AllocatorGH<IGripSRComponent *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<IGripSRComponent *,2> : public Grip_Array<IGripSRComponent *,Grip::AllocatorGH_POD<IGripSRComponent *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<IGripSRComponent *,2> &operator=(const Grip_ArrayPOD<IGripSRComponent *,2> &);
-    void Clone(const Grip_ArrayPOD<IGripSRComponent *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<IGripSRComponent *,2> &);
-    Grip_ArrayPOD(const int);
     #endif
 };
 
@@ -13804,46 +13574,6 @@ public:
     #endif
 };
 
-template <> class Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &operator=(const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &);
-    void Clone(const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(const CCSCover &) const;
-    bool ContainsItem(const CCSCover &) const;
-    int Num() const;
-    const CCSCover &operator[](int) const;
-    CCSCover &operator[](int);
-    void AddItem(const CCSCover &);
-    void AddUniqueItem(const CCSCover &);
-    void InsertItemAt(const CCSCover &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(const CCSCover &);
-    CCSCover *GetData();
-HG_PROTECTED:
-    void CloneContainer(CCSCover *, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<CCSCover,Grip::AllocatorGH<CCSCover,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
 class IGripSRProxy  // size 0x4
 {
     HG_VFPTR
@@ -13969,97 +13699,6 @@ public:
     CCSGlobalBlackboard *m_pGlobalBB;  // 0xC
     #else
     hg::gptr<CCSGlobalBlackboard> m_pGlobalBB;
-    #endif
-};
-
-template <> class Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &operator=(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
-    void Clone(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(const CCSCharacter &) const;
-    bool ContainsItem(const CCSCharacter &) const;
-    int Num() const;
-    const CCSCharacter &operator[](int) const;
-    CCSCharacter &operator[](int);
-    void AddItem(const CCSCharacter &);
-    void AddUniqueItem(const CCSCharacter &);
-    void InsertItemAt(const CCSCharacter &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(const CCSCharacter &);
-    CCSCharacter *GetData();
-HG_PROTECTED:
-    void CloneContainer(CCSCharacter *, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<CCSCharacter,Grip::AllocatorGH<CCSCharacter,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_Array<CCSBrain *,Grip::AllocatorGH_POD<CCSBrain *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<CCSBrain *,Grip::AllocatorGH<CCSBrain *,2> > &operator=(const Grip_Array<CCSBrain *,Grip::AllocatorGH<CCSBrain *,2> > &);
-    void Clone(const Grip_Array<CCSBrain *,Grip::AllocatorGH<CCSBrain *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(CCSBrain *const &) const;
-    bool ContainsItem(CCSBrain *const &) const;
-    int Num() const;
-    CCSBrain *const &operator[](int) const;
-    CCSBrain *&operator[](int);
-    void AddItem(CCSBrain *const &);
-    void AddUniqueItem(CCSBrain *const &);
-    void InsertItemAt(CCSBrain *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(CCSBrain *const &);
-    CCSBrain **GetData();
-HG_PROTECTED:
-    void CloneContainer(CCSBrain **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<CCSBrain *,Grip::AllocatorGH<CCSBrain *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<CCSBrain *,2> : public Grip_Array<CCSBrain *,Grip::AllocatorGH_POD<CCSBrain *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<CCSBrain *,2> &operator=(const Grip_ArrayPOD<CCSBrain *,2> &);
-    void Clone(const Grip_ArrayPOD<CCSBrain *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<CCSBrain *,2> &);
-    Grip_ArrayPOD(const int);
     #endif
 };
 
@@ -14516,131 +14155,6 @@ public:
     hg::gptr<CCSTargetRenderingComponent> m_pDebugComponent;
     #endif
 };
-
-namespace Grip {
-class String  // size 0x4
-{
-public:
-    enum FlagConstants
-    {
-        Flag_LengthIsSizeShift = 31,
-    };
-    struct DataDesc;
-    enum HeapType
-    {
-        HT_Global = 0,
-        HT_Local = 1,
-        HT_Dynamic = 2,
-        HT_Mask = 3,
-    };
-    struct NoConstructor;
-    struct InitStruct;
-    struct NoCaseKey;
-HG_PROTECTED:
-    Grip::String::HeapType GetHeapType() const;
-    Grip::String::DataDesc *GetData() const;
-    void SetData(Grip::String::DataDesc *);
-    Grip::String::DataDesc *AllocData(Grip::MemoryHeap *, unsigned int, unsigned int);
-    Grip::String::DataDesc *AllocDataCopy1(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int);
-    Grip::String::DataDesc *AllocDataCopy2(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int, const char *, unsigned int);
-public:
-    Grip::MemoryHeap *GetHeap() const;
-    void Clear();
-    operator const char *() const;
-    const char *ToCStr() const;
-    unsigned int GetSize() const;
-    bool IsEmpty() const;
-    unsigned int GetLength() const;
-    unsigned long GetCharAt(unsigned int) const;
-    unsigned long GetFirstCharAt(unsigned int, const char **) const;
-    unsigned long GetNextChar(const char **) const;
-    void AppendChar(unsigned long);
-    void AppendString(const char *, int);
-    void AppendString(const wchar_t *, int);
-    void AssignString(const char *, unsigned int);
-    void AssignString(const Grip::String::InitStruct &, unsigned int);
-    void Remove(unsigned int, int);
-    Grip::String Substring(unsigned int, unsigned int) const;
-    Grip::String ToUpper() const;
-    Grip::String ToLower() const;
-    Grip::String &Insert(const char *, unsigned int, int);
-    unsigned int InsertCharAt(unsigned long, unsigned int);
-    unsigned int GetByteIndex(unsigned int) const;
-    int CompareNoCase(const Grip::String &) const;
-    int CompareNoCase(const char *) const;
-    static int CompareNoCase(const char *, const char *, int);
-    static int CompareNoCase(const char *, const char *);
-    static unsigned int BernsteinHashFunctionCIS(const void *, unsigned int, unsigned int);
-    static unsigned int BernsteinHashFunction(const void *, unsigned int, unsigned int);
-    static void EscapeSpecialHTML(const char *, unsigned int, Grip::String *);
-    static void UnescapeSpecialHTML(const char *, unsigned int, Grip::String *);
-    bool HasAbsolutePath() const;
-    static bool HasAbsolutePath(const char *);
-    bool HasExtension() const;
-    static bool HasExtension(const char *);
-    bool HasProtocol() const;
-    static bool HasProtocol(const char *);
-    Grip::String GetProtocol() const;
-    Grip::String GetPath() const;
-    Grip::String GetFilename() const;
-    Grip::String GetExtension() const;
-    void StripProtocol();
-    void StripExtension();
-    void operator=(const Grip::StringBuffer &);
-    void operator=(const Grip::String &);
-    void operator=(const wchar_t *);
-    void operator=(const char *);
-    void operator+=(char);
-    void operator+=(const wchar_t *);
-    void operator+=(const char *);
-    void operator+=(const Grip::String &);
-    Grip::String operator+(const Grip::String &) const;
-    Grip::String operator+(const char *) const;
-    bool operator==(const Grip::String::NoCaseKey &) const;
-    bool operator==(const char *) const;
-    bool operator==(const Grip::String &) const;
-    bool operator!=(const Grip::String::NoCaseKey &) const;
-    bool operator!=(const char *) const;
-    bool operator!=(const Grip::String &) const;
-    bool operator<(const Grip::String &) const;
-    bool operator<(const char *) const;
-    bool operator>(const Grip::String &) const;
-    bool operator>(const char *) const;
-    const char &operator[](unsigned int) const;
-    const char &operator[](int) const;
-    #ifndef HAGGAR_HOST
-    static void *operator new(unsigned int, void *);
-    static void operator delete(void *, void *);
-    String(const wchar_t *);
-    String(const Grip::String::InitStruct &, unsigned int);
-    String(const Grip::StringBuffer &);
-    String(const Grip::String &);
-    String(const char *, unsigned int);
-    String(const char *, const char *, const char *);
-    String(const char *);
-    String();
-HG_PROTECTED:
-    String(const Grip::String::NoConstructor &);
-public:
-    ~String();
-    #endif
-    #ifndef HAGGAR_HOST
-    static Grip::String::DataDesc NullData;
-    union
-    {
-        Grip::String::DataDesc *pData;  // 0x0
-        unsigned int HeapTypeBits;  // 0x0
-    };
-    #else
-    static Grip::String::DataDesc (&NullData);
-    union
-    {
-        hg::gptr<Grip::String::DataDesc> pData;
-        hg::be<unsigned int> HeapTypeBits;
-    };
-    #endif
-};
-}
 
 class GripRBTNode : public GripVHeapObject  // size 0x64
 {
@@ -15200,57 +14714,6 @@ public:
     #endif
 };
 
-template <> class Grip_Array<ANavigationPoint *,Grip::AllocatorGH_POD<ANavigationPoint *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<ANavigationPoint *,Grip::AllocatorGH<ANavigationPoint *,2> > &operator=(const Grip_Array<ANavigationPoint *,Grip::AllocatorGH<ANavigationPoint *,2> > &);
-    void Clone(const Grip_Array<ANavigationPoint *,Grip::AllocatorGH<ANavigationPoint *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(ANavigationPoint *const &) const;
-    bool ContainsItem(ANavigationPoint *const &) const;
-    int Num() const;
-    ANavigationPoint *const &operator[](int) const;
-    ANavigationPoint *&operator[](int);
-    void AddItem(ANavigationPoint *const &);
-    void AddUniqueItem(ANavigationPoint *const &);
-    void InsertItemAt(ANavigationPoint *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(ANavigationPoint *const &);
-    ANavigationPoint **GetData();
-HG_PROTECTED:
-    void CloneContainer(ANavigationPoint **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<ANavigationPoint *,Grip::AllocatorGH<ANavigationPoint *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<ANavigationPoint *,2> : public Grip_Array<ANavigationPoint *,Grip::AllocatorGH_POD<ANavigationPoint *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<ANavigationPoint *,2> &operator=(const Grip_ArrayPOD<ANavigationPoint *,2> &);
-    void Clone(const Grip_ArrayPOD<ANavigationPoint *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<ANavigationPoint *,2> &);
-    Grip_ArrayPOD(const int);
-    #endif
-};
-
 class CCSRBTSearch : public CCSRBTMoveTo  // size 0xD0
 {
 public:
@@ -15646,112 +15109,6 @@ public:
     static GripStatEntry ms_statEntries[4];
     #else
     static GripStatEntry (&ms_statEntries)[4];
-    #endif
-};
-
-namespace Kaim {
-template <> class Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >  // size 0x4, opaque
-{
-public:
-    bool operator==(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
-    bool operator==(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    bool operator!=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *) const;
-    bool operator!=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    bool operator<(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &) const;
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &operator=(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &SetPtr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    void NullWithoutRelease();
-    void Clear();
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *&GetRawRef();
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *GetPtr() const;
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &operator*() const;
-    Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *operator->() const;
-    operator class Kaim::AStarQuery<class Kaim::DefaultTraverseLogic> *() const;
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &Pick(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    #ifndef HAGGAR_HOST
-    Ptr(const Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &);
-    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> *);
-    Ptr(Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > &, Kaim::PickType);
-    Ptr(Kaim::Pickable<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> >);
-    Ptr(Kaim::AStarQuery<Kaim::DefaultTraverseLogic> &);
-    Ptr();
-    ~Ptr();
-    #endif
-HG_PRIVATE:
-    unsigned int PtrData[0x1];
-};
-}
-
-struct CCSTarget : public GripHeapObject  // size 0x64
-{
-public:
-    Grip_Vector GetDefaultShootLocation() const;
-    bool IsValid() const;
-    void ResetAwareness();
-    float CurrentCamo() const;
-    void FindDestinationReachable(Grip_Vector);
-    void UpdateDestinationReachable();
-    bool CanFindPath();
-    #ifndef HAGGAR_HOST
-    CCSTarget(CCSBrain *);
-    CCSTarget();
-    #endif
-    #ifndef HAGGAR_HOST
-    CCSCharacter character;  // 0x0
-    int teamNum;  // 0x14
-    Grip_Vector position;  // 0x18
-    Grip_Vector LKP;  // 0x24
-    float LKPAge;  // 0x30
-    float CNTAge;  // 0x34
-    float range2D;  // 0x38
-    float rangeNavMesh;  // 0x3C
-    float currentThreat;  // 0x40
-    bool canShoot;  // 0x44
-    bool ClearOfFriendlies;  // 0x45
-    bool isAware;  // 0x46
-    bool isFiring;  // 0x47
-    bool isVisible;  // 0x48
-    bool isHeard;  // 0x49
-    bool isAvailableVehicle;  // 0x4A
-    bool isBehindCover;  // 0x4B
-    float forwardDot;  // 0x4C
-    float rightDot;  // 0x50
-    EAITargetType m_aiTargetType;  // 0x54
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > m_asyncAStarQuery;  // 0x58
-    UGwNavBotHandle *m_pGwNavBotHandle;  // 0x5C
-    Kaim::AStarQueryResult pathResult;  // 0x60
-    #else
-    CCSCharacter character;
-    hg::be<int> teamNum;
-    Grip_Vector position;
-    Grip_Vector LKP;
-    hg::be<float> LKPAge;
-    hg::be<float> CNTAge;
-    hg::be<float> range2D;
-    hg::be<float> rangeNavMesh;
-    hg::be<float> currentThreat;
-    bool canShoot;
-    bool ClearOfFriendlies;
-    bool isAware;
-    bool isFiring;
-    bool isVisible;
-    bool isHeard;
-    bool isAvailableVehicle;
-    bool isBehindCover;
-    hg::be<float> forwardDot;
-    hg::be<float> rightDot;
-    hg::be<EAITargetType> m_aiTargetType;
-    Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > m_asyncAStarQuery;
-    hg::gptr<UGwNavBotHandle> m_pGwNavBotHandle;
-    hg::be<Kaim::AStarQueryResult> pathResult;
     #endif
 };
 
@@ -16625,57 +15982,6 @@ public:
     FVector2D LightMapResolutionScale;
     hg::be<ELightMapInteractionType> LightMapType;
     char _pad2[0xC];
-    #endif
-};
-
-template <> class Grip_Array<IGripSRProxy *,Grip::AllocatorGH_POD<IGripSRProxy *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<IGripSRProxy *,Grip::AllocatorGH<IGripSRProxy *,2> > &operator=(const Grip_Array<IGripSRProxy *,Grip::AllocatorGH<IGripSRProxy *,2> > &);
-    void Clone(const Grip_Array<IGripSRProxy *,Grip::AllocatorGH<IGripSRProxy *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(IGripSRProxy *const &) const;
-    bool ContainsItem(IGripSRProxy *const &) const;
-    int Num() const;
-    IGripSRProxy *const &operator[](int) const;
-    IGripSRProxy *&operator[](int);
-    void AddItem(IGripSRProxy *const &);
-    void AddUniqueItem(IGripSRProxy *const &);
-    void InsertItemAt(IGripSRProxy *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(IGripSRProxy *const &);
-    IGripSRProxy **GetData();
-HG_PROTECTED:
-    void CloneContainer(IGripSRProxy **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<IGripSRProxy *,Grip::AllocatorGH<IGripSRProxy *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<IGripSRProxy *,2> : public Grip_Array<IGripSRProxy *,Grip::AllocatorGH_POD<IGripSRProxy *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<IGripSRProxy *,2> &operator=(const Grip_ArrayPOD<IGripSRProxy *,2> &);
-    void Clone(const Grip_ArrayPOD<IGripSRProxy *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<IGripSRProxy *,2> &);
-    Grip_ArrayPOD(const int);
     #endif
 };
 
@@ -20639,97 +19945,6 @@ public:
     #endif
 };
 
-template <> class Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > &operator=(const Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > &);
-    void Clone(const Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(const Grip::String &) const;
-    bool ContainsItem(const Grip::String &) const;
-    int Num() const;
-    const Grip::String &operator[](int) const;
-    Grip::String &operator[](int);
-    void AddItem(const Grip::String &);
-    void AddUniqueItem(const Grip::String &);
-    void InsertItemAt(const Grip::String &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(const Grip::String &);
-    Grip::String *GetData();
-HG_PROTECTED:
-    void CloneContainer(Grip::String *, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<Grip::String,Grip::AllocatorGH<Grip::String,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_Array<GripMessengerWorker *,Grip::AllocatorGH_POD<GripMessengerWorker *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<GripMessengerWorker *,Grip::AllocatorGH<GripMessengerWorker *,2> > &operator=(const Grip_Array<GripMessengerWorker *,Grip::AllocatorGH<GripMessengerWorker *,2> > &);
-    void Clone(const Grip_Array<GripMessengerWorker *,Grip::AllocatorGH<GripMessengerWorker *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(GripMessengerWorker *const &) const;
-    bool ContainsItem(GripMessengerWorker *const &) const;
-    int Num() const;
-    GripMessengerWorker *const &operator[](int) const;
-    GripMessengerWorker *&operator[](int);
-    void AddItem(GripMessengerWorker *const &);
-    void AddUniqueItem(GripMessengerWorker *const &);
-    void InsertItemAt(GripMessengerWorker *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(GripMessengerWorker *const &);
-    GripMessengerWorker **GetData();
-HG_PROTECTED:
-    void CloneContainer(GripMessengerWorker **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<GripMessengerWorker *,Grip::AllocatorGH<GripMessengerWorker *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<GripMessengerWorker *,2> : public Grip_Array<GripMessengerWorker *,Grip::AllocatorGH_POD<GripMessengerWorker *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<GripMessengerWorker *,2> &operator=(const Grip_ArrayPOD<GripMessengerWorker *,2> &);
-    void Clone(const Grip_ArrayPOD<GripMessengerWorker *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<GripMessengerWorker *,2> &);
-    Grip_ArrayPOD(const int);
-    #endif
-};
-
 class IConsoleLinkClient  // size 0x4
 {
     HG_VFPTR
@@ -20775,159 +19990,6 @@ public:
     hg::be<float> m_messageSendTimer;
     hg::be<float> m_messageSendInterval;
     hg::gptr<IGripAIConsoleLink> m_aiConsoleLink;
-    #endif
-};
-
-template <> class Grip_Array<IGripAISystem *,Grip::AllocatorGH_POD<IGripAISystem *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<IGripAISystem *,Grip::AllocatorGH<IGripAISystem *,2> > &operator=(const Grip_Array<IGripAISystem *,Grip::AllocatorGH<IGripAISystem *,2> > &);
-    void Clone(const Grip_Array<IGripAISystem *,Grip::AllocatorGH<IGripAISystem *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(IGripAISystem *const &) const;
-    bool ContainsItem(IGripAISystem *const &) const;
-    int Num() const;
-    IGripAISystem *const &operator[](int) const;
-    IGripAISystem *&operator[](int);
-    void AddItem(IGripAISystem *const &);
-    void AddUniqueItem(IGripAISystem *const &);
-    void InsertItemAt(IGripAISystem *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(IGripAISystem *const &);
-    IGripAISystem **GetData();
-HG_PROTECTED:
-    void CloneContainer(IGripAISystem **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<IGripAISystem *,Grip::AllocatorGH<IGripAISystem *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<IGripAISystem *,2> : public Grip_Array<IGripAISystem *,Grip::AllocatorGH_POD<IGripAISystem *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<IGripAISystem *,2> &operator=(const Grip_ArrayPOD<IGripAISystem *,2> &);
-    void Clone(const Grip_ArrayPOD<IGripAISystem *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<IGripAISystem *,2> &);
-    Grip_ArrayPOD(const int);
-    #endif
-};
-
-template <> class Grip_Array<IGripBrainListener *,Grip::AllocatorGH_POD<IGripBrainListener *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<IGripBrainListener *,Grip::AllocatorGH<IGripBrainListener *,2> > &operator=(const Grip_Array<IGripBrainListener *,Grip::AllocatorGH<IGripBrainListener *,2> > &);
-    void Clone(const Grip_Array<IGripBrainListener *,Grip::AllocatorGH<IGripBrainListener *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(IGripBrainListener *const &) const;
-    bool ContainsItem(IGripBrainListener *const &) const;
-    int Num() const;
-    IGripBrainListener *const &operator[](int) const;
-    IGripBrainListener *&operator[](int);
-    void AddItem(IGripBrainListener *const &);
-    void AddUniqueItem(IGripBrainListener *const &);
-    void InsertItemAt(IGripBrainListener *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(IGripBrainListener *const &);
-    IGripBrainListener **GetData();
-HG_PROTECTED:
-    void CloneContainer(IGripBrainListener **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<IGripBrainListener *,Grip::AllocatorGH<IGripBrainListener *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<IGripBrainListener *,2> : public Grip_Array<IGripBrainListener *,Grip::AllocatorGH_POD<IGripBrainListener *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<IGripBrainListener *,2> &operator=(const Grip_ArrayPOD<IGripBrainListener *,2> &);
-    void Clone(const Grip_ArrayPOD<IGripBrainListener *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<IGripBrainListener *,2> &);
-    Grip_ArrayPOD(const int);
-    #endif
-};
-
-template <> class Grip_Array<IGripHUDRenderingComponent *,Grip::AllocatorGH_POD<IGripHUDRenderingComponent *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<IGripHUDRenderingComponent *,Grip::AllocatorGH<IGripHUDRenderingComponent *,2> > &operator=(const Grip_Array<IGripHUDRenderingComponent *,Grip::AllocatorGH<IGripHUDRenderingComponent *,2> > &);
-    void Clone(const Grip_Array<IGripHUDRenderingComponent *,Grip::AllocatorGH<IGripHUDRenderingComponent *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(IGripHUDRenderingComponent *const &) const;
-    bool ContainsItem(IGripHUDRenderingComponent *const &) const;
-    int Num() const;
-    IGripHUDRenderingComponent *const &operator[](int) const;
-    IGripHUDRenderingComponent *&operator[](int);
-    void AddItem(IGripHUDRenderingComponent *const &);
-    void AddUniqueItem(IGripHUDRenderingComponent *const &);
-    void InsertItemAt(IGripHUDRenderingComponent *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(IGripHUDRenderingComponent *const &);
-    IGripHUDRenderingComponent **GetData();
-HG_PROTECTED:
-    void CloneContainer(IGripHUDRenderingComponent **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<IGripHUDRenderingComponent *,Grip::AllocatorGH<IGripHUDRenderingComponent *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<IGripHUDRenderingComponent *,2> : public Grip_Array<IGripHUDRenderingComponent *,Grip::AllocatorGH_POD<IGripHUDRenderingComponent *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<IGripHUDRenderingComponent *,2> &operator=(const Grip_ArrayPOD<IGripHUDRenderingComponent *,2> &);
-    void Clone(const Grip_ArrayPOD<IGripHUDRenderingComponent *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<IGripHUDRenderingComponent *,2> &);
-    Grip_ArrayPOD(const int);
     #endif
 };
 
@@ -21038,57 +20100,6 @@ public:
     #endif
 };
 
-template <> class Grip_Array<GripRBTNode *,Grip::AllocatorGH_POD<GripRBTNode *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<GripRBTNode *,Grip::AllocatorGH<GripRBTNode *,2> > &operator=(const Grip_Array<GripRBTNode *,Grip::AllocatorGH<GripRBTNode *,2> > &);
-    void Clone(const Grip_Array<GripRBTNode *,Grip::AllocatorGH<GripRBTNode *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(GripRBTNode *const &) const;
-    bool ContainsItem(GripRBTNode *const &) const;
-    int Num() const;
-    GripRBTNode *const &operator[](int) const;
-    GripRBTNode *&operator[](int);
-    void AddItem(GripRBTNode *const &);
-    void AddUniqueItem(GripRBTNode *const &);
-    void InsertItemAt(GripRBTNode *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(GripRBTNode *const &);
-    GripRBTNode **GetData();
-HG_PROTECTED:
-    void CloneContainer(GripRBTNode **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<GripRBTNode *,Grip::AllocatorGH<GripRBTNode *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<GripRBTNode *,2> : public Grip_Array<GripRBTNode *,Grip::AllocatorGH_POD<GripRBTNode *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<GripRBTNode *,2> &operator=(const Grip_ArrayPOD<GripRBTNode *,2> &);
-    void Clone(const Grip_ArrayPOD<GripRBTNode *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<GripRBTNode *,2> &);
-    Grip_ArrayPOD(const int);
-    #endif
-};
-
 class GripBTStack : public GripVHeapObject  // size 0x14
 {
 public:
@@ -21129,44 +20140,6 @@ public:
     bool m_writeBT;
     char _pad0[0x3];
     hg::be<int> m_brainID;
-    #endif
-};
-
-struct GripEvent : public GripVHeapObject  // size 0x2C
-{
-public:
-    bool operator==(const GripEvent &);
-    bool operator!=(const GripEvent &);
-    #ifndef HAGGAR_HOST
-    GripEvent();
-    HG_VIRTUAL ~GripEvent();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const char *DES_EXTRA_KILLED_TYPE;
-    static const char *GLOBAL_EVENT_TYPE;
-    static const GripEvent NONE;
-    Grip_Vector origin;  // 0x4
-    Grip::String type;  // 0x10
-    float triggerTime;  // 0x14
-    float delayedTime;  // 0x18
-    float speed;  // 0x1C
-    float radius;  // 0x20
-    int age;  // 0x24
-    bool consumed;  // 0x28
-    char _pad0[0x3];
-    #else
-    static hg::gptr<const char> (&DES_EXTRA_KILLED_TYPE);
-    static hg::gptr<const char> (&GLOBAL_EVENT_TYPE);
-    static const GripEvent (&NONE);
-    Grip_Vector origin;
-    Grip::String type;
-    hg::be<float> triggerTime;
-    hg::be<float> delayedTime;
-    hg::be<float> speed;
-    hg::be<float> radius;
-    hg::be<int> age;
-    bool consumed;
-    char _pad0[0x3];
     #endif
 };
 
@@ -21225,108 +20198,6 @@ public:
     int m_currNodeIdx;  // 0x64
     #else
     hg::be<int> m_currNodeIdx;
-    #endif
-};
-
-template <> class Grip_Array<IGripRBTTreeListener *,Grip::AllocatorGH_POD<IGripRBTTreeListener *,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<IGripRBTTreeListener *,Grip::AllocatorGH<IGripRBTTreeListener *,2> > &operator=(const Grip_Array<IGripRBTTreeListener *,Grip::AllocatorGH<IGripRBTTreeListener *,2> > &);
-    void Clone(const Grip_Array<IGripRBTTreeListener *,Grip::AllocatorGH<IGripRBTTreeListener *,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(IGripRBTTreeListener *const &) const;
-    bool ContainsItem(IGripRBTTreeListener *const &) const;
-    int Num() const;
-    IGripRBTTreeListener *const &operator[](int) const;
-    IGripRBTTreeListener *&operator[](int);
-    void AddItem(IGripRBTTreeListener *const &);
-    void AddUniqueItem(IGripRBTTreeListener *const &);
-    void InsertItemAt(IGripRBTTreeListener *const &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(IGripRBTTreeListener *const &);
-    IGripRBTTreeListener **GetData();
-HG_PROTECTED:
-    void CloneContainer(IGripRBTTreeListener **, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<IGripRBTTreeListener *,Grip::AllocatorGH<IGripRBTTreeListener *,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<IGripRBTTreeListener *,2> : public Grip_Array<IGripRBTTreeListener *,Grip::AllocatorGH_POD<IGripRBTTreeListener *,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<IGripRBTTreeListener *,2> &operator=(const Grip_ArrayPOD<IGripRBTTreeListener *,2> &);
-    void Clone(const Grip_ArrayPOD<IGripRBTTreeListener *,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<IGripRBTTreeListener *,2> &);
-    Grip_ArrayPOD(const int);
-    #endif
-};
-
-template <> class Grip_Array<int,Grip::AllocatorGH_POD<int,2> > : public GripVHeapObject  // size 0x10, opaque
-{
-public:
-    Grip_Array<int,Grip::AllocatorGH<int,2> > &operator=(const Grip_Array<int,Grip::AllocatorGH<int,2> > &);
-    void Clone(const Grip_Array<int,Grip::AllocatorGH<int,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(const int &) const;
-    bool ContainsItem(const int &) const;
-    int Num() const;
-    const int &operator[](int) const;
-    int &operator[](int);
-    void AddItem(const int &);
-    void AddUniqueItem(const int &);
-    void InsertItemAt(const int &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(const int &);
-    int *GetData();
-HG_PROTECTED:
-    void CloneContainer(int *, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<int,Grip::AllocatorGH<int,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
-HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
-};
-
-template <> class Grip_ArrayPOD<int,2> : public Grip_Array<int,Grip::AllocatorGH_POD<int,2> >  // size 0x10, opaque
-{
-public:
-    Grip_ArrayPOD<int,2> &operator=(const Grip_ArrayPOD<int,2> &);
-    void Clone(const Grip_ArrayPOD<int,2> &);
-    #ifndef HAGGAR_HOST
-    Grip_ArrayPOD(const Grip_ArrayPOD<int,2> &);
-    Grip_ArrayPOD(const int);
     #endif
 };
 
@@ -21414,44 +20285,10 @@ public:
     #endif
 };
 
-template <> class Grip_Array<GripSerializerStackObj,Grip::AllocatorGH<GripSerializerStackObj,2> > : public GripVHeapObject  // size 0x10, opaque
+struct GripSerializerStackObj : public GripHeapObject  // size 0x2, opaque
 {
-public:
-    Grip_Array<GripSerializerStackObj,Grip::AllocatorGH<GripSerializerStackObj,2> > &operator=(const Grip_Array<GripSerializerStackObj,Grip::AllocatorGH<GripSerializerStackObj,2> > &);
-    void Clone(const Grip_Array<GripSerializerStackObj,Grip::AllocatorGH<GripSerializerStackObj,2> > &);
-    void Empty();
-    void Reset();
-    void Reserve(int);
-    int FindObject(const GripSerializerStackObj &) const;
-    bool ContainsItem(const GripSerializerStackObj &) const;
-    int Num() const;
-    const GripSerializerStackObj &operator[](int) const;
-    GripSerializerStackObj &operator[](int);
-    void AddItem(const GripSerializerStackObj &);
-    void AddUniqueItem(const GripSerializerStackObj &);
-    void InsertItemAt(const GripSerializerStackObj &, int);
-    void RemoveItemSwap(int);
-    void RemoveItem(int);
-    void RemoveItemItem(const GripSerializerStackObj &);
-    GripSerializerStackObj *GetData();
-HG_PROTECTED:
-    void CloneContainer(GripSerializerStackObj *, int, int);
-    void DestructItems(int, int);
-    void ResizeTo(int);
-    void DeleteContainerContent();
-public:
-    #ifndef HAGGAR_HOST
-    Grip_Array(const Grip_Array<GripSerializerStackObj,Grip::AllocatorGH<GripSerializerStackObj,2> > &);
-    Grip_Array(const int);
-    HG_VIRTUAL ~Grip_Array();
-    #endif
-    #ifndef HAGGAR_HOST
-    static const int increment;
-    #else
-    static const hg::be<int> (&increment);
-    #endif
 HG_PRIVATE:
-    unsigned int Grip_ArrayData[0x3];
+    char GripSerializerStackObjData[0x2];
 };
 
 class GripSerializer : public GripVHeapObject  // size 0x30
@@ -37051,6 +35888,1122 @@ inline UUSSATBlendByPosture::~UUSSATBlendByPosture() { ConditionalDestroy(); }
 inline void *UUSSATBlendByPosture::operator new(const unsigned int, EInternal *InMem) { return (void *)InMem; }
 inline void UUSSATBlendByPosture::InternalConstructor(void *X) { new ((EInternal *)X) UUSSATBlendByPosture; }
 
+inline UClass *ABrush::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassABrush(L"Engine");
+        InitializePrivateStaticClassABrush();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ACoverLink::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassACoverLink(L"Engine");
+        InitializePrivateStaticClassACoverLink();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ADynamicSMActor::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassADynamicSMActor(L"Engine");
+        InitializePrivateStaticClassADynamicSMActor();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AFileLog::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAFileLog(L"Engine");
+        InitializePrivateStaticClassAFileLog();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AFileWriter::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAFileWriter(L"Engine");
+        InitializePrivateStaticClassAFileWriter();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AFluidSurfaceActor::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAFluidSurfaceActor(L"Engine");
+        InitializePrivateStaticClassAFluidSurfaceActor();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AGamePawn::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAGamePawn(L"GameFramework");
+        InitializePrivateStaticClassAGamePawn();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AGamePlayerController::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAGamePlayerController(L"GameFramework");
+        InitializePrivateStaticClassAGamePlayerController();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AGwNavPawn::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAGwNavPawn(L"GwNavEngine");
+        InitializePrivateStaticClassAGwNavPawn();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AGwNavVehicle::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAGwNavVehicle(L"GwNavEngine");
+        InitializePrivateStaticClassAGwNavVehicle();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AInfo::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAInfo(L"Engine");
+        InitializePrivateStaticClassAInfo();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AInterpActor::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAInterpActor(L"Engine");
+        InitializePrivateStaticClassAInterpActor();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AInventory::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAInventory(L"Engine");
+        InitializePrivateStaticClassAInventory();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AInventoryManager::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAInventoryManager(L"Engine");
+        InitializePrivateStaticClassAInventoryManager();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ALadderVolume::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassALadderVolume(L"Engine");
+        InitializePrivateStaticClassALadderVolume();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ANavigationPoint::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassANavigationPoint(L"Engine");
+        InitializePrivateStaticClassANavigationPoint();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *APhysicsVolume::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAPhysicsVolume(L"Engine");
+        InitializePrivateStaticClassAPhysicsVolume();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *APlayerController::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAPlayerController(L"Engine");
+        InitializePrivateStaticClassAPlayerController();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *APlayerReplicationInfo::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAPlayerReplicationInfo(L"Engine");
+        InitializePrivateStaticClassAPlayerReplicationInfo();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *APlayerStart::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAPlayerStart(L"Engine");
+        InitializePrivateStaticClassAPlayerStart();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *APortalTeleporter::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAPortalTeleporter(L"Engine");
+        InitializePrivateStaticClassAPortalTeleporter();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *APrefabInstance::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAPrefabInstance(L"Engine");
+        InitializePrivateStaticClassAPrefabInstance();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AProjectile::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAProjectile(L"Engine");
+        InitializePrivateStaticClassAProjectile();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AReplicationInfo::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAReplicationInfo(L"Engine");
+        InitializePrivateStaticClassAReplicationInfo();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ARoute::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassARoute(L"Engine");
+        InitializePrivateStaticClassARoute();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ASVehicle::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassASVehicle(L"Engine");
+        InitializePrivateStaticClassASVehicle();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ASceneCaptureActor::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassASceneCaptureActor(L"Engine");
+        InitializePrivateStaticClassASceneCaptureActor();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ASceneCapturePortalActor::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassASceneCapturePortalActor(L"Engine");
+        InitializePrivateStaticClassASceneCapturePortalActor();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ASceneCaptureReflectActor::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassASceneCaptureReflectActor(L"Engine");
+        InitializePrivateStaticClassASceneCaptureReflectActor();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AUDKPawn::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAUDKPawn(L"UDKBase");
+        InitializePrivateStaticClassAUDKPawn();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AUDKPlayerController::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAUDKPlayerController(L"UDKBase");
+        InitializePrivateStaticClassAUDKPlayerController();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AVehicle::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAVehicle(L"Engine");
+        InitializePrivateStaticClassAVehicle();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AVolume::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAVolume(L"Engine");
+        InitializePrivateStaticClassAVolume();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AWeapon::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAWeapon(L"Engine");
+        InitializePrivateStaticClassAWeapon();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AWorldInfo::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAWorldInfo(L"Engine");
+        InitializePrivateStaticClassAWorldInfo();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *AZoneInfo::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassAZoneInfo(L"Engine");
+        InitializePrivateStaticClassAZoneInfo();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAICommandBase::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAICommandBase(L"Engine");
+        InitializePrivateStaticClassUAICommandBase();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UActorChannel::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUActorChannel(L"UDKBase");
+        InitializePrivateStaticClassUActorChannel();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAkBaseSoundObject::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAkBaseSoundObject(L"Engine");
+        InitializePrivateStaticClassUAkBaseSoundObject();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAkEvent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAkEvent(L"Engine");
+        InitializePrivateStaticClassUAkEvent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAnimNodeAimOffset::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAnimNodeAimOffset(L"Engine");
+        InitializePrivateStaticClassUAnimNodeAimOffset();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAnimNodeSequence::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAnimNodeSequence(L"Engine");
+        InitializePrivateStaticClassUAnimNodeSequence();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAnimNotify::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAnimNotify(L"Engine");
+        InitializePrivateStaticClassUAnimNotify();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAnimNotify_ForceField::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAnimNotify_ForceField(L"Engine");
+        InitializePrivateStaticClassUAnimNotify_ForceField();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAnimNotify_PlayParticleEffect::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAnimNotify_PlayParticleEffect(L"Engine");
+        InitializePrivateStaticClassUAnimNotify_PlayParticleEffect();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAnimNotify_Trails::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAnimNotify_Trails(L"Engine");
+        InitializePrivateStaticClassUAnimNotify_Trails();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAnimTree::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAnimTree(L"Engine");
+        InitializePrivateStaticClassUAnimTree();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UArrayProperty::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUArrayProperty(L"UDKBase");
+        InitializePrivateStaticClassUArrayProperty();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UAudioComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUAudioComponent(L"Engine");
+        InitializePrivateStaticClassUAudioComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UByteProperty::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUByteProperty(L"UDKBase");
+        InitializePrivateStaticClassUByteProperty();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UCCSBTTree::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUCCSBTTree(L"Cognition");
+        InitializePrivateStaticClassUCCSBTTree();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UCanvas::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUCanvas(L"Engine");
+        InitializePrivateStaticClassUCanvas();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UChannel::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUChannel(L"UDKBase");
+        InitializePrivateStaticClassUChannel();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UClass::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUClass(L"UDKBase");
+        InitializePrivateStaticClassUClass();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UCylinderComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUCylinderComponent(L"Engine");
+        InitializePrivateStaticClassUCylinderComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UDecalComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUDecalComponent(L"Engine");
+        InitializePrivateStaticClassUDecalComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UFaceFXAnimSet::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUFaceFXAnimSet(L"Engine");
+        InitializePrivateStaticClassUFaceFXAnimSet();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UFaceFXAsset::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUFaceFXAsset(L"Engine");
+        InitializePrivateStaticClassUFaceFXAsset();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UField::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUField(L"UDKBase");
+        InitializePrivateStaticClassUField();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UFogVolumeDensityComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUFogVolumeDensityComponent(L"Engine");
+        InitializePrivateStaticClassUFogVolumeDensityComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UFunction::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUFunction(L"UDKBase");
+        InitializePrivateStaticClassUFunction();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGameAICommand::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGameAICommand(L"GameFramework");
+        InitializePrivateStaticClassUGameAICommand();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGripBTInterface::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGripBTInterface(L"Grip");
+        InitializePrivateStaticClassUGripBTInterface();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGripBTPriority::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGripBTPriority(L"Grip");
+        InitializePrivateStaticClassUGripBTPriority();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGripBTScriptNodeCache::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGripBTScriptNodeCache(L"Grip");
+        InitializePrivateStaticClassUGripBTScriptNodeCache();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGripBTTree::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGripBTTree(L"Grip");
+        InitializePrivateStaticClassUGripBTTree();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGwNavBotHandle::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGwNavBotHandle(L"GwNavEngine");
+        InitializePrivateStaticClassUGwNavBotHandle();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGwNavHandle::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGwNavHandle(L"GwNavEngine");
+        InitializePrivateStaticClassUGwNavHandle();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGwNavNavdataFamily::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGwNavNavdataFamily(L"GwNavEngine");
+        InitializePrivateStaticClassUGwNavNavdataFamily();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UHaloAnimBlendByJumpLand::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUHaloAnimBlendByJumpLand(L"Engine");
+        InitializePrivateStaticClassUHaloAnimBlendByJumpLand();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UInterpGroup::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUInterpGroup(L"Engine");
+        InitializePrivateStaticClassUInterpGroup();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UInterpGroupInst::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUInterpGroupInst(L"Engine");
+        InitializePrivateStaticClassUInterpGroupInst();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UInterpTrack::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUInterpTrack(L"Engine");
+        InitializePrivateStaticClassUInterpTrack();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UInterpTrackInst::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUInterpTrackInst(L"Engine");
+        InitializePrivateStaticClassUInterpTrackInst();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UInterpTrackInstMove::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUInterpTrackInstMove(L"Engine");
+        InitializePrivateStaticClassUInterpTrackInstMove();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UInterpTrackMove::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUInterpTrackMove(L"Engine");
+        InitializePrivateStaticClassUInterpTrackMove();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UKMeshProps::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUKMeshProps(L"Engine");
+        InitializePrivateStaticClassUKMeshProps();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULevel::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULevel(L"UDKBase");
+        InitializePrivateStaticClassULevel();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULevelBase::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULevelBase(L"UDKBase");
+        InitializePrivateStaticClassULevelBase();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULightComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULightComponent(L"Engine");
+        InitializePrivateStaticClassULightComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULightEnvironmentComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULightEnvironmentComponent(L"Engine");
+        InitializePrivateStaticClassULightEnvironmentComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULinker::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULinker(L"UDKBase");
+        InitializePrivateStaticClassULinker();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULinkerLoad::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULinkerLoad(L"UDKBase");
+        InitializePrivateStaticClassULinkerLoad();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULinkerSave::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULinkerSave(L"UDKBase");
+        InitializePrivateStaticClassULinkerSave();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UMaterialInstance::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUMaterialInstance(L"Engine");
+        InitializePrivateStaticClassUMaterialInstance();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UMaterialInstanceConstant::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUMaterialInstanceConstant(L"Engine");
+        InitializePrivateStaticClassUMaterialInstanceConstant();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UMaterialInterface::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUMaterialInterface(L"Engine");
+        InitializePrivateStaticClassUMaterialInterface();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UMeshComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUMeshComponent(L"Engine");
+        InitializePrivateStaticClassUMeshComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UMorphNodeBase::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUMorphNodeBase(L"Engine");
+        InitializePrivateStaticClassUMorphNodeBase();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UNavigationHandle::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUNavigationHandle(L"Engine");
+        InitializePrivateStaticClassUNavigationHandle();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UPackage::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUPackage(L"UDKBase");
+        InitializePrivateStaticClassUPackage();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UPackageMap::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUPackageMap(L"UDKBase");
+        InitializePrivateStaticClassUPackageMap();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UParticleSystem::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUParticleSystem(L"Engine");
+        InitializePrivateStaticClassUParticleSystem();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UPathConstraint::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUPathConstraint(L"Engine");
+        InitializePrivateStaticClassUPathConstraint();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UPathGoalEvaluator::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUPathGoalEvaluator(L"Engine");
+        InitializePrivateStaticClassUPathGoalEvaluator();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UPhysicalMaterial::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUPhysicalMaterial(L"Engine");
+        InitializePrivateStaticClassUPhysicalMaterial();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UPhysicsAsset::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUPhysicsAsset(L"Engine");
+        InitializePrivateStaticClassUPhysicsAsset();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UProperty::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUProperty(L"UDKBase");
+        InitializePrivateStaticClassUProperty();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *URB_BodyInstance::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassURB_BodyInstance(L"Engine");
+        InitializePrivateStaticClassURB_BodyInstance();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *URB_BodySetup::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassURB_BodySetup(L"Engine");
+        InitializePrivateStaticClassURB_BodySetup();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *URB_ConstraintInstance::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassURB_ConstraintInstance(L"Engine");
+        InitializePrivateStaticClassURB_ConstraintInstance();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *URB_ConstraintSetup::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassURB_ConstraintSetup(L"Engine");
+        InitializePrivateStaticClassURB_ConstraintSetup();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *URB_StayUprightSetup::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassURB_StayUprightSetup(L"Engine");
+        InitializePrivateStaticClassURB_StayUprightSetup();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UReachSpec::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUReachSpec(L"Engine");
+        InitializePrivateStaticClassUReachSpec();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USVehicleSimBase::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSVehicleSimBase(L"Engine");
+        InitializePrivateStaticClassUSVehicleSimBase();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USVehicleWheel::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSVehicleWheel(L"Engine");
+        InitializePrivateStaticClassUSVehicleWheel();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USelection::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSelection(L"UDKBase");
+        InitializePrivateStaticClassUSelection();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USeqAct_ActorFactory::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSeqAct_ActorFactory(L"Engine");
+        InitializePrivateStaticClassUSeqAct_ActorFactory();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USeqAct_Interp::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSeqAct_Interp(L"Engine");
+        InitializePrivateStaticClassUSeqAct_Interp();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USeqAct_Latent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSeqAct_Latent(L"Engine");
+        InitializePrivateStaticClassUSeqAct_Latent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USequenceAction::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSequenceAction(L"Engine");
+        InitializePrivateStaticClassUSequenceAction();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USequenceEvent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSequenceEvent(L"Engine");
+        InitializePrivateStaticClassUSequenceEvent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USequenceObject::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSequenceObject(L"Engine");
+        InitializePrivateStaticClassUSequenceObject();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USequenceOp::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSequenceOp(L"Engine");
+        InitializePrivateStaticClassUSequenceOp();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USkelControlBase::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSkelControlBase(L"Engine");
+        InitializePrivateStaticClassUSkelControlBase();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USkelControlLookAt::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSkelControlLookAt(L"Engine");
+        InitializePrivateStaticClassUSkelControlLookAt();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USkeletalMesh::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSkeletalMesh(L"Engine");
+        InitializePrivateStaticClassUSkeletalMesh();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USkeletalMeshComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSkeletalMeshComponent(L"Engine");
+        InitializePrivateStaticClassUSkeletalMeshComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USoundCue::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSoundCue(L"Engine");
+        InitializePrivateStaticClassUSoundCue();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USpriteComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSpriteComponent(L"Engine");
+        InitializePrivateStaticClassUSpriteComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UState::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUState(L"UDKBase");
+        InitializePrivateStaticClassUState();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UStruct::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUStruct(L"UDKBase");
+        InitializePrivateStaticClassUStruct();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *USurface::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUSurface(L"Engine");
+        InitializePrivateStaticClassUSurface();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UWorld::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUWorld(L"UDKBase");
+        InitializePrivateStaticClassUWorld();
+    }
+    return PrivateStaticClass;
+}
 extern FName UDKBASE_ActionStopFiring;
 extern FName UDKBASE_AimAt;
 extern FName UDKBASE_CacheAllConditions;

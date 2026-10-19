@@ -363,6 +363,12 @@ class Classes:
                     out += [f'inline void *{c}::operator new(const unsigned int, EInternal *InMem) {{ return (void *)InMem; }}',
                             f'inline void {c}::InternalConstructor(void *X) {{ new ((EInternal *)X) {c}; }}']
                 out.append('')
+        # StaticClass of every other UObject class the header renders
+        for c in sorted(self.header.classes):
+            if c not in done and c != 'UObject' and self._has(c, 'StaticClass') and self._has(c, f'GetPrivateStaticClass{c}'):
+                out += [f'inline UClass *{c}::StaticClass()', '{', '    if (!PrivateStaticClass)', '    {',
+                        f'        PrivateStaticClass = GetPrivateStaticClass{c}(L"{self.package_of(c)}");',
+                        f'        InitializePrivateStaticClass{c}();', '    }', '    return PrivateStaticClass;', '}']
         return out
 
     def tiny_definition(self, row, shape):

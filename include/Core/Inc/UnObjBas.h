@@ -68,3 +68,19 @@ template <class T> T *FindField(UStruct *Owner, FName FieldName);
         return Src && Src->GetClass()->HasAnyCastFlag(CASTCLASS_##ClassName) ? (ClassName *)Src : 0; \
     }
 inline unsigned int UClass::HasAnyCastFlag(EClassCastFlag FlagToCheck) const { return (ClassCastFlags & FlagToCheck) != 0; }
+
+inline unsigned int UObject::IsA(const UClass *SomeBase) const
+{
+    if (SomeBase == 0)
+    {
+        return 1;
+    }
+    for (const UClass *TempClass = Class; TempClass; TempClass = (const UClass *)TempClass->SuperStruct)
+    {
+        if (TempClass == SomeBase)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}

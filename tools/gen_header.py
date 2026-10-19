@@ -33,13 +33,40 @@ PROVIDED_RECORDS = {'FHeapAllocator', 'FDefaultAllocator', 'FScriptInterface'}
 PROVIDED_TEMPLATES = {'TArray', 'TArrayNoInit', 'TScriptInterface'}
 PROVIDED_ENUMS = {'ENoInit'}
 PROVIDED_INCLUDES = ['Core/Inc/Array.h', 'Core/Inc/ScriptInterface.h']
+# Hand-written templates whose bases the header renders: their header is
+# included once those bases are complete, before the first class that holds
+# one of them by value. {include: (templates, bases)}
+PROVIDED_LATE = {
+    'Grip/Inc/GripContainers.h': (
+        {'Grip_Array', 'Grip_ArrayPOD', 'GripBBArray', 'GripBBProperty', 'Grip::AllocatorGH', 'Grip::AllocatorGH_POD',
+         'Grip::AllocatorBaseGH', 'Grip::ConstructorPOD', 'Grip::ConstructorMov'},
+        ['GripVHeapObject', 'GripBBMember']),
+}
+
+
+def _provided_prefix(name):
+    """The provided template or record `name` belongs to, or None: the
+    qualified name of the first scope part, with its arguments dropped, that
+    is provided."""
+    parts = split_scope(name)
+    for i, part in enumerate(parts):
+        prefix = '::'.join(parts[:i] + [template_args(part)[0]])
+        if prefix in PROVIDED_RECORDS or prefix in PROVIDED_TEMPLATES or any(
+                prefix in t for t, _b in PROVIDED_LATE.values()):
+            return prefix
+    return None
 
 
 def provided(name):
     """Whether a record is written by hand (a provided class, a class
     nested in one, or an instance of a provided template)."""
-    top = split_scope(name)[0]
-    return top in PROVIDED_RECORDS or template_args(top)[0] in PROVIDED_TEMPLATES
+    return _provided_prefix(name) is not None
+
+
+def late_include(name):
+    """The late header that provides `name`, or None."""
+    prefix = _provided_prefix(name)
+    return next((inc for inc, (t, _b) in PROVIDED_LATE.items() if prefix in t), None)
 
 
 def split_scope(name):
@@ -150,9 +177,19 @@ class Header:
         if provided(name):
             self._note_name(name)
             # an array by value destroys its elements: they must be complete
-            for arg in template_args(split_scope(name)[0])[1] or []:
+            for arg in template_args(split_scope(name)[-1])[1] or []:
                 if self._is_record_name(arg):
                     self._need_class(self.t.find(arg), dep)
+            late = late_include(name)
+            if late:
+                if late not in self.deps:
+                    self.deps[late] = set()
+                    for base in PROVIDED_LATE[late][1]:
+                        self._stack.append(late)
+                        self._need_class(self.t.find(base))
+                        self._stack.pop()
+                if dep and self._stack:
+                    self.deps[self._stack[-1]].add(late)
             return
         if dep and self._stack:
             self.deps[self._stack[-1]].add(name)
@@ -235,7 +272,7 @@ class Header:
             if args is None:
                 continue
             kinds = ['int' if re.fullmatch(r'-?\d+', a) else 'class' for a in args]
-            if not (i == 0 and base in PROVIDED_TEMPLATES):
+            if not provided('::'.join(split_scope(name)[:i + 1])):
                 self.templates.setdefault(base if base in self.templates else self._qualify(name, part, base), kinds)
             for a in args:
                 arg = re.sub(r'^(?:const |enum |class |struct |union )+', '', a.rstrip(' *&')).strip()
@@ -673,6 +710,9 @@ class Header:
         for ns, lines in scoped.items():
             out += self._wrap(list(ns), lines) + ['']
         for name in self.order():
+            if name in PROVIDED_LATE:
+                out += [f'#include "{name}"', '']
+                continue
             text, ns = self.render_class(name)
             out += self._wrap(ns or [], [text]) + ['']
         if any('__vector4' in line for line in out):
@@ -760,6 +800,8 @@ def host_thunks(h, header, defined='', pdb=None):
     done = set()
     order = h.order()
     for cname in order + [c for c in h.classes if c not in set(order)]:
+        if cname not in h.classes:
+            continue  # a late provided header
         ti = h.classes[cname]
         short = template_args(split_scope(cname)[-1])[0]
         for mname, mtype, off, _a in h.members(ti):

@@ -1,6 +1,7 @@
 // UDKBaseClasses.h's hand-written part: inline bodies the PDB has no code
 // for, written from the disassembly. Included at the end of that header.
 #pragma once
+#include "Core/Inc/UnMath.h"
 
 extern UWorld *GWorld;
 
@@ -64,3 +65,44 @@ inline int CCSCSMovement::GetId() const { return SGetId(); }
 // ccsafaction.h
 inline CCSAFAction::CCSAFAction() : m_pMeatPuppet(0) {}
 #endif
+
+#ifndef HAGGAR_HOST
+// gripafmodifier.h
+inline GripAFModifier::GripAFModifier() : m_id(-1) {}
+inline GripAFModifier::~GripAFModifier() {}
+// gripvheapobject.h
+inline GripVHeapObject::~GripVHeapObject() {}
+#endif
+inline void GripAFModifier::Apply() {}
+inline void GripAFModifier::Revert() {}
+
+// gripvheapobject.h, griprbtnode.h: allocation
+inline void *GripVHeapObject::operator new(unsigned int Size) { return Grip::Memory::pGlobalHeap->Alloc(Size, 0); }
+inline void *GripRBTNode::operator new(unsigned int Size)
+{
+    if (ms_pAllocator == 0)
+    {
+        return GripVHeapObject::operator new(Size);
+    }
+    return ms_pAllocator->AllocateAlign(Size);
+}
+
+// ccsgamecharacter.h, ccscharacter.h
+inline bool CCSGameCharacter::operator==(const CCSGameCharacter &Other) const
+{
+    return m_pawn == Other.m_pawn && m_actor == Other.m_actor;
+}
+inline bool CCSCharacter::operator==(const CCSCharacter &Other) const { return m_gameCharacter == Other.m_gameCharacter; }
+inline bool CCSCharacter::operator!=(const CCSCharacter &Other) const { return !(*this == Other); }
+inline void *CCSCharacter::GetActor() const
+{
+    if (*this != NONE)
+    {
+        return m_gameCharacter.GetActor();
+    }
+    return 0;
+}
+
+// gripafaction.h
+inline GripAFAction::EGripAFActionStatus GripAFAction::GetStatus() { return m_status; }
+inline Grip_ArrayPOD<GripAFModifier *, 2> &GripAFAction::GetModifiers() { return m_modifiers; }

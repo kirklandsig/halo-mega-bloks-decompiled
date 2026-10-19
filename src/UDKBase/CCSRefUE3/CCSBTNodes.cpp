@@ -1,17 +1,6 @@
 // @object Unity_HaloRBTKamikazeEtAl.cpp.obj
 #include "UDKBase/Inc/UDKBaseClasses.h"
 
-// GripVHeapObject's and GripRBTNode's allocation (gripvheapobject.h, griprbtnode.h)
-inline void *GripVHeapObject::operator new(unsigned int Size) { return Grip::Memory::pGlobalHeap->Alloc(Size, 0); }
-inline void *GripRBTNode::operator new(unsigned int Size)
-{
-    if (ms_pAllocator == 0)
-    {
-        return GripVHeapObject::operator new(Size);
-    }
-    return ms_pAllocator->AllocateAlign(Size);
-}
-
 // Runtime nodes whose constructors only call their base's
 inline CCSRBTWaitInCover::CCSRBTWaitInCover() {}
 inline CCSRBTMoveToClosestCover::CCSRBTMoveToClosestCover() {}

@@ -4944,6 +4944,123 @@ inline UCCSBTTree::~UCCSBTTree() { ConditionalDestroy(); }
 inline void *UCCSBTTree::operator new(const unsigned int, EInternal *InMem) { return (void *)InMem; }
 inline void UCCSBTTree::InternalConstructor(void *X) { new ((EInternal *)X) UCCSBTTree; }
 
+inline UClass *UArrayProperty::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUArrayProperty(L"Cognition");
+        InitializePrivateStaticClassUArrayProperty();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UClass::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUClass(L"Cognition");
+        InitializePrivateStaticClassUClass();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UComponent::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUComponent(L"Core");
+        InitializePrivateStaticClassUComponent();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UField::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUField(L"Cognition");
+        InitializePrivateStaticClassUField();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UFunction::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUFunction(L"Cognition");
+        InitializePrivateStaticClassUFunction();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULinker::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULinker(L"Cognition");
+        InitializePrivateStaticClassULinker();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULinkerLoad::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULinkerLoad(L"Cognition");
+        InitializePrivateStaticClassULinkerLoad();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *ULinkerSave::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassULinkerSave(L"Cognition");
+        InitializePrivateStaticClassULinkerSave();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UPackage::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUPackage(L"Cognition");
+        InitializePrivateStaticClassUPackage();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UPackageMap::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUPackageMap(L"Cognition");
+        InitializePrivateStaticClassUPackageMap();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UProperty::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUProperty(L"Cognition");
+        InitializePrivateStaticClassUProperty();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UState::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUState(L"Cognition");
+        InitializePrivateStaticClassUState();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UStruct::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUStruct(L"Cognition");
+        InitializePrivateStaticClassUStruct();
+    }
+    return PrivateStaticClass;
+}
 
 #ifndef HAGGAR_HOST
 inline FString::FString() {}
