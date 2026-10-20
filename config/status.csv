@@ -496,6 +496,7 @@ address,status
 0x83324AD0,matched
 0x83324AE0,matched
 0x83324B50,matched
+0x83324B98,matched
 0x83324BA8,matched
 0x83324BB0,matched
 0x83324BB8,matched
@@ -746,6 +747,9 @@ address,status
 0x83331D88,matched
 0x83331DC0,near
 0x83331E28,matched
+0x83331F08,matched
+0x83331F80,matched
+0x83332020,matched
 0x83332070,matched
 0x83332240,matched
 0x83332428,matched
@@ -901,6 +905,8 @@ address,status
 0x8333EB08,matched
 0x8333F028,matched
 0x8333F0A8,matched
+0x8333F598,near
+0x8333F878,matched
 0x8333FC48,matched
 0x8333FFD0,near
 0x83340148,matched
