@@ -39,6 +39,7 @@ rewrites that improved it, counts). Without --iterations the run is limited
 only by --time; with --seed and --iterations it is deterministic.
 """
 import argparse
+import collections
 import copy
 import difflib
 import json
@@ -52,7 +53,6 @@ from pathlib import Path
 
 import check
 import coff
-import inventory
 import paths
 
 # ---------------------------------------------------------------- tokens
@@ -315,6 +315,11 @@ def _render(s, indent, pad):
     raise ValueError(s.kind)
 
 
+def statements(s):
+    """A loop body's statements (a block's, or the one statement)."""
+    return list(s.body) if s.kind == 'block' else [s]
+
+
 def walk(stmts):
     """Every statement, depth first."""
     for s in stmts:
@@ -353,9 +358,8 @@ class Parser:
         self.t = toks
         self.i = 0
 
-    def peek(self, k=0):
-        j = self.i + k
-        return self.t[j] if j < len(self.t) else None
+    def peek(self):
+        return self.t[self.i] if self.i < len(self.t) else None
 
     def take(self, want=None):
         tok = self.peek()
@@ -596,11 +600,7 @@ def declaration(toks):
         while j < len(toks) and toks[j] in ('*', '&', 'const', 'volatile'):
             j += 1
         if words >= 2 and (j >= len(toks) or toks[j] in ('=', ';', '[', '(', ',')):
-            if not is_name(toks[j - 1]):
-                return None
-            if j < len(toks) and toks[j] in ('(', ','):
-                return None
-            if j < len(toks) and toks[j] == '[':
+            if not is_name(toks[j - 1]) or (j < len(toks) and toks[j] in ('(', ',', '[')):
                 return None
             return toks[j - 1], (j if j < len(toks) and toks[j] == '=' else None)
     return None
@@ -722,9 +722,8 @@ def writes(toks):
     out = {d[0]} if d else set()
     for i, t in enumerate(toks):
         if t in ASSIGN_OPS and not d:
-            lhs = [x for x in toks[:i]]
-            if lhs and is_name(lhs[0]):
-                out.add(lhs[0])
+            if i and is_name(toks[0]):
+                out.add(toks[0])
         if t in ('++', '--'):
             for j in (i - 1, i + 1):
                 if 0 <= j < len(toks) and is_name(toks[j]):
@@ -822,16 +821,27 @@ def rw_commute(func, rng):
 
 
 def rw_temp(func, rng):
-    return (_hoist if rng.random() < 0.5 else _inline)(func, rng) or (_inline if rng.random() < 0.5 else _hoist)(func, rng)
+    first, second = (_hoist, _inline) if rng.random() < 0.5 else (_inline, _hoist)
+    return first(func, rng) or second(func, rng)
+
+
+def _statement_regions(func):
+    """{id(statement): its first toks or cond region}."""
+    out = {}
+    for r in regions(func):
+        if r[1] in ('toks', 'cond'):
+            out.setdefault(id(r[0]), r)
+    return out
 
 
 def _hoist(func, rng):
     sites = []
+    by_stmt = _statement_regions(func)
     for c in containers(func.body):
         for i, s in enumerate(c):
             if s.kind not in ('simple', 'if', 'switch'):
                 continue
-            region = next((r for r in regions(func) if r[0] is s and r[1] in ('toks', 'cond')), None)
+            region = by_stmt.get(id(s))
             if region is None:
                 continue
             try:
@@ -879,6 +889,7 @@ def _uses(stmts, name):
 
 def _inline(func, rng):
     escaped = func.escaped()
+    by_stmt = _statement_regions(func)
     sites = []
     for c in containers(func.body):
         for i in range(len(c) - 1):
@@ -891,7 +902,7 @@ def _inline(func, rng):
             name = d[0]
             if _uses(c[i + 1:], name) != 1 or _uses([nxt], name) != 1:
                 continue
-            region = next((r for r in regions(func) if r[0] is nxt and r[1] in ('toks', 'cond')), None)
+            region = by_stmt.get(id(nxt))
             if region is None or nxt.kind not in ('simple', 'if', 'switch'):
                 continue
             try:
@@ -946,7 +957,7 @@ def rw_if(func, rng):
                     b = c[i + 1]
                     if b.kind == 'simple' and b.toks[0] == 'return' and len(b.toks) > 1:
                         sites.append(('ret2', c, i))
-                if s.else_ is not None and not (s.else_.kind == 'if'):
+                if s.else_ is not None and s.else_.kind != 'if':
                     sites.append(('inv', c, i))
             elif s.kind == 'simple' and s.toks:
                 try:
@@ -1008,7 +1019,7 @@ def rw_loop(func, rng):
             if s.kind == 'for' and not continues(s.body):
                 sites.append(('for2while', c, i))
             if s.kind == 'while' and not continues(s.body):
-                body = s.body.body if s.body.kind == 'block' else [s.body]
+                body = statements(s.body)
                 if body and body[-1].kind == 'simple' and movable(body[-1]) and not declaration(body[-1].toks):
                     sites.append(('while2for', c, i))
                 if pure_cond(s.cond):
@@ -1022,7 +1033,7 @@ def rw_loop(func, rng):
     kind, c, i = rng.choice(sites)
     s = c[i]
     if kind == 'for2while':
-        body = list(s.body.body) if s.body.kind == 'block' else [s.body]
+        body = statements(s.body)
         if s.step:
             body.append(Stmt('simple', toks=s.step))
         loop = Stmt('while', cond=s.cond or ['true'], body=Stmt('block', body=body))
@@ -1031,7 +1042,7 @@ def rw_loop(func, rng):
         else:
             new = loop
     elif kind == 'while2for':
-        body = list(s.body.body) if s.body.kind == 'block' else [s.body]
+        body = statements(s.body)
         step = body.pop()
         init = []
         if i > 0 and movable(c[i - 1]) and rng.random() < 0.5:
@@ -1053,9 +1064,7 @@ def rw_loop(func, rng):
 def rw_cast(func, rng):
     sites = []
     for s in walk(func.body):
-        if s.kind in ('if', 'while', 'do') and s.cond:
-            sites.append(('bool', s, 'cond', 0))
-        if s.kind == 'for' and s.cond:
+        if s.kind in ('if', 'while', 'do', 'for') and s.cond:
             sites.append(('bool', s, 'cond', 0))
         if s.kind == 'simple' and s.toks:
             if s.toks[0] == 'return' and len(s.toks) > 1:
@@ -1218,8 +1227,7 @@ def rw_split(func, rng):
         else:
             name, op = s.toks[tree.kids[0].lo:tree.kids[0].hi], tree.op
         forms = [[op] + name, name + [op], name + [op[0] + '=', '1']]
-        cur = [f for f in forms if f == s.toks]
-        s.toks = rng.choice([f for f in forms if f not in cur])
+        s.toks = rng.choice([f for f in forms if f != s.toks])
     return True
 
 
@@ -1233,31 +1241,29 @@ class Source:
     """A source file split around one function: prefix, header, body, suffix."""
 
     def __init__(self, text, address):
-        m = re.search(rf'^[ \t]*//[ \t]*@retail[ \t]+0x{address:08X}\b[^\n]*\n', text, re.M | re.I)
+        m = next((m for m in check.RETAIL.finditer(text) if int(m.group(1), 16) == address), None)
         if not m:
             raise SystemExit(f'no // @retail 0x{address:08X} marker')
-        pos = m.end()
-        toks = []
+        pos = text.find('\n', m.end()) + 1 or len(text)
+        seen, depth = False, 0
         for t in TOKEN.finditer(text, pos):
             kind = t.lastgroup
             if kind in ('ws', 'comment', 'pp'):
-                if kind != 'ws' and not toks:
+                if kind != 'ws' and not seen:
                     if re.match(r'//\s*@retail', t.group()):
                         raise SystemExit(f'0x{address:08X} has no body in this file (an inline defined elsewhere)')
                     pos = t.end()
                 continue
-            toks.append(t)
-            if t.group() == ';' and not any(x.group() == '{' for x in toks):
-                depth = sum((x.group() == '(') - (x.group() == ')') for x in toks)
-                if depth == 0:
-                    raise SystemExit(f'0x{address:08X} has no body in this file (a declaration)')
-            if t.group() == '{':
-                depth = sum((x.group() == '(') - (x.group() == ')') for x in toks[:-1])
-                if depth == 0:
-                    break
+            seen = True
+            tok = t.group()
+            if depth == 0 and tok == ';':
+                raise SystemExit(f'0x{address:08X} has no body in this file (a declaration)')
+            if depth == 0 and tok == '{':
+                break
+            depth += (tok == '(') - (tok == ')')
         else:
             raise SystemExit('function body not found')
-        open_ = toks[-1].start()
+        open_ = t.start()
         depth = 0
         for t in TOKEN.finditer(text, open_):
             depth += (t.group() == '{') - (t.group() == '}')
@@ -1361,26 +1367,18 @@ def diff_score(ours, retail):
 class Target:
     """What a candidate is compiled with and compared against."""
 
-    def __init__(self, src, address, retail, row, cmd, cl, includes):
+    def __init__(self, src, address, retail, row, cmd, cl, includes, same_name=None):
         self.src, self.address, self.retail, self.row = Path(src), address, retail, row
-        self.cmd, self.cl, self.includes = cmd, cl, includes
+        self.cmd, self.cl, self.includes, self.same_name = cmd, cl, includes, same_name
 
     @classmethod
-    def load(cls, src, address):
-        xdk = paths.xdk()
-        cl = paths.require(xdk / 'bin' / 'win32' / 'cl.exe')
-        image = paths.require(paths.basefile()).read_bytes()
-        obj_name, _ = check.parse_markers(src)
-        objects = {r['object']: r for r in inventory.read_csv(paths.CONFIG / 'objects.csv')}
-        rows = inventory.read_functions()
-        row = next((r for r in rows if int(r['address'], 16) == address), None)
-        if row is None:
-            raise SystemExit(f'0x{address:08X} is not a function start')
-        row = dict(row, namesakes=check.namesakes(rows).get((row['object'], row['name']), ()))
-        size = int(row['size'])
-        retail = image[address - check.IMAGE_BASE:address - check.IMAGE_BASE + size]
-        includes = [Path(src).resolve().parent, paths.ROOT / 'include', xdk / 'include' / 'xbox']
-        return cls(src, address, retail, row, objects[obj_name]['cmd'], cl, includes)
+    def load(cls, src, address, ctx):
+        row = ctx.row(address)
+        cmd = ctx.cmd(check.parse_markers(src)[0])
+        # candidates compile from a work directory: the source's own one
+        # still resolves its relative includes
+        includes = [Path(src).resolve().parent] + ctx.includes
+        return cls(src, address, ctx.retail(row), row, cmd, ctx.cl, includes, ctx.same_name)
 
     def score(self, text, work):
         """(score, status) of a candidate file's text; None if it doesn't compile."""
@@ -1392,30 +1390,23 @@ class Target:
         r = check.compile_file(self.cl, self.cmd, self.includes, cpp, obj)
         if r.returncode or not obj.exists():
             return None
-        ours = coff.parse(obj.read_bytes())
         try:
-            data, masks = coff.function_bytes(ours, check.find_symbol(ours, self.row, self.row['namesakes']))
+            status, data = check.function_status(coff.parse(obj.read_bytes()), self.row, self.retail, self.same_name)
         except KeyError:
             return None
-        status = check.compare(data, masks, self.retail)
-        if status == 'matched':
-            return 0, status
-        return max(1, diff_score(data, self.retail)), status
+        return (0 if status == 'matched' else max(1, diff_score(data, self.retail))), status
 
 
 # ---------------------------------------------------------------- search
 
 def worker(args):
     """One random walk; returns its improvements [(score, iteration, kinds, function text)]."""
-    target, source_text, wid, seed, deadline, iterations, kinds, work, queue = args
+    target, source_text, start_score, wid, seed, deadline, iterations, kinds, work, queue = args
     rng = random.Random(seed * 1009 + wid)
     source = Source(source_text, target.address)
     best = source.function()
-    first = target.score(source.with_function(best.text()), work)
     stats = {'iterations': 0, 'compiled': 0, 'failed': 0, 'rewrite_errors': 0}
-    if first is None:
-        return wid, [], stats
-    best_score = first[0]
+    best_score = start_score
     seen = {best.text()}
     found = []
     it = 0
@@ -1462,11 +1453,13 @@ def permute(target, source_text, jobs=1, seed=0, seconds=60, iterations=None, ki
     if base is None:
         raise SystemExit('the source as written does not compile')
     rendered = target.score(source.with_function(source.function().text()), out / 'base')
-    progress(f'base score {base[0]} ({base[1]}); re-rendered unchanged: {rendered and rendered[0]}')
+    if rendered is None:
+        raise SystemExit('the function as re-rendered does not compile')
+    progress(f'base score {base[0]} ({base[1]}); re-rendered unchanged: {rendered[0]}')
     deadline = time.time() + seconds
-    manager = multiprocessing.Manager() if jobs > 1 else None
-    queue = manager.Queue() if manager else None
-    tasks = [(target, source_text, w, seed, deadline, iterations, kinds, out / f'w{w}', queue) for w in range(jobs)]
+    queue = multiprocessing.Manager().Queue() if jobs > 1 else None
+    tasks = [(target, source_text, rendered[0], w, seed, deadline, iterations, kinds, out / f'w{w}', queue)
+             for w in range(jobs)]
     if jobs > 1:
         with multiprocessing.Pool(jobs) as pool:
             pending = pool.map_async(worker, tasks)
@@ -1482,11 +1475,8 @@ def permute(target, source_text, jobs=1, seed=0, seconds=60, iterations=None, ki
             for sc, it, applied, _ in found:
                 progress(f'worker 0 iteration {it}: score {sc} ({", ".join(applied)})')
     improvements = sorted(((sc, wid, it, applied, text) for wid, found, _ in results for sc, it, applied, text in found),
-                          key=lambda x: (x[0], x[1], x[2]))
-    helped = {}
-    for sc, wid, it, applied, text in improvements:
-        for k in applied:
-            helped[k] = helped.get(k, 0) + 1
+                          key=lambda x: x[:3])
+    helped = dict(collections.Counter(k for *_, applied, _ in improvements for k in applied))
     result = {'source': str(target.src), 'address': f'0x{target.address:08X}', 'base_score': base[0],
               'base_status': base[1], 'best_score': base[0], 'seed': seed, 'jobs': jobs, 'kinds': kinds,
               'improvements': [{'score': sc, 'worker': wid, 'iteration': it, 'kinds': applied}
@@ -1502,11 +1492,10 @@ def permute(target, source_text, jobs=1, seed=0, seconds=60, iterations=None, ki
     return result
 
 
-def parse_address(src, which):
+def parse_address(src, which, by_address):
     if re.fullmatch(r'0x[0-9A-Fa-f]+', which):
         return int(which, 16)
     _, addresses = check.parse_markers(src)
-    by_address = {int(r['address'], 16): r for r in inventory.read_functions()}
     hits = [va for va in addresses if va in by_address and which in (by_address[va]['name'], by_address[va]['name'].split('::')[-1])]
     if len(hits) != 1:
         raise SystemExit(f'{which}: {len(hits)} marked functions of that name in {src}')
@@ -1525,11 +1514,12 @@ def main(argv=None):
     ap.add_argument('--out', help='output directory (default build/permute/<address>)')
     args = ap.parse_args(argv)
     src = paths.require(Path(args.source).resolve())
-    address = parse_address(src, args.function)
+    ctx = check.Context()
+    address = parse_address(src, args.function, ctx.by_address)
     kinds = args.kinds.split(',') if args.kinds else None
     if kinds and set(kinds) - set(REWRITES):
         raise SystemExit(f'unknown kinds: {", ".join(sorted(set(kinds) - set(REWRITES)))}')
-    target = Target.load(src, address)
+    target = Target.load(src, address, ctx)
     seconds = args.time if args.time is not None else (300 if args.iterations is None else 1e9)
     result = permute(target, src.read_text(encoding='utf-8'), args.jobs, args.seed, seconds, args.iterations, kinds, args.out)
     print(f"best score {result['best_score']} (base {result['base_score']}); helped: {result['kinds_helped'] or 'none'}")

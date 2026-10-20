@@ -98,12 +98,12 @@ def plain_name(symbol):
     return '::'.join(reversed(symbol[1:].split('@@', 1)[0].split('@')))
 
 
-def find_symbol(c, row, namesakes=()):
+def find_symbol(c, row, same_name=None):
     """Our symbol for an inventory row: its decorated name, or, when the
     PDB has none (statics, inlines), the one symbol whose plain name is the row's.
-    `namesakes` are the addresses of the object's rows of that name with no
-    decorated name (the row's own included): when our object has as many
-    symbols of the name, the n-th by retail address is the n-th in our object."""
+    `same_name` is namesakes() of the inventory: when the row's object has
+    several rows of its name with no decorated name and our object as many
+    symbols of it, the n-th by retail address is the n-th in our object."""
     if row['symbol'] and '?A0x' not in row['symbol']:
         return row['symbol']
     if row['symbol']:  # an anonymous namespace: its '?A0x<hash>@' differs per translation unit
@@ -118,8 +118,9 @@ def find_symbol(c, row, namesakes=()):
         hits = {s.name for s in c.symbols.values() if s.section > 0 and s.name.startswith(f'??__F{atexit.group(1)}@')}
     else:
         hits = {s.name for s in c.symbols.values() if s.section > 0 and plain_name(s.name) == row['name']}
-    if len(hits) > 1 and len(hits) == len(namesakes):
-        return in_object_order(c, hits)[sorted(namesakes).index(int(row['address'], 16))]
+    peers = (same_name or {}).get((row['object'], row['name']), ())
+    if len(hits) > 1 and len(hits) == len(peers):
+        return in_object_order(c, hits)[peers.index(int(row['address'], 16))]
     if len(hits) != 1:
         raise KeyError(row['name'])
     return hits.pop()
@@ -133,12 +134,49 @@ def in_object_order(c, names):
 
 
 def namesakes(rows):
-    """{(object, name): addresses} of the rows with no decorated name."""
+    """{(object, name): sorted addresses} of the rows with no decorated name."""
     out = {}
     for r in rows:
         if not r['symbol']:
             out.setdefault((r['object'], r['name']), []).append(int(r['address'], 16))
-    return out
+    return {k: sorted(v) for k, v in out.items()}
+
+
+class Context:
+    """What checking needs: cl, the basefile, the objects' command lines, the
+    inventory, and the include directories that replace the original -I."""
+
+    def __init__(self):
+        xdk = paths.xdk()
+        self.cl = paths.require(xdk / 'bin' / 'win32' / 'cl.exe')
+        self.image = paths.require(paths.basefile()).read_bytes()
+        self.objects = {r['object']: r for r in inventory.read_csv(paths.CONFIG / 'objects.csv')}
+        rows = inventory.read_functions()
+        self.by_address = {int(r['address'], 16): r for r in rows}
+        self.same_name = namesakes(rows)
+        self.includes = [paths.ROOT / 'include', xdk / 'include' / 'xbox']
+
+    def row(self, va, where=''):
+        row = self.by_address.get(va)
+        if row is None:
+            raise SystemExit(f'{where}0x{va:08X} is not a function start')
+        return row
+
+    def retail(self, row):
+        va = int(row['address'], 16)
+        return self.image[va - IMAGE_BASE:va - IMAGE_BASE + int(row['size'])]
+
+    def cmd(self, obj_name, where=''):
+        if obj_name not in self.objects:
+            raise SystemExit(f'{where}unknown object {obj_name}')
+        return self.objects[obj_name]['cmd']
+
+
+def function_status(ours, row, retail, same_name=None):
+    """(status, our bytes) of a row's function in our parsed object; KeyError
+    if the object has no (unique) symbol for it."""
+    data, masks = coff.function_bytes(ours, find_symbol(ours, row, same_name))
+    return compare(data, masks, retail), data
 
 
 STATUS_COLUMNS = ['address', 'status']
@@ -173,37 +211,25 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description='Compile sources and compare marked functions with retail.')
     ap.add_argument('sources', nargs='+')
     args = ap.parse_args(argv)
-    xdk = paths.xdk()
-    cl = paths.require(xdk / 'bin' / 'win32' / 'cl.exe')
-    image = paths.require(paths.basefile()).read_bytes()
-    objects = {r['object']: r for r in inventory.read_csv(paths.CONFIG / 'objects.csv')}
-    rows = inventory.read_functions()
-    by_address = {int(r['address'], 16): r for r in rows}
-    same_name = namesakes(rows)
+    ctx = Context()
     results = {}
-    includes = [paths.ROOT / 'include', xdk / 'include' / 'xbox']
     failed = 0
     for src in args.sources:
         src = paths.require(Path(src).resolve())
         obj_name, addresses = parse_markers(src)
-        if obj_name not in objects:
-            raise SystemExit(f'{src}: unknown object {obj_name}')
+        cmd = ctx.cmd(obj_name, f'{src}: ')
         obj = paths.BUILD / 'obj' / src.relative_to(paths.ROOT).with_suffix('.obj')
         obj.parent.mkdir(parents=True, exist_ok=True)
-        r = compile_file(cl, objects[obj_name]['cmd'], includes, src, obj)
+        r = compile_file(ctx.cl, cmd, ctx.includes, src, obj)
         if r.returncode:
             print(r.stdout + r.stderr)
             raise SystemExit(f'{src}: cl failed')
         ours = coff.parse(obj.read_bytes())
         for va in addresses:
-            row = by_address.get(va)
-            if row is None:
-                raise SystemExit(f'{src}: 0x{va:08X} is not a function start')
+            row = ctx.row(va, f'{src}: ')
             size = int(row['size'])
-            retail = image[va - IMAGE_BASE:va - IMAGE_BASE + size]
             try:
-                data, masks = coff.function_bytes(ours, find_symbol(ours, row, same_name.get((row['object'], row['name']), ())))
-                status = compare(data, masks, retail)
+                status, data = function_status(ours, row, ctx.retail(row), ctx.same_name)
                 note = '' if status == 'matched' else f' ({len(data)} bytes vs {size})'
             except KeyError:
                 status = 'todo'

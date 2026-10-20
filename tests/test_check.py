@@ -74,7 +74,7 @@ def test_find_symbol_pairs_namesakes_by_address():
             {'address': '0x83382000', 'symbol': '', 'object': 'b.obj', 'name': 'UnwindRot'}]
     same = check.namesakes(rows)
     assert same[('a.obj', 'UnwindRot')] == [0x83322568, 0x833225B8]
-    assert check.find_symbol(c, rows[0], same[('a.obj', 'UnwindRot')]) == '?UnwindRot@@YAHH@Z'
-    assert check.find_symbol(c, rows[1], same[('a.obj', 'UnwindRot')]) == '?UnwindRot@@YA?AUFRotator@@U1@@Z'
+    assert check.find_symbol(c, rows[0], same) == '?UnwindRot@@YAHH@Z'
+    assert check.find_symbol(c, rows[1], same) == '?UnwindRot@@YA?AUFRotator@@U1@@Z'
     with pytest.raises(KeyError):  # without the namesakes it stays ambiguous
         check.find_symbol(c, rows[0])

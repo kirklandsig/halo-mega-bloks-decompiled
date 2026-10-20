@@ -3,6 +3,7 @@ import random
 import pytest
 
 import check
+import coff
 import inventory
 import paths
 import permute
@@ -175,14 +176,13 @@ def test_permute_finds_a_commuted_compare(tmp_path):
         src.write_text(f'int PermuteTest(int a, int b, int c)\n{{\n    int x = a * b;\n    int y = c - a;\n    return {expr};\n}}\n')
         obj = tmp_path / 'retail.obj'
         assert check.compile_file(cl, cmd, includes, src, obj).returncode == 0
-        import coff
         return coff.function_bytes(coff.parse(obj.read_bytes()), '?PermuteTest@@YAHHHH@Z')[0]
 
     retail = compiled('x == y')
     assert compiled('y == x') != retail
     text = ('// @retail 0x82000100\nint PermuteTest(int a, int b, int c)\n{\n    int x = a * b;\n'
             '    int y = c - a;\n    return y == x;\n}\n')
-    row = {'address': '0x82000100', 'symbol': '', 'name': 'PermuteTest', 'object': 'test.obj', 'namesakes': ()}
+    row = {'address': '0x82000100', 'symbol': '', 'name': 'PermuteTest', 'object': 'test.obj'}
     target = permute.Target(tmp_path / 'test.cpp', 0x82000100, retail, row, cmd, cl, includes)
     out = tmp_path / 'out'
     result = permute.permute(target, text, jobs=1, seed=0, seconds=600, iterations=20, kinds=['commute', 'const'],

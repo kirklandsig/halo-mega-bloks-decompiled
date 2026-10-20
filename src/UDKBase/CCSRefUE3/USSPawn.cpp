@@ -19,7 +19,7 @@ static int UnwindRot(int Rot)
 }
 
 // @retail 0x833225B8
-static FRotator UnwindRot(FRotator Rot)
+static __forceinline FRotator UnwindRot(FRotator Rot)
 {
     FRotator Result = Rot;
     Result.Yaw = UnwindRot(Rot.Yaw);
@@ -194,9 +194,12 @@ void AUSSPawn::SetMovementSpeedDefault()
     SetSpeed(CCS::MovementSpeed_Walk);
 }
 
-// Todo: retail keeps the rotator difference in a stack copy (all three
-// components stored, the pawn's Roll held in r30); neither GetNormalized (which
-// fixed CanAim) nor an inline operator-= reproduces it.
+// Todo (620 bytes against 656): the unwinding is the file's UnwindRot,
+// inlined (retail's sequence, other registers; it is __forceinline here, as
+// plain inline it stays a call). Retail also keeps the rotator difference in
+// a stack copy (all three components stored, the pawn's Roll held in r30);
+// neither GetNormalized (which fixed CanAim), an inline operator-=, nor
+// `Delta = UnwindRot(Delta)` reproduces it.
 // @retail 0x8336D540
 void AUSSPawn::TickSpecial(float DeltaTime)
 {
@@ -206,23 +209,7 @@ void AUSSPawn::TickSpecial(float DeltaTime)
     {
         return;
     }
-    FRotator Delta = pController->AimingRot - pController->Pawn->Rotation;
-    while (Delta.Yaw > 32768)
-    {
-        Delta.Yaw -= 65536;
-    }
-    while (Delta.Yaw < -32768)
-    {
-        Delta.Yaw += 65536;
-    }
-    while (Delta.Pitch > 32768)
-    {
-        Delta.Pitch -= 65536;
-    }
-    while (Delta.Pitch < -32768)
-    {
-        Delta.Pitch += 65536;
-    }
+    FRotator Delta = UnwindRot(pController->AimingRot - pController->Pawn->Rotation);
     if (!bNoWeaponFiring)
     {
         const float InvDeltaTime = 1.0f / DeltaTime;
