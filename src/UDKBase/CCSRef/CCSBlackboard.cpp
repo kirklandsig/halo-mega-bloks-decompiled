@@ -240,13 +240,14 @@ void CCSBlackboard::OnVehicleDestroyed(int Index)
 // @retail 0x83356778
 void CCSBlackboard::OnThreatTargetDestroyed(int Index)
 {
-    if (Index < m_OutRangeThreatTargets.Num())
+    const int NumOutRange = m_OutRangeThreatTargets.Num();
+    if (Index < NumOutRange)
     {
         m_OutRangeThreatTargets.RemoveItemSwap(Index);
     }
     else
     {
-        m_targets.RemoveItemSwap(Index - m_OutRangeThreatTargets.Num());
+        m_targets.RemoveItemSwap(Index - NumOutRange);
     }
     UpdateTargetPointers();
 }

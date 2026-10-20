@@ -204,8 +204,10 @@ bool CCSPSTargetAwareness::IsTargetVisible(const CCSTarget &Target, ICCSMeatPupp
 }
 
 // near: retail adds the element offset to the array's base (add r31, r29,
-// r11), ours the base to the offset; operator[], GetData()[i], the content
-// pointer and a late reference all give ours
+// r11), ours the base to the offset; operator[], GetData()[i], a hoisted data
+// pointer, the content pointer, a late reference, ++i and a reversed loop all
+// give ours, and the same source in CCSBlackboard::UpdateTargetPointers
+// matches retail, so the order is the compiler's tie-break, not the source's
 // @retail 0x833459A0
 void CCSPSTargetAwareness::UpdateHighestThreatTarget(float DeltaTime)
 {
@@ -266,8 +268,6 @@ void CCSPSTargetAwareness::UpdateHighestThreatTarget(float DeltaTime)
     }
 }
 
-// near: the forward dot product's first fmuls has its operands swapped
-// (either operand order of operator|, a named Forward vector tried)
 // @retail 0x8333DF70
 void CCSPSTargetAwareness::UpdateCurrentTarget()
 {
@@ -292,7 +292,9 @@ void CCSPSTargetAwareness::UpdateCurrentTarget()
     Rotation.Yaw = (int)(Rotation.Yaw + 8191.998f);
     pTarget->position = pTarget->character.GetPosition();
     Grip_Vector Position = pMeatPuppet->GetCharacter().GetPosition();
-    Grip_Vector Delta(pTarget->position.X - Position.X, pTarget->position.Y - Position.Y, 0.0f);
+    const float DeltaX = pTarget->position.X - Position.X;
+    const float DeltaY = pTarget->position.Y - Position.Y;
+    Grip_Vector Delta(DeltaX, DeltaY, 0.0f);
     pTarget->forwardDot = Rotation.Vector2D() | Delta;
     Rotation.Yaw = (int)(Rotation.Yaw + 16383.996f);
     pTarget->rightDot = Rotation.Vector2D() | Delta;
@@ -303,10 +305,12 @@ void CCSPSTargetAwareness::UpdateCurrentTarget()
     }
 }
 
-// near: retail keeps the target's team in a saved register across
-// GetTeamNum (r23, a bigger frame), stores CNTAge later, and adds the threat
-// array's offset to its base when it rereads TotalDamageAmount (either
-// operand order of the comparison and several accessors tried)
+// near: retail adds DeltaTime to the target's CNTAge the other way round
+// (fadds f13, f31, f0) and adds the threat array's index to its base the
+// other way round; the frame, the team number in r23 and the store of CNTAge
+// now match (the sum's operand order, += and named temporaries tried; the
+// compiler canonicalises a commutative float sum, so the source order, a
+// named local and += against = a + b all give the same code)
 // @retail 0x8333D9D0
 int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
 {
@@ -330,44 +334,48 @@ int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
         Target.teamNum = pActor->GetTeamNum();
     }
     Target.position = Target.character.GetPosition();
-    Target.CNTAge = DeltaTime + Target.CNTAge;
     Target.range2D = (Target.position - Grip_Vector(pController->Pawn->Location)).Size2D();
+    Target.CNTAge = DeltaTime + Target.CNTAge;
     Target.UpdateDestinationReachable();
-    if (pActor->IsValid() && pTargetable != 0 && pController->Pawn != 0 && Target.teamNum != pController->Pawn->GetTeamNum())
+    if (pActor->IsValid() && pTargetable != 0 && pController->Pawn != 0)
     {
-        const float OuterRadiusSq = pTargetable->OutterThreatRadius * pTargetable->OutterThreatRadius;
-        const float InnerRadiusSq = pTargetable->InnerThreatRadius * pTargetable->InnerThreatRadius;
-        Grip_Vector Delta = m_pBrain->m_meatPuppet->GetCharacter().GetPosition() - Target.position;
-        const float DistanceSq = Delta.SizeSquared2D();
-        if (DistanceSq < OuterRadiusSq)
+        const int TargetTeamNum = Target.teamNum;
+        if (TargetTeamNum != pController->Pawn->GetTeamNum())
         {
-            const float BaseThreat = (float)pTargetable->BaseThreatVal;
-            const float ModifiableThreat = pTargetable->ModifiableThreatPct * BaseThreat;
-            const float HeatScale = (pTargetable->MaxAIHeat - pTargetable->CurAIHeat) / pTargetable->MaxAIHeat;
-            const float HeightScale = Max(0.1f, (OuterRadiusSq - Abs(Delta.Z * Delta.Z)) / OuterRadiusSq);
-            const float Threat = (BaseThreat - ModifiableThreat + HeatScale * ModifiableThreat) * HeightScale;
-            const float Camo = Target.CurrentCamo();
-            if (pCurrentTarget != 0 && pCurrentTarget != &Target && Camo > 0.0f)
+            const float OuterRadiusSq = pTargetable->OutterThreatRadius * pTargetable->OutterThreatRadius;
+            const float InnerRadiusSq = pTargetable->InnerThreatRadius * pTargetable->InnerThreatRadius;
+            Grip_Vector Delta = m_pBrain->m_meatPuppet->GetCharacter().GetPosition() - Target.position;
+            const float DistanceSq = Delta.SizeSquared2D();
+            if (DistanceSq < OuterRadiusSq)
             {
-                CamoScale = 1.0f - Camo;
+                const float BaseThreat = (float)pTargetable->BaseThreatVal;
+                const float ModifiableThreat = pTargetable->ModifiableThreatPct * BaseThreat;
+                const float HeatScale = (pTargetable->MaxAIHeat - pTargetable->CurAIHeat) / pTargetable->MaxAIHeat;
+                const float HeightScale = Max(0.1f, (OuterRadiusSq - Abs(Delta.Z * Delta.Z)) / OuterRadiusSq);
+                const float Threat = (BaseThreat - ModifiableThreat + HeatScale * ModifiableThreat) * HeightScale;
+                const float Camo = Target.CurrentCamo();
+                if (pCurrentTarget != 0 && pCurrentTarget != &Target && Camo > 0.0f)
+                {
+                    CamoScale = 1.0f - Camo;
+                }
+                const float ScaledThreat = Threat * CamoScale;
+                if (DistanceSq < InnerRadiusSq)
+                {
+                    TotalThreat = (int)ScaledThreat;
+                }
+                else
+                {
+                    TotalThreat = (int)((1.0f - (DistanceSq - InnerRadiusSq) / (OuterRadiusSq - InnerRadiusSq)) * ScaledThreat);
+                }
             }
-            const float ScaledThreat = Threat * CamoScale;
-            if (DistanceSq < InnerRadiusSq)
+            for (int i = 0; i < pController->TotalEnemyThreat.Num(); i++)
             {
-                TotalThreat = (int)ScaledThreat;
-            }
-            else
-            {
-                TotalThreat = (int)((1.0f - (DistanceSq - InnerRadiusSq) / (OuterRadiusSq - InnerRadiusSq)) * ScaledThreat);
-            }
-        }
-        for (int i = 0; i < pController->TotalEnemyThreat.Num(); i++)
-        {
-            AController *pInstigator = pController->TotalEnemyThreat(i).DamageInstigator;
-            AActor *pDamager = pController->TotalEnemyThreat(i).DamagingActor;
-            if ((pInstigator != 0 && pInstigator->Pawn == pActor) || (pDamager != 0 && pDamager == pActor))
-            {
-                TotalThreat += (int)(pController->TotalEnemyThreat(i).TotalDamageAmount * CamoScale);
+                AController *pInstigator = pController->TotalEnemyThreat(i).DamageInstigator;
+                AActor *pDamager = pController->TotalEnemyThreat(i).DamagingActor;
+                if ((pInstigator != 0 && pInstigator->Pawn == pActor) || (pDamager != 0 && pDamager == pActor))
+                {
+                    TotalThreat += (int)(pController->TotalEnemyThreat(i).TotalDamageAmount * CamoScale);
+                }
             }
         }
     }
@@ -484,8 +492,12 @@ void CCSPSTargetAwareness::AddThreatTarget(AActor *pActor)
     }
 }
 
-// todo: 4 bytes long; where OnThreatTargetDestroyed inlines for a target in
-// m_targets, ours reloads the out-of-range count that retail keeps in r11
+// near: retail adds the element's offset to the array's base (add r11, r11,
+// r31) and ours the base to the offset; the address comes from
+// Grip_Array::DestructItems, and no array-access form tried (operator[],
+// GetData()[i], GetData() + i, a typed pointer, a char* cast in
+// DestructItems) changes the order; the count of the out-of-range targets
+// is now kept in a register across OnThreatTargetDestroyed
 // @retail 0x833579B8
 void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
 {
@@ -582,7 +594,8 @@ void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
 // near: saved registers are assigned in another order (the meat puppet in
 // r30, zero in r28), the trace distance squares X first, and isAware's or
 // takes bAware without masking it (the comparison's operand order, a
-// distance written out and an int flag tried)
+// distance written out and an int flag tried; a direct assignment shifts the
+// code, and | keeps the same code)
 // @retail 0x8336F5E0
 void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 {
@@ -655,8 +668,11 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 
 // near: three fadds have their operands the other way round (DeltaTime
 // first in retail, for the first loop's and the threat target's LKPAge and
-// the friendly limit; +=, both operand orders and named locals tried), and
-// the threat target's position is stored X, Z, Y
+// the distance square first for the friendly limit); the compiler
+// canonicalises a commutative float sum, so +=, = a + b, both operand
+// orders and named locals all give the same code; the threat target's
+// position is stored X, Z, Y (the member stores written out give other
+// code)
 // @retail 0x8333CD70
 void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
 {

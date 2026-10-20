@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-20 (n-Space's C++: 1,983 of 2,061 functions matched). Matching progress is
+Updated 2026-10-20 (n-Space's C++: 1,985 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -32,16 +32,16 @@ Phase 5 (UDK rebuild, later).
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **1,983 are matched (200,152 bytes, 80%), 43 are near
-(23,420 bytes) and 35 are todo (24,920 bytes)**; 1,996 functions match in
+isn't `todo`. **1,985 are matched (200,908 bytes, 80%), 43 are near
+(24,756 bytes) and 33 are todo (22,828 bytes)**; 1,998 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
-(156 match), and the CCS layer's other 644 functions (99,024 bytes; 590 of
+(156 match), and the CCS layer's other 644 functions (99,024 bytes; 591 of
 them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,530 | 38 | 35 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,532 | 38 | 33 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 351 | 3 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
@@ -62,7 +62,7 @@ saying why. In short:
 - **Todo, not written:** four `CCSCSMovementUnreal` functions (`DoMove`, `OrientationReached`,
   `GetNextMoveLocation`, `MoveToDestination`).
 - **Todo, written, registers, stack slots or inlining differ:** the
-  controller's `Tick`, `SetState` and `RemoveState`, `AUSSController::PostPollMove`,
+  controller's `Tick` and `RemoveState`, `AUSSController::PostPollMove`,
   `AUSSPawn::TickSpecial`, the `CCSAF*` actions' `UpdateGoal`,
   `UpdateMoveTarget` and `Tick`, `CCSBlackboard`'s constructor,
   `UCCSActorFactory::CreateActor`, `HaloRBTKamikaze::ExecuteInternal`,
@@ -70,7 +70,7 @@ saying why. In short:
   `DoGetInCover`, `DoGetOutCover` and `TakeCoverPose`, the GwNav movement's
   `OrientationReached` and `PathFailed`, `CCSGameCharacter::GetEyesPosition`,
   `CCSPSCover::HasValidAttackAngle` and `HasValidDefensiveAngle`,
-  `CCSPSTargetAwareness::RemoveThreatTarget`, `CCSASTarget::Tick`,
+  `CCSASTarget::Tick`,
   `CCSRBTShootFromCover::ExecuteInternal`, `CCSRBTEncircleTarget::ExecuteInternal`,
   `CCSRBTTargetAngle::TestPreCondition`, `CCSRBTMoveToTether::ExecutePostInternal`,
   `CCSCSMovement::IsProxyVisible`, `CCSDebugOptions::DrawHUD`, and the two

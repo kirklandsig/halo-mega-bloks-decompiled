@@ -5,7 +5,6 @@ address,name,status,score
 0x833219C8,CCSMeatPuppet::CanFireAt,near,4
 0x83321A68,CCSMeatPuppet::HasLineOfSightTo,near,30
 0x83325328,CCSTargetRenderingProxy::Render,near,168
-0x83329C50,ACCSController::SetState,todo,26
 0x83329F30,ACCSController::CalcAccuracyAngles,near,4
 0x8332ABA8,CCSCSMovementGwNav::OrientationReached,todo,21
 0x8332ACE0,CCSCSMovementGwNav::PathFailed,todo,11
@@ -21,7 +20,7 @@ address,name,status,score
 0x83330CE0,CCSRBTEncircleTarget::ExecuteInternal,todo,36
 0x83331FB8,CCSRBTMoveToTether::ExecutePostInternal,todo,8
 0x833327F8,CCSRBTTargetAngle::TestPreCondition,todo,41
-0x83337990,ACCSController::RemoveState,todo,43
+0x83337990,ACCSController::RemoveState,todo,25
 0x83337BB0,ACCSController::Tick,todo,139
 0x83338540,CCSCSMovementUnreal::CCSCSMovementUnreal,near,64
 0x833387C0,CCSEngineServices::FindAllCovers,todo,7
@@ -36,8 +35,7 @@ address,name,status,score
 0x8333C698,CCSPSCover::Finalize,near,1
 0x8333CA38,CCSPSCover::HasValidDefensiveAngle,todo,36
 0x8333CD70,CCSPSTargetAwareness::ComputeLowCostAwareness,near,14
-0x8333D9D0,CCSPSTargetAwareness::ComputeTotalThreat,near,26
-0x8333DF70,CCSPSTargetAwareness::UpdateCurrentTarget,near,2
+0x8333D9D0,CCSPSTargetAwareness::ComputeTotalThreat,near,8
 0x8333E1F8,CCSRBTEncircleTarget::ExecutePreInternal,near,97
 0x8333E5E8,CCSRBTMoveTo::ExecuteInternal,near,49
 0x8333EB60,CCSRBTMoveToBestCover::FindBestCover,near,48
@@ -65,7 +63,7 @@ address,name,status,score
 0x8334D020,CCSTarget::FindDestinationReachable,near,12
 0x83356838,CCSBlackboard::UpdateTargetListsByRange,near,54
 0x83356F20,CCSPSCover::LowCostPerception,near,6
-0x833579B8,CCSPSTargetAwareness::RemoveThreatTarget,todo,16
+0x833579B8,CCSPSTargetAwareness::RemoveThreatTarget,near,1
 0x8335F260,CCSGlobalDataScheduler::Initialize,todo,157
 0x833627C8,CCSBlackboard::CCSBlackboard,todo,1272
 0x8336D540,AUSSPawn::TickSpecial,todo,65

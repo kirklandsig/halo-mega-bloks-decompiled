@@ -11,15 +11,23 @@
 // `dynamic atexit destructor for 's_brainFinderCCS''
 static CCSBrainFinder s_brainFinderCCS;
 
-// Todo (and RemoveState): retail constructs the string argument before it
-// fetches the blackboard; ours fetches it first (tried named locals and the
-// untyped GetBlackboardInternal).
+// Retail builds the Grip::String argument before it fetches the blackboard;
+// returning the string by value from a helper makes the compiler do so.
+static inline Grip::String MakeStateString(const wchar_t *Text)
+{
+    return Grip::String(Text);
+}
+
 // @retail 0x83329C50
 void ACCSController::SetState(const FString &State)
 {
-    Brain->GetBlackboard<CCSBlackboard>()->AddState(*State);
+    Brain->GetBlackboard<CCSBlackboard>()->AddState(MakeStateString(*State));
 }
 
+// Todo (252 bytes vs 236): retail reads the temporary FString back from the
+// frame and frees only its data (UE3's FString), ours inlines
+// ~TArray/~ForAnyElementType, which also zeroes the fields, and takes the
+// constructor's result from r3 instead of the frame.
 // @retail 0x83337990
 void ACCSController::RemoveState(const FString &State)
 {
@@ -28,7 +36,7 @@ void ACCSController::RemoveState(const FString &State)
         Brain->GetBlackboard<CCSBlackboard>()->ClearAllState();
         return;
     }
-    Brain->GetBlackboard<CCSBlackboard>()->RemoveState(*State);
+    Brain->GetBlackboard<CCSBlackboard>()->RemoveState(MakeStateString(*State));
 }
 
 // @retail 0x83329CC0
