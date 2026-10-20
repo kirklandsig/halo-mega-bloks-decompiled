@@ -12,7 +12,7 @@ from upkbuild import Builder
 PROP_FLAGS = 1  # CPF_Edit
 
 
-def class_data(b, super_ref, child=0):
+def class_data(super_ref, child=0):
     return struct.pack('>iiii', 0, 0, super_ref, child)
 
 
@@ -24,7 +24,7 @@ def script_package():
     """Core.xxx: Object > Actor > StaticMeshActor, Object > Component > StaticMeshComponent,
     and Actor's `array<name> Layers` (so an array's element type has to come from here)."""
     b = Builder()
-    cls = b.add_import('Core', 'Class', 0, 'Class')
+    b.add_import('Core', 'Class', 0, 'Class')
     obj = b.add_export(0, 0, 'Object')
     actor = b.add_export(0, 0, 'Actor')
     sma = b.add_export(0, 0, 'StaticMeshActor')
@@ -34,13 +34,12 @@ def script_package():
     name_class = b.add_import('Core', 'Class', 0, 'NameProperty')
     layers = b.add_export(array_class, actor, 'Layers', prop_data(b))
     b.add_export(name_class, layers, 'Layers', prop_data(b))
-    b.set_data(obj, class_data(b, 0))
-    b.set_data(actor, class_data(b, obj, layers))
-    b.set_data(sma, class_data(b, actor))
-    b.set_data(comp, class_data(b, obj))
-    b.set_data(smc, class_data(b, comp))
+    b.set_data(obj, class_data(0))
+    b.set_data(actor, class_data(obj, layers))
+    b.set_data(sma, class_data(actor))
+    b.set_data(comp, class_data(obj))
+    b.set_data(smc, class_data(comp))
     b.add_export(actor, 0, 'Default__Actor', struct.pack('>i', 0) + b.tag('DrawScale', 'FloatProperty', struct.pack('>f', 1.0)) + b.end())
-    assert cls < 0
     return b.build()
 
 

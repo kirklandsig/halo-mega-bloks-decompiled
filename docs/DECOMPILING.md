@@ -215,6 +215,41 @@ never written by it.
 - **By-value class parameters are destroyed by the callee** (`FString`,
   `Grip::String`).
 
+### From the last of the AI code (2026-10-19)
+
+- **Assignment order inside a branch** decides which value lives in a saved
+  register: `bResult = 1; if (...) { bResult = 0; OutErrorMsg = ...; }`
+  (`UCCSActorFactory::CanCreateActor`) differs from the other order.
+- **Declaration order is store order** for small locals: two `Grip_Color`s
+  built at the top of `DrawHUD` store their bytes in the order they're
+  declared.
+- **Copies through a by-value return** keep a struct in a stack copy:
+  `FRotator Aim = Rotation; Aim = Aim.GetNormalized();` stores the rotator
+  where normalizing its members in place keeps it in registers
+  (`AUSSPawn::CanAim`).
+- **How a vector is built** changes later operand order:
+  `FVector D = A - B; D.Z = 0.0f;` is not `FVector D(A.X - B.X, A.Y - B.Y, 0)`
+  (`AUSSPawn::MoveToInCover`).
+- **A named temporary** makes its address the argument (`addi`) and lets the
+  slot be reused (`GetNodeTitle`'s `Printf` result); a named `FString` inside
+  an `if` block gives each exit its own destructor, where a temporary in the
+  condition needs a "constructed" flag (`CCSBlackboard::GetSpecificTarget`).
+- **Default arguments are not the same as passing the default:**
+  `ConstructObject<T>(Class, Outer)` keeps the default `FName` in a stack
+  temporary held by address; `FName(NAME_None)` written out doesn't.
+- **`GetData()[i]`** adds base + offset where `operator[]` adds offset + base
+  (`UpdateTargetPointers`' out-of-range loop).
+- **A file-scope static object** with an inlinable constructor has a dynamic
+  initializer that only registers its atexit destructor; that destructor
+  stores the base class's vtable, so the base's virtual destructor has to be
+  defined inline (`s_brainFinderCCS`).
+- **`FVector::Normalize` is plain inline:** retail inlines it in one function
+  and calls it in another (`CCSAFStrafeTarget`); forcing it inline breaks the
+  second.
+- **`TMap::Set`** builds an `FPairInitializer` that holds a class key by
+  reference and a pointer value by value, then calls `TSet::Add` out of line
+  (`Core/Inc/Map.h`).
+
 ## When it doesn't match
 
 Try a few distinct ideas (member order, an inline helper, a different

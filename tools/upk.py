@@ -318,7 +318,7 @@ class Schema:
                 self.supers[e.name.lower()] = pkg.object_name(super_ref).lower() if super_ref else ''
                 if kind == 'ScriptStruct':
                     layout = []
-                    while child > 0 and child in defs or (child > 0 and pkg.class_name(child) in ('Function', 'Const', 'Enum', 'ScriptStruct')):
+                    while child > 0 and (child in defs or pkg.class_name(child) in ('Function', 'Const', 'Enum', 'ScriptStruct')):
                         if child in defs:
                             layout.append(defs[child])
                         child = self._next_field(pkg, child)
@@ -358,18 +358,23 @@ class Schema:
             if kind == 'ClassProperty':
                 ref_to = r.i32()  # the meta class
             target = pkg.object_name(ref_to) if ref_to and pkg.valid_ref(ref_to) else ''
-        return PropDef(e.name, kind, target, None, flags)
+        return PropDef(e.name, kind, target, flags=flags)
+
+    def lineage(self, name):
+        """A class or struct's name (lower case), then its supers' up to the root."""
+        name, seen = name.lower(), set()
+        while name and name not in seen:
+            seen.add(name)
+            yield name
+            name = self.supers.get(name, '')
 
     def find(self, owner, name):
         """The definition of property `name` of class or struct `owner` or its supers."""
-        owner, name = owner.lower(), name.lower()
-        seen = set()
-        while owner and owner not in seen:
-            seen.add(owner)
-            d = self.props.get((owner, name))
+        name = name.lower()
+        for cls in self.lineage(owner):
+            d = self.props.get((cls, name))
             if d:
                 return d
-            owner = self.supers.get(owner, '')
         return None
 
     def defaults(self, class_name):
@@ -387,14 +392,7 @@ class Schema:
         return self._defaults[key]
 
     def is_a(self, class_name, base):
-        class_name, base = class_name.lower(), base.lower()
-        seen = set()
-        while class_name and class_name not in seen:
-            if class_name == base:
-                return True
-            seen.add(class_name)
-            class_name = self.supers.get(class_name, '')
-        return False
+        return base.lower() in self.lineage(class_name)
 
 
 # Structs serialized as raw values rather than tagged properties.
@@ -434,24 +432,18 @@ class Properties:
                 break
             kind = self.pkg.read_name(r)
             size, index = r.i32(), r.i32()
-            extra = ''
-            if kind == 'StructProperty':
-                extra = self.pkg.read_name(r)
-            elif kind == 'BoolProperty':
+            if kind == 'BoolProperty':
                 value = bool(r.u8())
-            elif kind == 'ByteProperty':
-                extra = self.pkg.read_name(r)
-            if kind != 'BoolProperty':
+            else:
+                # a struct's tag names the struct, a byte's its enum
+                extra = self.pkg.read_name(r) if kind in ('StructProperty', 'ByteProperty') else ''
                 start = r.pos
                 try:
                     value = self.value(Reader(r.data, r.big, start), kind, size, owner, name, extra)
                 except (EOFError, ValueError, IndexError, UnicodeDecodeError):
                     value = {'hex': r.data[start:start + size].hex()}
                 r.pos = start + size
-            key = name if index == 0 else f'{name}[{index}]'
-            if index and name in out and not isinstance(out.get(f'{name}[0]'), type(None)):
-                out.setdefault(f'{name}[0]', out[name])
-            out[key] = value
+            out[name if index == 0 else f'{name}[{index}]'] = value
         return out
 
     def value(self, r, kind, size, owner, name, extra=''):
@@ -514,13 +506,9 @@ class Properties:
         return out
 
     def _layout(self, struct_name):
-        layout, name, seen = [], struct_name.lower(), set()
-        chain = []
-        while name and name not in seen:
-            seen.add(name)
-            chain.append(name)
-            name = self.schema.supers.get(name, '')
-        for name in reversed(chain):
+        """A struct's members, its supers' first."""
+        layout = []
+        for name in reversed(list(self.schema.lineage(struct_name))):
             layout += self.schema.layouts.get(name, [])
         return layout
 

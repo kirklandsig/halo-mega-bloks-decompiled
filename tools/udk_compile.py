@@ -52,11 +52,28 @@ SHIMS = {
 }
 PACKAGE_HEADING = re.compile(r'Heading: -+(\w+) - Release-+')
 DIAGNOSTIC = re.compile(r'^\[[\d.]+\] (Error|Warning): (?:(.*?)\((\d+)\) : )?(?:Error|Warning), (.*)$')
+# Script packages with C++ classes compiled into UDK.exe.
+NATIVE_PACKAGES = {'Core', 'Engine', 'GameFramework', 'GFxUI', 'IpDrv', 'UDKBase'}
+# n-Space members left out of native classes in the work tree: name -> type.
+STUBBED = {}
+STUB_VALUES = {'bool': 'false', 'int': '0', 'float': '0.0', 'byte': '0', 'name': "''", 'string': '""'}
+
+
+def script_classes():
+    """The rows of config/script_classes.csv."""
+    with open(paths.CONFIG / 'script_classes.csv', newline='') as f:
+        return list(csv.DictReader(f))
+
+
+def split_lines(text):
+    """(lines, newline) of a file's text, so it can be joined back as it was."""
+    newline = '\r\n' if '\r\n' in text else '\n'
+    return text.split(newline), newline
 
 
 def committed_classes(nspace_only):
     """(package, class file) for each committed class to lay over UDK."""
-    status = {(r['package'], r['class']): r['status'] for r in csv.DictReader(open(paths.CONFIG / 'script_classes.csv'))}
+    status = {(r['package'], r['class']): r['status'] for r in script_classes()}
     for path in sorted((paths.ROOT / 'script').glob('*/Classes/*.uc')):
         package = path.parent.parent.name
         if nspace_only and status.get((package, path.stem)) == 'modified':
@@ -106,8 +123,7 @@ def udk_layout(text, udk_text):
     (n-Space's own after them): stock UDK checks a native class's defaults
     against the layout compiled into UDK.exe."""
     order = {name: i for i, name in enumerate(_class_var_names(udk_text))}
-    newline = '\r\n' if '\r\n' in text else '\n'
-    lines = text.split(newline)
+    lines, newline = split_lines(text)
     slots = [i for i, line in enumerate(lines) if re.match(r'var\b[^;{]*;\s*$', line)]
     if not slots:
         return text
@@ -133,11 +149,6 @@ def udk_layout(text, udk_text):
     return newline.join(lines)
 
 
-# n-Space members left out of native classes in the work tree: name -> type.
-STUBBED = {}
-STUB_VALUES = {'bool': 'false', 'int': '0', 'float': '0.0', 'byte': '0', 'name': "''", 'string': '""'}
-
-
 def stub_uses(work, errors):
     """Where the compiler reports a use of a member left out of a native class,
     write its type's default value instead (or drop an assignment to it), in the
@@ -145,12 +156,10 @@ def stub_uses(work, errors):
     lines changed."""
     changed = 0
     for file, number, message in errors:
-        path = work / file if file else None
-        if path is None or not path.exists():
+        path = work / file
+        if not file or not path.exists():
             continue
-        text = path.read_bytes().decode('utf-8', errors='replace')
-        newline = '\r\n' if '\r\n' in text else '\n'
-        lines = text.split(newline)
+        lines, newline = split_lines(path.read_bytes().decode('utf-8', errors='replace'))
         if not 0 < number <= len(lines):
             continue
         line = lines[number - 1]
@@ -175,11 +184,8 @@ def stub_uses(work, errors):
     return changed
 
 
-# Script packages with C++ classes compiled into UDK.exe.
-NATIVE_PACKAGES = {'Core', 'Engine', 'GameFramework', 'GFxUI', 'IpDrv', 'UDKBase'}
-
-
 def prepare(udk, work, nspace_only):
+    """A fresh work tree with the committed classes laid over UDK; the number of classes."""
     _remove_tree(work)
     STUBBED.clear()
     for part in ('Binaries', 'Development', 'Engine', 'UDKGame'):
@@ -195,7 +201,7 @@ def prepare(udk, work, nspace_only):
             raise SystemExit(f'{ini}: no "{anchor}" line to place the n-Space packages by')
         text = text.replace(anchor + '\n', lines + anchor + '\n' if before else anchor + '\n' + lines, 1)
         ini.write_text(text, encoding='utf-8')
-    udk_files = {(r['package'], r['class']): r['udk_file'] for r in csv.DictReader(open(paths.CONFIG / 'script_classes.csv'))
+    udk_files = {(r['package'], r['class']): r['udk_file'] for r in script_classes()
                  if r['status'] == 'modified' and r['udk_file']}
     count = 0
     for package, path in committed_classes(nspace_only):
@@ -212,6 +218,7 @@ def prepare(udk, work, nspace_only):
 
 
 def run(work):
+    """Compile the work tree; the parsed log (see parse_log)."""
     exe = work / 'Binaries' / 'Win32' / 'UDK.com'
     subprocess.run([str(exe), 'make', '-full', '-unattended', '-nopause', '-silent'], cwd=exe.parent,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -322,6 +329,10 @@ def _drop_interface_abstract(lines, number, m):
             return
 
 
+# Empty state-only functions of UDK's classes that the decompiler turns into ignores entries.
+UDK_STATE_FUNCTIONS = {'playnextanimation': 'simulated function PlayNextAnimation() {}'}
+
+
 def _state_function_for_ignore(lines, number, m):
     """An empty state function that overrides nothing decompiles as an ignores
     entry, which needs an existing function: write it back as a function, with
@@ -337,10 +348,6 @@ def _state_function_for_ignore(lines, number, m):
     end = next((j for j in range(number - 1, len(lines)) if ';' in lines[j]), None)
     if end is not None:
         lines[end + 1:end + 1] = ['', f'\t{UDK_STATE_FUNCTIONS.get(name.lower(), f"function {name}() {{}}")}']
-
-
-# Empty state-only functions of UDK's classes that the decompiler turns into ignores entries.
-UDK_STATE_FUNCTIONS = {'playnextanimation': 'simulated function PlayNextAnimation() {}'}
 
 
 def _class_to_interface(lines, number, m):
@@ -371,23 +378,17 @@ def _uncast_comparisons(line):
     take no conversions at all."""
     out, i = [], 0
     pattern = re.compile(r'\bint\(')
-    while True:
-        m = pattern.search(line, i)
-        if not m:
-            break
-        close = _closing(line, m.end() - 1)
+    while m := pattern.search(line, i):
+        start, end = m.span()
+        close = _closing(line, end - 1)
         op = re.match(r'\s*(==|!=|<=|>=|<|>)\s*int\(', line[close + 1:]) if close > 0 else None
-        if not op:
-            out.append(line[i:m.end()])
-            i = m.end()
-            continue
-        second = close + 1 + op.end() - 1
-        close2 = _closing(line, second)
+        second = close + op.end() if op else -1  # the '(' of the other int(
+        close2 = _closing(line, second) if op else -1
         if close2 < 0:
-            out.append(line[i:m.end()])
-            i = m.end()
+            out.append(line[i:end])
+            i = end
             continue
-        out.append(line[i:m.start()] + line[m.end():close] + f' {op.group(1)} ' + line[second + 1:close2])
+        out.append(line[i:start] + line[end:close] + f' {op.group(1)} ' + line[second + 1:close2])
         i = close2 + 1
     out.append(line[i:])
     return ''.join(out)
@@ -462,11 +463,11 @@ def _retype_argument(lines, number, m):
     name, index = m.group(1), int(m.group(2)) - 1
     line = lines[number - 1]
     call = _call_arguments(line, name)
-    enums, enum_of, _, params = source_index()
-    types = params.get(name.lower(), [])
     if call is None or index >= len(call[2]):
         return
     start, close, args = call
+    enums, enum_of, _, params = source_index()
+    types = params.get(name.lower(), [])
     arg = args[index].strip()
     wanted = types[index] if index < len(types) else None
     if wanted in enums and arg.lower() in enum_of:
@@ -475,7 +476,7 @@ def _retype_argument(lines, number, m):
         if position < len(enums[wanted]):
             args[index] = args[index].replace(arg, enums[wanted][position])
     elif wanted in enums and re.fullmatch(r'byte\((.*)\)', arg):
-        args[index] = args[index].replace(arg, f'{wanted_name(wanted)}({arg[5:-1]})')
+        args[index] = args[index].replace(arg, f'{enum_name(wanted)}({arg[5:-1]})')
     elif arg in ('true', 'false') and index > 0 and not args[index - 1].strip():
         del args[index - 1]
     else:
@@ -483,7 +484,7 @@ def _retype_argument(lines, number, m):
     lines[number - 1] = line[:start] + ','.join(args) + line[close:]
 
 
-def wanted_name(enum_lower):
+def enum_name(enum_lower):
     """An enum's name as declared."""
     for path in _sources().values():
         m = re.search(rf'\benum\s+({enum_lower})\b', path.read_text(encoding='utf-8', errors='replace'), re.I)
@@ -636,7 +637,7 @@ def _rebuild_loops(lines, number, m):
                     lines[k] = lines[k].replace('if', 'while', 1)
                     cut = end - 2 if lines[end - 2].strip() == '// [Loop Continue]' else end - 1
                     del lines[cut:end]
-                    end -= end - cut
+                    end = cut
                     if after_label:
                         stop = after_label.group(2)
                         for j in range(k, end):
@@ -644,7 +645,6 @@ def _rebuild_loops(lines, number, m):
                                 lines[j] = lines[j].replace(f'goto {stop};', 'break;')
                                 if lines[j - 1].strip() == '// [Explicit Break]':
                                     del lines[j - 1]
-                                    end -= 1
                                 break
                     changed = True
                     break
@@ -735,8 +735,7 @@ def apply_fixes(errors):
         if path is None:
             continue
         text = path.read_bytes().decode('utf-8')
-        newline = '\r\n' if '\r\n' in text else '\n'
-        lines = text.split(newline)
+        lines, newline = split_lines(text)
         # bottom up, so a fix that inserts a line leaves the others' numbers valid
         for number, message in sorted(items, reverse=True):
             for pattern, fix in FIXES:
@@ -800,7 +799,7 @@ def restore_epic_dependson(udk):
     """A modified Epic class keeps UDK's dependson() list: the original's, which
     cooking drops. The number of files changed."""
     changed = 0
-    for row in csv.DictReader(open(paths.CONFIG / 'script_classes.csv')):
+    for row in script_classes():
         path = paths.ROOT / 'script' / row['package'] / 'Classes' / f"{row['class']}.uc"
         if row['status'] != 'modified' or not path.exists() or not row['udk_file']:
             continue
@@ -811,8 +810,7 @@ def restore_epic_dependson(udk):
         if not names:
             continue
         text = path.read_bytes().decode('utf-8')
-        newline = '\r\n' if '\r\n' in text else '\n'
-        lines = text.split(newline)
+        lines, newline = split_lines(text)
         for name in names:
             add_dependson(lines, name)
         new = newline.join(lines)

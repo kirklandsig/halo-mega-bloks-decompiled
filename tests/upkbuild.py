@@ -11,10 +11,9 @@ class Builder:
         self.compressed = False  # mark the header as LZX-compressed (one chunk)
 
     def name(self, text):
-        base, number = text, 0
         if text not in self.names:
             self.names.append(text)
-        return self.names.index(base), number
+        return self.names.index(text), 0
 
     def fname(self, text):
         index, number = self.name(text)

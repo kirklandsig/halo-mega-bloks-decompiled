@@ -37,10 +37,15 @@ import paths  # noqa: E402
 import upk  # noqa: E402
 
 TURN = 65536
+ROTATOR = ('Pitch', 'Yaw', 'Roll')
+
+
+def units(rotation):
+    return {k.lower(): rotation.get(k, 0) for k in ROTATOR}
 
 
 def degrees(rotation):
-    return {k.lower(): round(rotation.get(k, 0) * 360.0 / TURN, 4) for k in ('Pitch', 'Yaw', 'Roll')}
+    return {k.lower(): round(rotation.get(k, 0) * 360.0 / TURN, 4) for k in ROTATOR}
 
 
 def vec(v, default):
@@ -118,7 +123,7 @@ def actor_entry(pkg, schema, level, ref, children):
         'class': cls,
         'archetype': pkg.full_path(archetype) if archetype else None,
         'location': vec(props.get('Location'), (0.0, 0.0, 0.0)),
-        'rotation': {k.lower(): rotation.get(k, 0) for k in ('Pitch', 'Yaw', 'Roll')},
+        'rotation': units(rotation),
         'rotation_degrees': degrees(rotation),
         'scale': props.get('DrawScale', defaults.get('DrawScale', 1.0)),
         'scale_3d': vec(props.get('DrawScale3D') or defaults.get('DrawScale3D'), (1.0, 1.0, 1.0)),
@@ -170,7 +175,7 @@ def collection_entries(pkg, schema, level, ref, children):
             'collection': pkg.object_name(ref),
             'archetype': None,
             'location': location,
-            'rotation': {k.lower(): rotation.get(k, 0) for k in ('Pitch', 'Yaw', 'Roll')},
+            'rotation': units(rotation),
             'rotation_degrees': degrees(rotation),
             'scale': props.get('Scale', 1.0),
             'scale_3d': scale_3d,
@@ -181,7 +186,8 @@ def collection_entries(pkg, schema, level, ref, children):
     return entries
 
 
-def has_level(path):
+def open_map(path):
+    """The package at `path` if it holds a level, else None."""
     try:
         pkg = upk.Package.open(path)
     except (ValueError, OSError, EOFError):
@@ -207,7 +213,7 @@ def main(argv=None):
     written = 0
     for name in names:
         path = args.packages / (name if name.endswith('.xxx') else f'{name}.xxx')
-        pkg = has_level(path)
+        pkg = open_map(path)
         if pkg is None:
             if args.maps:
                 print(f'{path.name}: no level in it', file=sys.stderr)

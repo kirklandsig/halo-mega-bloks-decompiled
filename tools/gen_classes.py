@@ -85,21 +85,24 @@ EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard
 EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 
 
+def function_rows():
+    """The rows of config/functions.csv without n-Space's additions to Epic's
+    classes (UDKPawn's CCS natives): they need those classes rendered as
+    targets, which isn't done yet."""
+    additions = script_compare.nspace_additions()
+    return [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv')
+            if tuple(r['name'].split('::', 1)) not in additions]
+
+
 def code_rows(package):
     """A package's rows of n-Space's code: owner nspace, and the rest of
-    its AI library (udkbase\\ccsref*, owner vendor). n-Space's additions to
-    Epic's classes (UDKPawn's CCS natives) are left out: they need those
-    classes rendered as targets, which isn't done yet."""
-    additions = script_compare.nspace_additions()
-    return [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv') if r['package'] == package.lower()
-            and (r['owner'] == 'nspace' or r['source'].startswith('udkbase\\ccsref'))
-            and tuple(r['name'].split('::', 1)) not in additions]
+    its AI library (udkbase\\ccsref*, owner vendor)."""
+    return [r for r in function_rows() if r['package'] == package.lower()
+            and (r['owner'] == 'nspace' or r['source'].startswith('udkbase\\ccsref'))]
 
 
 def nspace_rows():
-    additions = script_compare.nspace_additions()
-    return [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv')
-            if r['owner'] == 'nspace' and tuple(r['name'].split('::', 1)) not in additions]
+    return [r for r in function_rows() if r['owner'] == 'nspace']
 
 
 def script_packages():

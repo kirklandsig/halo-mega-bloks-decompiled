@@ -124,6 +124,9 @@ python -m pytest -q
 | `tools/recomp_config.py` | Writes the XenonRecomp config into `build/recomp/` |
 | `tools/script_export` | Exports a cooked package's script classes as `.uc` (dotnet) |
 | `tools/script_compare.py` | Compares exported classes with UDK's, writes `config/script_classes.csv` |
+| `tools/udk_compile.py` | Compiles the committed scripts with a local UDK July 2012 BETA 2 and fixes the decompiler artifacts it reports (`--fix`) |
+| `tools/upk.py` | Reads an unpacked cooked package: tables, object paths, any object's properties as JSON |
+| `tools/map_export.py` | Writes each map's actor placements (class, transform, properties, assets) to JSON, outside the repository |
 | `tools/decomp_dev_export.py` | Writes the [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled) progress report (docs/BYTEMATCH.md) |
 | `tools/prepublish.py` | Checks the tree for leaks before anything is pushed |
 
