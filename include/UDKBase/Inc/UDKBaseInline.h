@@ -346,6 +346,7 @@ inline bool Grip_Vector::operator!=(const Grip_Vector &V) const { return X != V.
 // gripengineservices.h
 inline Grip_Vector GripEngineServices::GetActorPosition(void *pActor) { return ms_pImpl->GetActorPosition(pActor); }
 inline GripAIManager *GripEngineServices::GetAIManager() { return ms_pImpl->GetAIManager(); }
+inline float GripEngineServices::GetTimeSeconds() { return ms_pImpl->GetTimeSeconds(); }
 inline bool GripEngineServices::SingleLineCheck(GripLineCheckResult &Result, void *pIgnore, const Grip_Vector &Start, const Grip_Vector &End,
                                                 const int Flags, const Grip_Vector Extent)
 {
@@ -567,3 +568,38 @@ inline unsigned int UStruct::IsChildOf(const UStruct *SomeBase) const
     }
     return 0;
 }
+
+// gripengineservices.h, gripbraindebugoptions.h
+template <class T0> inline T0 *GripEngineServices::GetAIManagerSystem()
+{
+    GripAIManager *pManager = GetAIManager();
+    if (pManager == 0)
+    {
+        return 0;
+    }
+    return static_cast<T0 *>(pManager->GetSystem(T0::SGetId()));
+}
+inline int GripBrainDebugOptions::SGetId() { return GripAIManager::SYSTEM_BRAIN_DEBUG_OPTIONS; }
+inline float Grip_Vector::Size() const { return appSqrt(X * X + Y * Y + Z * Z); }
+inline Grip_Vector Grip_Vector::operator/=(float V)
+{
+    const float Scale = 1.0f / V;
+    X *= Scale;
+    Y *= Scale;
+    Z *= Scale;
+    return *this;
+}
+inline void Grip_Vector::Normalize()
+{
+    const float VSize = Size();
+    if (VSize > 0.0f)
+    {
+        *this /= VSize;
+    }
+}
+inline UUDKTargetableComponent *CCSCharacter::GetTargetableComponent() { return m_gameCharacter.GetTargetableComponent(); }
+inline float Grip_Vector::Size2D() const { return appSqrt(X * X + Y * Y); }
+inline Grip_Rotation CCSCharacter::GetOrientation() const { return m_gameCharacter.GetOrientation(); }
+inline float CCSCharacter::GetSize() const { return m_gameCharacter.GetSize(); }
+inline int CCSCharacter::GetTeam() { return m_gameCharacter.GetTeam(); }
+inline bool CCSCharacter::IsPlayer() const { return m_gameCharacter.IsPlayer(); }

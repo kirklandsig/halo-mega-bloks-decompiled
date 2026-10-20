@@ -41,7 +41,7 @@ TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FA
                        'GripSystemTickGroup', 'GripStatEntry', 'GripBrainSystem', 'CCSGSCover',
                        'Kaim::SpatializedCylinder', 'Kaim::SpatializedPoint']}
 OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
-          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'GripEngineServices', 'IGripEngineServices', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
+          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripBrainDebugOptions', 'GripRBTAllocator', 'UWorld', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'GripEngineServices', 'IGripEngineServices', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
                        # the behaviour-tree nodes' runtime classes
                        'CCSRBTEnemyClosestRange',
                        'CCSRBTEnemyLowestLKPAge',
@@ -81,6 +81,7 @@ OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsSt
 EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();', 'template <class T0> T0 *GetActionFactory();',
                                           'template <class T0> T0 *GetMeatPuppetQuery();'],
                      'IGripAFInterface': ['template <class T0> T0 *GetSystem();'],
+                     'GripEngineServices': ['template <class T0> static T0 *GetAIManagerSystem();'],
                      # the action handles' CreateAction call it
                      'CCSAFFactory': ['HG_PRIVATE:', 'template <class AO, class AF> int CreateActionInternal(const AO &);', 'public:']
                      + [f'friend class UCCSAF{a};' for a in ('ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor',

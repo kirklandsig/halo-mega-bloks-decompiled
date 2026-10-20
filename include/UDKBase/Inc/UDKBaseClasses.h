@@ -702,6 +702,7 @@ class GripBTStack;
 class GripBTSystemFlags;
 class GripBlackboard;
 class GripBrain;
+class GripBrainDebugOptions;
 class GripBrainSnapshotSerializer;
 class GripBrainSystem;
 class GripBrainSystemContainer;
@@ -24576,6 +24577,31 @@ public:
     #endif
 };
 
+class GripBrainDebugOptions : public GripDebugOptions  // size 0x18, opaque
+{
+public:
+    enum EOptions
+    {
+        FIRST = 2,
+        BT_BB = 2,
+        STEP_MODE = 3,
+        NUM_OF = 10,
+    };
+    HG_VIRTUAL void Initialize(bool);
+    HG_VIRTUAL void Finalize();
+    HG_VIRTUAL void Tick(float);
+    static int SGetId();
+    HG_VIRTUAL int GetId() const;
+    HG_VIRTUAL void SetDebugOptions(const Grip_ArrayPOD<int,2> &);
+    void SetDebugOption(GripBrainDebugOptions::EOptions, bool);
+    bool IsOptionEnabled(GripBrainDebugOptions::EOptions) const;
+    #ifndef HAGGAR_HOST
+    GripBrainDebugOptions(GripAIManager *);
+    #endif
+HG_PRIVATE:
+    unsigned int GripBrainDebugOptionsData[0x3];
+};
+
 class GripBrainSnapshotSerializer : public GripVHeapObject  // size 0x10
 {
 public:
@@ -24612,6 +24638,7 @@ public:
     static GripEngine *GetEngine();
     static GripAIManager *GetAIManager();
     static bool SingleLineCheck(GripLineCheckResult &, void *, const Grip_Vector &, const Grip_Vector &, const int, const Grip_Vector);
+    template <class T0> static T0 *GetAIManagerSystem();
     #ifndef HAGGAR_HOST
     static IGripEngineServices *ms_pImpl;
     #else

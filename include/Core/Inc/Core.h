@@ -23,6 +23,7 @@ extern "C" float __fsqrts(float);
 #pragma intrinsic(__fsqrt)
 extern "C" int rand();
 extern "C" double atan(double);
+extern "C" double cos(double);
 inline void *operator new(unsigned int, void *Mem) throw() { return Mem; }
 inline void operator delete(void *, void *) throw() {}
 #else
@@ -89,4 +90,7 @@ extern "C" double __fsel(double Comparand, double ValGE, double ValLT);
 #pragma intrinsic(__fsel)
 template <> inline float Min(const float A, const float B) { return (float)__fsel(A - B, B, A); }
 template <> inline float Max(const float A, const float B) { return (float)__fsel(A - B, A, B); }
+extern "C" double fabs(double);
+#pragma intrinsic(fabs)
+template <> inline float Abs(const float A) { return (float)fabs(A); }
 #endif
