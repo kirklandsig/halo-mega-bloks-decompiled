@@ -531,3 +531,4 @@ inline GripSystemScheduler::GripSystemScheduler() {}
 #ifndef HAGGAR_HOST
 inline CCSGlobalDataScheduler::TickGroupInfo::TickGroupInfo() : pGDS(0), sensorCount(0), isActive(true) {}
 #endif
+inline float CCSCharacter::GetHeight() const { return m_gameCharacter.GetHeight(); }

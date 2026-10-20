@@ -18,3 +18,14 @@ Grip_Vector CCSGameCharacter::GetPosition() const
     }
     return Position;
 }
+
+// @retail 0x83321220
+float CCSGameCharacter::GetHeight() const
+{
+    float Height = 0.0f;
+    if (m_actor != 0)
+    {
+        Height = 1.0f;
+    }
+    return Height;
+}
