@@ -389,6 +389,7 @@ inline GripBBMember::~GripBBMember() {}
 // gripbbvisualization.h
 #ifndef HAGGAR_HOST
 inline GripBBVisualization::GripBBVisualization() { m_pBB = 0; }
+inline const Grip_Array<GripSerializationMember, Grip::AllocatorGH<GripSerializationMember, 2> > &GripBBVisualization::GetMembers() const { return m_members; }
 #endif
 inline void GripBBVisualization::SetBlackboard(GripBlackboard *pBB) { m_pBB = pBB; }
 

@@ -4,6 +4,8 @@
 // known position's age, range and whether it is shootable and visible.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSBlackboard.cpp"
+#include "../Src/HaloRBTKamikaze.cpp"
 
 namespace Grip
 {
@@ -101,4 +103,101 @@ void CCSBBTargetVisualization::Refresh()
     }
     Member = GripSerializationMember("   Visible", Value.ToCStr());
     m_members.AddItem(Member);
+}
+
+// The blackboard's members as the console shows them: the states, the
+// current target's details and the self-awareness values.
+// @retail 0x83355060
+void CCSBBVisualization::Refresh()
+{
+    if (m_pBB == 0)
+    {
+        return;
+    }
+    m_members.Reset();
+    CCSBlackboard *pBB = static_cast<CCSBlackboard *>(m_pBB);
+    Grip::String Value;
+    Grip_Array<Grip::String, Grip::AllocatorGH<Grip::String, 2> > &States = m_pBB->GetStates();
+    for (int i = 0; i < States.Num(); i++)
+    {
+        if (i > 0)
+        {
+            Value.AppendString(", ", -1);
+        }
+        Value += States[i];
+    }
+    m_members.AddItem(GripSerializationMember("Current State(s)", Value.ToCStr()));
+    CCSBBTargetVisualization TargetVisualization;
+    TargetVisualization.SetTarget(pBB->GetCurrentTarget());
+    TargetVisualization.Refresh();
+    m_members.AddItem(GripSerializationMember("Current Target", ""));
+    for (int i = 0; i < TargetVisualization.GetMembers().Num(); i++)
+    {
+        m_members.AddItem(TargetVisualization.GetMembers()[i]);
+    }
+    char Buffer[64];
+    Grip::SFsprintf(Buffer, sizeof(Buffer), "%01.2f", pBB->GetLowestLKPAgeEnemy() != 0 ? pBB->GetLowestLKPAgeEnemy()->LKPAge : 0.0f);
+    {
+        Grip::String Printed(Buffer);
+        Value = Printed;
+    }
+    m_members.AddItem(GripSerializationMember("Lowest Enemy LKP Age", Value.ToCStr()));
+    int Range = pBB->GetClosestVisibleEnemy() != 0 ? (int)pBB->GetClosestVisibleEnemy()->range2D : 0;
+    Grip::SFsprintf(Buffer, sizeof(Buffer), "%i", Range - Range % 10);
+    {
+        Grip::String Printed(Buffer);
+        Value = Printed;
+    }
+    m_members.AddItem(GripSerializationMember("Closest Visible Enemy Range", Value.ToCStr()));
+    Range = pBB->GetHighestThreatTarget() != 0 ? (int)pBB->GetHighestThreatTarget()->range2D : -1;
+    Grip::SFsprintf(Buffer, sizeof(Buffer), "%i", Range - Range % 10);
+    {
+        Grip::String Printed(Buffer);
+        Value = Printed;
+    }
+    m_members.AddItem(GripSerializationMember("Highest Threat Target Range", Value.ToCStr()));
+    Value = pBB->m_bHasBecomeAware.Get() ? "YES" : "NO";
+    m_members.AddItem(GripSerializationMember("Has Become Aware", Value.ToCStr()));
+    Value = pBB->m_visibleToPlayerCamera.Get() ? "YES" : "NO";
+    m_members.AddItem(GripSerializationMember("Visible To Player Camera", Value.ToCStr()));
+    const float Never = 3.402823466e+38F;
+    if (pBB->m_timeSinceDamage.Get() == Never)
+    {
+        Value = "---";
+    }
+    else
+    {
+        Grip::SFsprintf(Buffer, sizeof(Buffer), "%01.2f", pBB->m_timeSinceDamage.Get());
+        Grip::String Printed(Buffer);
+        Value = Printed;
+    }
+    m_members.AddItem(GripSerializationMember("Time Since Damage", Value.ToCStr()));
+    if (pBB->m_timeSinceAimedAt.Get() == Never)
+    {
+        Value = "---";
+    }
+    else
+    {
+        Grip::SFsprintf(Buffer, sizeof(Buffer), "%01.2f", pBB->m_timeSinceAimedAt.Get());
+        Grip::String Printed(Buffer);
+        Value = Printed;
+    }
+    m_members.AddItem(GripSerializationMember("Time Since Aimed At", Value.ToCStr()));
+    if (pBB->m_timeSinceThreatened.Get() == Never)
+    {
+        Value = "---";
+    }
+    else
+    {
+        Grip::SFsprintf(Buffer, sizeof(Buffer), "%01.2f", pBB->m_timeSinceThreatened.Get());
+        Grip::String Printed(Buffer);
+        Value = Printed;
+    }
+    m_members.AddItem(GripSerializationMember("Time Since Threatened", Value.ToCStr()));
+    Grip::SFsprintf(Buffer, sizeof(Buffer), "%i", pBB->m_health.Get());
+    {
+        Grip::String Printed(Buffer);
+        Value = Printed;
+    }
+    m_members.AddItem(GripSerializationMember("Health", Value.ToCStr()));
 }
