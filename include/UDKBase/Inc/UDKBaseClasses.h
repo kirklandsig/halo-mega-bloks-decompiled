@@ -24973,6 +24973,7 @@ public:
     GripSerializer();
     HG_VIRTUAL ~GripSerializer();
     #endif
+    template <class T0> void Write(const char *, T0 *);
     #ifndef HAGGAR_HOST
     Grip::StringBuffer m_stringRepresentation;  // 0x4
     Grip_Array<GripSerializerStackObj,Grip::AllocatorGH<GripSerializerStackObj,2> > m_stack;  // 0x1C

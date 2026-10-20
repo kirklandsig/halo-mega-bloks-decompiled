@@ -82,6 +82,7 @@ EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard
                                           'template <class T0> T0 *GetMeatPuppetQuery();'],
                      'IGripAFInterface': ['template <class T0> T0 *GetSystem();'],
                      'GripEngineServices': ['template <class T0> static T0 *GetAIManagerSystem();'],
+                     'GripSerializer': ['template <class T0> void Write(const char *, T0 *);'],
                      # the brain builders construct the brain through its private constructor
                      'CCSBrain': ['friend class CCSBrainBuilder;'],
                      # the action handles' CreateAction call it

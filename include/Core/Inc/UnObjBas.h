@@ -14,6 +14,7 @@ void InitializePrivateStaticClass(UClass *TClass_Super_StaticClass, UClass *TCla
 
 // RF_Public | RF_Standalone | RF_Transient | RF_Native, as IMPLEMENT_CLASS passes them
 #define RF_IMPLEMENT_CLASS 0x0408408400004000ULL
+#define RF_Unreachable 0x0000000200000000ULL
 
 inline const wchar_t *UObject::StaticConfigName() { return L"Engine"; }
 

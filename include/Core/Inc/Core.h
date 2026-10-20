@@ -16,6 +16,7 @@
 // The CRT's, declared here (the XDK's CRT headers aren't needed)
 extern "C" void *memcpy(void *Dest, const void *Src, unsigned int Count);
 extern "C" void *memmove(void *Dest, const void *Src, unsigned int Count);
+extern "C" int strncmp(const char *String1, const char *String2, unsigned int Count);
 extern "C" void *memset(void *Dest, int Value, unsigned int Count);
 extern "C" double __fsqrt(double);
 extern "C" float __fsqrts(float);
@@ -80,6 +81,8 @@ void appFailAssertFuncDebug(const char *Expr, const char *File, int Line, const 
             appFailAssertFunc(#expr, __FILE__, __LINE__, L"");        \
         }                                                             \
     }
+
+#define checkf(expr, ...)                                                        {                                                                                if (!(expr))                                                                 {                                                                                appFailAssertFuncDebug(#expr, __FILE__, __LINE__, __VA_ARGS__);              appDebugBreak();                                                             appFailAssertFunc(#expr, __FILE__, __LINE__, __VA_ARGS__);               }                                                                        }
 
 template <class T> inline T Min(const T A, const T B) { return (A <= B) ? A : B; }
 template <class T> inline T Max(const T A, const T B) { return (A >= B) ? A : B; }

@@ -5,6 +5,7 @@
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
 #include "CCSRBTMoveTo.cpp"
+#include "UDKBase/Inc/EngineUtils.h"
 
 #ifndef HAGGAR_HOST  // constructors stay recompiled in the port
 // @retail 0x8334BA38
@@ -115,4 +116,19 @@ void CCSRBTSearch::MoveToRandomLocation(IGripBTInterface *pInterface)
     CCSAOMoveToActor Objective = {m_navigationPoints[RandHelper(m_navigationPoints.Num())], m_movementType, m_alertness, Position};
     m_actionHandle = pFactory->CreateActionInternal<CCSAOMoveToActor, CCSAFMoveToActor>(Objective);
     pScheduler->Execute(m_actionHandle);
+}
+
+// todo: 4 bytes long, as CCSEngineServices::FindAllCovers (the actor
+// iterator's checked actor)
+// @retail 0x83339098
+void CCSRBTSearch::FindNavigationPoints()
+{
+    for (FActorIterator It; It; ++It)
+    {
+        ANavigationPoint *pPoint = Cast<ANavigationPoint>(*It);
+        if (pPoint != 0)
+        {
+            m_navigationPoints.AddItem(pPoint);
+        }
+    }
 }

@@ -476,6 +476,24 @@ inline Grip::String::~String()
     }
 }
 #endif
+struct Grip::String::DataDesc
+{
+    unsigned int Size;
+    volatile int RefCount;
+    char Data[1];
+    unsigned int GetSize() const { return Size & ~(1u << Flag_LengthIsSizeShift); }
+};
+#ifndef HAGGAR_HOST
+inline Grip::String::DataDesc *Grip::String::GetData() const { return (DataDesc *)(HeapTypeBits & ~HT_Mask); }
+inline const char *Grip::String::ToCStr() const { return GetData()->Data; }
+inline unsigned int Grip::String::GetSize() const { const DataDesc *pDesc = GetData(); return pDesc->GetSize(); }
+#endif
+
+// gripserializer.h: a bool is written as true or false
+#ifndef HAGGAR_HOST
+inline GripSerializer::~GripSerializer() {}
+#endif
+template <> inline void GripSerializer::Write<bool>(const char *pName, bool *pValue) { WriteValue(pName, *pValue ? "true" : "false"); }
 
 // UnMath.h: boxes
 #ifndef HAGGAR_HOST
