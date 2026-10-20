@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-20 (n-Space's C++: 1,979 of 2,061 functions matched). Matching progress is
+Updated 2026-10-20 (n-Space's C++: 1,981 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -32,16 +32,16 @@ Phase 5 (UDK rebuild, later).
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **1,979 are matched (199,744 bytes, 80%), 42 are near
-(22,592 bytes) and 40 are todo (26,156 bytes)**; 1,992 functions match in
+isn't `todo`. **1,981 are matched (200,008 bytes, 80%), 42 are near
+(22,592 bytes) and 38 are todo (25,892 bytes)**; 1,994 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
-(156 match), and the CCS layer's other 644 functions (99,024 bytes; 586 of
+(156 match), and the CCS layer's other 644 functions (99,024 bytes; 588 of
 them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,526 | 37 | 40 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,528 | 37 | 38 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 351 | 3 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
@@ -60,8 +60,7 @@ saying why. In short:
   publish), `CCSAFAction`'s and `CCSAnalysisSystem`'s out-of-line
   constructors (abstract classes, so no emitting use), four
   `CCSCSMovementUnreal` functions (`DoMove`, `OrientationReached`,
-  `GetNextMoveLocation`, `MoveToDestination`), and USSPawn's two `UnwindRot`
-  statics (written, but `check.py` can't tell two statics of one name apart).
+  `GetNextMoveLocation`, `MoveToDestination`).
 - **Todo, written, registers, stack slots or inlining differ:** the
   controller's `Tick`, `SetState` and `RemoveState`, `AUSSController::PostPollMove`,
   `AUSSPawn::TickSpecial`, the `CCSAF*` actions' `UpdateGoal`,

@@ -105,7 +105,10 @@ For each file, `check.py`:
 2. compiles the file with that command line, with every `-I` replaced by
    `include/` and the XDK's `include/xbox`, into `build/obj/`;
 3. finds each `// @retail` function in our object by its decorated name (the
-   `symbol` column), or by its plain name when the PDB has no decorated one;
+   `symbol` column), or by its plain name when the PDB has no decorated one
+   (several file statics of one name, such as USSPawn's two `UnwindRot`
+   overloads, pair with ours in address order: the n-th in retail is the
+   n-th our object defines);
 4. compares its bytes with the basefile's, masking relocated fields, and
    prints `matched`, `near` (same length, other bytes) or `todo`;
 5. merges the results into `config/status.csv`.

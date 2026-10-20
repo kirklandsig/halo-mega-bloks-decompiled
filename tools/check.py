@@ -8,9 +8,10 @@ Each file names its object once, as "// @object <obj file name>". The
 object's command line (config/objects.csv) is kept, except that every -I is
 replaced with include/ and the XDK's include/xbox, and -Fo points into
 build/obj/. A marked function is found in our object by its decorated name
-(the symbol column of config/functions/); its status becomes matched,
-near (same length, different bytes) or todo (different length or missing),
-and is merged into config/status.csv (address,status; only rows that are not
+(the symbol column of config/functions/), or, without one, by its plain
+name; several statics of one name pair with ours by address order. Its
+status becomes matched, near (same length, different bytes) or todo
+(different length or missing), and is merged into config/status.csv (address,status; only rows that are not
 todo). config/functions/ is never written. Exits 1 if any function is not
 matched.
 """
@@ -97,9 +98,12 @@ def plain_name(symbol):
     return '::'.join(reversed(symbol[1:].split('@@', 1)[0].split('@')))
 
 
-def find_symbol(c, row):
+def find_symbol(c, row, namesakes=()):
     """Our symbol for an inventory row: its decorated name, or, when the
-    PDB has none (statics, inlines), the one symbol whose plain name is the row's."""
+    PDB has none (statics, inlines), the one symbol whose plain name is the row's.
+    `namesakes` are the addresses of the object's rows of that name with no
+    decorated name (the row's own included): when our object has as many
+    symbols of the name, the n-th by retail address is the n-th in our object."""
     if row['symbol'] and '?A0x' not in row['symbol']:
         return row['symbol']
     if row['symbol']:  # an anonymous namespace: its '?A0x<hash>@' differs per translation unit
@@ -114,9 +118,27 @@ def find_symbol(c, row):
         hits = {s.name for s in c.symbols.values() if s.section > 0 and s.name.startswith(f'??__F{atexit.group(1)}@')}
     else:
         hits = {s.name for s in c.symbols.values() if s.section > 0 and plain_name(s.name) == row['name']}
+    if len(hits) > 1 and len(hits) == len(namesakes):
+        return in_object_order(c, hits)[sorted(namesakes).index(int(row['address'], 16))]
     if len(hits) != 1:
         raise KeyError(row['name'])
     return hits.pop()
+
+
+def in_object_order(c, names):
+    """`names` sorted by where our object defines them (section, then offset):
+    cl emits functions in source order, as the linker lays out retail's."""
+    where = {s.name: (s.section, s.value) for s in c.symbols.values() if s.section > 0 and s.name in names}
+    return sorted(names, key=where.get)
+
+
+def namesakes(rows):
+    """{(object, name): addresses} of the rows with no decorated name."""
+    out = {}
+    for r in rows:
+        if not r['symbol']:
+            out.setdefault((r['object'], r['name']), []).append(int(r['address'], 16))
+    return out
 
 
 STATUS_COLUMNS = ['address', 'status']
@@ -155,7 +177,9 @@ def main(argv=None):
     cl = paths.require(xdk / 'bin' / 'win32' / 'cl.exe')
     image = paths.require(paths.basefile()).read_bytes()
     objects = {r['object']: r for r in inventory.read_csv(paths.CONFIG / 'objects.csv')}
-    by_address = {int(r['address'], 16): r for r in inventory.read_functions()}
+    rows = inventory.read_functions()
+    by_address = {int(r['address'], 16): r for r in rows}
+    same_name = namesakes(rows)
     results = {}
     includes = [paths.ROOT / 'include', xdk / 'include' / 'xbox']
     failed = 0
@@ -178,7 +202,7 @@ def main(argv=None):
             size = int(row['size'])
             retail = image[va - IMAGE_BASE:va - IMAGE_BASE + size]
             try:
-                data, masks = coff.function_bytes(ours, find_symbol(ours, row))
+                data, masks = coff.function_bytes(ours, find_symbol(ours, row, same_name.get((row['object'], row['name']), ())))
                 status = compare(data, masks, retail)
                 note = '' if status == 'matched' else f' ({len(data)} bytes vs {size})'
             except KeyError:

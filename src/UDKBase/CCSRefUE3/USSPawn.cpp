@@ -1,9 +1,9 @@
 // @object Unity_HaloRBTKamikazeEtAl.cpp.obj
 #include "UDKBase/Inc/UDKBaseClasses.h"
 
-// Brings a rotator component into -32768..32768. Todo (both overloads): they
-// are file statics with no public symbol, and check.py can't tell two
-// statics of one name apart.
+// Brings a rotator component into -32768..32768. Both overloads are file
+// statics with no decorated name in the PDB; check.py pairs them with ours by
+// address order.
 // @retail 0x83322568
 static int UnwindRot(int Rot)
 {
@@ -21,9 +21,10 @@ static int UnwindRot(int Rot)
 // @retail 0x833225B8
 static FRotator UnwindRot(FRotator Rot)
 {
-    Rot.Yaw = UnwindRot(Rot.Yaw);
-    Rot.Pitch = UnwindRot(Rot.Pitch);
-    return Rot;
+    FRotator Result = Rot;
+    Result.Yaw = UnwindRot(Rot.Yaw);
+    Result.Pitch = UnwindRot(Rot.Pitch);
+    return Result;
 }
 #pragma inline_depth(0)
 extern int (*const EmitUnwindRotInt)(int) = &UnwindRot;

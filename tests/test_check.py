@@ -1,3 +1,5 @@
+import pytest
+
 import check
 
 RETAIL = bytes.fromhex('7d8802a6' '4bff0f05' '4e800020')
@@ -58,3 +60,21 @@ def test_plain_name_of_decorated_symbol():
     assert check.plain_name('?CheckVA@@YAXPBDZZ') == 'CheckVA'
     assert check.plain_name('?Tick@AHaloPawn@@UAAXM@Z') == 'AHaloPawn::Tick'
     assert check.plain_name('_memcpy') == '_memcpy'
+
+
+def test_find_symbol_pairs_namesakes_by_address():
+    # two file statics named UnwindRot, no decorated name in the PDB: the
+    # n-th by retail address is the n-th our object defines
+    import coff
+    c = coff.Coff(0x1F2, [], {0: coff.Symbol('?UnwindRot@@YA?AUFRotator@@U1@@Z', 0, 3, 3),
+                              1: coff.Symbol('?UnwindRot@@YAHH@Z', 0, 2, 3),
+                              2: coff.Symbol('?UnwindRot@@YAHH@Z', 0, 0, 2)})
+    rows = [{'address': '0x83322568', 'symbol': '', 'object': 'a.obj', 'name': 'UnwindRot'},
+            {'address': '0x833225B8', 'symbol': '', 'object': 'a.obj', 'name': 'UnwindRot'},
+            {'address': '0x83382000', 'symbol': '', 'object': 'b.obj', 'name': 'UnwindRot'}]
+    same = check.namesakes(rows)
+    assert same[('a.obj', 'UnwindRot')] == [0x83322568, 0x833225B8]
+    assert check.find_symbol(c, rows[0], same[('a.obj', 'UnwindRot')]) == '?UnwindRot@@YAHH@Z'
+    assert check.find_symbol(c, rows[1], same[('a.obj', 'UnwindRot')]) == '?UnwindRot@@YA?AUFRotator@@U1@@Z'
+    with pytest.raises(KeyError):  # without the namesakes it stays ambiguous
+        check.find_symbol(c, rows[0])

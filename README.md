@@ -65,9 +65,9 @@ The handheld goal: an Anbernic device, chosen by profiling the PC build.
 
 ## Status
 
-**1,979 of n-Space's 2,061 functions match** byte for byte (80% of the
+**1,981 of n-Space's 2,061 functions match** byte for byte (80% of the
 bytes). Phase 3 finished the original scope; the CCS layer, brought in since
-(644 functions), is written but for one function (586 of its 644 match), and
+(644 functions), is written but for one function (588 of its 644 match), and
 matched code can replace its recompiled version in the port. Phase 2
 made **the recompiled build run natively on Windows x86-64, from boot to the
 first level** (11 to 16 fps on an integrated GPU), and it builds on Linux.
@@ -77,7 +77,7 @@ The results are in `docs/specs/phase2-baseline.md`,
 | | |
 | --- | --- |
 | Inventory | 237,168 functions (215,944 from the PDB's procedures, 21,224 library functions with only a public symbol), 2,295 objects |
-| n-Space's C++ | 2,061 functions (248,492 bytes) in scope: **1,979 matched** (199,744 bytes, 80%), 42 near, 40 todo |
+| n-Space's C++ | 2,061 functions (248,492 bytes) in scope: **1,981 matched** (200,008 bytes, 80%), 42 near, 38 todo |
 | Native port | Windows: boots to the first level, playable with the build's own known issues. Linux: builds, and starts UE3 on a software Vulkan device |
 | Recompilation | 237,162 functions, 345 jump tables, no unimplemented instruction; 506 files compile in about 6 minutes |
 | UnrealScript | 2,597 classes export; the 758 that are n-Space's own or modified from UDK are committed, with every decompiler error fixed, and UDK's compiler checks them as far as stock UDK allows |
