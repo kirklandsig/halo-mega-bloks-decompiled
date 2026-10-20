@@ -24,6 +24,7 @@ extern "C" float __fsqrts(float);
 extern "C" int rand();
 extern "C" double atan(double);
 extern "C" double cos(double);
+int RandHelper(int A);
 inline void *operator new(unsigned int, void *Mem) throw() { return Mem; }
 inline void operator delete(void *, void *) throw() {}
 #else

@@ -14691,6 +14691,16 @@ public:
     friend class CCSRBTMoveToCover;
     friend class CCSRBTStrafeTarget;
     friend class CCSRBTEncircleTarget;
+    friend class CCSRBTSearch;
+    friend class CCSRBTMoveToTether;
+    friend class CCSRBTShoot;
+    friend class CCSRBTMoveToTarget;
+    friend class CCSRBTMoveToActor;
+    friend class CCSRBTFlee;
+    friend class CCSRBTOrientTowardTarget;
+    friend class CCSRBTIdle;
+    friend class CCSRBTMoveToVehicle;
+    friend class CCSRBTWaitInCover;
     #ifndef HAGGAR_HOST
     ICCSMeatPuppet *m_pMeatPuppet;  // 0x8
     IGripAFInterface *m_pAFInterface;  // 0xC
