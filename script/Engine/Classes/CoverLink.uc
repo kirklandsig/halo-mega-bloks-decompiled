@@ -155,7 +155,6 @@ struct native immutablewhencooked ExposedLink
 
 	structdefaultproperties
 	{
-		TargetActor=/* ERROR: System.ArgumentException */
 		ExposedScale=0
 	}
 };
@@ -168,7 +167,6 @@ struct native immutablewhencooked SlotMoveRef
 
 	structdefaultproperties
 	{
-		Poly=/* ERROR: System.ArgumentException */
 		Dest=(Base=none,Position=(X=0.0000000,Y=0.0000000,Z=0.0000000),CachedBaseLocation=(X=0.0000000,Y=0.0000000,Z=0.0000000),CachedBaseRotation=(Pitch=0,Yaw=0,Roll=0),CachedTransPosition=(X=0.0000000,Y=0.0000000,Z=0.0000000))
 		Direction=0
 	}

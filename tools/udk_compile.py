@@ -230,6 +230,11 @@ def parse_log(text, work=None):
             continue
         if 'Compile aborted due to errors' in line and packages:
             packages[-1][1] = False
+        if 'Critical error' in line:
+            # UDK.exe itself failed, with no file to blame (see SHIMS)
+            errors.append(('', 0, f'UDK crashed while compiling {packages[-1][0] if packages else "the scripts"}'))
+            if packages:
+                packages[-1][1] = False
         diag = DIAGNOSTIC.match(line)
         if diag:
             kind, file, number, message = diag.groups()

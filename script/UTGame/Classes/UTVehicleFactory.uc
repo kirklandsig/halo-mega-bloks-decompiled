@@ -417,5 +417,11 @@ defaultproperties
 	bSkipActorPropertyReplication=true
 	NetUpdateFrequency=1.0000000
 	CollisionComponent=CollisionCylinder
-	SupportedEvents=/* ERROR: System.ArgumentOutOfRangeException */
+	SupportedEvents[0]=Class'Engine.SeqEvent_Touch'
+	SupportedEvents[1]=Class'Engine.SeqEvent_Destroyed'
+	SupportedEvents[2]=Class'Engine.SeqEvent_TakeDamage'
+	SupportedEvents[3]=Class'Engine.SeqEvent_HitWall'
+	SupportedEvents[4]=Class'Engine.SeqEvent_AnimNotify'
+	SupportedEvents[5]=Class'Engine.SeqEvent_MobileTouch'
+	SupportedEvents[6]=Class'UTGame.UTSeqEvent_VehicleFactory'
 }

@@ -775,5 +775,5 @@ defaultproperties
 	bStatic=true
 	bForceAllowKismetModification=true
 	CollisionComponent=CollisionCylinder
-	SupportedEvents=/* ERROR: System.IO.EndOfStreamException */
+	SupportedEvents[0]=Class'GameFramework.SeqEvent_CrowdAgentReachedDestination'
 }

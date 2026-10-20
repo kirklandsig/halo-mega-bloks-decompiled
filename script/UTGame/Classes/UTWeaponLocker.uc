@@ -771,7 +771,12 @@ state Disabled
 
 defaultproperties
 {
-	LockerPositions=/* ERROR: System.ArgumentOutOfRangeException */
+	LockerPositions[0]=(X=18.0000000,Y=-30.0000000,Z=0.0000000)
+	LockerPositions[1]=(X=-15.0000000,Y=25.0000000,Z=0.0000000)
+	LockerPositions[2]=(X=34.0000000,Y=-2.0000000,Z=0.0000000)
+	LockerPositions[3]=(X=-30.0000000,Y=0.0000000,Z=0.0000000)
+	LockerPositions[4]=(X=16.0000000,Y=22.0000000,Z=0.0000000)
+	LockerPositions[5]=(X=-19.0000000,Y=-32.0000000,Z=0.0000000)
 	LockerString="Weapon Locker"
 	ProximityDistanceSquared=600000.0000000
 	ScaleRate=2.0000000

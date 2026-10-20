@@ -1316,5 +1316,12 @@ defaultproperties
 	bCollideActors=true
 	bProjTarget=true
 	bNoEncroachCheck=true
-	SupportedEvents=/* ERROR: System.ArgumentOutOfRangeException */
+	SupportedEvents[0]=Class'Engine.SeqEvent_Touch'
+	SupportedEvents[1]=Class'Engine.SeqEvent_Destroyed'
+	SupportedEvents[2]=Class'Engine.SeqEvent_TakeDamage'
+	SupportedEvents[3]=Class'Engine.SeqEvent_HitWall'
+	SupportedEvents[4]=Class'Engine.SeqEvent_AnimNotify'
+	SupportedEvents[5]=Class'Engine.SeqEvent_MobileTouch'
+	SupportedEvents[6]=Class'Engine.SeqEvent_TakeDamage'
+	SupportedEvents[7]=Class'Engine.SeqEvent_Death'
 }

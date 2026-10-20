@@ -79,7 +79,8 @@ welcome.
 
 ## UnrealScript
 
-2,597 classes in 13 packages export; 2,571 without decompiler error markers.
+2,597 classes in 13 packages export; 2,571 without decompiler error markers, and
+the 14 committed ones that had them are fixed (below).
 Committed: the 758 classes that are n-Space's own (no UDK counterpart, 561)
 or modified from UDK July 2012 BETA 2 (197). The 1,839 identical classes
 stay out; `config/script_classes.csv` lists every class with its status.
@@ -100,42 +101,61 @@ stay out; `config/script_classes.csv` lists every class with its status.
 | GFxUI | 2 |
 | Cognition | 1 |
 
-### Classes with decompiler errors
+### Decompiler errors
 
-These committed classes keep a UELib marker: `/* ERROR ... */` (a default
-property it couldn't read) or `!MISMATCHING` (control flow it couldn't
-rebuild). One pass found nothing to fix in the exporter; they need fixing by
-hand or in UELib.
+All 14 classes that kept a UELib error marker are fixed, from the bytecode
+and the cooked data: the three control-flow misreads (`!MISMATCHING`, in
+HaloAIFlightController, HaloConstructionObject and HaloObjective; plus
+UTPlayerController's empty `else`) are rebuilt from the jump offsets the
+decompiler prints; the nine default properties UELib couldn't read
+(SupportedEvents, LockerPositions, EdgePathColors, ProfileMappings,
+PropertyMappings) are written from the cooked class defaults, read with
+`tools/upk.py`; CoverLink's and Pylon's struct defaults that failed were all
+zero, as in UDK's source, and are dropped.
 
-- Engine: `CoverLink`, `Pylon`
-- GameFramework: `GameCrowdAgent`, `GameCrowdDestination`
-- MegaHaloGame: `HaloAIFlightController`, `HaloConstructionObject`,
-  `HaloObjective`, `HaloProfileSettings`, `HaloScout`,
-  `HaloVehicleFactory_BansheeAI`
-- UTGame: `UTGameSettingsCommon`, `UTPlayerController`, `UTVehicleFactory`,
-  `UTWeaponLocker`
+### Compiling with UDK's script compiler
 
-These 14 are still unfixed (Phase 3 time-boxed the script work to the
-compiler test below).
+UDK July 2012 BETA 2 has the game's engine version, so its compiler checks the
+scripts. No UDK file is in the repository; the check runs on a copy of a local
+install:
 
-### Recompiling with UDK's script compiler
+```
+python tools/udk_compile.py --udk <UDK July 2012 BETA 2 install> [--nspace-only] [--fix]
+```
 
-UDK July 2012 BETA 2 has the game's engine version, so its compiler
-(`UDK.com make -full`, from the installer, run locally) was tried on the
-committed scripts. No UDK file is in the repository.
+It copies the install to `build/udk/`, lays the committed classes over it,
+adds the n-Space packages to the EditPackages lists, runs `UDK.com make -full`
+and prints each package's result and every error. `--fix` applies the known
+fixes for decompiler artifacts where the compiler reports them, and compiles
+again until none applies. `tests/test_udk_compile.py` runs the
+`--nspace-only` check when `UDK_DIR` is set.
 
-| Input | Result |
+The compiler found these decompiler artifacts, now fixed in the 266 affected
+classes: operator declarations under their internal names (`Not_PreBool`
+for `!`), casts of literals (`int(0)`), `int()` around enum comparisons,
+`ComplementEqual` for `~=`, `!A == B` for `!(A == B)`, lost `dependson()`
+(Grip's GripAFActionStatus among them; a modified Epic class keeps UDK's
+list), lost `coerce` and `.static`, interfaces written as classes, `abstract`
+on interfaces, `atomicwhencooked`, `editinline` on locals, VfTable variables
+the compiler declares itself, empty state functions turned into `ignores`
+entries, enum values qualified in default properties, constants printed as
+numbers (`Controller.503`), enum values from the wrong enum
+(`NM_ListenServer` for `TRAVEL_Relative`), skipped optional arguments
+counted twice, `else { if }` nesting past the compiler's limit, and loops in
+state code written as labels and `goto`.
+
+| Run | Result |
 | --- | --- |
-| UDK's own packages | compile: 0 errors |
-| plus the committed "modified" Epic classes in place of UDK's | fails in `Core`: decompiled operator declarations (`Object.uc`) don't compile |
-| UDK's Epic packages, plus n-Space's 13 new Engine classes, the 101 new UDKBase classes, and AkAudio, Grip, GwNavEngine, Cognition, MegaHaloGame | Core to AkAudio compile; **Grip stops** on a struct declared in another class (`GripAFActionStatus`), which needs the `dependson()` that cooking drops |
+| All 758 committed classes | Core compiles. Engine passes parsing and code generation with 0 errors, then UDK.exe stops (a critical error) while setting up its own native classes |
+| `--nspace-only` (UDK's own Epic classes) | Core to Cognition compile, with n-Space's OnlineSubsystemLive, AkAudio, Grip, GwNavEngine and Cognition; UDKBase stops on its first use of n-Space's changes to Epic classes (USSPawn's `PlayDying` has Pawn's extra `Killer` parameter) |
 
-The compiler found an exporter bug on the way: prefix operators came out as
-postfix (`IsAdmin(C)!`, `MaxDelta-`). `tools/script_export` now takes the
-side from the operator's internal name (`Not_PreBool`), and the committed
-scripts are re-exported (232 classes, 1,926 lines; the error-marker counts
-are unchanged).
-
-Next steps for anyone: add the missing `dependson()` lines, then work
-through the next package's errors; the modified Epic classes need their UDK
-originals with n-Space's changes merged in, rather than the decompiled text.
+Why the rest can't be checked with stock UDK: n-Space added 80 members to
+native Epic classes (Actor's `Next_Actor` lists, Pawn's AI weights, ...), and
+the console build's property layout differs from UDK's PC one (editor-only
+members stripped). UDK.exe has the C++ side of those classes compiled in, so
+it can't load n-Space's versions. The tool lays them out in UDK's order in the
+work tree, leaves n-Space's members out and stubs their uses (never in
+`script/`), which gets Engine through the compiler but not past UDK's own
+startup checks. Checking the packages after Engine needs either a UDK build
+with n-Space's native classes, or the Epic packages rebuilt from UDK's
+sources with n-Space's script-visible changes merged in (Phase 5's route).

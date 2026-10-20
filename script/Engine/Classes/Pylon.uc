@@ -24,7 +24,6 @@ struct native immutablewhencooked PolyReference
 
 	structdefaultproperties
 	{
-		OwningPylon=/* ERROR: System.ArgumentException */
 		PolyId=0
 	}
 };

@@ -108,5 +108,13 @@ defaultproperties
 	Components[3]=MyLightEnvironment
 	Components[4]=none
 	CollisionComponent=CollisionCylinder
-	SupportedEvents=/* ERROR: System.ArgumentOutOfRangeException */
+	SupportedEvents[0]=Class'Engine.SeqEvent_Touch'
+	SupportedEvents[1]=Class'Engine.SeqEvent_Destroyed'
+	SupportedEvents[2]=Class'Engine.SeqEvent_TakeDamage'
+	SupportedEvents[3]=Class'Engine.SeqEvent_HitWall'
+	SupportedEvents[4]=Class'Engine.SeqEvent_AnimNotify'
+	SupportedEvents[5]=Class'Engine.SeqEvent_MobileTouch'
+	SupportedEvents[6]=Class'UTGame.UTSeqEvent_VehicleFactory'
+	SupportedEvents[7]=Class'MegaHaloGame.SeqEvent_FlightAI'
+	SupportedEvents[8]=Class'MegaHaloGame.SeqEvent_FlightAI_Threat'
 }
