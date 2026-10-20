@@ -373,3 +373,378 @@ int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
     }
     return TotalThreat;
 }
+
+// @retail 0x83357230
+void CCSPSTargetAwareness::UpdateTargetList()
+{
+    CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
+    ICCSMeatPuppet *pMeatPuppet = m_pBrain->m_meatPuppet;
+    m_vehicles.Reset();
+    if (TargetPlayers())
+    {
+        CCSEngineServices::FindAllVehicles(m_vehicles);
+    }
+    for (int i = 0; i < pBB->m_Vehicles.Num(); i++)
+    {
+        CCSCharacter Vehicle = pBB->m_Vehicles[i].character;
+        bool bFound = false;
+        for (int j = m_vehicles.Num() - 1; j >= 0; j--)
+        {
+            if (Vehicle == m_vehicles[j])
+            {
+                m_vehicles[j] = CCSCharacter::NONE;
+                bFound = true;
+                break;
+            }
+        }
+        if (!bFound && !(Vehicle == pMeatPuppet->GetCharacter()))
+        {
+            pBB->OnVehicleDestroyed(i);
+        }
+    }
+    for (int i = 0; i < m_vehicles.Num(); i++)
+    {
+        if (m_vehicles[i] == CCSCharacter::NONE)
+        {
+            continue;
+        }
+        if (m_vehicles[i].GetTeam() == pBB->m_team.Get())
+        {
+            CCSTarget Target(m_pBrain);
+            Target.character = m_vehicles[i];
+            pBB->OnNewVehicle(Target);
+        }
+    }
+}
+
+// @retail 0x83357608
+void CCSPSTargetAwareness::AddThreatTarget(AActor *pActor)
+{
+    CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
+    ICCSMeatPuppet *pMeatPuppet = m_pBrain->m_meatPuppet;
+    if (pActor == pMeatPuppet->GetCharacter().m_gameCharacter.GetActor())
+    {
+        return;
+    }
+    for (int i = 0; i < pBB->m_OutRangeThreatTargets.Num(); i++)
+    {
+        CCSCharacter Character = pBB->m_OutRangeThreatTargets[i].character;
+        if (Character.m_gameCharacter.m_actor == pActor)
+        {
+            return;
+        }
+    }
+    for (int i = 0; i < pBB->m_targets.Num(); i++)
+    {
+        CCSCharacter Character = pBB->m_targets[i].character;
+        if (Character.m_gameCharacter.m_actor == pActor)
+        {
+            return;
+        }
+    }
+    for (int i = 0; i < pBB->m_friendlies.Num(); i++)
+    {
+        CCSCharacter Character = pBB->m_friendlies[i].character;
+        if (Character.m_gameCharacter.m_actor == pActor)
+        {
+            return;
+        }
+    }
+    CCSCharacter Character;
+    Character.m_gameCharacter.m_actor = pActor;
+    UUDKTargetableComponent *pTargetable = Cast<UUDKTargetableComponent>(pActor->GetComponentOfType(UUDKTargetableComponent::StaticClass()));
+    if (pTargetable == 0 || !pActor->IsValid() || pActor->IsPendingKill())
+    {
+        return;
+    }
+    CCSTarget Target(m_pBrain);
+    Target.character = Character;
+    switch (pTargetable->AITargetType)
+    {
+    case 1:
+        Target.m_aiTargetType = AITargetType_PassiveObjective;
+        break;
+    case 2:
+        Target.m_aiTargetType = AITargetType_PassiveSecondary;
+        break;
+    case 3:
+        Target.m_aiTargetType = AITargetType_AggressiveStationary;
+        break;
+    case 4:
+        Target.m_aiTargetType = AITargetType_AggressiveMobile;
+        break;
+    }
+    if (pBB->m_team.Get() != pActor->GetTeamNum())
+    {
+        pBB->OnNewThreatTarget(Target);
+    }
+    else if (pActor != pMeatPuppet->GetCharacter().m_gameCharacter.GetActor())
+    {
+        pBB->OnNewFriendly(Target);
+    }
+}
+
+// todo: 4 bytes long; where OnThreatTargetDestroyed inlines for a target in
+// m_targets, ours reloads the out-of-range count that retail keeps in r11
+// @retail 0x833579B8
+void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
+{
+    CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
+    if (pActor == m_pBrain->m_meatPuppet->GetCharacter().m_gameCharacter.GetActor())
+    {
+        return;
+    }
+    bool bRemoved = false;
+    if (pBB->GetHighestThreatTarget() != 0
+        && (pBB->GetHighestThreatTarget()->character.m_gameCharacter.m_actor == pActor || pBB->GetHighestThreatTarget()->character.m_gameCharacter.m_pawn == pActor))
+    {
+        pBB->SetHighestThreatTarget(0);
+    }
+    if (pBB->GetClosestEnemy() != 0
+        && (pBB->GetClosestEnemy()->character.m_gameCharacter.m_actor == pActor || pBB->GetClosestEnemy()->character.m_gameCharacter.m_pawn == pActor))
+    {
+        pBB->SetClosestEnemy(0);
+    }
+    if (pBB->GetClosestVisibleEnemy() != 0
+        && (pBB->GetClosestVisibleEnemy()->character.m_gameCharacter.m_actor == pActor
+            || pBB->GetClosestVisibleEnemy()->character.m_gameCharacter.m_pawn == pActor))
+    {
+        pBB->SetClosestVisibleEnemy(0);
+    }
+    if (pBB->GetCurrentTarget() != 0
+        && (pBB->GetCurrentTarget()->character.m_gameCharacter.m_actor == pActor || pBB->GetCurrentTarget()->character.m_gameCharacter.m_pawn == pActor))
+    {
+        pBB->SetCurrentTarget(0);
+    }
+    if (pBB->GetLowestLKPAgeEnemy() != 0
+        && (pBB->GetLowestLKPAgeEnemy()->character.m_gameCharacter.m_actor == pActor || pBB->GetLowestLKPAgeEnemy()->character.m_gameCharacter.m_pawn == pActor))
+    {
+        pBB->SetLowestLKPAgeEnemy(0);
+    }
+    if (pBB->GetClosestObjective() != 0
+        && (pBB->GetClosestObjective()->character.m_gameCharacter.m_actor == pActor || pBB->GetClosestObjective()->character.m_gameCharacter.m_pawn == pActor))
+    {
+        pBB->SetClosestObjective(0);
+    }
+    if (pBB->GetReactiveTarget() != 0
+        && (pBB->GetReactiveTarget()->character.m_gameCharacter.m_actor == pActor || pBB->GetReactiveTarget()->character.m_gameCharacter.m_pawn == pActor))
+    {
+        pBB->SetReactiveTarget(0);
+    }
+    if (pBB->GetSecondaryTarget() != 0
+        && (pBB->GetSecondaryTarget()->character.m_gameCharacter.m_actor == pActor || pBB->GetSecondaryTarget()->character.m_gameCharacter.m_pawn == pActor))
+    {
+        pBB->SetSecondaryTarget(0);
+    }
+    for (int i = 0; i < pBB->m_OutRangeThreatTargets.Num(); i++)
+    {
+        CCSCharacter Character = pBB->m_OutRangeThreatTargets[i].character;
+        if (Character.m_gameCharacter.m_actor == pActor || Character.m_gameCharacter.m_pawn == pActor)
+        {
+            pBB->OnThreatTargetDestroyed(i);
+            bRemoved = true;
+            break;
+        }
+    }
+    if (!bRemoved)
+    {
+        for (int i = 0; i < pBB->m_targets.Num(); i++)
+        {
+            CCSCharacter Character = pBB->m_targets[i].character;
+            if (Character.m_gameCharacter.m_actor == pActor || Character.m_gameCharacter.m_pawn == pActor)
+            {
+                pBB->OnThreatTargetDestroyed(pBB->m_OutRangeThreatTargets.Num() + i);
+                bRemoved = true;
+                break;
+            }
+        }
+    }
+    if (!bRemoved)
+    {
+        for (int i = 0; i < pBB->m_friendlies.Num(); i++)
+        {
+            CCSCharacter Character = pBB->m_friendlies[i].character;
+            if (Character.m_gameCharacter.m_actor == pActor || Character.m_gameCharacter.m_pawn == pActor)
+            {
+                pBB->OnFriendlyDestroyed(i);
+                bRemoved = true;
+                break;
+            }
+        }
+    }
+    if (bRemoved && pBB->m_targets.Num() == 0)
+    {
+        pBB->SetHasBecomeAware(false);
+        pBB->m_timeSinceLostAware.Set(0.0f);
+    }
+}
+
+// near: saved registers are assigned in another order (the meat puppet in
+// r30, zero in r28), the trace distance squares X first, and isAware's or
+// takes bAware without masking it (the comparison's operand order, a
+// distance written out and an int flag tried)
+// @retail 0x8336F5E0
+void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
+{
+    if (Target.character.GetActor() == 0)
+    {
+        return;
+    }
+    CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
+    ICCSMeatPuppet *pMeatPuppet = m_pBrain->m_meatPuppet;
+    m_pBrain->GetMeatPuppetQuery<IGripMeatPuppetQuery>();
+    Target.isBehindCover = false;
+    const bool bWasVisible = Target.isVisible;
+    Target.isHeard = IsTargetHeard(Target, pMeatPuppet);
+    Target.isVisible = IsTargetVisible(Target, pMeatPuppet);
+    if (!Target.isVisible)
+    {
+        APawn *pPawn = pMeatPuppet->GetCharacter().m_gameCharacter.m_pawn;
+        AActor *pTargetActor = (AActor *)Target.character.GetActor();
+        if (pPawn != 0 && pTargetActor != 0 && rand() * (1.0f / 32767.0f) < pPawn->ChanceToFireAtTargetsBehindCover)
+        {
+            const float EyeHeight = pPawn->BaseEyeHeight;
+            FVector Start(pPawn->Location.X, pPawn->Location.Y, pPawn->Location.Z + EyeHeight);
+            FVector End(pTargetActor->Location.X, pTargetActor->Location.Y, pTargetActor->Location.Z + EyeHeight);
+            FCheckResult Hit;
+            GWorld->SingleLineCheck(Hit, pPawn, End, Start, 0x209F, FVector(0, 0, 0), 0);
+            if (Hit.Actor != 0 && Cast<UUDKTargetableComponent>(Hit.Actor->GetComponentOfType(UUDKTargetableComponent::StaticClass())) != 0)
+            {
+                const float Distance = (Start - End).Size();
+                const float HitDistance = Hit.Time * Distance;
+                if (Distance - HitDistance < HitDistance)
+                {
+                    Target.isBehindCover = true;
+                }
+            }
+        }
+    }
+    if (!bWasVisible && Target.isVisible)
+    {
+        NotifyTargetBecameVisible(Target);
+    }
+    bool bAware = false;
+    if (Target.isVisible || Target.isHeard)
+    {
+        if (pMeatPuppet->GetTeam() != Target.character.GetTeam())
+        {
+            bAware = true;
+        }
+    }
+    Target.isAware |= bAware;
+    if (!pBB->m_bHasBecomeAware.Get() && Target.isAware)
+    {
+        BecomeAware(true);
+    }
+    AActor *pActor = Target.character.m_gameCharacter.m_pawn != 0 ? Target.character.m_gameCharacter.m_pawn : Target.character.m_gameCharacter.m_actor;
+    if (pActor != 0)
+    {
+        Target.character.m_gameCharacter.m_cachedTeamNum = pActor->GetTeamNum();
+    }
+    if (Target.currentThreat > 0.0f && Target.CNTAge > 4.0f && Target.character.GetActor() != 0)
+    {
+        Grip_Vector Destination = Target.position;
+        APawn *pTargetPawn = (APawn *)Target.character.GetActor();
+        if (pTargetPawn != 0)
+        {
+            Destination = pTargetPawn->GetNavAdjustedLocation(m_pBrain->m_meatPuppet->GetCharacter().GetPosition(), 1.1f);
+        }
+        Target.FindDestinationReachable(Destination);
+    }
+}
+
+// near: three fadds have their operands the other way round (DeltaTime
+// first in retail, for the first loop's and the threat target's LKPAge and
+// the friendly limit; +=, both operand orders and named locals tried), and
+// the threat target's position is stored X, Z, Y
+// @retail 0x8333CD70
+void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
+{
+    CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
+    ICCSMeatPuppet *pMeatPuppet = m_pBrain->m_meatPuppet;
+    for (int i = 0; i < pBB->m_targets.Num(); i++)
+    {
+        CCSTarget &Target = pBB->m_targets[i];
+        Target.position = Target.character.GetPosition();
+        Target.range2D = (Target.position - pMeatPuppet->GetCharacter().GetPosition()).Size2D();
+        if (!Target.isVisible)
+        {
+            Target.LKPAge += DeltaTime;
+        }
+        if (Target.isVisible || Target.isHeard)
+        {
+            Target.LKPAge = 0.0f;
+            Target.LKP = Target.position;
+        }
+        Target.canShoot = Target.isVisible;
+        Target.ClearOfFriendlies = true;
+        if (pBB->m_friendlies.Num() > 0)
+        {
+            Grip_Vector Eyes = Target.character.GetEyesPosition();
+            Grip_Vector Weapon = pMeatPuppet->GetWeaponStartPosition();
+            Grip_Vector Direction = Eyes - Weapon;
+            const float Radius = pMeatPuppet->GetCharacter().GetSize() * 2.0f;
+            const float DistanceSq = Direction.SizeSquared2D();
+            if (DistanceSq > Radius * Radius)
+            {
+                const float Limit = Radius * Radius + DistanceSq;
+                const float Ratio = DistanceSq / Limit;
+                for (int j = 0; j < pBB->m_friendlies.Num(); j++)
+                {
+                    Grip_Vector FriendDirection = pBB->m_friendlies[j].character.GetEyesPosition() - Weapon;
+                    const float FriendDistanceSq = FriendDirection.SizeSquared2D();
+                    if (FriendDistanceSq >= Limit)
+                    {
+                        continue;
+                    }
+                    const float Dot = FriendDirection | Direction;
+                    if (Dot > 0.0f && Dot * Dot / (FriendDistanceSq * DistanceSq) >= (Ratio - 0.75f) / DistanceSq * FriendDistanceSq + 0.75f)
+                    {
+                        Target.canShoot = false;
+                        Target.ClearOfFriendlies = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    for (int i = 0; i < pBB->m_Vehicles.Num(); i++)
+    {
+        CCSTarget &Vehicle = pBB->m_Vehicles[i];
+        AUDKVehicle *pVehicle = 0;
+        if (Vehicle.character.GetActor() == 0)
+        {
+            continue;
+        }
+        if (((AActor *)Vehicle.character.GetActor())->IsA(AUDKVehicle::StaticClass()))
+        {
+            pVehicle = (AUDKVehicle *)Vehicle.character.GetActor();
+        }
+        Vehicle.position = Vehicle.character.GetPosition();
+        Vehicle.range2D = (Vehicle.position - pMeatPuppet->GetCharacter().GetPosition()).Size2D();
+        if (pVehicle != 0)
+        {
+            Vehicle.isAvailableVehicle = pVehicle->Seats(0).SeatPawn == 0 || pVehicle->Seats(0).SeatPawn->Controller == 0;
+        }
+        if (!Vehicle.isVisible)
+        {
+            Vehicle.LKPAge = Vehicle.LKPAge + DeltaTime;
+        }
+    }
+    if (pBB->GetHighestThreatTarget() != 0)
+    {
+        CCSTarget *pTarget = pBB->GetHighestThreatTarget();
+        if (pTarget->character != CCSCharacter::NONE)
+        {
+            pTarget->position = pTarget->character.GetPosition();
+            Grip_Vector Position = pMeatPuppet->GetCharacter().GetPosition();
+            const float DeltaX = pTarget->position.X - Position.X;
+            const float DeltaY = pTarget->position.Y - Position.Y;
+            pTarget->range2D = appSqrt(DeltaX * DeltaX + DeltaY * DeltaY);
+        }
+        if (!pTarget->isVisible)
+        {
+            pTarget->LKPAge += DeltaTime;
+        }
+    }
+}

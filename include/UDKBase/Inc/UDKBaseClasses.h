@@ -129,6 +129,7 @@ class AUDKProjectile;
 class AUDKSquadAI;
 class AUDKVehicle;
 class AUDKVehicleBase;
+class AUDKVehicleMovementEffect;
 class AUDKWeapon;
 class AUDKWeaponPawn;
 class AUSSController;
@@ -678,6 +679,7 @@ class FViewport;
 struct FVisiblePortalInfo;
 struct FWaveInstance;
 struct FWaveformSample;
+struct FWeaponEffectInfo;
 class FWindSourceSceneProxy;
 struct FWorldFractureSettings;
 struct FWrappedStringElement;
@@ -1087,7 +1089,9 @@ class UUDKAnimBlendByTurnInPlace;
 class UUDKAnimBlendByWeapType;
 class UUDKAnimNodeCopyBoneTranslation;
 class UUDKAnimNodeSeqWeap;
+class UUDKExplosionLight;
 class UUDKSkelControl_Damage;
+class UUDKSkelControl_TurretConstrained;
 class UUDKSkeletalMeshComponent;
 class UUDKTargetableComponent;
 class UUIDataProvider;
@@ -12557,15 +12561,113 @@ HG_PRIVATE:
     unsigned int FVehicleEffectData[0xA];
 };
 
-struct FVehicleSeat  // size 0x12C, opaque
+struct FWeaponEffectInfo  // size 0x24, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    FWeaponEffectInfo(EEventParm);
+    FWeaponEffectInfo();
+    #endif
+HG_PRIVATE:
+    unsigned int FWeaponEffectInfoData[0x9];
+};
+
+struct FVehicleSeat  // size 0x12C
 {
 public:
     #ifndef HAGGAR_HOST
     FVehicleSeat(EEventParm);
     FVehicleSeat();
     #endif
-HG_PRIVATE:
-    unsigned int FVehicleSeatData[0x4B];
+    #ifndef HAGGAR_HOST
+    APawn *StoragePawn;  // 0x0
+    AVehicle *SeatPawn;  // 0x4
+    UClass *GunClass;  // 0x8
+    AUDKWeapon *Gun;  // 0xC
+    TArrayNoInit<FName> GunSocket;  // 0x10
+    TArrayNoInit<FName> GunPivotPoints;  // 0x1C
+    int BarrelIndex;  // 0x28
+    FStringNoInit TurretVarPrefix;  // 0x2C
+    TArrayNoInit<FWeaponEffectInfo> WeaponEffects;  // 0x38
+    FName WeaponRotationName;  // 0x44
+    FName FlashLocationName;  // 0x4C
+    FName FlashCountName;  // 0x54
+    FName FiringModeName;  // 0x5C
+    void *WeaponRotationProperty;  // 0x64
+    void *FlashLocationProperty;  // 0x68
+    void *FlashCountProperty;  // 0x6C
+    void *FiringModeProperty;  // 0x70
+    FRotator LastWeaponRotation;  // 0x74
+    TArrayNoInit<FName> TurretControls;  // 0x80
+    TArrayNoInit<UUDKSkelControl_TurretConstrained *> TurretControllers;  // 0x8C
+    FVector AimPoint;  // 0x98
+    AActor *AimTarget;  // 0xA4
+    float PivotFireOffsetZ;  // 0xA8
+    unsigned long bDisableOffsetZAdjust : 1;  // 0xAC
+    FName CameraTag;  // 0xB0
+    FVector CameraBaseOffset;  // 0xB8
+    FVector CameraSafeOffset;  // 0xC4
+    float CameraOffset;  // 0xD0
+    float CameraEyeHeight;  // 0xD4
+    float ViewPitchMin;  // 0xD8
+    float ViewPitchMax;  // 0xDC
+    unsigned long bSeatVisible : 1;  // 0xE0
+    FName SeatBone;  // 0xE4
+    FVector SeatOffset;  // 0xEC
+    FRotator SeatRotation;  // 0xF8
+    FName SeatSocket;  // 0x104
+    UClass *MuzzleFlashLightClass;  // 0x10C
+    UUDKExplosionLight *MuzzleFlashLight;  // 0x110
+    UClass *ImpactFlashLightClass;  // 0x114
+    float DriverDamageMult;  // 0x118
+    UAudioComponent *SeatMotionAudio;  // 0x11C
+    AUDKVehicleMovementEffect *SeatMovementEffect;  // 0x120
+    FVector2D SeatIconPOS;  // 0x124
+    #else
+    hg::gptr<APawn> StoragePawn;
+    hg::gptr<AVehicle> SeatPawn;
+    hg::gptr<UClass> GunClass;
+    hg::gptr<AUDKWeapon> Gun;
+    TArrayNoInit<FName> GunSocket;
+    TArrayNoInit<FName> GunPivotPoints;
+    hg::be<int> BarrelIndex;
+    FStringNoInit TurretVarPrefix;
+    TArrayNoInit<FWeaponEffectInfo> WeaponEffects;
+    FName WeaponRotationName;
+    FName FlashLocationName;
+    FName FlashCountName;
+    FName FiringModeName;
+    hg::gptr<void> WeaponRotationProperty;
+    hg::gptr<void> FlashLocationProperty;
+    hg::gptr<void> FlashCountProperty;
+    hg::gptr<void> FiringModeProperty;
+    FRotator LastWeaponRotation;
+    TArrayNoInit<FName> TurretControls;
+    TArrayNoInit<UUDKSkelControl_TurretConstrained *> TurretControllers;
+    FVector AimPoint;
+    hg::gptr<AActor> AimTarget;
+    hg::be<float> PivotFireOffsetZ;
+    hg::be<unsigned int> _bitsAC;  // 0xAC, from bDisableOffsetZAdjust
+    FName CameraTag;
+    FVector CameraBaseOffset;
+    FVector CameraSafeOffset;
+    hg::be<float> CameraOffset;
+    hg::be<float> CameraEyeHeight;
+    hg::be<float> ViewPitchMin;
+    hg::be<float> ViewPitchMax;
+    hg::be<unsigned int> _bitsE0;  // 0xE0, from bSeatVisible
+    FName SeatBone;
+    FVector SeatOffset;
+    FRotator SeatRotation;
+    FName SeatSocket;
+    hg::gptr<UClass> MuzzleFlashLightClass;
+    hg::gptr<UUDKExplosionLight> MuzzleFlashLight;
+    hg::gptr<UClass> ImpactFlashLightClass;
+    hg::be<float> DriverDamageMult;
+    hg::gptr<UAudioComponent> SeatMotionAudio;
+    hg::gptr<AUDKVehicleMovementEffect> SeatMovementEffect;
+    FVector2D SeatIconPOS;
+    #endif
 };
 
 struct FVehicleSound  // size 0x18, opaque
@@ -46470,6 +46572,7 @@ inline FVehicleState::FVehicleState() {}
 inline FViewParticleEmitterInstanceMotionBlurInfo::FViewParticleEmitterInstanceMotionBlurInfo() {}
 inline FViewTargetTransitionParams::FViewTargetTransitionParams() {}
 inline FVisiblePortalInfo::FVisiblePortalInfo() {}
+inline FWeaponEffectInfo::FWeaponEffectInfo() {}
 #endif
 inline FTickableObject::FTickableObject() {}
 inline FTickableObject::~FTickableObject() {}

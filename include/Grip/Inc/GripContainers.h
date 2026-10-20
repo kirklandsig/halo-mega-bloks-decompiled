@@ -126,8 +126,8 @@ public:
     }
     bool ContainsItem(const T &Item) const { return FindObject(Item) != -1; }
     int Num() const { return m_ContainingNum; }
-    const T &operator[](int Index) const { return m_ContainerContent[Index]; }
-    T &operator[](int Index) { return m_ContainerContent[Index]; }
+    const T &operator[](int Index) const { return *(const T *)((const char *)m_ContainerContent + Index * sizeof(T)); }
+    T &operator[](int Index) { return *(T *)((char *)m_ContainerContent + Index * sizeof(T)); }
     void AddItem(const T &Item)
     {
         if (m_ContainingNum + 1 > m_ContainingMax)
