@@ -3048,6 +3048,7 @@ class ColliderCollectorConfig;
 class CoordSystem;
 class CylinderObstacle;
 class Database;
+class DatabaseBinding;
 class DatabaseGenMetrics;
 class DefaultTraverseLogic;
 class DisplayListManager;
@@ -3096,6 +3097,8 @@ class PathFinderQueryUtils;
 class PathProgressConfig;
 class PathRefinerContext;
 class PathValidityInterval;
+class PointDbSpatialization;
+class PointDbSpatializationPair;
 class PointOfInterest;
 class PositionOnLivePath;
 class PositionOnPath;
@@ -3113,6 +3116,7 @@ class SpatializedCylinder;
 class SpatializedCylinderInitConfig;
 class SpatializedPoint;
 class SpatializedPointCollectorContext;
+class SpatializedPointInitConfig;
 class StatBag;
 class String;
 class StringBuffer;
@@ -3289,6 +3293,15 @@ enum RayCanGoMarginMode
     MinimalTrajectoryMargin = 5,
     MoveOnNavMeshMargin = 6,
     RayCanGoMarginModeCount = 7,
+};
+enum SpatializedPointObjectType
+{
+    SpatializedPointObjectType_Undefined = 0,
+    SpatializedPointObjectType_Bot = 1,
+    SpatializedPointObjectType_CylinderObstacle = 2,
+    SpatializedPointObjectType_BoxObstacle = 3,
+    SpatializedPointObjectType_PointOfInterest = 4,
+    SpatializedPointObjectType_Count = 5,
 };
 enum TrajectoryMode
 {
@@ -25476,7 +25489,233 @@ HG_PRIVATE:
 }
 
 namespace Kaim {
-class SpatializedCylinder  // size 0x14, opaque
+class RefCountNTSImplCore  // size 0x8, opaque
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~RefCountNTSImplCore();)
+    int GetRefCount() const;
+    static void checkInvalidDelete(Kaim::RefCountNTSImplCore *);
+    void operator=(const Kaim::RefCountNTSImplCore &);
+    #ifndef HAGGAR_HOST
+    RefCountNTSImplCore();
+    #endif
+HG_PRIVATE:
+    unsigned int RefCountNTSImplCoreData[0x1];
+};
+}
+
+namespace Kaim {
+class RefCountNTSImpl : public Kaim::RefCountNTSImplCore  // size 0x8, opaque
+{
+public:
+    void AddRef() const;
+    void Release() const;
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseStatImpl<Kaim::RefCountNTSImpl,129> : public Kaim::RefCountNTSImpl  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    RefCountBaseStatImpl();
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseNTS<Kaim::DatabaseBinding,129> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountNTSImpl,129>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 129,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBaseNTS();
+    #endif
+};
+}
+
+namespace Kaim {
+class DatabaseBinding : public Kaim::RefCountBaseNTS<Kaim::DatabaseBinding,129>  // size 0x24, opaque
+{
+public:
+    int AddDataBase(Kaim::Database *);
+    Kaim::World *GetWorld();
+    unsigned int GetBoundDatabaseCount() const;
+    Kaim::Database *GetBoundDatabase(unsigned int) const;
+    unsigned int GetBoundDatabaseIdx(unsigned int) const;
+    void Clear();
+HG_PRIVATE:
+    void InitForWorld(Kaim::World *);
+public:
+    #ifndef HAGGAR_HOST
+    DatabaseBinding();
+    #endif
+    #ifndef HAGGAR_HOST
+    static const unsigned int InvalidBoundDatabaseIndex;
+    #else
+    static const hg::be<unsigned int> (&InvalidBoundDatabaseIndex);
+    #endif
+HG_PRIVATE:
+    unsigned int DatabaseBindingData[0x7];
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseStatImpl<Kaim::RefCountImpl,198> : public Kaim::RefCountImpl  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    RefCountBaseStatImpl();
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::SpatializedPoint,198> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,198>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 198,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class SpatializedPoint : public Kaim::RefCountBase<Kaim::SpatializedPoint,198>  // size 0x2C
+{
+HG_PRIVATE:
+    Kaim::SpatializedPoint &operator=(const Kaim::SpatializedPoint &);
+public:
+    void Init(const Kaim::SpatializedPointInitConfig &);
+    void Clear();
+    void Invalidate();
+    void InvalidateAllDbSpatializations();
+    const Kaim::DatabaseBinding *GetDatabaseBinding() const;
+    unsigned int GetDbSpatializationCount() const;
+    const Kaim::PointDbSpatialization &GetDbSpatialization(unsigned int) const;
+    Kaim::PointDbSpatialization &GetDbSpatialization(unsigned int);
+    const Kaim::Vec3f &GetPosition() const;
+    float GetHeight() const;
+    void *GetObject() const;
+    Kaim::SpatializedPointObjectType GetObjectType() const;
+    unsigned int GetIndexInObject() const;
+    Kaim::NavTrianglePtr GetNavTrianglePtr(Kaim::Database *) const;
+    void SetPosition(const Kaim::Vec3f &);
+    void SetHeight(float);
+    void UpdateSpatialization(const Kaim::Vec3f &);
+HG_PRIVATE:
+    void UpdateNavFloorCollections(Kaim::PointDbSpatializationPair &);
+public:
+    void UpdateNavFloorCollections();
+    void OnNavFloorDeActivation(Kaim::NavFloor *);
+    static const char *GetObjectTypeDescrition(Kaim::SpatializedPointObjectType);
+    bool SpatializationResultHasChanged() const;
+HG_PRIVATE:
+    void CreateDbSpatializationPairs();
+    void DestroyDbSpatializationPairs();
+public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    SpatializedPoint();
+HG_PRIVATE:
+    SpatializedPoint(const Kaim::SpatializedPoint &);
+public:
+    HG_VIRTUAL ~SpatializedPoint();
+    #endif
+    #ifndef HAGGAR_HOST
+    Kaim::Vec3f m_position;  // 0x8
+    Kaim::Ptr<Kaim::DatabaseBinding> m_databaseBinding;  // 0x14
+    Kaim::PointDbSpatializationPair *m_dbSpatializationPairs;  // 0x18
+    void *m_object;  // 0x1C
+    Kaim::SpatializedPointObjectType m_objectType;  // 0x20
+    unsigned int m_indexInObject;  // 0x24
+    float m_height;  // 0x28
+    #else
+    Kaim::Vec3f m_position;
+    Kaim::Ptr<Kaim::DatabaseBinding> m_databaseBinding;
+    hg::gptr<Kaim::PointDbSpatializationPair> m_dbSpatializationPairs;
+    hg::gptr<void> m_object;
+    hg::be<Kaim::SpatializedPointObjectType> m_objectType;
+    hg::be<unsigned int> m_indexInObject;
+    hg::be<float> m_height;
+    #endif
+};
+}
+
+namespace Kaim {
+class SpatializedCylinder  // size 0x14
 {
 HG_PRIVATE:
     Kaim::SpatializedCylinder &operator=(const Kaim::SpatializedCylinder &);
@@ -25527,8 +25766,15 @@ HG_PRIVATE:
 public:
     ~SpatializedCylinder();
     #endif
-HG_PRIVATE:
-    unsigned int SpatializedCylinderData[0x5];
+    #ifndef HAGGAR_HOST
+    Kaim::Ptr<Kaim::SpatializedPoint> m_spatializedPoint;  // 0x0
+    Kaim::Vec3f m_velocity;  // 0x4
+    float m_radius;  // 0x10
+    #else
+    Kaim::Ptr<Kaim::SpatializedPoint> m_spatializedPoint;
+    Kaim::Vec3f m_velocity;
+    hg::be<float> m_radius;
+    #endif
 };
 }
 
@@ -26203,63 +26449,6 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int MemoryHeapData[0x18];
-};
-}
-
-namespace Kaim {
-class RefCountNTSImplCore  // size 0x8, opaque
-{
-    HG_VFPTR
-public:
-    HG_XDK(HG_VIRTUAL ~RefCountNTSImplCore();)
-    int GetRefCount() const;
-    static void checkInvalidDelete(Kaim::RefCountNTSImplCore *);
-    void operator=(const Kaim::RefCountNTSImplCore &);
-    #ifndef HAGGAR_HOST
-    RefCountNTSImplCore();
-    #endif
-HG_PRIVATE:
-    unsigned int RefCountNTSImplCoreData[0x1];
-};
-}
-
-namespace Kaim {
-class RefCountNTSImpl : public Kaim::RefCountNTSImplCore  // size 0x8, opaque
-{
-public:
-    void AddRef() const;
-    void Release() const;
-};
-}
-
-namespace Kaim {
-template <> class RefCountBaseStatImpl<Kaim::RefCountNTSImpl,129> : public Kaim::RefCountNTSImpl  // size 0x8, opaque
-{
-public:
-    #ifndef HAGGAR_HOST
-    RefCountBaseStatImpl();
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
-    static void *operator new(unsigned int, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
-    static void *operator new(unsigned int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *);
-    static void *operator new(unsigned int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *);
-    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *);
-    static void operator delete(void *, int, const char *, int);
-    static void operator delete(void *, const char *, int);
-    static void operator delete(void *);
-    #endif
 };
 }
 

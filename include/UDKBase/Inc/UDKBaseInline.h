@@ -532,3 +532,25 @@ inline GripSystemScheduler::GripSystemScheduler() {}
 inline CCSGlobalDataScheduler::TickGroupInfo::TickGroupInfo() : pGDS(0), sensorCount(0), isActive(true) {}
 #endif
 inline float CCSCharacter::GetHeight() const { return m_gameCharacter.GetHeight(); }
+#ifndef HAGGAR_HOST
+inline IGripSRComponent::~IGripSRComponent() {}
+#endif
+
+// bot.h, spatializedcylinder.h, spatializedpoint.h (Gameware Navigation)
+inline const Kaim::Vec3f &Kaim::SpatializedPoint::GetPosition() const { return m_position; }
+inline const Kaim::Vec3f &Kaim::SpatializedCylinder::GetPosition() const { return m_spatializedPoint->GetPosition(); }
+inline const Kaim::Vec3f &Kaim::Bot::GetPosition() const { return m_spatializedCylinder.GetPosition(); }
+#ifndef HAGGAR_HOST
+inline void *Kaim::WorkingMemory::operator new(unsigned int Size) { return Kaim::Memory::pGlobalHeap->Alloc(Size, 0); }
+#endif
+
+// gripaimanager.h, ccsdebugoptions.h
+inline IGripAISystem *GripAIManager::GetSystem(int Id) const
+{
+    if (m_aiSystems.Num() > Id)
+    {
+        return m_aiSystems[Id];
+    }
+    return 0;
+}
+inline bool CCSDebugOptions::IsOptionEnabled(CCSDebugOptions::EOptions Option) const { return m_options[Option]; }

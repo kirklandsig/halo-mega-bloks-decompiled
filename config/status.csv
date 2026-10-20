@@ -252,7 +252,13 @@ address,status
 0x83320850,matched
 0x83320870,matched
 0x83320A20,matched
+0x83320A88,matched
 0x83320B50,matched
+0x83320B58,matched
+0x83320C50,matched
+0x83320CB0,matched
+0x83320D40,matched
+0x83320D50,matched
 0x83320DA0,matched
 0x83320DA8,matched
 0x83321220,matched
@@ -453,6 +459,8 @@ address,status
 0x8332A628,matched
 0x8332A898,matched
 0x8332A968,matched
+0x8332AA90,matched
+0x8332AB38,matched
 0x8332B430,matched
 0x8332B538,matched
 0x8332B630,matched
@@ -619,6 +627,9 @@ address,status
 0x83337B00,matched
 0x83338110,matched
 0x83338180,matched
+0x833381F8,matched
+0x83338348,matched
+0x83338388,matched
 0x83338BF8,matched
 0x83338C38,matched
 0x83338CC8,matched
@@ -697,6 +708,8 @@ address,status
 0x8334AB40,matched
 0x8334B038,matched
 0x8334B1E0,matched
+0x8334B5B8,near
+0x8334B6B8,near
 0x8334C3A8,matched
 0x8334D020,near
 0x83350AE8,matched

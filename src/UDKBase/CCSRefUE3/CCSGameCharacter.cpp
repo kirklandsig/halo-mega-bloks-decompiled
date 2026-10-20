@@ -29,3 +29,18 @@ float CCSGameCharacter::GetHeight() const
     }
     return Height;
 }
+
+// @retail 0x83321240
+Grip_Rotation CCSGameCharacter::GetOrientation() const
+{
+    Grip_Rotation Orientation;
+    if (m_pawn != 0)
+    {
+        Orientation = m_pawn->Rotation;
+    }
+    if (m_actor != 0)
+    {
+        Orientation = m_actor->Rotation;
+    }
+    return Orientation;
+}
