@@ -127,10 +127,6 @@ bool CCSCSMovementUnreal::DoMoving()
 // the difference with Grip_Vector::Rotation and reads the character's
 // rotation, which is not reconstructed yet.
 //
-// Todo(0x83338628): CCSCSMovementUnreal::CreateRenderingProxy makes the
-// pawn's debug proxy; the retail's proxy factory call is not reconstructed
-// yet.
-//
 // Todo(0x833434D0): CCSCSMovementUnreal::GetNextMoveLocation picks the next
 // point of the movement; the retail's path and projection calls are not
 // reconstructed yet.
@@ -138,3 +134,16 @@ bool CCSCSMovementUnreal::DoMoving()
 // Todo(0x8334B7C8): CCSCSMovementUnreal::MoveToDestination sends the pawn to
 // the final destination; the retail's scheduler calls and its handling of an
 // unreachable destination are not reconstructed yet.
+
+// The debug proxy: where the controller is heading, the final destination,
+// the next move location and the objective's target.
+// @retail 0x83338628
+IGripSRProxy *CCSCSMovementUnreal::CreateRenderingProxy()
+{
+    CCSMovementRenderingProxy *pProxy = new CCSMovementRenderingProxy;
+    pProxy->m_finalDest = m_validFinalDestination;
+    pProxy->m_currDest = m_pCCSCtrl->bAdjusting ? m_pCCSCtrl->GetAdjustLocation() : m_pCCSCtrl->GetDestinationPosition();
+    pProxy->m_nextMoveLocation = m_nextMoveLocation;
+    pProxy->m_objectiveTarget = m_moveObj.target;
+    return pProxy;
+}

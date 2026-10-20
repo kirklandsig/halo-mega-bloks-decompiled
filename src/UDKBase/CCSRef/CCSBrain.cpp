@@ -2,6 +2,7 @@
 // ccsbrain.cpp: the brain's setup and its per-frame work.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "../CCSRefUE3/CCSGameCharacter.cpp"
 
 // The CCS debug options are the third AI system the manager holds. The early
 // outs are what retail's code does: each of them leaves the options unset.
@@ -349,7 +350,13 @@ void CCSBrain::DrawHUD(GripHUDRenderer *pRenderer, int &Y)
     }
 }
 
-// Todo(0x8333BC98): CCSBrain::CreateDebugRenderingProxies builds a debug
-// proxy for the meat puppet's character and appends it to the caller's array.
-// The retail reads a global renderer, this class's two debug flags and the
-// character's actor, so the call sequence is not reconstructed yet.
+// Adds the brain's own debug marker, 20 units above the pawn.
+// @retail 0x8333BC98
+void CCSBrain::CreateDebugRenderingProxies(Grip_ArrayPOD<IGripSRProxy *, 2> &Proxies)
+{
+    GripBrain::CreateDebugRenderingProxies(Proxies);
+    CCSCharacter Character = m_meatPuppet->GetCharacter();
+    Grip_Vector Position = Character.GetPosition();
+    Position.Z = Character.GetHeight() + Position.Z + 20.0f;
+    Proxies.AddItem(new GripBrainRenderingProxy(Position, 1.0f, m_debug, m_disabled));
+}

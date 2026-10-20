@@ -809,6 +809,7 @@ address,status
 0x8332EDB0,matched
 0x8332EE78,matched
 0x8332EF40,matched
+0x8332EFE8,matched
 0x8332F380,matched
 0x8332F440,matched
 0x8332F4B0,near
@@ -964,6 +965,7 @@ address,status
 0x83338388,matched
 0x83338540,near
 0x833385E8,matched
+0x83338628,matched
 0x83338A88,matched
 0x83338B60,matched
 0x83338BF8,matched
@@ -1019,6 +1021,7 @@ address,status
 0x8333B960,near
 0x8333BA88,near
 0x8333BB88,matched
+0x8333BC98,matched
 0x8333BE28,matched
 0x8333BF30,matched
 0x8333C020,matched

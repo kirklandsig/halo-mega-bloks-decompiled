@@ -705,9 +705,11 @@ class GripBTSystemFlags;
 class GripBlackboard;
 class GripBrain;
 class GripBrainDebugOptions;
+class GripBrainRenderingProxy;
 class GripBrainSnapshotSerializer;
 class GripBrainSystem;
 class GripBrainSystemContainer;
+class GripDebug;
 class GripDebugOptions;
 class GripEngine;
 class GripEngineServices;
@@ -24745,6 +24747,27 @@ HG_PRIVATE:
     unsigned int GripBrainDebugOptionsData[0x3];
 };
 
+class GripBrainRenderingProxy : public GripVHeapObject, public IGripSRProxy  // size 0x1C
+{
+public:
+    HG_VIRTUAL void Render(IGripSceneRenderer *);
+    #ifndef HAGGAR_HOST
+    GripBrainRenderingProxy(const Grip_Vector &, float, bool, bool);
+    #endif
+    #ifndef HAGGAR_HOST
+    Grip_Vector m_debugGFXLoc;  // 0x8
+    float m_gameScaleFactor;  // 0x14
+    bool m_drawDebugIndicator;  // 0x18
+    bool m_drawDisabledIndicator;  // 0x19
+    #else
+    Grip_Vector m_debugGFXLoc;
+    hg::be<float> m_gameScaleFactor;
+    bool m_drawDebugIndicator;
+    bool m_drawDisabledIndicator;
+    char _pad0[0x2];
+    #endif
+};
+
 class GripBrainSnapshotSerializer : public GripVHeapObject  // size 0x10
 {
 public:
@@ -24764,6 +24787,68 @@ public:
     bool m_writeBT;
     char _pad0[0x3];
     hg::be<int> m_brainID;
+    #endif
+};
+
+class GripDebug : public GripVHeapObject  // size 0x4
+{
+public:
+    enum EBrainDebugRenderType
+    {
+        BDRT_BLACKBOARD = 0,
+        BDRT_BRAIN = 1,
+        BDRT_NUM_RENDER_TYPES = 2,
+    };
+    class GripDebugBrainListener;
+    static void Tick(float);
+    static void StartDebug();
+    static void StopDebug();
+    static bool IsDebugEnabled();
+    static void StartLogging();
+    static void StopLogging();
+    static void AdvanceSim();
+    static void StopAdvanceSim();
+    static void SelectDebugPawn();
+    static void ToggleDisableNPC();
+    static void DisableNPC(int, bool);
+    static float GetElapsedTime();
+    static long GetElapsedTicks();
+    static void ResetElapsedTicks();
+    static void SetBreakpoint(int);
+    static void ClearBreakpoint(int);
+    static void ClearAllBreakpoints();
+    static void SetDebugBrain(GripBrain *);
+    static GripBrain *GetDebugBrain();
+    static void NotifyDelete(GripBrain *);
+    static void NextBrainDebugRenderType();
+    static unsigned int GetBrainDebugRenderType();
+    static void DrawHUD(GripHUDRenderer *, int &);
+HG_PRIVATE:
+    static GripBrain *GetBrainUnderPlayerCursor();
+public:
+    #ifndef HAGGAR_HOST
+HG_PRIVATE:
+    GripDebug();
+public:
+    #endif
+    #ifndef HAGGAR_HOST
+    static GripDebug::GripDebugBrainListener ms_brainListener;
+    static GripBrain *ms_debugBrain;
+    static bool ms_debugEnabled;
+    static bool ms_bWasGameOnPause;
+    static float ms_lastSelectTime;
+    static float ms_elapsedTime;
+    static long ms_numTicks;
+    static unsigned int ms_brainDebugRenderType;
+    #else
+    static GripDebug::GripDebugBrainListener (&ms_brainListener);
+    static hg::gptr<GripBrain> (&ms_debugBrain);
+    static bool (&ms_debugEnabled);
+    static bool (&ms_bWasGameOnPause);
+    static hg::be<float> (&ms_lastSelectTime);
+    static hg::be<float> (&ms_elapsedTime);
+    static hg::be<long> (&ms_numTicks);
+    static hg::be<unsigned int> (&ms_brainDebugRenderType);
     #endif
 };
 
