@@ -21,12 +21,15 @@ everyone uses their own copy of the build.
 
 "Proper" covers three things:
 
-1. **n-Space's native C++:** the `nspace` rows, 1,258 functions and 136,660
+1. **n-Space's native C++:** the `nspace` rows, 1,417 functions and 149,468
    bytes, matched byte for byte. Progress is measured in bytes.
-2. **The UnrealScript classes,** compiling cleanly with UDK's compiler (open:
-   the 14 classes with decompiler errors, and Grip's lost `dependson()`).
-3. **Documented data formats and extraction tools,** including a level-layout
-   (actor placement) exporter that runs on your own copy; its output is never
+2. **The UnrealScript classes,** compiling with UDK's compiler: every
+   decompiler error is fixed, and the compiler checks the scripts as far as
+   stock UDK can load n-Space's changes to its native classes
+   ([docs/PROGRESS.md](docs/PROGRESS.md)).
+3. **Documented data formats and extraction tools**
+   ([docs/FORMATS.md](docs/FORMATS.md)), including a level-layout (actor
+   placement) exporter that runs on your own copy; its output is never
    committed.
 
 It doesn't cover the engine (UDK supplies it; a remake would use UE5's),
@@ -34,15 +37,11 @@ middleware and Xbox libraries (third-party, not game-specific), or Epic's
 UDKBase and GameFramework code (UDK ships the same). The PC port statically
 recompiles all of that, so it runs without being decompiled.
 
-Two scope checks are open, and either can grow the scope: whether Grip (1,711
-functions, 133 KB: `external/grip/sdk`, the `gripbtruntime.cpp` integration
-and its script package; the behaviour-tree system n-Space's AI uses) is
-n-Space's or third-party, and whether n-Space modified any Epic-owned
-functions (found by comparing against UDK's build).
+The scope checks are done: Grip, the behaviour-tree system n-Space's AI uses,
+is Autodesk Gameware's middleware and stays out; the 159 functions n-Space
+added to Epic's classes (the CCS pawn interface on UDKPawn and its kin) are in.
 
-Order: the remaining n-Space functions (now), then a clean script compile,
-then formats and extraction tools, then the scope checks, then Phase 4 (the
-handheld), then Phase 5 (the UDK rebuild).
+Next: Phase 4 (the handheld), then Phase 5 (the UDK rebuild).
 
 ## What this is
 
@@ -63,8 +62,9 @@ The handheld goal: an Anbernic device, chosen by profiling the PC build.
 
 ## Status
 
-Phase 3 is done: **1,237 of n-Space's 1,258 functions match** byte for byte (89% of the bytes),
-and matched code can replace its recompiled version in the port. Phase 2
+Phase 3 is done: **1,237 of n-Space's 1,417 functions match** byte for byte
+(81% of the bytes; 89% of the 1,258 in scope before the scope check), and
+matched code can replace its recompiled version in the port. Phase 2
 made **the recompiled build run natively on Windows x86-64, from boot to the
 first level** (11 to 16 fps on an integrated GPU), and it builds on Linux.
 The results are in `docs/specs/phase2-baseline.md`,
@@ -73,10 +73,11 @@ The results are in `docs/specs/phase2-baseline.md`,
 | | |
 | --- | --- |
 | Inventory | 237,168 functions (215,944 from the PDB's procedures, 21,224 library functions with only a public symbol), 2,295 objects |
-| n-Space's C++ | 1,258 functions (136,660 bytes) in scope: **1,237 matched** (121,312 bytes, 89%), 8 near, 13 todo |
+| n-Space's C++ | 1,417 functions (149,468 bytes) in scope: **1,237 matched** (121,312 bytes, 81%), 8 near, 172 todo |
 | Native port | Windows: boots to the first level, playable with the build's own known issues. Linux: builds, and starts UE3 on a software Vulkan device |
 | Recompilation | 237,162 functions, 345 jump tables, no unimplemented instruction; 506 files compile in about 6 minutes |
-| UnrealScript | 2,571 of 2,597 classes export cleanly; the 758 that are n-Space's own or modified from UDK are committed |
+| UnrealScript | 2,597 classes export; the 758 that are n-Space's own or modified from UDK are committed, with every decompiler error fixed, and UDK's compiler checks them as far as stock UDK allows |
+| Data formats | Package and map formats documented; `tools/map_export.py` exports every map's actor placements (250 maps on this build) from your own copy |
 
 Details: [docs/PROGRESS.md](docs/PROGRESS.md). Matching progress is charted on
 [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
@@ -98,6 +99,10 @@ from the build (names, types, addresses, compiler flags).
   16.00.11886. Point `XDK_DIR` at it. The project does not distribute it.
 - **Python 3**, then `pip install -r requirements-dev.txt`. The script
   exporter also needs the .NET 8 SDK.
+- **For the script compile check:** a UDK July 2012 BETA 2 install, used in
+  place (`python tools/udk_compile.py --udk <install>`). **For the format
+  tools:** the cooked packages unpacked with Gildor's decompressor
+  (`decompress -lzx`).
 
 Analysis, documentation, script review and the tests don't need any of it:
 tests that need the build's files skip without them.

@@ -4,16 +4,17 @@
 
 ## Goal
 
-A proper decomp of the game's own code and scripts: n-Space's native C++ (1,258 functions, 136,660 bytes) matched byte for byte, the UnrealScript compiling cleanly with UDK's compiler, and documented data formats and extraction tools. It is the foundation for reading and modding the game, playing it natively (PC, later an Anbernic handheld), and eventually finishing it: a rebuild as a UDK July 2012 BETA 2 project (Phase 5), and possibly a remake in a modern Unreal Engine by others. The engine, middleware and Epic's UDKBase/GameFramework code are recompiled by the port, not decompiled. No assets are shipped; everyone uses their own copy. Open scope checks: whether Grip (1,711 functions) is n-Space's, and whether n-Space modified Epic-owned functions.
+A proper decomp of the game's own code and scripts: n-Space's native C++ (1,417 functions, 149,468 bytes) matched byte for byte, the UnrealScript compiling with UDK's compiler, and documented data formats and extraction tools. It is the foundation for reading and modding the game, playing it natively (PC, later an Anbernic handheld), and eventually finishing it: a rebuild as a UDK July 2012 BETA 2 project (Phase 5), and possibly a remake in a modern Unreal Engine by others. The engine, middleware and Epic's UDKBase/GameFramework code are recompiled by the port, not decompiled. No assets are shipped; everyone uses their own copy. Scope checks done: Grip is Autodesk Gameware's middleware (out of scope); n-Space's 159 additions to Epic's classes are in scope.
 
 ## Key facts
 
 - Game: Project Haggar, the Halo Mega Bloks game by n-Space for the Xbox 360, cancelled in 2013. Engine: Unreal Engine 3, exactly UDK July 2012 BETA 2 (engine version 10246, changelist 1340247).
 - Inputs: a development build with a full private PDB (237,168 functions, 759,808 type records). The executable is a devkit-signed XEX2.
-- Matching compiler: XDK 21076, cl 16.00.11886 for PowerPC, with each object's command line from the PDB. 1,258 n-Space functions (136,660 bytes) in scope, 1,237 of them matched (121,312 bytes), 8 near and 13 todo.
+- Matching compiler: XDK 21076, cl 16.00.11886 for PowerPC, with each object's command line from the PDB. 1,417 n-Space functions (149,468 bytes) in scope, 1,237 of them matched (121,312 bytes), 8 near and 172 todo.
 - Port: the recompiled build runs natively on Windows x86-64 from boot to the first level (ReXGlue SDK codegen and its Xenia-derived runtime; 237,162 functions, no unimplemented instruction), and builds on Linux. Next: Linux on real GPUs, then a native renderer for handhelds.
-- Scripts: 758 UnrealScript classes (n-Space's own and those modified from UDK) are in script/.
-- Not playable natively yet.
+- Scripts: 758 UnrealScript classes (n-Space's own and those modified from UDK) are in script/, with every decompiler error fixed; tools/udk_compile.py checks them with UDK's compiler.
+- Data: docs/FORMATS.md documents the package and map formats; tools/map_export.py exports actor placements from your own copy.
+- Playable natively on Windows to the first level, with the build's own known issues.
 
 ## Docs
 
@@ -21,6 +22,7 @@ A proper decomp of the game's own code and scripts: n-Space's native C++ (1,258 
 - [Start here](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/START_HERE.md): setup, claiming work, an AI-agent prompt
 - [Decompiling](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/DECOMPILING.md): markers, the check, compiler idioms
 - [Porting](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PORTING.md): build and run the native port
+- [Formats](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/FORMATS.md): cooked packages, maps, the extraction tools
 - [Progress](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/PROGRESS.md): numbers per track
 - [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled): matching progress, charted from the report workflow
 - [Design](https://github.com/kirklandsig/halo-mega-bloks-decompiled/blob/main/docs/specs/2026-10-18-design.md): goals, scope, phases

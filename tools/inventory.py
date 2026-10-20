@@ -15,7 +15,9 @@ are the game tier, Core and Engine the engine tier, every other package the
 platform tier. Everything else is lib.
 
 Game-tier rows carry an owner: nspace for MegaHaloGame and Cognition and for
-source files whose name starts with Halo, epic for the rest (Epic's UDK code).
+source files whose name starts with Halo, vendor for middleware code (see
+VENDOR_SOURCES), epic for the rest (Epic's UDK code). tools/script_compare.py
+refines it by script class (refine_owner).
 """
 import argparse
 import bisect
@@ -32,6 +34,12 @@ OBJECT_COLUMNS = ['object', 'package', 'tier', 'functions', 'bytes', 'src', 'cmd
 GAME = {'udkbase', 'gameframework', 'megahalogame', 'cognition'}
 ENGINE = {'core', 'engine'}
 NSPACE_PACKAGES = {'megahalogame', 'cognition'}
+# Game-tier code that is neither Epic's nor n-Space's own: middleware headers
+# inlined into the game's objects (Autodesk Gameware's Grip and Navigation),
+# and the CCS reference integration of Gameware Cognition that n-Space built
+# its AI on (udkbase\ccsref*; the classes of n-Space's script are refined to
+# nspace).
+VENDOR_SOURCES = ('external\\', 'udkbase\\ccsref')
 PACKAGE = re.compile(r'\\intermediate\\megahalogame\\xbox360\\release\\([^\\]+)\\')
 SOURCE_PREFIXES = [('f:\\projects\\halo_megabloks\\development\\src\\', ''),
                    ('f:\\projects\\halo_megabloks\\development\\', ''),
@@ -70,8 +78,11 @@ def short_source(path):
 def owner(tier, package, source):
     if tier != 'game':
         return ''
-    if package in NSPACE_PACKAGES or ntpath.basename(source).lower().startswith('halo'):
+    source = source.lower()
+    if package in NSPACE_PACKAGES or ntpath.basename(source).startswith('halo'):
         return 'nspace'
+    if source.startswith(VENDOR_SOURCES):
+        return 'vendor'
     return 'epic'
 
 

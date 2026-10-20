@@ -22,6 +22,7 @@ import gen_header
 import inventory
 import paths
 import pdbtype
+import script_compare
 from pdbfile import IMAGE_BASE
 
 # Classes the hand-written code of a package needs in its header as well:
@@ -86,13 +87,19 @@ EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 
 def code_rows(package):
     """A package's rows of n-Space's code: owner nspace, and the rest of
-    its AI library (udkbase\\ccsref*), which the owner heuristic splits."""
+    its AI library (udkbase\\ccsref*, owner vendor). n-Space's additions to
+    Epic's classes (UDKPawn's CCS natives) are left out: they need those
+    classes rendered as targets, which isn't done yet."""
+    additions = script_compare.nspace_additions()
     return [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv') if r['package'] == package.lower()
-            and (r['owner'] == 'nspace' or r['source'].startswith('udkbase\\ccsref'))]
+            and (r['owner'] == 'nspace' or r['source'].startswith('udkbase\\ccsref'))
+            and tuple(r['name'].split('::', 1)) not in additions]
 
 
 def nspace_rows():
-    return [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv') if r['owner'] == 'nspace']
+    additions = script_compare.nspace_additions()
+    return [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv')
+            if r['owner'] == 'nspace' and tuple(r['name'].split('::', 1)) not in additions]
 
 
 def script_packages():

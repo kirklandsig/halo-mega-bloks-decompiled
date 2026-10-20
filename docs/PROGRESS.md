@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-19 (n-Space's C++: 1,237 of 1,258 functions matched). Matching progress is
+Updated 2026-10-19 (n-Space's C++: 1,237 of 1,417 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -11,32 +11,45 @@ in bytes), the UnrealScript compiling cleanly with UDK's compiler, and
 documented data formats and extraction tools (with a level-layout exporter
 whose output is never committed). The engine, middleware, Xbox libraries and
 Epic's UDKBase and GameFramework code are recompiled by the port, not
-decompiled. Open scope checks: whether Grip (1,711 functions, 133 KB) is
-n-Space's, and whether n-Space modified Epic-owned functions.
+decompiled.
 
-Order: remaining n-Space functions (now), then a clean script compile, then
-formats and extraction tools, then the scope checks, then Phase 4 (handheld),
-then Phase 5 (UDK rebuild, later).
+The two scope checks are closed (details in the design, "Scope checks"):
+Grip is Autodesk Gameware's middleware and stays out, as do the CCS reference
+layer's other rows and the inlined middleware headers (now owner `vendor`:
+1,571 functions, 258,704 bytes); n-Space's 159 additions to Epic's classes
+(the CCS pawn interface on UDKPawn, UDKWeaponPawn and UDKVehicle, and a few
+more; 12,808 bytes) are in scope now.
+
+Done in this order: the n-Space functions, the script compile, the formats
+and extraction tools, the scope checks. Next: Phase 4 (handheld), then
+Phase 5 (UDK rebuild, later).
 
 ## n-Space's C++ (matching)
 
-1,258 functions (136,660 bytes) are in scope: the `nspace` rows of
+1,417 functions (149,468 bytes) are in scope: the `nspace` rows of
 `config/functions.csv`. `config/status.csv` records every function that isn't
-`todo`. **1,237 are matched (121,312 bytes, 89%), 8 are near (3,864 bytes)
-and 13 are todo (11,484 bytes)**; 1,296 functions match in all, counting the
-Grip, CCS and Epic helpers that the same objects keep out of line.
+`todo`. **1,237 are matched (121,312 bytes, 81%), 8 are near (3,864 bytes)
+and 172 are todo (24,292 bytes)**; 1,296 functions match in all, counting the
+Grip, CCS and Epic helpers that the same objects keep out of line. Of the
+original 1,258, 1,237 match (89% of their 136,660 bytes); the 159 added by
+the scope check are all todo.
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 962 | 108,304 | 943 | 6 | 13 |
-| `Unity_UDKWeaponEtAl.cpp.obj` | 195 | 18,544 | 195 | 0 | 0 |
+| `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 195 | 0 | 159 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 42 | 5,784 | 42 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
 | `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 25 | 0 | 0 |
 
-Every function has now been written. Each one that doesn't match has a
-comment in its source file saying why. In short:
+Every function of the original scope has been written. Each one that
+doesn't match has a comment in its source file saying why. In short:
 
+- **Todo (159), not written yet:** n-Space's additions to Epic's classes in
+  `Unity_UDKWeaponEtAl.cpp.obj` (74 `exec` thunks and 85 implementations on
+  AUDKPawn, AUDKVehicle, AUDKWeaponPawn, AUDKPlayerController and
+  AUDKJumpPad). Generating their thunks needs those Epic classes rendered as
+  targets of `tools/gen_classes.py`, which leaves them out for now.
 - **Todo (13), the code is retail's but registers, stack slots or inlining
   differ:** `ACCSController::Tick` (retail inlines `FVector::Normalize`,
   which it calls out of line elsewhere), `SetState` and `RemoveState`

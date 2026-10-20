@@ -63,8 +63,8 @@ td:first-child { color: var(--muted); white-space: nowrap; }
 
 <section>
 <h2>Goal</h2>
-<p>A proper decomp of the game's own code and scripts: n-Space's native C++ (1,258 functions, 136,660 bytes) matched byte for byte, the UnrealScript compiling cleanly with UDK's compiler, and documented data formats and extraction tools. It is the foundation for reading and modding the game, playing it natively (PC, later an Anbernic handheld), and eventually finishing it: a rebuild as a UDK July 2012 BETA 2 project, and possibly a remake in a modern Unreal Engine by others. The engine, middleware and Epic's UDKBase and GameFramework code are recompiled by the port rather than decompiled. No assets are shipped; everyone uses their own copy.</p>
-<p>Order: the remaining n-Space functions, a clean script compile, data formats and extraction tools, two scope checks (is Grip n-Space's code; did n-Space change Epic's), the handheld, then the UDK rebuild.</p>
+<p>A proper decomp of the game's own code and scripts: n-Space's native C++ (1,417 functions, 149,468 bytes) matched byte for byte, the UnrealScript compiling with UDK's compiler, and documented data formats and extraction tools. It is the foundation for reading and modding the game, playing it natively (PC, later an Anbernic handheld), and eventually finishing it: a rebuild as a UDK July 2012 BETA 2 project, and possibly a remake in a modern Unreal Engine by others. The engine, middleware and Epic's UDKBase and GameFramework code are recompiled by the port rather than decompiled. No assets are shipped; everyone uses their own copy.</p>
+<p>Done: the n-Space functions written, the scripts' decompiler errors fixed and checked with UDK's compiler, the data formats documented with a level-layout exporter, and the scope checks (Grip is Autodesk Gameware's middleware; n-Space's 159 additions to Epic's classes are in scope). Next: the handheld, then the UDK rebuild.</p>
 </section>
 
 <section>
@@ -80,9 +80,10 @@ td:first-child { color: var(--muted); white-space: nowrap; }
 <h2>Status</h2>
 <table>
 <tr><td>Inventory</td><td>237,168 functions and 759,808 types from the build's PDB</td></tr>
-<tr><td>n-Space's C++</td><td>1,258 functions in scope, 1,237 matched (121,312 of 136,660 bytes)</td></tr>
+<tr><td>n-Space's C++</td><td>1,417 functions in scope, 1,237 matched (121,312 of 149,468 bytes)</td></tr>
 <tr><td>Recompilation</td><td>237,162 functions and 345 jump tables, with no unimplemented instruction; the whole output compiles</td></tr>
-<tr><td>UnrealScript</td><td>2,571 of 2,597 classes export cleanly; the 758 n-Space and modified classes are in the repo</td></tr>
+<tr><td>UnrealScript</td><td>2,597 classes export; the 758 n-Space and modified classes are in the repo, every decompiler error fixed, checked with UDK's compiler as far as stock UDK allows</td></tr>
+<tr><td>Data formats</td><td>Package and map formats documented; actor placements of all 250 maps export from your own copy</td></tr>
 <tr><td>Playable natively</td><td>Windows x86-64: yes, to the first level (11 to 16 fps on an integrated GPU). Linux: builds; real GPUs untested</td></tr>
 </table>
 </section>

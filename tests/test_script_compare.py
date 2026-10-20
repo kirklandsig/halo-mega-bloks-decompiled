@@ -86,14 +86,20 @@ def test_classify_nspace_only(tmp_path):
     ]
 
 
-def test_refine_owner():
-    rows = [{'name': 'AHaloPawn::Tick', 'tier': 'game', 'owner': 'epic'},
-            {'name': 'AUTWeapon::Fire', 'tier': 'game', 'owner': 'nspace'},
-            {'name': 'FHelper::Run', 'tier': 'game', 'owner': 'nspace'},
-            {'name': 'AUTWeapon::Fire', 'tier': 'engine', 'owner': ''}]
-    status = {'halopawn': 'nspace-only', 'utweapon': 'modified'}
+def test_refine_owner(monkeypatch):
+    monkeypatch.setattr(script_compare, 'nspace_additions', lambda: {('AUDKPawn', 'GetAlertness')})
+    game = {'tier': 'game', 'package': 'udkbase', 'source': r'udkbase\src\x.cpp'}
+    rows = [dict(game, name='AHaloPawn::Tick'),
+            dict(game, name='AUTWeapon::Fire'),
+            dict(game, name='FHelper::Run', package='megahalogame'),
+            {'name': 'AUTWeapon::Fire', 'tier': 'engine', 'package': 'engine', 'source': '', 'owner': ''},
+            dict(game, name='AUDKPawn::GetAlertness'),
+            dict(game, name='CCSBlackboard::Reset', source=r'udkbase\ccsref\ccsblackboard.cpp'),
+            dict(game, name="IGripAISystem::`scalar deleting destructor'", source=''),
+            dict(game, name='Grip_Array<int>::AddItem', source=r'external\grip\sdk\core\grip_array.h')]
+    status = {'halopawn': 'nspace-only', 'utweapon': 'modified', 'udkpawn': 'modified'}
     script_compare.refine_owner(rows, status)
-    assert [r['owner'] for r in rows] == ['nspace', 'epic', 'nspace', '']
+    assert [r['owner'] for r in rows] == ['nspace', 'epic', 'nspace', '', 'nspace', 'vendor', 'vendor', 'vendor']
 
 
 def test_editoronly_vars_and_constants_ignored():

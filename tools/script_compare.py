@@ -232,28 +232,59 @@ def classify(script_dir, udk_root):
     return rows
 
 
+# Classes of the middleware n-Space's AI is built on (Gameware Cognition, Grip,
+# Navigation): their compiler-generated functions have no source line.
+VENDOR_CLASS = re.compile(r'^(?:[IFAU]?(?:CCS|Grip|GwNav)|Kaim::)')
+
+
+def nspace_additions():
+    """(class, function) pairs n-Space added to Epic's native classes
+    (config/nspace_additions.csv; see docs/specs/2026-10-18-design.md)."""
+    path = paths.CONFIG / 'nspace_additions.csv'
+    return {(r['class'], r['function']) for r in inventory.read_csv(path)} if path.exists() else set()
+
+
 def refine_owner(rows, status):
-    """Set the owner of game-tier functions of native classes from their script class's status."""
+    """Set the owner of game-tier functions from their source (inventory.owner),
+    then by class: n-Space's additions to Epic classes and the classes of
+    n-Space's own script are nspace, the rest of the classes of identical or
+    modified script Epic's (unless middleware), the middleware's classes vendor."""
+    additions = nspace_additions()
     for r in rows:
-        if r['tier'] != 'game' or '::' not in r['name']:
+        if r['tier'] != 'game':
             continue
-        cls = r['name'].split('::', 1)[0].lower()
+        r['owner'] = inventory.owner(r['tier'], r['package'], r['source'])
+        if '::' not in r['name']:
+            continue
+        cls_name, function = r['name'].split('::', 1)
+        if (cls_name, function) in additions:
+            r['owner'] = 'nspace'
+            continue
+        cls = cls_name.lower()
         cls = cls[1:] if cls[:1] in ('a', 'u') and cls[1:] in status else cls
         st = status.get(cls)
-        if st in ('identical', 'modified'):
-            r['owner'] = 'epic'
-        elif st == 'nspace-only':
+        if st == 'nspace-only':
             r['owner'] = 'nspace'
+        elif st in ('identical', 'modified') and r['owner'] != 'vendor':
+            r['owner'] = 'epic'
+        elif r['owner'] == 'epic' and VENDOR_CLASS.match(r['name']):
+            r['owner'] = 'vendor'
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description='Compare exported script classes with UDK and refine owners.')
-    ap.add_argument('--udk', required=True, help='a UDK build folder holding Development/Src')
+    ap.add_argument('--udk', help='a UDK build folder holding Development/Src')
     ap.add_argument('--script', default=str(paths.BUILD / 'script'))
+    ap.add_argument('--owners', action='store_true', help='only refine the owners, from config/script_classes.csv')
     args = ap.parse_args(argv)
-    paths.require(Path(args.udk) / 'Development' / 'Src')
-    rows = classify(paths.require(Path(args.script)), Path(args.udk))
-    inventory.write_csv(paths.CONFIG / 'script_classes.csv', COLUMNS, rows)
+    if args.owners:
+        rows = inventory.read_csv(paths.CONFIG / 'script_classes.csv')
+    else:
+        if not args.udk:
+            ap.error('--udk is required unless --owners')
+        paths.require(Path(args.udk) / 'Development' / 'Src')
+        rows = classify(paths.require(Path(args.script)), Path(args.udk))
+        inventory.write_csv(paths.CONFIG / 'script_classes.csv', COLUMNS, rows)
     counts = {}
     for r in rows:
         counts.setdefault(r['package'], {}).setdefault(r['status'], 0)
