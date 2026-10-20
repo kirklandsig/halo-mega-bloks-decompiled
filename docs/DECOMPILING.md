@@ -280,6 +280,43 @@ written by it.
   `CCSGameCharacter::GetOrientation` stores Roll, Yaw, Pitch, so the
   assignments are written in that order.
 
+### From the rest of the CCS layer (2026-10-20)
+
+- **Include the callee's file** even when nothing of it inlines: the
+  compiler then knows which registers the call leaves alone and keeps
+  values in volatile registers across it, as retail does (`r7` or `r8`
+  live across a `bl`). A dozen near and todo functions matched this way
+  (`#include "CCSAFFactory.cpp"`, `"../CCSRefUE3/CCSGameCharacter.cpp"`).
+  A scratch script that tries each callee's file in turn finds them.
+- **Calls that must stay calls:** an event thunk or an inline the retail
+  calls out of line goes through a member pointer,
+  `(p->*(&C::eventX))(...)`.
+- **Aggregate init of the action objectives** (`CCSAOFlee Objective =
+  {Target};`) avoids the default constructor's zero stores; a trailing bool
+  left out zero-fills a whole word.
+- **`cond ? floatExpr : 100000.0`** with a double literal gives retail's
+  `frsp` after the select.
+- **If-chains and switches** decide the compare chains; a switch's case
+  blocks are laid out in source order, so write the cases in the order of
+  retail's targets (`CCSCoverRenderingProxy::Render`).
+- **Inline budget:** the first use of a getter inlines and later ones are
+  called, as in retail; `__forceinline` (the actor iterator's `operator*`)
+  where UE3 has `FORCEINLINE`.
+- **A function-static or file-static of a header** (`static
+  CCSAIManagerFactoryRegister s_AIManagerFactoryRegister;`) gets its
+  dynamic initializer per file; where the constructor is defined in the
+  same unity it inlines.
+- **A temporary returned by an out-of-line call** is reused through the
+  returned pointer (`mr r4, r3`); retail's `addi r4, r1, N` means a named
+  local, `Grip::String Printed(Buffer); Value = Printed;`.
+- **A string's size and data:** `Grip::String::GetSize` reads its
+  descriptor through a named local, or the mask is computed twice.
+- **Unsolved so far:** add operand order (offset + base against base +
+  offset), saved-register assignment order, retail loading `this` fields
+  before a position in an objective's initializer, frame-slot reuse of
+  temporaries (a 4-byte struct sharing a slot with a later string) and the
+  operand order of a sum with `DeltaTime`.
+
 ## When it doesn't match
 
 Try a few distinct ideas (member order, an inline helper, a different

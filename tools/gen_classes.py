@@ -77,7 +77,10 @@ OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsSt
                        'CCSRBTWaitInCover',
                        'HaloRBTKamikaze',
                        ]}
-# Member declarations the PDB lacks (member templates), per package.
+# The CCS actions: their factory makes each one, and its UCCSAF handle calls the factory.
+CCS_ACTIONS = ('ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor', 'StrafeTarget', 'EncircleTarget',
+               'FireBurst', 'EnterCover', 'GetInCover', 'GetOutCover')
+# Member declarations the PDB lacks (member templates, friends), per package.
 EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard();', 'template <class T0> T0 *GetActionFactory();',
                                           'template <class T0> T0 *GetMeatPuppetQuery();'],
                      'IGripAFInterface': ['template <class T0> T0 *GetSystem();'],
@@ -88,16 +91,13 @@ EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard
                      # the action handles' CreateAction call it
                      'CCSAFFactory': ['template <class AO> int CreateAction(const AO &);',
                                       'HG_PRIVATE:', 'template <class AO, class AF> int CreateActionInternal(const AO &);', 'public:']
-                     + [f'friend class UCCSAF{a};' for a in ('ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor',
-                                                             'StrafeTarget', 'EncircleTarget', 'FireBurst', 'EnterCover', 'GetInCover', 'GetOutCover')]
-                     + ['friend class HaloRBTKamikaze;', 'friend class CCSRBTMoveToCover;', 'friend class CCSRBTStrafeTarget;',
-                        'friend class CCSRBTEncircleTarget;']
-                     + [f'friend class CCSRBT{n};' for n in ('Search', 'MoveToTether', 'Shoot', 'MoveToTarget', 'MoveToActor', 'Flee', 'OrientTowardTarget',
-                                                             'Idle', 'MoveToVehicle', 'WaitInCover', 'ShootFromCover')]}}
+                     + [f'friend class UCCSAF{a};' for a in CCS_ACTIONS]
+                     + ['friend class HaloRBTKamikaze;']
+                     + [f'friend class CCSRBT{n};' for n in ('MoveToCover', 'StrafeTarget', 'EncircleTarget', 'Search', 'MoveToTether',
+                                                             'Shoot', 'MoveToTarget', 'MoveToActor', 'Flee', 'OrientTowardTarget', 'Idle',
+                                                             'MoveToVehicle', 'WaitInCover', 'ShootFromCover')]}}
 # the factory makes every action, through their protected constructors and SetObjective
-EXTRA['UDKBase'].update({f'CCSAF{a}': ['friend class CCSAFFactory;'] for a in (
-    'ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor', 'StrafeTarget', 'EncircleTarget', 'FireBurst',
-    'EnterCover', 'GetInCover', 'GetOutCover')})
+EXTRA['UDKBase'].update({f'CCSAF{a}': ['friend class CCSAFFactory;'] for a in CCS_ACTIONS})
 # Event thunks of other classes that a package's code calls (inlined there).
 EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 

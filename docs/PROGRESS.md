@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-20 (n-Space's C++: 1,571 of 2,061 functions matched). Matching progress is
+Updated 2026-10-20 (n-Space's C++: 1,979 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -24,63 +24,66 @@ more; 12,808 bytes) are in scope now.
 
 Done in this order: the n-Space functions, the script compile, the formats
 and extraction tools, the scope checks, n-Space's additions to Epic's
-classes. Now: the rest of the CCS layer. Then Phase 4 (handheld) and
+classes, the CCS layer (all of it written but one function). Now: the
+leftovers. Then Phase 4 (handheld) and
 Phase 5 (UDK rebuild, later).
 
 ## n-Space's C++ (matching)
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **1,571 are matched (147,128 bytes, 59%), 16 are near
-(6,672 bytes) and 474 are todo (94,692 bytes)**; 1,584 functions match in
+isn't `todo`. **1,979 are matched (199,744 bytes, 80%), 42 are near
+(22,592 bytes) and 40 are todo (26,156 bytes)**; 1,992 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
-(156 match), and the CCS layer's other 644 functions (99,024 bytes; 178 of
+(156 match), and the CCS layer's other 644 functions (99,024 bytes; 586 of
 them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,120 | 11 | 472 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,526 | 37 | 40 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 351 | 3 | 0 |
-| `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 43 | 0 | 2 |
+| `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
 | `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 25 | 0 | 0 |
+
+Four of the CCS files (`ccsbrain.cpp`, `ccscsmovementunreal.cpp`,
+`ccsastarget.cpp`, `ccsrbtshootfromcover.cpp`, 60 functions) came from a
+separate lane, written by the MiniMax-M3.1-Flash model; at its merge 46 of
+them matched (4,844 bytes), 6 were near (1,236 bytes) and 8 todo.
 
 Each written function that doesn't match has a comment in its source file
 saying why. In short:
 
-- **Todo, not written yet:** the CCS layer's other 468 functions (the four files another lane is writing among them: ccsbrain.cpp, ccscsmovementunreal.cpp, ccsastarget.cpp, ccsrbtshootfromcover.cpp), in `Unity_HaloRBTKamikazeEtAl.cpp.obj` and `Unity_UDKCoverEtAl.cpp.obj`.
-- **Todo (13) in the original scope, the code is retail's but registers, stack slots or inlining
-  differ:** `ACCSController::Tick` (retail inlines `FVector::Normalize`,
-  which it calls out of line elsewhere), `SetState` and `RemoveState`
-  (argument order), `AUSSController::PostPollMove`, `AUSSPawn::TickSpecial`
-  (a rotator kept in a stack copy), the `CCSAF*` actions' `UpdateGoal`,
-  `UpdateMoveTarget` and `Tick`, `CCSBlackboard`'s constructor and destructor,
-  `UCCSActorFactory::CreateActor` and `HaloRBTKamikaze::ExecuteInternal`.
-- **Todo (6) in the CCS files written so far:** `CCSGlobalDataScheduler::Initialize`
-  (retail inlines an array's AddItem and a constructor that ours calls),
-  `CCSCSCoverUnreal::DoGetInCover`, `DoGetOutCover` and `TakeCoverPose`
-  (stack slots, a shared call), `CCSCSMovementGwNav::OrientationReached` and
-  `PathFailed`.
-- **Near (16):** `UHaloSaveGame::BasicSerializeObject` and
-  `BasicDeserializeObject`, `CCSTarget::FindDestinationReachable`,
-  `UCCSBlackboard::GetCovers` and `GetTargets`,
-  `ACCSController::CalcAccuracyAngles`, `CCSBlackboard::GetSpecificTarget` and
-  `UpdateTargetListsByRange`, AUDKVehicle's look-steer modes
-  (`moveTowardGwNavLSStrafe`, `LSDefault`, `LSEncircle`),
-  `CCSCSMovementGwNav::FindNavMeshPath` and `FindNavMeshDistance`,
-  `CCSRBTMoveToCover::StartMoveToCover` and `ExitCover`, and
-  `CCSRBTTimeSinceEvent::TestPreCondition`: a swapped register pair, operand
-  order, schedule or stack slot.
-
-### The CCS layer's four files
-
-The CCS reference layer is decompiled file by file; `ccsbrain.cpp`,
-`ccscsmovementunreal.cpp`, `ccsastarget.cpp` and `ccsrbtshootfromcover.cpp`
-hold 60 of its functions (10,560 bytes). **46 match byte for byte (4,844
-bytes), 6 are near (1,236 bytes) and 8 are todo (4,480 bytes)**. The near
-ones differ by a swapped register pair, an operand order or a schedule; the
-todo ones say in their source file what is still missing.
+- **Todo, not written:** `USSBrainBuilder::ConstructBrain` (it passes the
+  Cognition SDK's licence string, which is game data the repository doesn't
+  publish), `CCSAFAction`'s and `CCSAnalysisSystem`'s out-of-line
+  constructors (abstract classes, so no emitting use), four
+  `CCSCSMovementUnreal` functions (`DoMove`, `OrientationReached`,
+  `GetNextMoveLocation`, `MoveToDestination`), and USSPawn's two `UnwindRot`
+  statics (written, but `check.py` can't tell two statics of one name apart).
+- **Todo, written, registers, stack slots or inlining differ:** the
+  controller's `Tick`, `SetState` and `RemoveState`, `AUSSController::PostPollMove`,
+  `AUSSPawn::TickSpecial`, the `CCSAF*` actions' `UpdateGoal`,
+  `UpdateMoveTarget` and `Tick`, `CCSBlackboard`'s constructor,
+  `UCCSActorFactory::CreateActor`, `HaloRBTKamikaze::ExecuteInternal`,
+  `CCSGlobalDataScheduler::Initialize`, the cover control system's
+  `DoGetInCover`, `DoGetOutCover` and `TakeCoverPose`, the GwNav movement's
+  `OrientationReached` and `PathFailed`, `CCSGameCharacter::GetEyesPosition`,
+  `CCSPSCover::HasValidAttackAngle` and `HasValidDefensiveAngle`,
+  `CCSPSTargetAwareness::RemoveThreatTarget`, `CCSASTarget::Tick`,
+  `CCSRBTShootFromCover::ExecuteInternal`, `CCSRBTEncircleTarget::ExecuteInternal`,
+  `CCSRBTTargetAngle::TestPreCondition`, `CCSRBTMoveToTether::ExecutePostInternal`,
+  `CCSCSMovement::IsProxyVisible`, `CCSDebugOptions::DrawHUD`, and the two
+  actor-iterator loops (`CCSEngineServices::FindAllCovers`,
+  `CCSRBTSearch::FindNavigationPoints`: retail loads the iterated actor
+  straight into the register it keeps, ours copies it there).
+- **Near (42):** mostly a swapped register pair, an operand order, a
+  schedule or a stack slot; among them the target-awareness sensor's
+  awareness and threat functions, the cover sensor's perception, the
+  move-to and strafe nodes, `CCSBrain`'s scheduler registration, the
+  blackboard's `GetSpecificTarget` and `UpdateTargetListsByRange`, and
+  AUDKVehicle's look-steer modes.
 
 The inline layer they rest on is hand-written in `include/`: `Core/Inc/Core.h`
 (memory, `check()`, `Min`/`Max` with `fsel`, `appSqrt`), `Core/Inc/Array.h`
