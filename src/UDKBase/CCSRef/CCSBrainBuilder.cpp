@@ -11,6 +11,7 @@
 #include "CCSAFFactory.cpp"
 #include "CCSCSInterface.cpp"
 #include "CCSPSSelfAwareness.cpp"
+#include "CCSASTarget.cpp"
 
 // The constructor's out-of-line copy (it is inline in the header).
 // @retail 0x8332ED80
@@ -75,8 +76,6 @@ void CCSBrainBuilder::AddSystem(GripBrainSystem *pSystem)
     m_pBrain->m_systems.Add(pSystem);
 }
 
-// todo: retail inlines CCSASTarget's constructor, which ccsastarget.cpp
-// defines (not written here yet); with it visible this matches
 // @retail 0x833441B8
 void CCSBrainBuilder::SetUpSystems()
 {
