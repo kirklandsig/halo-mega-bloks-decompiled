@@ -12,7 +12,8 @@
 static CCSBrainFinder s_brainFinderCCS;
 
 // Todo (and RemoveState): retail constructs the string argument before it
-// fetches the blackboard; ours fetches it first.
+// fetches the blackboard; ours fetches it first (tried named locals and the
+// untyped GetBlackboardInternal).
 // @retail 0x83329C50
 void ACCSController::SetState(const FString &State)
 {
@@ -377,6 +378,7 @@ void ACCSController::TakePossession()
 // calls it out of line in retail, so it isn't FORCEINLINE). With it forced
 // inline, the eye position still lands in another stack slot (retail reuses
 // it for the facing copy, which it takes from FRotator::Vector's result).
+// Writing both normalizes out by hand gets 1,368 bytes, still not retail's.
 // @retail 0x83337BB0
 unsigned int ACCSController::Tick(float DeltaTime, ELevelTick TickType)
 {

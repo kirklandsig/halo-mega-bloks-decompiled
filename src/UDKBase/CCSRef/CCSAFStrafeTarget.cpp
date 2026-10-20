@@ -36,7 +36,8 @@ void CCSAFStrafeTarget::OnActivate()
 }
 
 // Todo: the code is retail's but retail has 0x20 more bytes of frame and
-// reads the rotated direction from a fixed slot (another temporary somewhere).
+// reads the rotated direction from a fixed slot (another temporary somewhere;
+// tried the direction as an FVector, a named axis and a named offset).
 // @retail 0x8332DAD0
 bool CCSAFStrafeTarget::UpdateGoal()
 {

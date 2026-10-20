@@ -78,7 +78,9 @@ bool HaloRBTKamikaze::TestPreCondition(IGripBTInterface *pInterface)
 // Todo: retail zeroes the origin and has CCSCharacter::GetPosition write
 // straight into it; ours goes through a temporary (and a larger frame).
 // Declaring the origin zeroed and assigning it under `if (pBrain)` gets the
-// zeroing right but still copies from a separate return slot.
+// zeroing right but still copies from a separate return slot. Building the
+// objective first and assigning its pointOfOrigin under `if (pBrain)` gets
+// within 4 bytes (608), but retail builds the objective after the origin.
 // @retail 0x83340B78
 GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {

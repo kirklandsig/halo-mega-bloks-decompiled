@@ -66,7 +66,7 @@ FSystemSettings &GetSystemSettings()
 // instructions as retail but for one swapped pair (the TArray's zero and
 // FArchive's vtable) and two registers swapped around the proxy archive's
 // vtable. Tried: the order of the archive flags, an initializer list, a
-// temporary proxy.
+// temporary proxy, the writer through an FArchive reference, a scope block.
 // @retail 0x833C9E98
 TArray<unsigned char, FDefaultAllocator> UHaloSaveGame::BasicSerializeObject(UObject *Obj, int Version)
 {

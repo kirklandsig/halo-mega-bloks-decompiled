@@ -3,8 +3,10 @@
 // optionally in a vehicle.
 #include "UDKBase/Inc/UDKBaseClasses.h"
 
-// Todo: retail calls AUDKVehicle::StaticClass and AGwNavPawn::StaticClass
-// out of line here (its inlining budget), where ours inlines them.
+// Todo (976 bytes vs 1,044): retail calls AUDKVehicle::StaticClass and
+// AGwNavPawn::StaticClass out of line here, where ours inlines them; forcing
+// those calls out of line makes ours smaller still, so retail must inline
+// more somewhere else.
 // @retail 0x83342160
 AActor *UCCSActorFactory::CreateActor(const FVector *const Location, const FRotator *const Rotation,
                                       const USeqAct_ActorFactory *const ActorFactoryData)

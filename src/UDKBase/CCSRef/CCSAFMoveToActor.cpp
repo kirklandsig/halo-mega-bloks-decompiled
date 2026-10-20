@@ -57,7 +57,8 @@ bool CCSAFMoveToActor::TransitionTo(GripAFAction *)
 
 // Todo: the same code as retail but for the constant 1.0, which ours keeps
 // in a saved FPR across the GetNavAdjustedLocation call and retail reloads
-// (16 bytes of save and restore).
+// (16 bytes of save and restore; comparing Camo with a double 1.0 or with
+// >= changes nothing).
 // @retail 0x8332D4E0
 void CCSAFMoveToActor::Tick(float DeltaTime)
 {
