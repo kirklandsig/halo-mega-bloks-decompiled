@@ -39,7 +39,7 @@ class Reader:
         self.e = '>' if big_endian else '<'
 
     def take(self, n):
-        if n < 0 or self.pos + n > len(self.data):
+        if n < 0 or self.pos < 0 or self.pos + n > len(self.data):
             raise EOFError(f'read of {n} bytes past the end at {self.pos:#x}')
         b = self.data[self.pos:self.pos + n]
         self.pos += n
@@ -202,8 +202,18 @@ class Package:
         return '.'.join(reversed(parts))
 
     def full_path(self, ref):
-        """The object's path with this package's name in front for an export."""
-        return f'{self.path.stem}.{self.path_of(ref)}' if ref > 0 else self.path_of(ref)
+        """The object's path with its package's name in front. A seek-free map
+        carries copies of the assets it uses under Package objects named after
+        their own packages (WhiteBoxJPM.SuperRocks.JungleRockA): those keep
+        their own path."""
+        if ref <= 0:
+            return self.path_of(ref)
+        root = ref
+        while self.exports[root - 1].outer > 0:
+            root = self.exports[root - 1].outer
+        if root != ref and self.class_name(root) == 'Package':
+            return self.path_of(ref)
+        return f'{self.path.stem}.{self.path_of(ref)}'
 
     def class_name(self, ref):
         """The name of the class of an object (or 'Class' for a class)."""
@@ -223,14 +233,27 @@ class Package:
         return [i for i, e in enumerate(self.exports, 1)
                 if (e.name == path or self.path_of(i) == path) and (class_name is None or self.class_name(i) == class_name)]
 
-    def properties(self, ref, schema=None):
+    def properties(self, ref, schema=None, decoder=None):
         """An export's tagged properties, as {name: value} (see Properties)."""
         e = self.exports[ref - 1]
+        class_name = self.class_name(ref)
         r = Reader(self.data, self.big_endian, e.offset)
         if e.flags & RF_HAS_STACK:
             skip_state_frame(r)
+        if schema is not None and schema.is_a(class_name, 'Component'):
+            r.i32()  # template owner class
+            if self.is_template(ref):
+                r.take(8)  # template name
         r.i32()  # net index
-        return Properties(self, schema).read_tagged(r, self.class_name(ref), e.offset + e.size)
+        return (decoder or Properties(self, schema)).read_tagged(r, class_name, e.offset + e.size)
+
+    def is_template(self, ref):
+        """A class default object, or something inside one (a component template)."""
+        while ref > 0:
+            if self.exports[ref - 1].name.startswith('Default__'):
+                return True
+            ref = self.exports[ref - 1].outer
+        return False
 
 
 def skip_state_frame(r):
@@ -263,6 +286,8 @@ class Schema:
         self.supers = {}  # class or struct name (lower) -> super name
         self.props = {}  # (owner lower, property lower) -> PropDef
         self.layouts = {}  # struct name (lower) -> [PropDef] in declaration order
+        self.class_defaults = {}  # class name (lower) -> (package, its Default__ export)
+        self._defaults = {}
 
     @classmethod
     def load(cls, folder):
@@ -276,6 +301,8 @@ class Schema:
     def add(self, pkg):
         defs = {}
         for i, e in enumerate(pkg.exports, 1):
+            if e.name.startswith('Default__') and e.outer == 0:
+                self.class_defaults.setdefault(e.name[len('Default__'):].lower(), (pkg, i))
             kind = pkg.class_name(i)
             if kind.endswith('Property'):
                 defs[i] = self._property(pkg, i, kind)
@@ -345,6 +372,20 @@ class Schema:
             owner = self.supers.get(owner, '')
         return None
 
+    def defaults(self, class_name):
+        """The class's default property values, its supers' merged under its own."""
+        key = class_name.lower()
+        if key not in self._defaults:
+            merged = dict(self.defaults(self.supers[key])) if self.supers.get(key) else {}
+            if key in self.class_defaults:
+                pkg, ref = self.class_defaults[key]
+                try:
+                    merged.update(pkg.properties(ref, self))
+                except (EOFError, ValueError, IndexError):
+                    pass
+            self._defaults[key] = merged
+        return self._defaults[key]
+
     def is_a(self, class_name, base):
         class_name, base = class_name.lower(), base.lower()
         seen = set()
@@ -362,7 +403,7 @@ NATIVE_STRUCTS = {
     'rotator': ('iii', ('Pitch', 'Yaw', 'Roll')),
     'vector2d': ('ff', ('X', 'Y')),
     'vector4': ('ffff', ('X', 'Y', 'Z', 'W')),
-    'plane': ('ffff', ('X', 'Y', 'Z', 'W')),
+    'plane': ('ffff', ('W', 'X', 'Y', 'Z')),  # W first, as this build cooks it (a matrix's rows end W=0,0,0,1)
     'quat': ('ffff', ('X', 'Y', 'Z', 'W')),
     'linearcolor': ('ffff', ('R', 'G', 'B', 'A')),
     'guid': ('IIII', ('A', 'B', 'C', 'D')),

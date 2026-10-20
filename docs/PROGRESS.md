@@ -65,6 +65,26 @@ modding).
 `owner` is a heuristic (see the design, "Where the code is"). Corrections are
 welcome.
 
+## Data formats and extraction
+
+`docs/FORMATS.md` describes the cooked folder, the package format this build
+uses (version 863/0, big-endian, LZX) and how maps are laid out (streaming
+sublevels, seek-free asset copies, the cooker's merged static mesh and light
+collections). Two tools read your own copy, unpacked with Gildor's
+decompressor:
+
+- `tools/upk.py`: a package's tables, object paths and any object's tagged
+  properties as JSON, with property types and class defaults from the script
+  packages;
+- `tools/map_export.py`: per-map actor placements (class, name, location,
+  rotation, scale, properties, components, referenced assets) to JSON, in a
+  folder outside the repository. On this build it exports 250 maps and 17,393
+  actors (13,142 of them static meshes merged by the cooker); only CoverLink's
+  `Slots` and one light component's properties stay undecoded.
+
+Tests use synthetic packages built by `tests/upkbuild.py`; `test_real_maps`
+runs on your copy when `HAGGAR_PACKAGES` names the unpacked folder.
+
 ## Port
 
 | Step | State |
