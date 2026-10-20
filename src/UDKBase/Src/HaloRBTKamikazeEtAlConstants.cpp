@@ -7,9 +7,29 @@
 void CCSAFExitCover::SetObjective(const CCSAOExitCover &)
 {}
 
+// @retail 0x8331EA68
+int CCSAISystem::SGetId()
+{ return 1; }
+
+// @retail 0x8331EAB8
+int CCSDebugOptions::SGetId()
+{ return 2; }
+
 // @retail 0x833206E8
 void ACCSController::ShowSelf()
 {}
+
+// @retail 0x83320B50
+IGripSRProxy *CCSCSMovement::CreateRenderingProxy()
+{ return 0; }
+
+// @retail 0x83320DA0
+bool CCSCSMovementUnreal::DoStrafe()
+{ return true; }
+
+// @retail 0x83320DA8
+bool CCSCSMovementUnreal::DoStrafing()
+{ return true; }
 
 // @retail 0x83322A58
 void AUSSPawn::SetDefaultBehaviorTree(UCCSBTTree *)
@@ -31,6 +51,26 @@ const char *CCSAFIdle::GetName()
 void CCSAFIdle::Tick(float)
 {}
 
+// @retail 0x83323430
+int CCSAnalysisSystem::SGetFamily()
+{ return 1; }
+
+// @retail 0x83323438
+int CCSAnalysisSystem::GetFamily() const
+{ return 1; }
+
+// @retail 0x83323448
+int CCSSensorSystem::SGetFamily()
+{ return 0; }
+
+// @retail 0x83323500
+int CCSASTarget::SGetId()
+{ return 0; }
+
+// @retail 0x83323508
+int CCSASTarget::GetId() const
+{ return 0; }
+
 // @retail 0x83323AE8
 void CCSBlackboard::OnNewTarget(const CCSTarget &)
 {}
@@ -38,6 +78,62 @@ void CCSBlackboard::OnNewTarget(const CCSTarget &)
 // @retail 0x83323AF0
 void CCSBlackboard::OnTargetDestroyed(int)
 {}
+
+// @retail 0x83323C30
+int CCSPSSelfAwareness::SGetId()
+{ return 0; }
+
+// @retail 0x83324348
+bool CCSCSMovement::PathFailed() const
+{ return false; }
+
+// @retail 0x83324468
+void CCSGlobalBlackboard::Init()
+{}
+
+// @retail 0x83324470
+void CCSGlobalBlackboard::Tick(float)
+{}
+
+// @retail 0x833244D0
+int CCSGlobalDataSystem::SGetFamily()
+{ return 3; }
+
+// @retail 0x833244D8
+int CCSGlobalDataSystem::GetFamily() const
+{ return 3; }
+
+// @retail 0x83324530
+void CCSGSCover::Tick(float)
+{}
+
+// @retail 0x83324538
+void CCSGSCover::UpdateWorldCovers()
+{}
+
+// @retail 0x83324540
+void CCSGSCover::InvalidateOccupiedCovers()
+{}
+
+// @retail 0x833246C0
+void CCSPSCover::UpdateFromGlobalData()
+{}
+
+// @retail 0x833248B0
+bool CCSRBTFlee::TestPreCondition(IGripBTInterface *)
+{ return true; }
+
+// @retail 0x83324BA8
+bool CCSRBTMoveToTether::TetherIsInVehicle()
+{ return false; }
+
+// @retail 0x83324BB0
+void CCSRBTMoveToTether::UpdateTetherTarget(AActor *)
+{}
+
+// @retail 0x83325178
+int CCSSensorSystem::GetFamily() const
+{ return 0; }
 
 // @retail 0x83327DF0
 const char *CCSAFFireBurst::GetName()
@@ -71,6 +167,30 @@ const char *CCSAFStrafeTarget::GetName()
 const char *CCSAFStrafeTo::GetName()
 { return "StrafeTo"; }
 
+// @retail 0x8332FAD0
+void CCSDebugOptions::Tick(float)
+{}
+
+// @retail 0x8332FAD8
+int CCSDebugOptions::GetId() const
+{ return 2; }
+
+// @retail 0x833304D8
+int CCSPSCover::SGetId()
+{ return 2; }
+
+// @retail 0x833304E0
+int CCSPSCover::GetId() const
+{ return 2; }
+
+// @retail 0x83330600
+int CCSPSSelfAwareness::GetId() const
+{ return 0; }
+
+// @retail 0x83338180
+bool CCSCSCoverUnreal::DoExitingCover()
+{ return true; }
+
 // @retail 0x83339D18
 const char *CCSAFEnterCover::GetName()
 { return "EnterCover"; }
@@ -82,6 +202,14 @@ const char *CCSAFGetInCover::GetName()
 // @retail 0x8333A110
 const char *CCSAFGetOutCover::GetName()
 { return "GetOutCover"; }
+
+// @retail 0x8333CD28
+int CCSPSTargetAwareness::SGetId()
+{ return 1; }
+
+// @retail 0x8333CD30
+int CCSPSTargetAwareness::GetId() const
+{ return 1; }
 
 // @retail 0x83351270
 EGripBTNodeType UCCSBTEncircleTarget::GetType()
@@ -314,3 +442,15 @@ EGripBTNodeType UCCSBTWaitInCover::GetType()
 // @retail 0x83354790
 BTMenuType UCCSBTWaitInCover::GetMenuType()
 { return MT_BEHAVIOR; }
+
+// @retail 0x83354F70
+int CCSAISystem::GetId() const
+{ return 1; }
+
+// @retail 0x83356DF0
+int CCSGSCover::GetId() const
+{ return 0; }
+
+// @retail 0x83356DF8
+int CCSGSCover::GetFamily() const
+{ return 3; }
