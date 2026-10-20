@@ -3,6 +3,7 @@
 // pawn's tether point, facing the current target.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSAFFactory.cpp"
 #include "CCSRBTMoveTo.cpp"
 #include "CCSCSMovement.cpp"
 
@@ -27,8 +28,6 @@ bool CCSRBTMoveToTether::TestPreCondition(IGripBTInterface *pInterface)
     return pInterface->GetBlackboard<CCSBlackboard>() != 0;
 }
 
-// near: the objective gets its own frame slot where retail reuses the
-// character temporary's (a 0x10 bigger frame)
 // @retail 0x8333F598
 GripRBTNode::EBTExecutionResult CCSRBTMoveToTether::ExecutePreInternal(IGripBTInterface *pInterface, bool bFirstTime)
 {

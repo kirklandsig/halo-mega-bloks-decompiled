@@ -733,6 +733,7 @@ struct GripStatEntry;
 struct GripSystemConfig;
 class GripSystemScheduler;
 class GripSystemTickGroup;
+class GripTGLowHigh;
 class GripUnrealSceneProxy;
 class GripVHeapObject;
 class Grip_Color;
@@ -3019,7 +3020,9 @@ class StatBag;
 class String;
 class StringBuffer;
 class SysAlloc;
+class SysAllocBase;
 class SysAllocPaged;
+class System;
 }
 
 namespace Kaim {
@@ -15450,7 +15453,132 @@ public:
     #endif
 };
 
-struct GripSerializationMember : public GripHeapObject  // size 0xC, opaque
+namespace Grip {
+class String  // size 0x4
+{
+public:
+    enum FlagConstants
+    {
+        Flag_LengthIsSizeShift = 31,
+    };
+    struct DataDesc;
+    enum HeapType
+    {
+        HT_Global = 0,
+        HT_Local = 1,
+        HT_Dynamic = 2,
+        HT_Mask = 3,
+    };
+    struct NoConstructor;
+    struct InitStruct;
+    struct NoCaseKey;
+HG_PROTECTED:
+    Grip::String::HeapType GetHeapType() const;
+    Grip::String::DataDesc *GetData() const;
+    void SetData(Grip::String::DataDesc *);
+    Grip::String::DataDesc *AllocData(Grip::MemoryHeap *, unsigned int, unsigned int);
+    Grip::String::DataDesc *AllocDataCopy1(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int);
+    Grip::String::DataDesc *AllocDataCopy2(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int, const char *, unsigned int);
+public:
+    Grip::MemoryHeap *GetHeap() const;
+    void Clear();
+    operator const char *() const;
+    const char *ToCStr() const;
+    unsigned int GetSize() const;
+    bool IsEmpty() const;
+    unsigned int GetLength() const;
+    unsigned long GetCharAt(unsigned int) const;
+    unsigned long GetFirstCharAt(unsigned int, const char **) const;
+    unsigned long GetNextChar(const char **) const;
+    void AppendChar(unsigned long);
+    void AppendString(const char *, int);
+    void AppendString(const wchar_t *, int);
+    void AssignString(const char *, unsigned int);
+    void AssignString(const Grip::String::InitStruct &, unsigned int);
+    void Remove(unsigned int, int);
+    Grip::String Substring(unsigned int, unsigned int) const;
+    Grip::String ToUpper() const;
+    Grip::String ToLower() const;
+    Grip::String &Insert(const char *, unsigned int, int);
+    unsigned int InsertCharAt(unsigned long, unsigned int);
+    unsigned int GetByteIndex(unsigned int) const;
+    int CompareNoCase(const Grip::String &) const;
+    int CompareNoCase(const char *) const;
+    static int CompareNoCase(const char *, const char *, int);
+    static int CompareNoCase(const char *, const char *);
+    static unsigned int BernsteinHashFunctionCIS(const void *, unsigned int, unsigned int);
+    static unsigned int BernsteinHashFunction(const void *, unsigned int, unsigned int);
+    static void EscapeSpecialHTML(const char *, unsigned int, Grip::String *);
+    static void UnescapeSpecialHTML(const char *, unsigned int, Grip::String *);
+    bool HasAbsolutePath() const;
+    static bool HasAbsolutePath(const char *);
+    bool HasExtension() const;
+    static bool HasExtension(const char *);
+    bool HasProtocol() const;
+    static bool HasProtocol(const char *);
+    Grip::String GetProtocol() const;
+    Grip::String GetPath() const;
+    Grip::String GetFilename() const;
+    Grip::String GetExtension() const;
+    void StripProtocol();
+    void StripExtension();
+    void operator=(const Grip::StringBuffer &);
+    void operator=(const Grip::String &);
+    void operator=(const wchar_t *);
+    void operator=(const char *);
+    void operator+=(char);
+    void operator+=(const wchar_t *);
+    void operator+=(const char *);
+    void operator+=(const Grip::String &);
+    Grip::String operator+(const Grip::String &) const;
+    Grip::String operator+(const char *) const;
+    bool operator==(const Grip::String::NoCaseKey &) const;
+    bool operator==(const char *) const;
+    bool operator==(const Grip::String &) const;
+    bool operator!=(const Grip::String::NoCaseKey &) const;
+    bool operator!=(const char *) const;
+    bool operator!=(const Grip::String &) const;
+    bool operator<(const Grip::String &) const;
+    bool operator<(const char *) const;
+    bool operator>(const Grip::String &) const;
+    bool operator>(const char *) const;
+    const char &operator[](unsigned int) const;
+    const char &operator[](int) const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void operator delete(void *, void *);
+    String(const wchar_t *);
+    String(const Grip::String::InitStruct &, unsigned int);
+    String(const Grip::StringBuffer &);
+    String(const Grip::String &);
+    String(const char *, unsigned int);
+    String(const char *, const char *, const char *);
+    String(const char *);
+    String();
+HG_PROTECTED:
+    String(const Grip::String::NoConstructor &);
+public:
+    ~String();
+    #endif
+    #ifndef HAGGAR_HOST
+    static Grip::String::DataDesc NullData;
+    union
+    {
+        Grip::String::DataDesc *pData;  // 0x0
+        unsigned int HeapTypeBits;  // 0x0
+    };
+    #else
+    static Grip::String::DataDesc (&NullData);
+    union
+    {
+        hg::gptr<Grip::String::DataDesc> pData;
+        hg::be<unsigned int> HeapTypeBits;
+    };
+    #endif
+};
+}
+
+struct GripSerializationMember : public GripHeapObject  // size 0xC
 {
 public:
     void Serialize(GripSerializer *);
@@ -15461,8 +15589,15 @@ public:
     GripSerializationMember(const Grip::String &, const Grip::String &);
     GripSerializationMember();
     #endif
-HG_PRIVATE:
-    unsigned int GripSerializationMemberData[0x3];
+    #ifndef HAGGAR_HOST
+    Grip::String m_key;  // 0x0
+    Grip::String m_value;  // 0x4
+    Grip::String m_type;  // 0x8
+    #else
+    Grip::String m_key;
+    Grip::String m_value;
+    Grip::String m_type;
+    #endif
 };
 
 class GripBBVisualization : public GripVHeapObject  // size 0x18
@@ -16521,131 +16656,6 @@ public:
     hg::be<Kaim::AStarQueryResult> pathResult;
     #endif
 };
-
-namespace Grip {
-class String  // size 0x4
-{
-public:
-    enum FlagConstants
-    {
-        Flag_LengthIsSizeShift = 31,
-    };
-    struct DataDesc;
-    enum HeapType
-    {
-        HT_Global = 0,
-        HT_Local = 1,
-        HT_Dynamic = 2,
-        HT_Mask = 3,
-    };
-    struct NoConstructor;
-    struct InitStruct;
-    struct NoCaseKey;
-HG_PROTECTED:
-    Grip::String::HeapType GetHeapType() const;
-    Grip::String::DataDesc *GetData() const;
-    void SetData(Grip::String::DataDesc *);
-    Grip::String::DataDesc *AllocData(Grip::MemoryHeap *, unsigned int, unsigned int);
-    Grip::String::DataDesc *AllocDataCopy1(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int);
-    Grip::String::DataDesc *AllocDataCopy2(Grip::MemoryHeap *, unsigned int, unsigned int, const char *, unsigned int, const char *, unsigned int);
-public:
-    Grip::MemoryHeap *GetHeap() const;
-    void Clear();
-    operator const char *() const;
-    const char *ToCStr() const;
-    unsigned int GetSize() const;
-    bool IsEmpty() const;
-    unsigned int GetLength() const;
-    unsigned long GetCharAt(unsigned int) const;
-    unsigned long GetFirstCharAt(unsigned int, const char **) const;
-    unsigned long GetNextChar(const char **) const;
-    void AppendChar(unsigned long);
-    void AppendString(const char *, int);
-    void AppendString(const wchar_t *, int);
-    void AssignString(const char *, unsigned int);
-    void AssignString(const Grip::String::InitStruct &, unsigned int);
-    void Remove(unsigned int, int);
-    Grip::String Substring(unsigned int, unsigned int) const;
-    Grip::String ToUpper() const;
-    Grip::String ToLower() const;
-    Grip::String &Insert(const char *, unsigned int, int);
-    unsigned int InsertCharAt(unsigned long, unsigned int);
-    unsigned int GetByteIndex(unsigned int) const;
-    int CompareNoCase(const Grip::String &) const;
-    int CompareNoCase(const char *) const;
-    static int CompareNoCase(const char *, const char *, int);
-    static int CompareNoCase(const char *, const char *);
-    static unsigned int BernsteinHashFunctionCIS(const void *, unsigned int, unsigned int);
-    static unsigned int BernsteinHashFunction(const void *, unsigned int, unsigned int);
-    static void EscapeSpecialHTML(const char *, unsigned int, Grip::String *);
-    static void UnescapeSpecialHTML(const char *, unsigned int, Grip::String *);
-    bool HasAbsolutePath() const;
-    static bool HasAbsolutePath(const char *);
-    bool HasExtension() const;
-    static bool HasExtension(const char *);
-    bool HasProtocol() const;
-    static bool HasProtocol(const char *);
-    Grip::String GetProtocol() const;
-    Grip::String GetPath() const;
-    Grip::String GetFilename() const;
-    Grip::String GetExtension() const;
-    void StripProtocol();
-    void StripExtension();
-    void operator=(const Grip::StringBuffer &);
-    void operator=(const Grip::String &);
-    void operator=(const wchar_t *);
-    void operator=(const char *);
-    void operator+=(char);
-    void operator+=(const wchar_t *);
-    void operator+=(const char *);
-    void operator+=(const Grip::String &);
-    Grip::String operator+(const Grip::String &) const;
-    Grip::String operator+(const char *) const;
-    bool operator==(const Grip::String::NoCaseKey &) const;
-    bool operator==(const char *) const;
-    bool operator==(const Grip::String &) const;
-    bool operator!=(const Grip::String::NoCaseKey &) const;
-    bool operator!=(const char *) const;
-    bool operator!=(const Grip::String &) const;
-    bool operator<(const Grip::String &) const;
-    bool operator<(const char *) const;
-    bool operator>(const Grip::String &) const;
-    bool operator>(const char *) const;
-    const char &operator[](unsigned int) const;
-    const char &operator[](int) const;
-    #ifndef HAGGAR_HOST
-    static void *operator new(unsigned int, void *);
-    static void operator delete(void *, void *);
-    String(const wchar_t *);
-    String(const Grip::String::InitStruct &, unsigned int);
-    String(const Grip::StringBuffer &);
-    String(const Grip::String &);
-    String(const char *, unsigned int);
-    String(const char *, const char *, const char *);
-    String(const char *);
-    String();
-HG_PROTECTED:
-    String(const Grip::String::NoConstructor &);
-public:
-    ~String();
-    #endif
-    #ifndef HAGGAR_HOST
-    static Grip::String::DataDesc NullData;
-    union
-    {
-        Grip::String::DataDesc *pData;  // 0x0
-        unsigned int HeapTypeBits;  // 0x0
-    };
-    #else
-    static Grip::String::DataDesc (&NullData);
-    union
-    {
-        hg::gptr<Grip::String::DataDesc> pData;
-        hg::be<unsigned int> HeapTypeBits;
-    };
-    #endif
-};
-}
 
 struct GripEvent : public GripVHeapObject  // size 0x2C
 {
@@ -24756,6 +24766,37 @@ public:
     #endif
 };
 
+class GripEngine  // size 0x1C
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~GripEngine();)
+HG_PROTECTED:
+    HG_VIRTUAL Grip::SysAllocBase *GetKernelAllocator() HG_PURE;
+    HG_VIRTUAL void EngineInitialize(bool) HG_PURE;
+    HG_VIRTUAL void EngineTick() HG_PURE;
+    HG_VIRTUAL void EngineFinalize() HG_PURE;
+public:
+    IGripAIConsoleLink *GetAIConsoleLink();
+    void Initialize(bool);
+    void Tick();
+    void Finalize();
+    void AddAIManagerFactory(IGripAIManagerFactory *);
+    const Grip_Array<IGripAIManagerFactory *,Grip::AllocatorGH<IGripAIManagerFactory *,2> > &GetAIManagerFactories() const;
+    #ifndef HAGGAR_HOST
+    GripEngine();
+    #endif
+    #ifndef HAGGAR_HOST
+    Grip::System *m_kernelSystem;  // 0x4
+    Grip_Array<IGripAIManagerFactory *,Grip::AllocatorGH<IGripAIManagerFactory *,2> > m_aiManagerFactories;  // 0x8
+    IGripAIConsoleLink *m_gripAIConsoleLink;  // 0x18
+    #else
+    hg::gptr<Grip::System> m_kernelSystem;
+    Grip_Array<IGripAIManagerFactory *,Grip::AllocatorGH<IGripAIManagerFactory *,2> > m_aiManagerFactories;
+    hg::gptr<IGripAIConsoleLink> m_gripAIConsoleLink;
+    #endif
+};
+
 class GripEngineServices  // size 0x1, opaque
 {
 public:
@@ -25004,6 +25045,22 @@ public:
     #else
     GripStatEntry m_statId;
     Grip_ArrayPOD<GripBrainSystem *,2> m_systems;
+    #endif
+};
+
+class GripTGLowHigh : public GripSystemTickGroup  // size 0x24
+{
+public:
+    HG_VIRTUAL void TickInternal(float);
+    #ifndef HAGGAR_HOST
+    GripTGLowHigh(int);
+    #endif
+    #ifndef HAGGAR_HOST
+    int m_budgetPerTick;  // 0x1C
+    int m_tickIdx;  // 0x20
+    #else
+    hg::be<int> m_budgetPerTick;
+    hg::be<int> m_tickIdx;
     #endif
 };
 

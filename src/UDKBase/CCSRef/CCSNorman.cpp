@@ -2,6 +2,12 @@
 #include "UDKBase/Inc/UDKBaseClasses.h"
 #include "Core/Inc/UnMath.h"
 
+// ccsaimanagerfactory.h's register object: each file that includes the
+// header has its own, and here the constructor is called, not inlined
+static CCSAIManagerFactoryRegister s_AIManagerFactoryRegister;
+// @retail 0x8428CAE8
+// `dynamic initializer for 's_AIManagerFactoryRegister''
+
 // The next ActorWrapper's ID (a file static: no public symbol)
 static int s_NextActorID;
 

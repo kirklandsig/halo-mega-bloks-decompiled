@@ -3,6 +3,7 @@
 // target while standing.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSAFFactory.cpp"
 #include "../Src/HaloRBTKamikaze.cpp"
 #include "CCSBlackboard.cpp"
 
@@ -33,8 +34,6 @@ bool CCSRBTShoot::TestPreCondition(IGripBTInterface *pInterface)
     return bHasTarget != 0;
 }
 
-// near: one load of the target's pawn is scheduled after the last-shot
-// compare instead of before it
 // @retail 0x8333FFD0
 GripRBTNode::EBTExecutionResult CCSRBTShoot::ExecutePreInternal(IGripBTInterface *pInterface, bool)
 {

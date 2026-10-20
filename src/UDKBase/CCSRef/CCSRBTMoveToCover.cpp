@@ -3,6 +3,7 @@
 // it, moves the pawn there and takes cover.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSAFFactory.cpp"
 #include "../Src/HaloRBTKamikaze.cpp"
 #include "CCSCover.cpp"
 
@@ -140,7 +141,6 @@ GripRBTNode::EBTExecutionResult CCSRBTMoveToCover::StartMoveToCover(IGripBTInter
     return ER_INPROGRESS;
 }
 
-// Near: retail sets up the objective's address before saving this.
 // @retail 0x83331DC0
 void CCSRBTMoveToCover::ExitCover(CCSAFFactory *pFactory, GripAFScheduler *pScheduler)
 {

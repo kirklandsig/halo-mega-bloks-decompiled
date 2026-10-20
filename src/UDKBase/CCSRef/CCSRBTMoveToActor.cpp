@@ -3,6 +3,7 @@
 // position a move command put on the blackboard.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSAFFactory.cpp"
 #include "CCSRBTMoveTo.cpp"
 
 // @retail 0x83324AB8
@@ -19,8 +20,6 @@ bool CCSRBTMoveToActor::TestPreCondition(IGripBTInterface *pInterface)
     return pInterface->GetBlackboard<CCSBlackboard>()->GetMoveCommand() != CCSBlackboard::MOVE_CMD_NONE;
 }
 
-// near: retail loads the movement type and alertness before the position
-// (as in CCSRBTSearch::MoveToLKP)
 // @retail 0x8333EA58
 GripRBTNode::EBTExecutionResult CCSRBTMoveToActor::ExecutePreInternal(IGripBTInterface *pInterface, bool bFirstTime)
 {

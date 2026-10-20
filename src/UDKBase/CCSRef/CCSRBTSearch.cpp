@@ -4,6 +4,7 @@
 // between random navigation points until the target shows up again.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSAFFactory.cpp"
 #include "CCSRBTMoveTo.cpp"
 #include "UDKBase/Inc/EngineUtils.h"
 
@@ -85,8 +86,6 @@ GripRBTNode::EBTExecutionResult CCSRBTSearch::ExecuteInternal(IGripBTInterface *
     return ER_INPROGRESS;
 }
 
-// near: retail loads the movement type and alertness before the position
-// (assignments zero the vector first; the aggregate loads it first)
 // @retail 0x83338E48
 void CCSRBTSearch::MoveToLKP(IGripBTInterface *pInterface)
 {

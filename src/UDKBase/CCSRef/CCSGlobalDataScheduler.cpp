@@ -4,9 +4,6 @@
 #pragma once
 #include "CCSGSCover.cpp"
 
-// Near: retail adds the slot's offset to the array's base where ours adds
-// the base to the offset (tried the store through operator[], GetData(),
-// pointer arithmetic and a named slot).
 // @retail 0x8333C020
 void CCSGDS_SafeAddGroup(Grip_ArrayPOD<GripSystemTickGroup *, 2> &TickGroups, GripSystemTickGroup *pTickGroup, int, int StatId)
 {

@@ -3,6 +3,7 @@
 // toward the current target.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSAFFactory.cpp"
 #include "../Src/HaloRBTKamikaze.cpp"
 #include "CCSBlackboard.cpp"
 
@@ -22,8 +23,6 @@ bool CCSRBTOrientTowardTarget::TestPreCondition(IGripBTInterface *pInterface)
     return true;
 }
 
-// near: retail loads the alertness before the target's position (as in
-// CCSRBTSearch::MoveToLKP)
 // @retail 0x8333FB50
 GripRBTNode::EBTExecutionResult CCSRBTOrientTowardTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool)
 {

@@ -387,7 +387,7 @@ inline GripBBMember::~GripBBMember() {}
 
 // gripbbvisualization.h
 #ifndef HAGGAR_HOST
-inline GripBBVisualization::GripBBVisualization() : m_pBB(0) {}
+inline GripBBVisualization::GripBBVisualization() { m_pBB = 0; }
 #endif
 inline void GripBBVisualization::SetBlackboard(GripBlackboard *pBB) { m_pBB = pBB; }
 
@@ -531,6 +531,7 @@ inline void GripBrainSystem::FlagAsUsed() { m_used = true; }
 inline void GripSystemTickGroup::SetStatId(GripStatEntry StatId) { m_statId = StatId; }
 #ifndef HAGGAR_HOST
 inline GripSystemTickGroup::GripSystemTickGroup() { m_statId.id = -1; }
+inline GripTGLowHigh::GripTGLowHigh(int BudgetPerTick) : m_budgetPerTick(BudgetPerTick), m_tickIdx(0) {}
 #endif
 
 // ccsstat.h

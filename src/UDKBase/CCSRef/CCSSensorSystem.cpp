@@ -4,6 +4,7 @@
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
 #include "CCSBlackboard.cpp"
+#include "../Src/HaloRBTKamikaze.cpp"
 
 #ifndef HAGGAR_HOST  // constructors stay recompiled in the port
 // @retail 0x83325128
@@ -43,8 +44,8 @@ void CCSSensorSystem::BecomeAware(bool bForce)
     }
 }
 
-// near: retail keeps the friend's target in r8 across GetCurrentTarget (it
-// knows that call leaves r8 alone), so it saves one register fewer
+// near: retail copies the friend's location word by word in X, Y, Z order,
+// ours starts with Z (a cast copy, an FVector copy and assignment tried)
 // Wakes the friendlies within yelling distance (plus their hearing range) and
 // hands an idle one this brain's current target.
 // @retail 0x8336D820

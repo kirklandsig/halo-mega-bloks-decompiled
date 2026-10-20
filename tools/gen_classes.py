@@ -39,7 +39,7 @@ TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FA
                        'FMatrix', 'FRotationTranslationMatrix', 'FRotationMatrix',
                        # the CCS layer
                        'GripSystemTickGroup', 'GripStatEntry', 'GripBrainSystem', 'CCSGSCover',
-                       'Kaim::SpatializedCylinder', 'Kaim::SpatializedPoint', 'FVehicleSeat', 'Grip_Matrix', 'Grip_RotationTranslationMatrix', 'UGripBTInterface', 'UGripBlackboard', 'UGripActionFramework']}
+                       'Kaim::SpatializedCylinder', 'Kaim::SpatializedPoint', 'FVehicleSeat', 'Grip_Matrix', 'Grip_RotationTranslationMatrix', 'UGripBTInterface', 'UGripBlackboard', 'UGripActionFramework', 'GripTGLowHigh', 'GripEngine', 'GripSerializationMember']}
 OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
           'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripBrainDebugOptions', 'GripScopeCycleCounter', 'GripRBTAllocator', 'UWorld', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'GripEngineServices', 'IGripEngineServices', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
                        # the behaviour-tree nodes' runtime classes

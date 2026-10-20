@@ -4,6 +4,7 @@
 // a given distance.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "../CCSRefUE3/CCSGameCharacter.cpp"
 
 // The setters (ccsrbttimesinceevent.h), out of line as in retail
 void EmitTimeSinceEventSetters(CCSRBTTimeSinceEvent *pNode)
@@ -29,9 +30,6 @@ void CCSRBTTimeSinceEvent::FlagUsedBBMembers(GripBlackboard *pBlackboard)
     pBB->m_eventLocation.FlagAsUsed();
 }
 
-// Near: retail loads the event location before storing the time and keeps
-// the squared distance's terms in another order (tried a reference to the
-// location and a named delta).
 // @retail 0x83333188
 bool CCSRBTTimeSinceEvent::TestPreCondition(IGripBTInterface *pInterface)
 {
