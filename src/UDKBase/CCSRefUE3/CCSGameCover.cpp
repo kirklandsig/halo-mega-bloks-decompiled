@@ -15,6 +15,33 @@ bool CCSGameCover::IsEnabled() const
     return m_coverInfo.Link->Slots(m_coverInfo.SlotIdx).bEnabled;
 }
 
+// near: the X sum's operands are the other way round (both add orders tried)
+// Where to stand to shoot past the cover's side: beside the slot, a body
+// half-width plus 68 units out, square to the slot's facing.
+// @retail 0x83321468
+Grip_Vector CCSGameCover::GetShootPosition(const CCS::ECoverShootConfig Config, const float Offset) const
+{
+    ACoverLink *pLink = m_coverInfo.Link;
+    Grip_Rotation Rotation = pLink->GetSlotRotation(m_coverInfo.SlotIdx, 0);
+    if (Config == CCS::CoverShootConfig_Right)
+    {
+        Rotation.Yaw += 0x4000;
+    }
+    else if (Config == CCS::CoverShootConfig_Left)
+    {
+        Rotation.Yaw -= 0x4000;
+    }
+    else
+    {
+        return Grip_Vector(pLink->GetSlotLocation(m_coverInfo.SlotIdx, 0));
+    }
+    Rotation.Normalize();
+    float Distance = Offset + 68.0f;
+    Grip_Vector Side = static_cast<const Grip_Vector &>(Rotation.Vector2D()) * Distance;
+    Grip_Vector Position = Side + Grip_Vector(pLink->GetSlotLocation(m_coverInfo.SlotIdx, 0));
+    return Position;
+}
+
 // @retail 0x83338C38
 CCS::ECoverShootConfig CCSGameCover::GetShootConfig() const
 {

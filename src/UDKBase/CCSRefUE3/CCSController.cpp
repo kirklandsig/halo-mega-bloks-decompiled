@@ -466,3 +466,97 @@ unsigned int ACCSController::Tick(float DeltaTime, ELevelTick TickType)
     }
     return 1;
 }
+
+// The brain finder: the engine's way to find the CCS brains of the world.
+// @retail 0x8336D028
+GripBrain *CCSBrainFinder::FindBrain(void *pActor) const
+{
+    GripBrain *pBrain = 0;
+    APawn *pPawn = Cast<APawn>((UObject *)pActor);
+    if (pPawn != 0)
+    {
+        ACCSController *pController = Cast<ACCSController>(pPawn->Controller);
+        if (pController != 0)
+        {
+            pBrain = pController->Brain;
+        }
+    }
+    return pBrain;
+}
+
+// The closest brain in 2D, its distance written to Distance (-1 if none).
+// @retail 0x8336D090
+GripBrain *CCSBrainFinder::FindClosestBrain(Grip_Vector Position, float &Distance) const
+{
+    if (GWorld == 0)
+    {
+        return 0;
+    }
+    GripBrain *pClosest = 0;
+    bool bFound = false;
+    Distance = -1.0f;
+    for (AController *pController = GWorld->GetFirstController(); pController != 0; pController = pController->NextController)
+    {
+        ACCSController *pCCSController = Cast<ACCSController>(pController);
+        if (pCCSController == 0)
+        {
+            continue;
+        }
+        GripBrain *pBrain = pCCSController->Brain;
+        if (pBrain == 0)
+        {
+            continue;
+        }
+        APawn *pPawn = pCCSController->Pawn;
+        if (pPawn != 0)
+        {
+            float DeltaX = pPawn->Location.X - Position.X;
+            float DeltaY = pPawn->Location.Y - Position.Y;
+            float BrainDistance = appSqrt(DeltaX * DeltaX + DeltaY * DeltaY);
+            if (!bFound || BrainDistance < Distance)
+            {
+                Distance = BrainDistance;
+                pClosest = pBrain;
+                bFound = true;
+            }
+        }
+    }
+    return pClosest;
+}
+
+// @retail 0x8336D190
+void CCSBrainFinder::FindAllBrains(Grip_ArrayPOD<GripBrain *, 2> &Brains) const
+{
+    if (GWorld == 0)
+    {
+        return;
+    }
+    for (AController *pController = GWorld->GetFirstController(); pController != 0; pController = pController->NextController)
+    {
+        ACCSController *pCCSController = Cast<ACCSController>(pController);
+        if (pCCSController != 0 && pCCSController->Brain != 0)
+        {
+            Brains.AddItem(pCCSController->Brain);
+        }
+    }
+}
+
+// @retail 0x8336D218
+bool CCSBrainFinder::FindLocationAndRotationFromBrainID(int BrainID, Grip_Vector &Location, Grip_Vector &Rotation) const
+{
+    if (GWorld == 0)
+    {
+        return false;
+    }
+    for (AController *pController = GWorld->GetFirstController(); pController != 0; pController = pController->NextController)
+    {
+        ACCSController *pCCSController = Cast<ACCSController>(pController);
+        if (pCCSController != 0 && pCCSController->Brain != 0 && pCCSController->Brain->m_brainID == BrainID && pCCSController->Pawn != 0)
+        {
+            Location = pCCSController->Pawn->Location;
+            Rotation = pCCSController->Pawn->Rotation.Vector();
+            return true;
+        }
+    }
+    return false;
+}

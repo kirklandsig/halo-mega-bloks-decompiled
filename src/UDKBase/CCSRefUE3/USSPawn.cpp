@@ -1,6 +1,35 @@
 // @object Unity_HaloRBTKamikazeEtAl.cpp.obj
 #include "UDKBase/Inc/UDKBaseClasses.h"
 
+// Brings a rotator component into -32768..32768. Todo (both overloads): they
+// are file statics with no public symbol, and check.py can't tell two
+// statics of one name apart.
+// @retail 0x83322568
+static int UnwindRot(int Rot)
+{
+    while (Rot > 32768)
+    {
+        Rot -= 65536;
+    }
+    while (Rot < -32768)
+    {
+        Rot += 65536;
+    }
+    return Rot;
+}
+
+// @retail 0x833225B8
+static FRotator UnwindRot(FRotator Rot)
+{
+    Rot.Yaw = UnwindRot(Rot.Yaw);
+    Rot.Pitch = UnwindRot(Rot.Pitch);
+    return Rot;
+}
+#pragma inline_depth(0)
+extern int (*const EmitUnwindRotInt)(int) = &UnwindRot;
+extern FRotator (*const EmitUnwindRot)(FRotator) = &UnwindRot;
+#pragma inline_depth()
+
 // @retail 0x83322670
 unsigned char AUSSPawn::GetMovementType()
 {

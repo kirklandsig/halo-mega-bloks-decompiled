@@ -179,6 +179,7 @@ address,status
 0x8331E5E0,matched
 0x8331E670,matched
 0x8331E700,matched
+0x8331E7F0,matched
 0x8331E848,matched
 0x8331E868,matched
 0x8331E938,matched
@@ -215,6 +216,8 @@ address,status
 0x8331EC98,matched
 0x8331ECA0,matched
 0x8331ECA8,matched
+0x8331ECB0,matched
+0x8331ECB8,matched
 0x8331ECC0,matched
 0x8331ECC8,matched
 0x8331ECD0,matched
@@ -292,6 +295,8 @@ address,status
 0x833204E8,matched
 0x833204F8,matched
 0x83320508,matched
+0x83320518,matched
+0x83320520,matched
 0x833205A0,matched
 0x83320630,matched
 0x833206E0,matched
@@ -328,6 +333,7 @@ address,status
 0x83321330,matched
 0x83321368,matched
 0x833213D0,matched
+0x83321468,near
 0x833215F0,matched
 0x83321668,matched
 0x833216A0,matched
@@ -379,6 +385,7 @@ address,status
 0x83321F90,matched
 0x83321FA8,matched
 0x83321FE8,matched
+0x83322078,matched
 0x833220A8,matched
 0x83322178,matched
 0x83322208,matched
@@ -689,6 +696,7 @@ address,status
 0x8332A968,matched
 0x8332AA90,matched
 0x8332AB38,matched
+0x8332B180,matched
 0x8332B3B0,matched
 0x8332B430,matched
 0x8332B528,matched
@@ -791,6 +799,8 @@ address,status
 0x8332E928,matched
 0x8332E930,matched
 0x8332E950,matched
+0x8332E9F0,matched
+0x8332E9F8,matched
 0x8332EA10,matched
 0x8332EBA0,matched
 0x8332EC40,matched
@@ -855,7 +865,7 @@ address,status
 0x83332070,matched
 0x83332138,matched
 0x83332240,matched
-0x83332348,near
+0x83332348,matched
 0x83332428,matched
 0x833324B8,matched
 0x83332728,matched
@@ -1367,7 +1377,7 @@ address,status
 0x83354AB8,matched
 0x83354D90,matched
 0x83354DC8,matched
-0x83354E00,near
+0x83354E00,matched
 0x83354EB0,matched
 0x83354F70,matched
 0x83356340,matched
@@ -1544,7 +1554,15 @@ address,status
 0x8336A838,matched
 0x8336A8C8,matched
 0x8336CFD8,matched
+0x8336D028,matched
+0x8336D090,matched
+0x8336D190,matched
+0x8336D218,matched
 0x8336D320,matched
+0x8336D3C0,matched
+0x8336D440,matched
+0x8336D4D0,matched
+0x8336D4E0,matched
 0x8336D4F0,matched
 0x8336D7D0,matched
 0x8336D820,near
@@ -1929,6 +1947,7 @@ address,status
 0x833C8468,matched
 0x833C86D0,matched
 0x833C87F8,matched
+0x833C8860,matched
 0x833C88B8,matched
 0x833C8918,matched
 0x833C8A38,matched

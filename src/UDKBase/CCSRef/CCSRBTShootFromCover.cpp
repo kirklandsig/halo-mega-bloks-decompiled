@@ -2,6 +2,7 @@
 // ccsrbtshootfromcover.cpp: the behaviour node that shoots from cover.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSAFFactory.cpp"
 
 // @retail 0x83324DC8
 CCSRBTShootFromCover::CCSRBTShootFromCover()
@@ -227,3 +228,14 @@ int CCSRBTShootFromCover::GetOutCover(CCSTarget *pTarget, CCSCover *pCover, CCSA
     pScheduler->Execute(m_actionHandle);
     return m_actionHandle;
 }
+
+// ccsrbtshootfromcover.h's inline setters, out of line as in retail
+#pragma inline_depth(0)
+extern void (CCSRBTShootFromCover::*const EmitShootFromCoverSetFireBurstPerShot)(int) = &CCSRBTShootFromCover::SetFireBurstPerShot;
+extern void (CCSRBTShootFromCover::*const EmitShootFromCoverSetDelayBetweenBursts)(float) = &CCSRBTShootFromCover::SetDelayBetweenBursts;
+#pragma inline_depth()
+
+// @retail 0x8331ECB0
+// CCSRBTShootFromCover::SetFireBurstPerShot (in the header)
+// @retail 0x8331ECB8
+// CCSRBTShootFromCover::SetDelayBetweenBursts (in the header)

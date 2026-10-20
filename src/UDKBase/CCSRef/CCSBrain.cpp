@@ -92,6 +92,31 @@ GripBlackboard *CCSBrain::GetBlackboardInternal()
     return m_blackboard;
 }
 
+// @retail 0x8332E9F0
+IGripMeatPuppetQuery *CCSBrain::GetMeatPuppetQueryInternal()
+{
+    return m_meatPuppetQuery;
+}
+
+// @retail 0x8332E9F8
+IGripWorldQuery *CCSBrain::GetWorldQueryInternal()
+{
+    return m_worldQuery;
+}
+
+// ccsbrain.h's getters
+// @retail 0x83320518
+ICCSMeatPuppet *CCSBrain::GetMeatPuppet()
+{
+    return m_meatPuppet;
+}
+
+// @retail 0x83320520
+CCSGlobalBlackboard *CCSBrain::GetGlobalBB()
+{
+    return m_pGlobalBB;
+}
+
 // @retail 0x83344180
 void CCSBrain::CompleteSetUp()
 {

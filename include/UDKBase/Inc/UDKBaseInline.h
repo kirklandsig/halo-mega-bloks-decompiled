@@ -646,6 +646,9 @@ inline Grip_Vector Grip_Matrix::TransformNormal(const Grip_Vector &V) const
                        V.X * M[0][2] + V.Z * M[2][2] + V.Y * M[1][2]);
 }
 
+// UnPrimitiveSceneProxy.h (UnSceneProxy)
+inline unsigned long FPrimitiveSceneProxy::GetAllocatedSize() const { return Owners.GetAllocatedSize(); }
+
 // gripafframework.h
 inline GripAFFactory *GripAFFramework::GetFactory() { return m_pAFFactory; }
 #ifndef HAGGAR_HOST
@@ -671,6 +674,7 @@ inline GripDebugOptions::GripDebugOptions(GripAIManager *pAIMgr) : GripAISystem(
 inline GripAISystem::~GripAISystem() {}
 inline IGripAISystem::~IGripAISystem() {}
 inline IGripHUDRenderingComponent::~IGripHUDRenderingComponent() {}
+inline ICCSMeatPuppet::~ICCSMeatPuppet() {}
 #endif
 // ccsafexitcover.h
 inline void CCSAFExitCover::SetObjective(const CCSAOExitCover &) {}

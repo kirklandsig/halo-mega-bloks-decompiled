@@ -2,6 +2,7 @@
 // ccscsmovementunreal.cpp: the movement system that drives a UE3 pawn.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "CCSGameCharacter.cpp"
 
 // The invalid movement location: a big negative Z, so a path request to it
 // always fails.

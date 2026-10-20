@@ -434,3 +434,15 @@ bool CCSNorman::IsAlertedEnemyInRange(AActor *pActor, float Range)
 // CCSNorman::~CCSNorman
 // @retail 0x833C9290
 // CCSNorman::`scalar deleting destructor'
+
+// Logs a chain of destructible cover links (a debugging aid).
+extern FOutputDeviceRedirectorBase *GLog;
+// @retail 0x833C8860
+void debugcover(ACoverLink *pLink)
+{
+    for (; pLink != 0; pLink = pLink->NextDestructibleCoverLink)
+    {
+        GLog->Logf__VA(L"CoverLink = 0x%08x", pLink);
+    }
+    GLog->Logf__VA(L"NULL");
+}

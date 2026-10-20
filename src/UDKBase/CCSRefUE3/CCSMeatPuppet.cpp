@@ -336,3 +336,15 @@ void CCSMeatPuppet::DrawHUD(GripHUDRenderer *pRenderer, int &Y)
 {
     m_pCCSCtrl->DrawHUD(pRenderer, Y);
 }
+
+// iccsmeatpuppet.h's destructor, out of line as in retail
+// @retail 0x8331E7F0
+// ICCSMeatPuppet::~ICCSMeatPuppet (in the header)
+#pragma inline_depth(0)
+#ifndef HAGGAR_HOST
+void EmitMeatPuppetInterfaceDestructor(ICCSMeatPuppet *pMeatPuppet)
+{
+    pMeatPuppet->ICCSMeatPuppet::~ICCSMeatPuppet();
+}
+#endif
+#pragma inline_depth()
