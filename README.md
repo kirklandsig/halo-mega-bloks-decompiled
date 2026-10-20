@@ -21,8 +21,10 @@ everyone uses their own copy of the build.
 
 "Proper" covers three things:
 
-1. **n-Space's native C++:** the `nspace` rows, 1,417 functions and 149,468
-   bytes, matched byte for byte. Progress is measured in bytes.
+1. **n-Space's native C++:** the `nspace` rows, 2,061 functions and 248,492
+   bytes, matched byte for byte. Progress is measured in bytes. They include
+   the CCS layer: Autodesk Gameware Cognition's reference integration with
+   UE3, which n-Space extended into the game's AI.
 2. **The UnrealScript classes,** compiling with UDK's compiler: every
    decompiler error is fixed, and the compiler checks the scripts as far as
    stock UDK can load n-Space's changes to its native classes
@@ -39,7 +41,8 @@ recompiles all of that, so it runs without being decompiled.
 
 The scope checks are done: Grip, the behaviour-tree system n-Space's AI uses,
 is Autodesk Gameware's middleware and stays out; the 159 functions n-Space
-added to Epic's classes (the CCS pawn interface on UDKPawn and its kin) are in.
+added to Epic's classes (the CCS pawn interface on UDKPawn and its kin) are in,
+and so is the whole CCS layer (644 more functions, 99,024 bytes).
 
 Next: Phase 4 (the handheld), then Phase 5 (the UDK rebuild).
 
@@ -62,8 +65,8 @@ The handheld goal: an Anbernic device, chosen by profiling the PC build.
 
 ## Status
 
-Phase 3 is done: **1,237 of n-Space's 1,417 functions match** byte for byte
-(81% of the bytes; 89% of the 1,258 in scope before the scope check), and
+Phase 3 is done: **1,439 of n-Space's 2,061 functions match** byte for byte
+(55% of the bytes; the scope grew by the CCS layer's 644 functions), and
 matched code can replace its recompiled version in the port. Phase 2
 made **the recompiled build run natively on Windows x86-64, from boot to the
 first level** (11 to 16 fps on an integrated GPU), and it builds on Linux.
@@ -73,7 +76,7 @@ The results are in `docs/specs/phase2-baseline.md`,
 | | |
 | --- | --- |
 | Inventory | 237,168 functions (215,944 from the PDB's procedures, 21,224 library functions with only a public symbol), 2,295 objects |
-| n-Space's C++ | 1,417 functions (149,468 bytes) in scope: **1,237 matched** (121,312 bytes, 81%), 8 near, 172 todo |
+| n-Space's C++ | 2,061 functions (248,492 bytes) in scope: **1,439 matched** (136,292 bytes, 55%), 11 near, 611 todo |
 | Native port | Windows: boots to the first level, playable with the build's own known issues. Linux: builds, and starts UE3 on a software Vulkan device |
 | Recompilation | 237,162 functions, 345 jump tables, no unimplemented instruction; 506 files compile in about 6 minutes |
 | UnrealScript | 2,597 classes export; the 758 that are n-Space's own or modified from UDK are committed, with every decompiler error fixed, and UDK's compiler checks them as far as stock UDK allows |

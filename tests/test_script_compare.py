@@ -99,7 +99,7 @@ def test_refine_owner(monkeypatch):
             dict(game, name='Grip_Array<int>::AddItem', source=r'external\grip\sdk\core\grip_array.h')]
     status = {'halopawn': 'nspace-only', 'utweapon': 'modified', 'udkpawn': 'modified'}
     script_compare.refine_owner(rows, status)
-    assert [r['owner'] for r in rows] == ['nspace', 'epic', 'nspace', '', 'nspace', 'vendor', 'vendor', 'vendor']
+    assert [r['owner'] for r in rows] == ['nspace', 'epic', 'nspace', '', 'nspace', 'nspace', 'vendor', 'vendor']
 
 
 def test_editoronly_vars_and_constants_ignored():

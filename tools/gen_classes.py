@@ -94,10 +94,8 @@ def function_rows():
 
 
 def code_rows(package):
-    """A package's rows of n-Space's code: owner nspace, and the rest of
-    its AI library (udkbase\\ccsref*, owner vendor)."""
-    return [r for r in function_rows() if r['package'] == package.lower()
-            and (r['owner'] == 'nspace' or r['source'].startswith('udkbase\\ccsref'))]
+    """A package's rows of n-Space's code (owner nspace)."""
+    return [r for r in function_rows() if r['package'] == package.lower() and r['owner'] == 'nspace']
 
 
 def nspace_rows():
@@ -791,8 +789,12 @@ def main(argv=None):
             by_object.setdefault(r['object'], []).append(r)
         for obj, orows in sorted(by_object.items()):
             write_source(c, package, obj, orows)
+        # bodies the hand-written headers already define stay theirs
+        hand = tail + ''.join(h.read_text(encoding='utf-8') for h in header.parent.glob('*Inline.h'))
         tiny = {}
         for r, shape in c.tiny:
+            if f"{r['name']}(" in hand:
+                continue
             text = c.tiny_definition(r, shape)
             if text:
                 tiny.setdefault(r['object'], []).extend(text)

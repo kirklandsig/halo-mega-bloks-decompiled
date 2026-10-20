@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-19 (n-Space's C++: 1,237 of 1,417 functions matched). Matching progress is
+Updated 2026-10-19 (n-Space's C++: 1,439 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -14,9 +14,11 @@ Epic's UDKBase and GameFramework code are recompiled by the port, not
 decompiled.
 
 The two scope checks are closed (details in the design, "Scope checks"):
-Grip is Autodesk Gameware's middleware and stays out, as do the CCS reference
-layer's other rows and the inlined middleware headers (now owner `vendor`:
-1,571 functions, 258,704 bytes); n-Space's 159 additions to Epic's classes
+Grip is Autodesk Gameware's middleware and stays out, as do the inlined
+middleware headers (owner `vendor`: 927 functions, 159,680 bytes). The CCS
+layer, Gameware Cognition's reference integration with UE3 that n-Space
+extended into the game's AI, is in scope: its 644 rows that were `vendor`
+(99,024 bytes) are `nspace` now. n-Space's 159 additions to Epic's classes
 (the CCS pawn interface on UDKPawn, UDKWeaponPawn and UDKVehicle, and a few
 more; 12,808 bytes) are in scope now.
 
@@ -26,44 +28,41 @@ Phase 5 (UDK rebuild, later).
 
 ## n-Space's C++ (matching)
 
-1,417 functions (149,468 bytes) are in scope: the `nspace` rows of
-`config/functions/game.csv`. `config/status.csv` records every function that isn't
-`todo`. **1,237 are matched (121,312 bytes, 81%), 8 are near (3,864 bytes)
-and 172 are todo (24,292 bytes)**; 1,296 functions match in all, counting the
-Grip, CCS and Epic helpers that the same objects keep out of line. Of the
-original 1,258, 1,237 match (89% of their 136,660 bytes); the 159 added by
-the scope check are all todo.
+2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
+`config/functions/game.csv`. `config/status.csv` records every function that
+isn't `todo`. **1,439 are matched (136,292 bytes, 55%), 11 are near
+(5,208 bytes) and 611 are todo (106,992 bytes)**; 1,452 functions match in
+all, counting the Grip and Epic helpers that the same objects keep out of
+line. The scope has grown twice: n-Space's 159 additions to Epic's classes
+(156 match), and the CCS layer's other 644 functions (99,024 bytes; 46 of
+them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 962 | 108,304 | 943 | 6 | 13 |
-| `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 195 | 0 | 159 |
-| `Unity_UDKCoverEtAl.cpp.obj` | 42 | 5,784 | 42 | 0 | 0 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 988 | 6 | 609 |
+| `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 351 | 3 | 0 |
+| `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 43 | 0 | 2 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
 | `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 25 | 0 | 0 |
 
-Every function of the original scope has been written. Each one that
-doesn't match has a comment in its source file saying why. In short:
+Each written function that doesn't match has a comment in its source file
+saying why. In short:
 
-- **Todo (159), not written yet:** n-Space's additions to Epic's classes in
-  `Unity_UDKWeaponEtAl.cpp.obj` (74 `exec` thunks and 85 implementations on
-  AUDKPawn, AUDKVehicle, AUDKWeaponPawn, AUDKPlayerController and
-  AUDKJumpPad). Generating their thunks needs those Epic classes rendered as
-  targets of `tools/gen_classes.py`, which leaves them out for now.
+- **Todo, not written yet:** the CCS layer's 598 functions that came into scope with it, in `Unity_HaloRBTKamikazeEtAl.cpp.obj` and `Unity_UDKCoverEtAl.cpp.obj`.
 - **Todo (13), the code is retail's but registers, stack slots or inlining
   differ:** `ACCSController::Tick` (retail inlines `FVector::Normalize`,
   which it calls out of line elsewhere), `SetState` and `RemoveState`
   (argument order), `AUSSController::PostPollMove`, `AUSSPawn::TickSpecial`
   (a rotator kept in a stack copy), the `CCSAF*` actions' `UpdateGoal`,
   `UpdateMoveTarget` and `Tick`, `CCSBlackboard`'s constructor and destructor,
-  `UCCSActorFactory::CreateActor` (retail calls two `StaticClass` out of
-  line) and `HaloRBTKamikaze::ExecuteInternal`.
-- **Near (8):** `UHaloSaveGame::BasicSerializeObject` and
+  `UCCSActorFactory::CreateActor` and `HaloRBTKamikaze::ExecuteInternal`.
+- **Near (11):** `UHaloSaveGame::BasicSerializeObject` and
   `BasicDeserializeObject`, `CCSTarget::FindDestinationReachable`,
   `UCCSBlackboard::GetCovers` and `GetTargets`,
   `ACCSController::CalcAccuracyAngles`, `CCSBlackboard::GetSpecificTarget` and
-  `UpdateTargetListsByRange`: a swapped register pair, operand order or
-  schedule.
+  `UpdateTargetListsByRange`, and AUDKVehicle's look-steer modes
+  (`moveTowardGwNavLSStrafe`, `LSDefault`, `LSEncircle`): a swapped register
+  pair, operand order or schedule.
 
 The inline layer they rest on is hand-written in `include/`: `Core/Inc/Core.h`
 (memory, `check()`, `Min`/`Max` with `fsel`, `appSqrt`), `Core/Inc/Array.h`

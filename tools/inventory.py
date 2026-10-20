@@ -17,10 +17,11 @@ to UE3 package <Package>: UDKBase, GameFramework, MegaHaloGame and Cognition
 are the game tier, Core and Engine the engine tier, every other package the
 platform tier. Everything else is lib.
 
-Game-tier rows carry an owner: nspace for MegaHaloGame and Cognition and for
-source files whose name starts with Halo, vendor for middleware code (see
-VENDOR_SOURCES), epic for the rest (Epic's UDK code). tools/script_compare.py
-refines it by script class (refine_owner).
+Game-tier rows carry an owner: nspace for MegaHaloGame and Cognition, for
+source files whose name starts with Halo and for the CCS layer (CCS_SOURCES),
+vendor for middleware code (see VENDOR_SOURCES), epic for the rest (Epic's
+UDK code). tools/script_compare.py refines it by script class
+(refine_owner).
 """
 import argparse
 import bisect
@@ -39,12 +40,12 @@ OBJECT_COLUMNS = ['object', 'package', 'tier', 'functions', 'bytes', 'src', 'cmd
 GAME = {'udkbase', 'gameframework', 'megahalogame', 'cognition'}
 ENGINE = {'core', 'engine'}
 NSPACE_PACKAGES = {'megahalogame', 'cognition'}
-# Game-tier code that is neither Epic's nor n-Space's own: middleware headers
-# inlined into the game's objects (Autodesk Gameware's Grip and Navigation),
-# and the CCS reference integration of Gameware Cognition that n-Space built
-# its AI on (udkbase\ccsref*; the classes of n-Space's script are refined to
-# nspace).
-VENDOR_SOURCES = ('external\\', 'udkbase\\ccsref')
+# The CCS layer: Autodesk Gameware Cognition's reference integration with
+# UE3, which n-Space extended into the game's AI (udkbase\ccsref*). In scope.
+CCS_SOURCES = ('udkbase\\ccsref',)
+# Game-tier code that is neither Epic's nor n-Space's: middleware headers
+# inlined into the game's objects (Autodesk Gameware's Grip and Navigation).
+VENDOR_SOURCES = ('external\\',)
 PACKAGE = re.compile(r'\\intermediate\\megahalogame\\xbox360\\release\\([^\\]+)\\')
 SOURCE_PREFIXES = [('f:\\projects\\halo_megabloks\\development\\src\\', ''),
                    ('f:\\projects\\halo_megabloks\\development\\', ''),
@@ -84,7 +85,7 @@ def owner(tier, package, source):
     if tier != 'game':
         return ''
     source = source.lower()
-    if package in NSPACE_PACKAGES or ntpath.basename(source).startswith('halo'):
+    if package in NSPACE_PACKAGES or ntpath.basename(source).startswith('halo') or source.startswith(CCS_SOURCES):
         return 'nspace'
     if source.startswith(VENDOR_SOURCES):
         return 'vendor'
