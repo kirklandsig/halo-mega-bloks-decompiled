@@ -28,7 +28,7 @@ import shutil
 import subprocess
 import sys
 import time
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import paths  # noqa: E402
@@ -250,7 +250,8 @@ def parse_log(text, work=None):
                 packages[-1][1] = False
             if work is not None and file:
                 try:
-                    file = Path(file).resolve().relative_to(work.resolve()).as_posix()
+                    # UDK logs Windows paths; parse them as such on any host.
+                    file = PureWindowsPath(file).relative_to(PureWindowsPath(work)).as_posix()
                 except ValueError:
                     pass
             key = (kind, file, number, message)
