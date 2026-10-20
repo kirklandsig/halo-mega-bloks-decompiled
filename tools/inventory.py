@@ -162,6 +162,7 @@ SHARD_BYTES = 8 * 1024 * 1024
 
 
 def functions_dir():
+    """config/functions/, the inventory's function rows."""
     return paths.CONFIG / 'functions'
 
 
@@ -197,11 +198,12 @@ def write_functions(rows, directory=None):
         shards, size = [[]], len(header)
         for r in sorted((r for r in rows if r['tier'] == tier), key=lambda r: int(r['address'], 16)):
             line = _line(FUNCTION_COLUMNS, r)
-            if size + len(line.encode()) > SHARD_BYTES and shards[-1]:
+            n = len(line.encode())
+            if size + n > SHARD_BYTES and shards[-1]:
                 shards.append([])
                 size = len(header)
             shards[-1].append(line)
-            size += len(line.encode())
+            size += n
         if not shards[0]:
             continue
         for i, lines in enumerate(shards, 1):

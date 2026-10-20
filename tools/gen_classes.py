@@ -91,6 +91,7 @@ EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 
 
 def function_rows():
+    """Every function row, read once."""
     if not hasattr(function_rows, 'cache'):
         function_rows.cache = inventory.read_functions()
     return function_rows.cache
@@ -328,7 +329,7 @@ class Classes:
         A constructor row from a .cpp counts for every overload: the PDB
         often has no decorated name to tell which one it is."""
         if not hasattr(self, '_out_of_line'):
-            self._out_of_line = {r['name'] for r in inventory.read_functions()
+            self._out_of_line = {r['name'] for r in function_rows()
                                  if r['source'].endswith('.cpp')}
         return self._out_of_line
 
@@ -449,7 +450,7 @@ class Classes:
         lines = [f'inline void {cls}::{member}(FFrame &Stack, void *const{"" if ret == "void" else " Result"})', '{']
         for i, p in enumerate(params):
             if p.startswith('const ') and not p.endswith(('&', '*')):
-                p = p[6:]  # a const by-value parameter reads like any other
+                p = p.removeprefix('const ')  # a const by-value parameter reads like any other
             kind = parameter_kind(p)
             opt, default = optional[i]
             a = f'A{i}'
@@ -763,7 +764,7 @@ def argument_registers(va, size, regs, callee='UClass::UClass'):
 def names():
     """{address: name} of every function, read once."""
     if not hasattr(names, 'cache'):
-        names.cache = {int(r['address'], 16): r['name'] for r in inventory.read_functions()}
+        names.cache = {int(r['address'], 16): r['name'] for r in function_rows()}
     return names.cache
 
 

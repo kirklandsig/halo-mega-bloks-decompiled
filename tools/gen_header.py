@@ -780,9 +780,12 @@ class Header:
 
     def _small_return(self, mtype):
         """The record a member function returns by value, if 8 bytes or less."""
-        if mtype < self.t.begin or self.t.record(mtype)[0] != pt.LF_MFUNCTION:
+        if mtype < self.t.begin:
             return None
-        ret = struct.unpack_from('<I', self.t.data, self.t.record(mtype)[1])[0]
+        leaf, offset = self.t.record(mtype)
+        if leaf != pt.LF_MFUNCTION:
+            return None
+        ret = struct.unpack_from('<I', self.t.data, offset)[0]
         if ret < self.t.begin or self._kind(ret) not in (pt.LF_CLASS, pt.LF_STRUCTURE):
             return None
         ret = self.t._resolve(ret)
