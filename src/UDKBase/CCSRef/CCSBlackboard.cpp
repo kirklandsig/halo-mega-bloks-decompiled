@@ -3,6 +3,7 @@
 // gripblackboard.h's) inline functions that retail keeps.
 #pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
+#include "../CCSRef/CCSCover.cpp"
 #include "../CCSRefUE3/CCSGameCharacter.cpp"
 
 #pragma inline_depth(0)
@@ -63,8 +64,8 @@ extern void (GripBBMember::*const EmitAddUsedAnalysisSystems)(const int) = &Grip
 // @retail 0x8331EA30
 // GripBBMember::AddUsedAnalysisSystems
 
-// Todo: the members are built as retail's, but registers and schedule
-// differ across the 1.8 KB of stores.
+// The blackboard's own covers are default-constructed in place, so this file
+// includes CCSCover.cpp and lets the CCSCover constructor inline.
 // @retail 0x833627C8
 CCSBlackboard::CCSBlackboard()
 {
@@ -433,17 +434,18 @@ void CCSBlackboard::SetHasBecomeAware(bool bAware)
 // @retail 0x833631B8
 // CCSBlackboard::`scalar deleting destructor'
 
-// Near: in the actor branch ours knows the pawn is null and compares
-// CCSCharacter::NONE's pawn with 0; retail compares it with the loaded pawn.
+// The pawn is read into a local first: retail keeps the loaded pawn in a
+// register for the comparison with CCSCharacter::NONE's pawn.
 // @retail 0x8333B448
 CCSTarget *CCSBlackboard::GetSpecificTarget(FString TargetName)
 {
     for (int i = 0; i < m_targets.Num(); i++)
     {
         CCSTarget &Target = m_targets[i];
-        if (Target.character.m_gameCharacter.m_pawn != 0)
+        APawn *pPawn = Target.character.m_gameCharacter.m_pawn;
+        if (pPawn != 0)
         {
-            const FString Name = Target.character.m_gameCharacter.m_pawn->Tag.ToString();
+            const FString Name = pPawn->Tag.ToString();
             if (Name == TargetName)
             {
                 return &Target;
@@ -465,9 +467,10 @@ CCSTarget *CCSBlackboard::GetSpecificTarget(FString TargetName)
     for (int i = 0; i < m_OutRangeThreatTargets.Num(); i++)
     {
         CCSTarget &Target = m_OutRangeThreatTargets[i];
-        if (Target.character.m_gameCharacter.m_pawn != 0)
+        APawn *pPawn = Target.character.m_gameCharacter.m_pawn;
+        if (pPawn != 0)
         {
-            const FString Name = Target.character.m_gameCharacter.m_pawn->Tag.ToString();
+            const FString Name = pPawn->Tag.ToString();
             if (Name == TargetName)
             {
                 return &Target;
@@ -489,7 +492,11 @@ CCSTarget *CCSBlackboard::GetSpecificTarget(FString TargetName)
     return 0;
 }
 
-// Near: the instruction schedule of the inlined position copies differs.
+// Near: the new out-of-range element's address is computed in the other
+// two registers than retail uses (3 bytes): retail loads the count into
+// r10 and the data pointer into r11, ours the other way round. The
+// inlined position copies match once the position is read before the
+// target reference.
 // Moves targets beyond OutRange to the out-of-range list, and those back
 // within InRange to the target list.
 // @retail 0x83356838
@@ -500,8 +507,8 @@ void CCSBlackboard::UpdateTargetListsByRange(const Grip_Vector &Origin, const fl
     int NumOutRange = m_OutRangeThreatTargets.Num();
     for (int i = 0; i < m_targets.Num();)
     {
+        const Grip_Vector Position = m_targets[i].character.GetPosition();
         CCSTarget &Target = m_targets[i];
-        const Grip_Vector Position = Target.character.GetPosition();
         const float DeltaX = Position.X - Origin.X;
         const float DeltaY = Position.Y - Origin.Y;
         if (DeltaX * DeltaX + DeltaY * DeltaY > OutRangeSq)
@@ -516,8 +523,8 @@ void CCSBlackboard::UpdateTargetListsByRange(const Grip_Vector &Origin, const fl
     }
     for (int i = 0; i < NumOutRange;)
     {
+        const Grip_Vector Position = m_OutRangeThreatTargets[i].character.GetPosition();
         CCSTarget &Target = m_OutRangeThreatTargets[i];
-        const Grip_Vector Position = Target.character.GetPosition();
         const float DeltaX = Position.X - Origin.X;
         const float DeltaY = Position.Y - Origin.Y;
         if (DeltaX * DeltaX + DeltaY * DeltaY < InRangeSq)

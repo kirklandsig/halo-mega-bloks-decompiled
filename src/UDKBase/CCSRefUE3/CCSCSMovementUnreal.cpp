@@ -8,6 +8,11 @@
 // always fails.
 const FVector CCSCSMovementUnreal::INVALID_LOCATION = FVector(0.0f, 0.0f, -1.7014118346046923e+38F);
 
+// How close (in rotator units) the pawn's yaw must be to the objective's.
+// The retail keeps its own copy of the value in the data section, where it
+// reads as a number larger than a full turn.
+static int s_orientationTolerance = 2000;
+
 // Near: retail keeps the meat puppet's base pointer (the -4) and loads the
 // invalid location through it; ours folds the offset into the accesses and
 // loads the meat puppet after the invalid location instead of before it.
@@ -118,15 +123,47 @@ bool CCSCSMovementUnreal::DoMoving()
     return bReached;
 }
 
-// Todo(0x8332ADD0): CCSCSMovementUnreal::DoMove walks the pawn to the next
-// move location; the retail's path queries and its pawn movement calls are
-// not reconstructed yet.
-//
-// Todo(0x8332AFE8): CCSCSMovementUnreal::OrientationReached compares the
-// character's facing with the movement's target direction; the retail rotates
-// the difference with Grip_Vector::Rotation and reads the character's
-// rotation, which is not reconstructed yet.
-//
+// @retail 0x8332ADD0
+bool CCSCSMovementUnreal::DoMove()
+{
+    m_nextMoveLocation = INVALID_LOCATION;
+    m_validFinalDestination = m_moveObj.target;
+    if (m_moveObj.target != INVALID_LOCATION)
+    {
+        m_validFinalDestination = m_moveObj.target;
+        if (m_pCCSCtrl->NavigationHandle->ComputeValidFinalDestination(m_validFinalDestination) == 0)
+        {
+            m_validFinalDestination = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
+        }
+    }
+    else
+    {
+        m_validFinalDestination = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
+    }
+    if (m_overridenMovementType < CCS::MovementType_MAX)
+    {
+        m_overridenMovementType = m_moveObj.movementType;
+    }
+    if (m_moveObj.movementType == CCS::MovementType_Walk)
+    {
+        m_pMeatPuppet->SetSpeed(CCS::MovementSpeed_Walk);
+    }
+    else if (m_moveObj.movementType == CCS::MovementType_Run)
+    {
+        m_pMeatPuppet->SetSpeed(CCS::MovementSpeed_Run);
+    }
+    return true;
+}
+
+// @retail 0x8332AFE8
+bool CCSCSMovementUnreal::OrientationReached() const
+{
+    const int TargetYaw = (m_orientObj.target - m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition()).Rotation().Yaw;
+    const int Yaw = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetOrientation().Yaw;
+    const int Delta = Abs((TargetYaw & 0xFFFF) - (Yaw & 0xFFFF));
+    return Delta < s_orientationTolerance || Delta > 0xFFFF - s_orientationTolerance;
+}
+
 // Todo(0x833434D0): CCSCSMovementUnreal::GetNextMoveLocation picks the next
 // point of the movement; the retail's path and projection calls are not
 // reconstructed yet.

@@ -46,8 +46,10 @@ void CCSPSCover::Initialize(const GripSystemConfig *pConfig)
     CCSNorman::getInstance()->AddCoverSeeker(this);
 }
 
-// near: adds the element offset to the array base the other way round (the
-// same add-order difference as elsewhere; several accessors tried)
+// near: the element address adds the offset to the base the other way
+// round (offset + base against base + offset); a reference to the element,
+// a pointer to the element and the operand order in Grip_Array::operator[]
+// tried
 // @retail 0x8333C698
 void CCSPSCover::Finalize()
 {
@@ -83,7 +85,7 @@ bool CCSPSCover::TickBudget(float, int &Budget)
 }
 
 // near: the loop's two counters are incremented in the other order (i++,
-// ++i and i += 1 tried)
+// ++i, i += 1, i = i + 1 and a while-loop form tried)
 // @retail 0x83356F20
 void CCSPSCover::LowCostPerception()
 {
@@ -253,9 +255,11 @@ bool CCSPSCover::PathCulling(CCSCover &Cover)
     return true;
 }
 
-// todo: 4 bytes long; ours reads the first Rotation() through the pointer it
-// returns, retail from its stack slot (and its frame is 16 bytes smaller);
-// a named location, a named delta and FVector arithmetic tried
+// near: the code matches byte for byte, only the stack slots differ: the
+// retail reuses the first vector difference's slot for the rotation
+// difference (four slots, frame 0xe0), ours takes five (frame 0xf0); a
+// named difference, the rotation named after the difference, the first
+// test in a block of its own and a reference to the temporary tried
 // @retail 0x8333CA38
 bool CCSPSCover::HasValidDefensiveAngle(const float MinYaw, const float MaxYaw, const Grip_Vector Position, const Grip_Rotation &Orientation,
                                         const CCSTarget *pTarget)
@@ -264,12 +268,30 @@ bool CCSPSCover::HasValidDefensiveAngle(const float MinYaw, const float MaxYaw, 
     {
         return true;
     }
-    if (pTarget->character.GetActor() == 0)
+    if (pTarget->character == CCSCharacter::NONE)
     {
         return true;
     }
-    AActor *pActor = (AActor *)pTarget->character.GetActor();
-    Grip_Rotation Rotation = (Grip_Vector(pActor->Location) - Position).Rotation() - Orientation;
+    if (pTarget->character.m_gameCharacter.GetActor() == 0)
+    {
+        return true;
+    }
+    AActor *pActor;
+    if (pTarget->character != CCSCharacter::NONE)
+    {
+        pActor = (AActor *)pTarget->character.m_gameCharacter.GetActor();
+    }
+    else
+    {
+        pActor = 0;
+    }
+    Grip_Rotation Rotation;
+    {
+        Grip_Rotation R = (Grip_Vector(pActor->Location) - Position).Rotation();
+        Rotation.Pitch = R.Pitch - Orientation.Pitch;
+        Rotation.Yaw = R.Yaw - Orientation.Yaw;
+        Rotation.Roll = R.Roll - Orientation.Roll;
+    }
     Rotation.Normalize();
     if (Rotation.Yaw >= MaxYaw || Rotation.Yaw <= MinYaw)
     {
@@ -280,9 +302,10 @@ bool CCSPSCover::HasValidDefensiveAngle(const float MinYaw, const float MaxYaw, 
     return Rotation.Yaw < MaxYaw && Rotation.Yaw > MinYaw;
 }
 
-// todo: 24 bytes long; ours keeps the first test's rotation in its own
-// frame slot (a bigger frame) and masks the and of the two yaw/pitch tests
-// (one shared rotation, per-block rotations and a branchless & tried)
+// near: the retail keeps the cover position in the last stack slot and
+// reads it through the pointer GetPosition returns, ours copies it into
+// the first slot (frame 0x120 against 0x100); a copied position, the
+// position fetched three times and the delta declared first tried
 // @retail 0x83344B48
 bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover &Cover, const Grip_Rotation &Orientation, const CCSTarget *pTarget)
 {
@@ -298,20 +321,48 @@ bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover
     const CCS::ECoverShootConfig Config = Cover.m_gameCover.GetShootConfig();
     if (Config == CCS::CoverShootConfig_All)
     {
-        Grip_Rotation Rotation = (pTarget->character.GetEyesPosition() - Cover.GetPosition()).Rotation() - Orientation;
+        Grip_Vector Eyes = pTarget->character.GetEyesPosition();
+        const Grip_Vector &Pos = Cover.GetPosition();
+        Grip_Vector Delta;
+        Delta.X = Eyes.X - Pos.X;
+        Delta.Y = Eyes.Y - Pos.Y;
+        Delta.Z = Eyes.Z - Pos.Z;
+        Grip_Rotation R = Delta.Rotation();
+        Grip_Rotation Rotation;
+        Rotation.Pitch = R.Pitch - Orientation.Pitch;
+        Rotation.Yaw = R.Yaw - Orientation.Yaw;
+        Rotation.Roll = R.Roll - Orientation.Roll;
         Rotation.Normalize();
         bValid = (Abs(Rotation.Yaw) < 0x4000) & (Rotation.Pitch < 0x2000);
     }
     CCSCharacter Self = pMeatPuppet->GetCharacter();
     if (Config == CCS::CoverShootConfig_Left || Config == CCS::CoverShootConfig_LeftOrRight)
     {
-        Grip_Rotation Rotation = (pTarget->position - Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Left, Self.GetSize())).Rotation() - Orientation;
+        const Grip_Vector &Pos = Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Left, Self.GetSize());
+        Grip_Vector Delta;
+        Delta.X = pTarget->position.X - Pos.X;
+        Delta.Y = pTarget->position.Y - Pos.Y;
+        Delta.Z = pTarget->position.Z - Pos.Z;
+        Grip_Rotation R = Delta.Rotation();
+        Grip_Rotation Rotation;
+        Rotation.Pitch = R.Pitch - Orientation.Pitch;
+        Rotation.Yaw = R.Yaw - Orientation.Yaw;
+        Rotation.Roll = R.Roll - Orientation.Roll;
         Rotation.Normalize();
         bValid = Rotation.Yaw < 0 && Rotation.Yaw > -0x2000;
     }
     if (Config == CCS::CoverShootConfig_Right || (Config == CCS::CoverShootConfig_LeftOrRight && !bValid))
     {
-        Grip_Rotation Rotation = (pTarget->position - Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Right, Self.GetSize())).Rotation() - Orientation;
+        const Grip_Vector &Pos = Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Right, Self.GetSize());
+        Grip_Vector Delta;
+        Delta.X = pTarget->position.X - Pos.X;
+        Delta.Y = pTarget->position.Y - Pos.Y;
+        Delta.Z = pTarget->position.Z - Pos.Z;
+        Grip_Rotation R = Delta.Rotation();
+        Grip_Rotation Rotation;
+        Rotation.Pitch = R.Pitch - Orientation.Pitch;
+        Rotation.Yaw = R.Yaw - Orientation.Yaw;
+        Rotation.Roll = R.Roll - Orientation.Roll;
         Rotation.Normalize();
         bValid = Rotation.Yaw > 0 && Rotation.Yaw < 0x2000;
     }

@@ -93,8 +93,6 @@ static CCSDebugOptionName s_optionNames[] = {
 };
 
 // The help screen: the options and the debugging keys.
-// todo: 8 bytes short; ours keeps the doubled line height in a saved
-// register where retail doubles it again for each use
 // @retail 0x8332FB68
 void CCSDebugOptions::DrawHUD(GripHUDRenderer *pRenderer, int &Y)
 {
@@ -105,6 +103,12 @@ void CCSDebugOptions::DrawHUD(GripHUDRenderer *pRenderer, int &Y)
     Grip_Color Title(255, 102, 0);
     Grip_Color Text(0, 255, 0);
     const int Line = pRenderer->endl;
+    // The blank lines before "Stat CSS", "StartGripDebug" and the help. The
+    // line height is read again for each of them, so that each doubling is
+    // its own expression, as retail compiles it.
+    const int StatCSSLine = pRenderer->endl;
+    const int StartGripDebugLine = pRenderer->endl;
+    const int HelpLine = pRenderer->endl;
     if (!m_options[HELP])
     {
         return;
@@ -123,13 +127,13 @@ void CCSDebugOptions::DrawHUD(GripHUDRenderer *pRenderer, int &Y)
     }
     Y += Line;
     pRenderer->DrawString(100, Y, "Use the plus symbol <+> to create combinations e.g. CCSDebugOptions 2+3", Text);
-    Y += Line * 2;
+    Y += StatCSSLine * 2;
     pRenderer->DrawString(100, Y, "Stat CSS", Text);
-    Y += Line * 2;
+    Y += StartGripDebugLine * 2;
     pRenderer->DrawString(100, Y, "StartGripDebug", Text);
     Y += Line;
     pRenderer->DrawString(100, Y, "StopGripDebug", Text);
-    Y += Line * 2;
+    Y += HelpLine * 2;
     Grip::String Help("Select NPC to debug or advance simulation.");
     pRenderer->DrawString(100, Y, "<F1>", Text);
     pRenderer->DrawString(250, Y, Help, Text);
