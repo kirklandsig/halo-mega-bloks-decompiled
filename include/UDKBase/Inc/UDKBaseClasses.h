@@ -14436,6 +14436,7 @@ HG_PROTECTED:
     CCSAFEncircleTarget();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     ACCSController *m_pCCSCtrl;  // 0x20
     CCSAOEncircleTarget m_objective;  // 0x24
@@ -14614,6 +14615,7 @@ HG_PROTECTED:
     CCSAFEnterCover();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOEnterCover m_objective;  // 0x20
     CCSCSCover *m_pCSCover;  // 0x54
@@ -14637,6 +14639,7 @@ HG_PROTECTED:
     CCSAFExitCover();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSCSCover *m_pCSCover;  // 0x20
     #else
@@ -14667,6 +14670,7 @@ public:
     CCSAFFactory();
     HG_VIRTUAL ~CCSAFFactory();
     #endif
+    template <class AO> int CreateAction(const AO &);
     HG_PRIVATE:
     template <class AO, class AF> int CreateActionInternal(const AO &);
     public:
@@ -14726,6 +14730,7 @@ HG_PROTECTED:
     CCSAFFireBurst();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOFireBurst m_objective;  // 0x20
     ACCSController *m_pCCSCtrl;  // 0x3C
@@ -14771,6 +14776,7 @@ HG_PROTECTED:
     CCSAFFlee();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOFlee m_objective;  // 0x20
     CCSCSMovement *m_pMovementCS;  // 0x38
@@ -14813,6 +14819,7 @@ HG_PROTECTED:
     CCSAFGetInCover();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOGetInCover m_objective;  // 0x20
     CCSCSCover *m_pCSCover;  // 0x54
@@ -14849,6 +14856,7 @@ HG_PROTECTED:
     CCSAFGetOutCover();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOGetOutCover m_objective;  // 0x20
     CCSCSCover *m_pCSCover;  // 0x54
@@ -14882,6 +14890,7 @@ HG_PROTECTED:
     CCSAFIdle();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOIdle m_objective;  // 0x20
     #else
@@ -14948,6 +14957,7 @@ HG_PROTECTED:
     CCSAFMoveTo();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOMoveTo m_objective;  // 0x20
     CCSCSMovementGwNav *m_pMovementCS;  // 0x34
@@ -14991,6 +15001,7 @@ HG_PROTECTED:
     CCSAFMoveToActor();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOMoveToActor m_objective;  // 0x20
     CCSCSMovementGwNav *m_pMovementCS;  // 0x3C
@@ -15053,6 +15064,7 @@ HG_PROTECTED:
     CCSAFOrientToward();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOOrientToward m_objective;  // 0x20
     CCSCSMovement *m_pMovementCS;  // 0x34
@@ -15127,6 +15139,7 @@ HG_PROTECTED:
     CCSAFStrafeTarget();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     ACCSController *m_pCCSCtrl;  // 0x20
     CCSAOStrafeTarget m_objective;  // 0x24
@@ -15169,6 +15182,7 @@ HG_PROTECTED:
     CCSAFStrafeTo();
 public:
     #endif
+    friend class CCSAFFactory;
     #ifndef HAGGAR_HOST
     CCSAOStrafeTo m_objective;  // 0x20
     CCSCSMovement *m_pMovementCS;  // 0x34

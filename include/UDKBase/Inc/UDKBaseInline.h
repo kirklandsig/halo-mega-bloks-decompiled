@@ -642,3 +642,5 @@ inline GripAISystem::~GripAISystem() {}
 inline IGripAISystem::~IGripAISystem() {}
 inline IGripHUDRenderingComponent::~IGripHUDRenderingComponent() {}
 #endif
+// ccsafexitcover.h
+inline void CCSAFExitCover::SetObjective(const CCSAOExitCover &) {}

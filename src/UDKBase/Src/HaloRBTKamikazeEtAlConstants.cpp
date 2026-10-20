@@ -3,10 +3,6 @@
 // Functions whose whole body returns a constant or a string, or does nothing.
 #include "UDKBase/Inc/UDKBaseClasses.h"
 
-// @retail 0x8331DF18
-void CCSAFExitCover::SetObjective(const CCSAOExitCover &)
-{}
-
 // @retail 0x833206E8
 void ACCSController::ShowSelf()
 {}

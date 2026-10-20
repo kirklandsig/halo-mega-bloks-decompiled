@@ -1,4 +1,5 @@
 // @object Unity_HaloRBTKamikazeEtAl.cpp.obj
+#pragma once
 #include "UDKBase/Inc/UDKBaseClasses.h"
 #include "CCSCSCover.cpp"
 
@@ -43,3 +44,11 @@ void CCSAFExitCover::Tick(float)
 // CCSAFExitCover::~CCSAFExitCover
 // @retail 0x8332C4A0
 // CCSAFExitCover::`scalar deleting destructor'
+
+// ccsafexitcover.h's inline SetObjective, out of line as in retail
+#pragma inline_depth(0)
+extern void (CCSAFExitCover::*const EmitExitCoverSetObjective)(const CCSAOExitCover &) = &CCSAFExitCover::SetObjective;
+#pragma inline_depth()
+
+// @retail 0x8331DF18
+// CCSAFExitCover::SetObjective (in the header)

@@ -83,10 +83,15 @@ EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard
                      'IGripAFInterface': ['template <class T0> T0 *GetSystem();'],
                      'GripEngineServices': ['template <class T0> static T0 *GetAIManagerSystem();'],
                      # the action handles' CreateAction call it
-                     'CCSAFFactory': ['HG_PRIVATE:', 'template <class AO, class AF> int CreateActionInternal(const AO &);', 'public:']
+                     'CCSAFFactory': ['template <class AO> int CreateAction(const AO &);',
+                                      'HG_PRIVATE:', 'template <class AO, class AF> int CreateActionInternal(const AO &);', 'public:']
                      + [f'friend class UCCSAF{a};' for a in ('ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor',
                                                              'StrafeTarget', 'EncircleTarget', 'FireBurst', 'EnterCover', 'GetInCover', 'GetOutCover')]
                      + ['friend class HaloRBTKamikaze;', 'friend class CCSRBTMoveToCover;']}}
+# the factory makes every action, through their protected constructors and SetObjective
+EXTRA['UDKBase'].update({f'CCSAF{a}': ['friend class CCSAFFactory;'] for a in (
+    'ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor', 'StrafeTarget', 'EncircleTarget', 'FireBurst',
+    'EnterCover', 'GetInCover', 'GetOutCover')})
 # Event thunks of other classes that a package's code calls (inlined there).
 EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 
