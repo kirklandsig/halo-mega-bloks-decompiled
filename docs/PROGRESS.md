@@ -73,6 +73,15 @@ saying why. In short:
   `CCSRBTTimeSinceEvent::TestPreCondition`: a swapped register pair, operand
   order, schedule or stack slot.
 
+### The CCS layer's four files
+
+The CCS reference layer is decompiled file by file; `ccsbrain.cpp`,
+`ccscsmovementunreal.cpp`, `ccsastarget.cpp` and `ccsrbtshootfromcover.cpp`
+hold 60 of its functions (10,560 bytes). **46 match byte for byte (4,844
+bytes), 6 are near (1,236 bytes) and 8 are todo (4,480 bytes)**. The near
+ones differ by a swapped register pair, an operand order or a schedule; the
+todo ones say in their source file what is still missing.
+
 The inline layer they rest on is hand-written in `include/`: `Core/Inc/Core.h`
 (memory, `check()`, `Min`/`Max` with `fsel`, `appSqrt`), `Core/Inc/Array.h`
 (`TArray`), `Core/Inc/UnMath.h`, `Grip/Inc/GripContainers.h` (`Grip_Array`,

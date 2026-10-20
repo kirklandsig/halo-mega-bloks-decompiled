@@ -14704,6 +14704,7 @@ public:
     friend class CCSRBTIdle;
     friend class CCSRBTMoveToVehicle;
     friend class CCSRBTWaitInCover;
+    friend class CCSRBTShootFromCover;
     #ifndef HAGGAR_HOST
     ICCSMeatPuppet *m_pMeatPuppet;  // 0x8
     IGripAFInterface *m_pAFInterface;  // 0xC

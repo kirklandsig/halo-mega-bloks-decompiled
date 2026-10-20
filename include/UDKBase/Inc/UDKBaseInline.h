@@ -290,6 +290,7 @@ inline unsigned int FCoverInfo::operator==(const FCoverInfo &Other) const { retu
 // gripbbmember.h, gripblackboard.h
 inline void GripBBMember::FlagAsUsed() { m_used = true; }
 inline void GripBTSystemFlags::SetFlag(int Flag) { m_flags |= 1 << Flag; }
+inline bool GripBTSystemFlags::TestFlag(int Flag) const { return (m_flags & (1 << Flag)) == (1 << Flag); }
 inline void GripBBMember::AddUsedSensorSystems(const int Systems) { m_ssFlags.SetFlag(Systems); }
 inline void GripBBMember::AddUsedAnalysisSystems(const int Systems) { m_asFlags.SetFlag(Systems); }
 inline Grip_Array<Grip::String, Grip::AllocatorGH<Grip::String, 2> > &GripBlackboard::GetStates() { return m_states.GetArray(); }
@@ -645,6 +646,13 @@ inline Grip_Vector Grip_Matrix::TransformNormal(const Grip_Vector &V) const
                        V.X * M[0][2] + V.Z * M[2][2] + V.Y * M[1][2]);
 }
 
+// gripafframework.h
+inline GripAFFactory *GripAFFramework::GetFactory() { return m_pAFFactory; }
+#ifndef HAGGAR_HOST
+// ccsanalysissystem.h
+inline CCSAnalysisSystem::CCSAnalysisSystem(CCSBrain *pBrain) : GripBrainSystem(), m_pBrain(pBrain) {}
+#endif
+
 // ccsaisystem.h
 inline int CCSAISystem::SGetId() { return GripAIManager::SYSTEM_CCS; }
 inline CCSGlobalDataScheduler *CCSAISystem::GetGlobalDataScheduler() { return &m_globalDataScheduler; }
@@ -683,14 +691,16 @@ inline void Grip_Rotation::Normalize()
 }
 // ccscsmovement.h
 inline void CCSCSMovement::SetIsPanicking(bool bPanicking) { m_pMeatPuppet->SetIsPanicking(bPanicking); }
-// gripsf_random.h
+// gripsf_random.h: the shared generator's statics
 namespace Grip
 {
 namespace Alg
 {
-namespace Random
+class Random
 {
-unsigned long NextRandom();
-}
+public:
+    static unsigned long NextRandom();
+    static float GetUnitFloat();
+};
 }
 }
