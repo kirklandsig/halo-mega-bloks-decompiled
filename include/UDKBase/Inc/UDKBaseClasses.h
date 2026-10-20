@@ -725,6 +725,7 @@ class GripRBTCondition;
 class GripRBTNode;
 class GripRBTPriority;
 class GripRBTTree;
+class GripScopeCycleCounter;
 struct GripSerializationMember;
 class GripSerializer;
 struct GripSerializerStackObj;
@@ -735,7 +736,9 @@ class GripSystemTickGroup;
 class GripUnrealSceneProxy;
 class GripVHeapObject;
 class Grip_Color;
+class Grip_Matrix;
 struct Grip_Rotation;
+class Grip_RotationTranslationMatrix;
 struct Grip_Vector;
 class GwNavBot;
 class GwNavEngineServices;
@@ -24904,6 +24907,17 @@ public:
     #endif
 };
 
+class GripScopeCycleCounter  // size 0x4, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    GripScopeCycleCounter(const GripStatEntry &);
+    ~GripScopeCycleCounter();
+    #endif
+HG_PRIVATE:
+    unsigned int GripScopeCycleCounterData[0x1];
+};
+
 struct GripSerializerStackObj : public GripHeapObject  // size 0x2, opaque
 {
 HG_PRIVATE:
@@ -24985,6 +24999,27 @@ public:
     #endif
 };
 
+class Grip_Matrix : public GripHeapObject  // size 0x40
+{
+public:
+    operator class FMatrix() const;
+    Grip_Vector TransformVector(const Grip_Vector &) const;
+    Grip_Vector TransformNormal(const Grip_Vector &) const;
+    Grip_Matrix Inverse() const;
+    void SetIdentity();
+    void operator*=(const Grip_Matrix &);
+    #ifndef HAGGAR_HOST
+    Grip_Matrix(const Grip_Vector &, const Grip_Vector &, const Grip_Vector &, const Grip_Vector &);
+    Grip_Matrix(const FMatrix &);
+    Grip_Matrix();
+    #endif
+    #ifndef HAGGAR_HOST
+    float M[4][4];  // 0x0
+    #else
+    hg::be<float> M[4][4];
+    #endif
+};
+
 struct Grip_Rotation : public GripHeapObject  // size 0xC
 {
 public:
@@ -25007,6 +25042,14 @@ public:
     hg::be<int> Pitch;
     hg::be<int> Yaw;
     hg::be<int> Roll;
+    #endif
+};
+
+class Grip_RotationTranslationMatrix : public Grip_Matrix  // size 0x40
+{
+public:
+    #ifndef HAGGAR_HOST
+    Grip_RotationTranslationMatrix(const Grip_Rotation &, const Grip_Vector &);
     #endif
 };
 

@@ -554,7 +554,15 @@ inline IGripAISystem *GripAIManager::GetSystem(int Id) const
     }
     return 0;
 }
-inline bool CCSDebugOptions::IsOptionEnabled(CCSDebugOptions::EOptions Option) const { return m_options[Option]; }
+inline bool CCSDebugOptions::IsOptionEnabled(CCSDebugOptions::EOptions Option) const
+{
+    bool bEnabled = false;
+    if (Option < NUM_OF)
+    {
+        bEnabled = m_options[Option];
+    }
+    return bEnabled;
+}
 
 // UnClass.h
 inline unsigned int UStruct::IsChildOf(const UStruct *SomeBase) const
@@ -603,3 +611,34 @@ inline Grip_Rotation CCSCharacter::GetOrientation() const { return m_gameCharact
 inline float CCSCharacter::GetSize() const { return m_gameCharacter.GetSize(); }
 inline int CCSCharacter::GetTeam() { return m_gameCharacter.GetTeam(); }
 inline bool CCSCharacter::IsPlayer() const { return m_gameCharacter.IsPlayer(); }
+
+// grip_rotation.h, grip_matrix.h
+inline Grip_Rotation Grip_Rotation::operator-(const Grip_Rotation &R) const { return Grip_Rotation(Pitch - R.Pitch, Yaw - R.Yaw, Roll - R.Roll); }
+#ifndef HAGGAR_HOST
+inline Grip_Matrix::Grip_Matrix() {}
+#endif
+inline Grip_Vector Grip_Matrix::TransformNormal(const Grip_Vector &V) const
+{
+    return Grip_Vector(V.X * M[0][0] + V.Z * M[2][0] + V.Y * M[1][0], V.X * M[0][1] + V.Z * M[2][1] + V.Y * M[1][1],
+                       V.X * M[0][2] + V.Z * M[2][2] + V.Y * M[1][2]);
+}
+
+// ccsaisystem.h
+inline int CCSAISystem::SGetId() { return GripAIManager::SYSTEM_CCS; }
+inline CCSGlobalDataScheduler *CCSAISystem::GetGlobalDataScheduler() { return &m_globalDataScheduler; }
+inline CCSSensorScheduler *CCSAISystem::GetSensorScheduler() { return &m_sensorScheduler; }
+inline CCSAnalysisScheduler *CCSAISystem::GetAnalysisScheduler() { return &m_analysisScheduler; }
+inline CCSGlobalBlackboard *CCSAISystem::GetGlobalBB() { return &m_globalBB; }
+inline int CCSDebugOptions::SGetId() { return GripAIManager::SYSTEM_CCS_DEBUG_OPTIONS; }
+inline void GripBrain::RemoveDebugRenderer(IGripSRComponent *pComponent) { m_debugRenderingComponents.RemoveItemItem(pComponent); }
+#ifndef HAGGAR_HOST
+// gripaisystem.h
+inline GripAISystem::GripAISystem(GripAIManager *pAIMgr) : m_pAIMgr(pAIMgr) {}
+#endif
+#ifndef HAGGAR_HOST
+// gripdebugoptions.h, igriphudrenderingcomponent.h
+inline GripDebugOptions::GripDebugOptions(GripAIManager *pAIMgr) : GripAISystem(pAIMgr) {}
+inline GripAISystem::~GripAISystem() {}
+inline IGripAISystem::~IGripAISystem() {}
+inline IGripHUDRenderingComponent::~IGripHUDRenderingComponent() {}
+#endif

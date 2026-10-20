@@ -7,14 +7,6 @@
 void CCSAFExitCover::SetObjective(const CCSAOExitCover &)
 {}
 
-// @retail 0x8331EA68
-int CCSAISystem::SGetId()
-{ return 1; }
-
-// @retail 0x8331EAB8
-int CCSDebugOptions::SGetId()
-{ return 2; }
-
 // @retail 0x833206E8
 void ACCSController::ShowSelf()
 {}
