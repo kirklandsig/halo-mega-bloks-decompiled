@@ -116,6 +116,54 @@ For each file, `check.py`:
 It exits 1 while any marked function differs. `config/functions/` is never
 written by it.
 
+## The permuter
+
+When a function is near or a little off, `tools/permute.py` searches for a
+source shape that compiles closer to retail, in the spirit of
+decomp-permuter:
+
+```
+python tools/permute.py src/UDKBase/CCSRefUE3/USSBrainBuilder.cpp 0x833439E8 --jobs 8 --time 600
+```
+
+The function is named by its `// @retail` address (or its name, if that is
+unique in the file). Each worker applies one to three random rewrites to its
+current best version of the function, compiles the whole file with the
+object's command line, as `check.py` does, and scores our function against
+retail: an instruction diff in which a word that differs only in registers
+or an immediate costs 1 and any other changed, inserted or deleted word costs
+2 (branch displacements and `lis`/`addi` address halves are ignored, as
+relocations fill them). A lower score replaces the worker's best; an equal
+one sometimes does, so the walk can cross plateaus. Score 0 is `matched`.
+
+| Kind | Rewrites |
+| --- | --- |
+| `reorder` | swap two adjacent statements that don't depend on each other |
+| `commute` | swap the operands of `+ * & \| ^ == !=`, mirror `< <= > >=` |
+| `temp` | hoist a call or an arithmetic result into an `auto` temporary; inline a temporary used once in the next statement |
+| `if` | `if`/`else` of one assignment or `return` to `?:` and back; invert an `if`/`else` |
+| `loop` | `for` to `while` and back; `while` to `if` + `do`/`while` and back |
+| `cast` | add or drop `(bool)` on a condition, a declaration's own type on its initializer, an arithmetic cast on an assigned value |
+| `const` | add or drop a local's `const` |
+| `split` | `T x = e;` and `T x; x = e;`; `x op= e` and `x = x op e`; `x++`, `++x` and `x += 1`; `x = a op b;` and `x = a; x op= b;` |
+
+Options: `--jobs` (parallel processes), `--time` (seconds, default 300),
+`--seed` and `--iterations` (per worker: with both the run is
+deterministic), `--kinds` (a comma-separated subset), `--out` (default
+`build/permute/<address>/`). It writes `best.cpp` (the whole file with the
+best function), `best_function.cpp` and `result.json` (base and best score,
+each improvement with the rewrites that made it, `kinds_helped`, and counts
+of iterations and failed compiles). The source file is never changed.
+
+The rewrites are meant to preserve meaning, but they don't know types: a
+statement swap only crosses a call when the other statement touches nothing
+but unescaped locals, yet commuting `+` on a class whose `operator+` isn't
+commutative (`FString`), or an `auto` copy of a call that returns a
+reference, would change it. Read the winner before taking it. Comments
+inside the function stay with the statement after them; the function is
+re-indented, and `#line` keeps its line numbers (for `check()`) those of the
+file.
+
 ## Reading the original
 
 - `config/functions/`: address, size, name, decorated symbol, object,
