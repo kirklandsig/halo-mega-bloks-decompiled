@@ -45,7 +45,7 @@ everyone whose work is merged is credited in the README's
 
 ## 2. Claim some work
 
-The decomp's scope is n-Space's own C++: the rows of `config/functions.csv`
+The decomp's scope is n-Space's own C++: the rows of `config/functions/game.csv`
 whose `owner` is `nspace`. They are grouped by object (one unity `.cpp` of
 the original build); [PROGRESS.md](PROGRESS.md) lists the objects and how
 much of each is matched.
@@ -83,12 +83,12 @@ Setup check. Stop and tell me if any step fails:
 2. `XDK_DIR` points to a folder whose `bin/win32/cl.exe` prints version 16.00.11886.
 3. `python tools/check.py src/UDKBase/Src/HaloRBTKamikaze.cpp` prints `matched` ten times. Copy `config/status.csv` to `build/baseline.csv`.
 
-Finding work, if my claim above is "none yet": read docs/PROGRESS.md and `config/functions.csv` (rows with owner `nspace`), and show me three good starts: small objects, or groups of small leaf functions in one object that nobody holds on issue #1. When I pick one, give me a claim line for a draft pull request. Don't start until the claim is up.
+Finding work, if my claim above is "none yet": read docs/PROGRESS.md and `config/functions/game.csv` (rows with owner `nspace`), and show me three good starts: small objects, or groups of small leaf functions in one object that nobody holds on issue #1. When I pick one, give me a claim line for a draft pull request. Don't start until the claim is up.
 
 Work only on the functions my claim covers.
 
 Work loop:
-1. For each function, read its row in `config/functions.csv` (address, size, name, decorated symbol, object, original source file and line), its types with `python tools/pdbtype.py <Type>`, and retail's code by disassembling the basefile at its address (for example with capstone, PowerPC 32-bit big-endian).
+1. For each function, read its row in `config/functions/game.csv` (address, size, name, decorated symbol, object, original source file and line), its types with `python tools/pdbtype.py <Type>`, and retail's code by disassembling the basefile at its address (for example with capstone, PowerPC 32-bit big-endian).
 2. Write the C++ in `src/<Package>/Src/<File>.cpp`, with `// @object <obj>` once at the top of the file and `// @retail 0x<va>` on the line above each function. Put the declarations it needs in `include/<Package>/Inc/`, rebuilt from the PDB's types: base classes may be opaque, sized byte arrays behind a vtable pointer, and unknown virtual slots placeholders.
 3. Run `python tools/check.py <file>` after each change. It compiles with the object's own flags (including -W4 -WX, so headers must compile cleanly) and prints matched, near or todo per function.
 4. Time-box: if a function isn't matched after a few distinct attempts, leave it `near`, note the suspected cause in a comment, and move on.
@@ -116,7 +116,7 @@ automatically, but whether the code reads like the original is up to you.
 - Commit with your GitHub no-reply email address
   (`<id>+<username>@users.noreply.github.com`).
 - Commit `config/status.csv` with your matches. Don't commit
-  `config/functions.csv` unless you changed the inventory tool.
+  `config/functions/` unless you changed the inventory tool.
 
 We check every pull request against the current `main` and merge it with a
 merge commit, so your authorship stays in the history. Questions are welcome

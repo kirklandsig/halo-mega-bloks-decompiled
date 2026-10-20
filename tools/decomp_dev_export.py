@@ -1,5 +1,5 @@
 """Writes the objdiff-format progress report that ByteMatch charts, from
-config/functions.csv and config/status.csv. It needs neither the build's
+config/functions/ and config/status.csv. It needs neither the build's
 files nor the SDK. See docs/BYTEMATCH.md. (The name
 predates ByteMatch, which succeeded decomp.dev.)
 
@@ -56,13 +56,14 @@ def _sum(units):
     return out
 
 
-def build_report(functions_csv, status_csv):
-    """The objdiff report (version 2) as a dict."""
+def build_report(functions, status_csv):
+    """The objdiff report (version 2) as a dict. `functions` is the
+    inventory folder (or one CSV file of rows)."""
     status = {}
     if Path(status_csv).exists():
         status = {int(r['address'], 16): r['status'] for r in inventory.read_csv(status_csv)}
     groups = defaultdict(list)
-    for r in inventory.read_csv(functions_csv):
+    for r in inventory.read_functions(functions):
         if r['tier'] != 'game':
             continue
         va = int(r['address'], 16)
@@ -101,7 +102,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description='Write the ByteMatch (objdiff) progress report.')
     ap.add_argument('-o', '--output', default='-', help='report path, or - for stdout (default)')
     args = ap.parse_args(argv)
-    report = build_report(paths.require(paths.CONFIG / 'functions.csv'), paths.CONFIG / 'status.csv')
+    report = build_report(inventory.functions_dir(), paths.CONFIG / 'status.csv')
     text = json.dumps(report, indent=2) + '\n'
     if args.output == '-':
         sys.stdout.write(text)

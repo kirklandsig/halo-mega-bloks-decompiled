@@ -797,7 +797,7 @@ def host_thunks(h, header, defined='', pdb=None):
     import inventory
     from pdbfile import IMAGE_BASE, Pdb
     rows = {}
-    for r in inventory.read_csv(paths.CONFIG / 'functions.csv'):
+    for r in inventory.read_functions():
         rows.setdefault(r['name'], []).append(r)
     statics = {}  # (member, decorated scope) -> RVAs of public static data
     for rva, name in (pdb or Pdb(paths.pdb())).publics().items():

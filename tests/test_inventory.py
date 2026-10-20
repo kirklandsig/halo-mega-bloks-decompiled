@@ -102,12 +102,12 @@ def test_inventory_keeps_status(tmp_path, monkeypatch):
     status.write_bytes(b'address,status\n0x82000100,matched\n')
     inventory.main(['--pdb', 'x.pdb'])
     assert status.read_bytes() == b'address,status\n0x82000100,matched\n'
-    assert (tmp_path / 'functions.csv').exists()
+    assert (tmp_path / 'functions' / 'game.csv').exists()
 
 
 @pytest.mark.orig
 def test_tier_totals(orig_pdb):
-    rows = [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv') if r['name']]
+    rows = [r for r in inventory.read_functions() if r['name']]
     counts = {}
     for r in rows:
         counts[r['tier']] = counts.get(r['tier'], 0) + 1
@@ -117,13 +117,38 @@ def test_tier_totals(orig_pdb):
 @pytest.mark.orig
 def test_public_only_rows(orig_pdb):
     from pdbfile import Pdb
-    rows = inventory.read_csv(paths.CONFIG / 'functions.csv')
+    rows = inventory.read_functions()
     addresses = {int(r['address'], 16) for r in rows}
     assert all(0x82000000 + p.rva in addresses for p in Pdb(orig_pdb).procedures())
     assert sum(1 for r in rows if not r['name']) == 21224
     assert len(rows) == 215944 + 21224
 
 
-def test_functions_csv_under_50mb():
-    # GitHub warns about files over 50 MB; the names alone are about 19 MB
-    assert (paths.CONFIG / 'functions.csv').stat().st_size < 50 * 1024 * 1024
+def test_inventory_files_stay_small():
+    # GitHub warns about files over 50 MB; the whole inventory is about 47 MB
+    files = list(inventory.functions_dir().glob('*.csv'))
+    assert files
+    assert all(f.stat().st_size <= inventory.SHARD_BYTES for f in files)
+
+
+def _row(address, tier, name='f'):
+    return {'address': f'0x{address:08X}', 'size': '4', 'name': name, 'symbol': '', 'object': 'a.obj',
+            'package': '', 'tier': tier, 'owner': '', 'source': '', 'line': ''}
+
+
+def test_write_functions_shards_by_tier_and_size(tmp_path, monkeypatch):
+    monkeypatch.setattr(inventory, 'SHARD_BYTES', 200)
+    rows = [_row(0x82000000 + 4 * i, 'lib' if i % 3 else 'game', f'name{i:03}') for i in range(30)]
+    (tmp_path / 'stale.csv').write_text('address\n')
+    inventory.write_functions(rows, tmp_path)
+    names = sorted(f.name for f in tmp_path.glob('*.csv'))
+    assert 'stale.csv' not in names and 'game-1.csv' in names and 'lib-1.csv' in names
+    assert all(f.stat().st_size <= 200 for f in tmp_path.glob('*.csv'))
+    assert inventory.read_functions(tmp_path) == rows
+    inventory.write_functions(rows[:1], tmp_path)
+    assert sorted(f.name for f in tmp_path.glob('*.csv')) == ['game.csv']
+
+
+def test_write_functions_rejects_unknown_tiers(tmp_path):
+    with pytest.raises(ValueError):
+        inventory.write_functions([_row(0x82000000, 'other')], tmp_path)

@@ -1,7 +1,10 @@
 """Writes the function and object inventory from the PDB:
-config/functions.csv (one row per function address: every procedure, then
+config/functions/ (one row per function address: every procedure, then
 the library functions that have only a public symbol) and config/objects.csv
-(one row per object file that holds code). Both are static: match status
+(one row per object file that holds code). The function rows are split into
+plain CSV files by tier (game.csv, platform.csv, engine-1.csv, ...), each
+sorted by address and cut before it passes SHARD_BYTES, so no file nears
+GitHub's size limits; read_functions() is the one way to load them. Both are static: match status
 lives in config/status.csv, which tools/check.py writes and this tool leaves
 alone. Source paths drop the build machine's source root. The decorated
 name (symbol) is kept for the game tier, which tools/check.py matches, and
@@ -22,8 +25,10 @@ refines it by script class (refine_owner).
 import argparse
 import bisect
 import csv
+import io
 import ntpath
 import re
+from pathlib import Path
 
 import paths
 from pdbfile import IMAGE_BASE, Pdb
@@ -151,8 +156,64 @@ def read_csv(path):
         return list(csv.DictReader(f))
 
 
+TIERS = ('game', 'platform', 'engine', 'lib')
+SHARD_BYTES = 8 * 1024 * 1024
+
+
+def functions_dir():
+    return paths.CONFIG / 'functions'
+
+
+def read_functions(path=None):
+    """Every function row, sorted by address, from config/functions/ (or
+    `path`: such a folder, or one CSV file)."""
+    path = paths.require(functions_dir() if path is None else path)
+    files = sorted(path.glob('*.csv')) if path.is_dir() else [path]
+    rows = [r for f in files for r in read_csv(f)]
+    rows.sort(key=lambda r: int(r['address'], 16))
+    return rows
+
+
+def _line(columns, row):
+    out = io.StringIO()
+    csv.DictWriter(out, columns, lineterminator='\n').writerow(row)
+    return out.getvalue()
+
+
+def write_functions(rows, directory=None):
+    """Writes the rows to `directory` (config/functions/) one tier at a time,
+    a tier's rows by address, in files of at most SHARD_BYTES: <tier>.csv,
+    or <tier>-1.csv, <tier>-2.csv, ... when one file can't hold them. Other
+    CSV files there are removed."""
+    directory = functions_dir() if directory is None else Path(directory)
+    unknown = {r['tier'] for r in rows} - set(TIERS)
+    if unknown:
+        raise ValueError(f'rows of unknown tiers: {sorted(unknown)}')
+    directory.mkdir(parents=True, exist_ok=True)
+    header = _line(FUNCTION_COLUMNS, dict(zip(FUNCTION_COLUMNS, FUNCTION_COLUMNS)))
+    written = set()
+    for tier in TIERS:
+        shards, size = [[]], len(header)
+        for r in sorted((r for r in rows if r['tier'] == tier), key=lambda r: int(r['address'], 16)):
+            line = _line(FUNCTION_COLUMNS, r)
+            if size + len(line.encode()) > SHARD_BYTES and shards[-1]:
+                shards.append([])
+                size = len(header)
+            shards[-1].append(line)
+            size += len(line.encode())
+        if not shards[0]:
+            continue
+        for i, lines in enumerate(shards, 1):
+            name = f'{tier}.csv' if len(shards) == 1 else f'{tier}-{i}.csv'
+            (directory / name).write_text(header + ''.join(lines), encoding='utf-8', newline='')
+            written.add(name)
+    for f in directory.glob('*.csv'):
+        if f.name not in written:
+            f.unlink()
+
+
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='Write config/functions.csv and config/objects.csv from the PDB.')
+    ap = argparse.ArgumentParser(description='Write config/functions/ and config/objects.csv from the PDB.')
     ap.add_argument('--pdb', default=None)
     args = ap.parse_args(argv)
     functions, objects = build(Pdb(args.pdb or paths.pdb()))
@@ -162,7 +223,7 @@ def main(argv=None):
         for r in read_csv(paths.CONFIG / 'script_classes.csv'):
             status.setdefault(r['class'].lower(), r['status'])
         script_compare.refine_owner(functions, status)
-    write_csv(paths.CONFIG / 'functions.csv', FUNCTION_COLUMNS, functions)
+    write_functions(functions)
     write_csv(paths.CONFIG / 'objects.csv', OBJECT_COLUMNS, objects)
     tiers = {}
     for r in functions:

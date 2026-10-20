@@ -1,7 +1,7 @@
 """Writes the ReXGlue codegen inputs into $HAGGAR_BUILD_DIR/recomp/ (default
 build/recomp/): haggar_manifest.toml, the project manifest that
 `rexglue codegen` reads, and functions.toml, every function boundary from
-config/functions.csv plus setjmp/longjmp found by their PDB names.
+config/functions/ plus setjmp/longjmp found by their PDB names.
 
     python tools/recomp_config.py
 
@@ -103,7 +103,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
     helper_vas = helpers(Pdb(args.pdb or paths.pdb()))
     thunks = [int(r['thunk'], 16) for r in inventory.read_csv(paths.CONFIG / 'imports.csv')]
-    funcs = functions(inventory.read_csv(paths.CONFIG / 'functions.csv'), helper_vas, thunks)
+    funcs = functions(inventory.read_functions(), helper_vas, thunks)
     out = recomp_dir()
     out.mkdir(parents=True, exist_ok=True)
     (out / 'functions.toml').write_text(render_functions(helper_vas, funcs), encoding='utf-8', newline='\n')

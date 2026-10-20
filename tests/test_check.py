@@ -46,7 +46,8 @@ def test_update_status_merges_and_sorts(tmp_path):
 def test_check_writes_status_only(tmp_path, monkeypatch):
     import paths
     monkeypatch.setattr(paths, 'CONFIG', tmp_path)
-    functions = tmp_path / 'functions.csv'
+    functions = tmp_path / 'functions' / 'game.csv'
+    functions.parent.mkdir()
     functions.write_bytes(b'address,size,name\n0x82000100,8,f\n')
     check.save({0x82000100: 'matched'})
     assert functions.read_bytes() == b'address,size,name\n0x82000100,8,f\n'

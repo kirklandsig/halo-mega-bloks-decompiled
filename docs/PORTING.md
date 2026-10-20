@@ -14,7 +14,7 @@ starts UE3 under WSL2 on a software Vulkan device. Details are in
    ahead-of-time translator whose analysis and instruction translations
    follow XenonRecomp) turns every PowerPC function of the executable into
    C++. Our inputs:
-   - the PDB's function list (`config/functions.csv`);
+   - the PDB's function list (`config/functions/`);
    - this compiler's jump tables (`tools/switch_tables.py`, 345 tables);
    - the build's imports (`config/imports.csv`).
    The output compiles with no unimplemented instruction.

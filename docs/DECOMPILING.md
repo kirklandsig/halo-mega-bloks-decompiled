@@ -110,13 +110,16 @@ For each file, `check.py`:
    prints `matched`, `near` (same length, other bytes) or `todo`;
 5. merges the results into `config/status.csv`.
 
-It exits 1 while any marked function differs. `config/functions.csv` is
-never written by it.
+It exits 1 while any marked function differs. `config/functions/` is never
+written by it.
 
 ## Reading the original
 
-- `config/functions.csv`: address, size, name, decorated symbol, object,
-  original source file and line of every function.
+- `config/functions/`: address, size, name, decorated symbol, object,
+  original source file and line of every function, one CSV file per tier
+  (`game.csv` holds every `nspace`, `epic` and `vendor` row; the engine, lib
+  and platform rows are cut into files of at most 8 MB). Tools load it with
+  `inventory.read_functions()`; grep works on the folder.
 - `python tools/pdbtype.py <Type>`: a class, struct or enum from the PDB, with
   member offsets, base classes, the vtable pointer and bitfields.
 - Disassemble the basefile (`orig/MegaHaloGame.exe`, image base

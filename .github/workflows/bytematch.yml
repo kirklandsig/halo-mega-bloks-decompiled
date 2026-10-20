@@ -1,7 +1,7 @@
 name: ByteMatch report
 
 # Publishes the objdiff-format progress report that ByteMatch charts
-# (https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled; see docs/BYTEMATCH.md). It reads config/functions.csv and
+# (https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled; see docs/BYTEMATCH.md). It reads config/functions/ and
 # config/status.csv only, so it needs neither the build's files nor the SDK,
 # and it holds no secrets.
 on:

@@ -8,10 +8,10 @@ Each file names its object once, as "// @object <obj file name>". The
 object's command line (config/objects.csv) is kept, except that every -I is
 replaced with include/ and the XDK's include/xbox, and -Fo points into
 build/obj/. A marked function is found in our object by its decorated name
-(the symbol column of config/functions.csv); its status becomes matched,
+(the symbol column of config/functions/); its status becomes matched,
 near (same length, different bytes) or todo (different length or missing),
 and is merged into config/status.csv (address,status; only rows that are not
-todo). config/functions.csv is never written. Exits 1 if any function is not
+todo). config/functions/ is never written. Exits 1 if any function is not
 matched.
 """
 import argparse
@@ -98,7 +98,7 @@ def plain_name(symbol):
 
 
 def find_symbol(c, row):
-    """Our symbol for a functions.csv row: its decorated name, or, when the
+    """Our symbol for an inventory row: its decorated name, or, when the
     PDB has none (statics, inlines), the one symbol whose plain name is the row's."""
     if row['symbol'] and '?A0x' not in row['symbol']:
         return row['symbol']
@@ -155,7 +155,7 @@ def main(argv=None):
     cl = paths.require(xdk / 'bin' / 'win32' / 'cl.exe')
     image = paths.require(paths.basefile()).read_bytes()
     objects = {r['object']: r for r in inventory.read_csv(paths.CONFIG / 'objects.csv')}
-    by_address = {int(r['address'], 16): r for r in inventory.read_csv(paths.CONFIG / 'functions.csv')}
+    by_address = {int(r['address'], 16): r for r in inventory.read_functions()}
     results = {}
     includes = [paths.ROOT / 'include', xdk / 'include' / 'xbox']
     failed = 0

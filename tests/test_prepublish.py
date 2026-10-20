@@ -34,14 +34,6 @@ def test_scan_flags(tmp_path):
     assert len(problems) == 7
 
 
-def test_inventory_size_allowance(tmp_path):
-    p = tmp_path / 'config' / 'functions.csv'
-    p.parent.mkdir()
-    with open(p, 'wb') as f:
-        f.truncate(20 * 1024 * 1024)
-    assert prepublish.scan([p], [], ignore_patterns=[], identical=set(), root=tmp_path) == []
-
-
 def test_scan_flags_tracked_ignored_files_and_more_paths(tmp_path):
     a = tmp_path / 'a.h'
     a.write_text('x\n')

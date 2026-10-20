@@ -1,6 +1,6 @@
 """Compares the exported script classes (build/script/<Package>/*.uc, from
 tools/script_export) with a UDK build's Development/Src/*/Classes/*.uc, and
-refines the owner column of config/functions.csv from the result.
+refines the owner column of config/functions/ from the result.
 
     python tools/script_compare.py --udk %USERPROFILE%\\haggar-tools\\udk\\<build>
 
@@ -294,10 +294,9 @@ def main(argv=None):
     status = {}
     for r in rows:
         status.setdefault(r['class'].lower(), r['status'])
-    functions_csv = paths.CONFIG / 'functions.csv'
-    functions = inventory.read_csv(functions_csv)
+    functions = inventory.read_functions()
     refine_owner(functions, status)
-    inventory.write_csv(functions_csv, inventory.FUNCTION_COLUMNS, functions)
+    inventory.write_functions(functions)
     owners = {}
     for r in functions:
         if r['tier'] == 'game':

@@ -10,7 +10,7 @@ classes' declarations from the PDB through gen_header.py, then the macro
 bodies; a hand-written part below gen_header's marker is kept) and, for each
 object holding the package's rows, src/<Package>/Src/<Object>Classes.cpp
 with a // @retail marker per generated function. Rows come from
-config/functions.csv (owner nspace). Script facts (within, config) come from
+config/functions/ (owner nspace). Script facts (within, config) come from
 script/<Package>/Classes/.
 """
 import argparse
@@ -86,11 +86,11 @@ EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 
 
 def function_rows():
-    """The rows of config/functions.csv without n-Space's additions to Epic's
+    """The inventory rows without n-Space's additions to Epic's
     classes (UDKPawn's CCS natives): they need those classes rendered as
     targets, which isn't done yet."""
     additions = script_compare.nspace_additions()
-    return [r for r in inventory.read_csv(paths.CONFIG / 'functions.csv')
+    return [r for r in inventory.read_functions()
             if tuple(r['name'].split('::', 1)) not in additions]
 
 
@@ -328,7 +328,7 @@ class Classes:
         A constructor row from a .cpp counts for every overload: the PDB
         often has no decorated name to tell which one it is."""
         if not hasattr(self, '_out_of_line'):
-            self._out_of_line = {r['name'] for r in inventory.read_csv(paths.CONFIG / 'functions.csv')
+            self._out_of_line = {r['name'] for r in inventory.read_functions()
                                  if r['source'].endswith('.cpp')}
         return self._out_of_line
 
@@ -761,7 +761,7 @@ def argument_registers(va, size, regs, callee='UClass::UClass'):
 def names():
     """{address: name} of every function, read once."""
     if not hasattr(names, 'cache'):
-        names.cache = {int(r['address'], 16): r['name'] for r in inventory.read_csv(paths.CONFIG / 'functions.csv')}
+        names.cache = {int(r['address'], 16): r['name'] for r in inventory.read_functions()}
     return names.cache
 
 

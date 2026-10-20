@@ -117,7 +117,7 @@ python -m pytest -q
 
 | Tool | What it does |
 | --- | --- |
-| `tools/inventory.py` | Writes `config/functions.csv` and `config/objects.csv` from the PDB |
+| `tools/inventory.py` | Writes `config/functions/` and `config/objects.csv` from the PDB; `read_functions()` loads the inventory for every tool |
 | `tools/xex.py` | Unpacks the XEX into its PE image (the basefile), and a decrypted copy for XenonRecomp |
 | `tools/pdbtype.py <Name>` | Prints a type from the PDB as a C++ declaration with member offsets |
 | `tools/check.py <src...>` | Compiles sources with their object's flags and compares every `// @retail` function with retail; writes `config/status.csv` |

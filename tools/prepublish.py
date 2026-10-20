@@ -10,7 +10,7 @@ Scans `git ls-files` and exits 1 if it finds any of:
 - an email address that isn't a no-reply address
 - a regex from local/prepublish_patterns.txt (git-ignored, one per line:
   the maintainer's username and similar, never written into a tracked file)
-- a file over 10 MB (config/functions.csv may be up to 50 MB)
+- a file over 10 MB
 - a file of a type .gitignore excludes (*.xex, *.pdb, ...), or any tracked
   file that .gitignore would exclude (git ls-files -ci --exclude-standard)
 - a .uc file whose class config/script_classes.csv marks as identical to UDK's
@@ -28,7 +28,6 @@ LOCAL_PATH = re.compile(r'[A-Za-z]:(?:\\{1,2}|/)Users[\\/]|/home/\w|/mnt/[a-z]/U
 DOWNLOAD_SOURCE = re.compile(r'archive\.org|xdk_\d{8}|udk[i]nstall|xdks[e]tupxenon', re.I)  # [x]: no self-match
 EMAIL = re.compile(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}')
 MAX_SIZE = 10 * 1024 * 1024
-SIZE_ALLOWANCE = {'config/functions.csv': 50 * 1024 * 1024}
 PATTERNS_FILE = paths.ROOT / 'local' / 'prepublish_patterns.txt'
 
 
@@ -60,8 +59,8 @@ def scan(tree_files, private_patterns, ignore_patterns=None, identical=None, roo
         except ValueError:
             rel = path.as_posix()
         size = path.stat().st_size
-        if size > SIZE_ALLOWANCE.get(rel, MAX_SIZE):
-            problems.append(f'{rel}: over {SIZE_ALLOWANCE.get(rel, MAX_SIZE) // (1024 * 1024)} MB ({size} bytes)')
+        if size > MAX_SIZE:
+            problems.append(f'{rel}: over {MAX_SIZE // (1024 * 1024)} MB ({size} bytes)')
         if any(fnmatch.fnmatch(path.name.lower(), p.lower()) for p in ignore_patterns if p.startswith('*')):
             problems.append(f'{rel}: ignored file type')
         if path.resolve() in ignored_tracked:

@@ -27,7 +27,7 @@ Phase 5 (UDK rebuild, later).
 ## n-Space's C++ (matching)
 
 1,417 functions (149,468 bytes) are in scope: the `nspace` rows of
-`config/functions.csv`. `config/status.csv` records every function that isn't
+`config/functions/game.csv`. `config/status.csv` records every function that isn't
 `todo`. **1,237 are matched (121,312 bytes, 81%), 8 are near (3,864 bytes)
 and 172 are todo (24,292 bytes)**; 1,296 functions match in all, counting the
 Grip, CCS and Epic helpers that the same objects keep out of line. Of the

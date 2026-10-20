@@ -19,7 +19,7 @@ percentages are JSON numbers.
 python tools/decomp_dev_export.py -o build/report.json
 ```
 
-It reads `config/functions.csv` and `config/status.csv` only.
+It reads `config/functions/` and `config/status.csv` only.
 
 - **Top-level measures and the `nspace` category:** the game-tier functions
   whose owner is `nspace`, the decomp's target. One unit per object.

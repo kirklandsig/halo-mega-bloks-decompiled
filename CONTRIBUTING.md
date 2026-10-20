@@ -4,7 +4,7 @@ Thanks for helping. New here? Start with [docs/START_HERE.md](docs/START_HERE.md
 
 ## What you can work on
 
-- **n-Space's C++** (matching): the `nspace` rows of `config/functions.csv`.
+- **n-Space's C++** (matching): the `nspace` rows of `config/functions/game.csv`.
   Epic's engine and UDK code is recompiled, not hand-decompiled.
 - **UnrealScript**: reviewing, naming and commenting the classes in
   `script/`, and cross-linking them with the native functions they declare.
