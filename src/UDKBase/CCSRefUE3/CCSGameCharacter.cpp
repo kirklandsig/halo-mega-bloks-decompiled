@@ -33,7 +33,10 @@ float CCSGameCharacter::GetHeight() const
 // @retail 0x83321240
 Grip_Rotation CCSGameCharacter::GetOrientation() const
 {
-    Grip_Rotation Orientation;
+    Grip_Rotation Orientation;  // zeroed again below, in the order retail stores it
+    Orientation.Roll = 0;
+    Orientation.Yaw = 0;
+    Orientation.Pitch = 0;
     if (m_pawn != 0)
     {
         Orientation = m_pawn->Rotation;

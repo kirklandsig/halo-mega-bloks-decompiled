@@ -87,7 +87,7 @@ source line, by shape (matched after Phase 3's Task 2):
 | destructor | 101 | 73 | `DECLARE_CLASS`: `ConditionalDestroy()`, then the base's destructor |
 | scalar deleting destructor, other compiler thunks | 100 | 73 | compiler-generated from the virtual destructor |
 | `event<Name>` thunk | 15 | 15 | script compiler: fill `_Parms`, `ProcessEvent` |
-| `exec<Name>` thunk | 64 | 0 | script compiler: read `FFrame` parameters, call the native |
+| `exec<Name>` thunk | 64 | 0 | script compiler: read `FFrame` parameters, call the native (n-Space's additions to Epic's classes add 74 more, 74 matched) |
 | other (cpptext inlines such as `GetType`) | 66 | 0 | hand-written in the class's `cpptext` |
 
 `IMPLEMENT_CLASS`'s `GetPrivateStaticClass<Class>` and
@@ -252,6 +252,33 @@ written by it.
 - **`TMap::Set`** builds an `FPairInitializer` that holds a class key by
   reference and a pointer value by value, then calls `TSet::Add` out of line
   (`Core/Inc/Map.h`).
+
+### From the Epic additions and the CCS layer (2026-10-20)
+
+- **Dot products and sums written out** can fix the evaluation order: where
+  `Right | Dir` computes Z first, `Dir.X * Right.X + Right.Y * Dir.Y +
+  Right.Z * Dir.Z` gives retail's X-first order (`AUDKVehicle::moveTowardGwNav`).
+- **Virtual inline functions** get their out-of-line copy from a non-virtual
+  call under `#pragma inline_depth(0)` (`p->C::f()`); taking a virtual's
+  address gives a vcall thunk instead.
+- **A struct of 8 bytes or less returned by value** comes back in r3 only if
+  it is complete where the method is declared; gen_header.py orders such
+  return types first (`GripStatEntry` before `CCSStat`).
+- **A result variable assigned in both paths** keeps its register:
+  `bool b = false; if (...) b = Base::f(); return b;` where an early
+  `return Base::f();` folds the false path to `li r3, 0`.
+- **A negated boolean condition** in the CCS nodes is
+  `return m_negate ? !bValue : (bool)bValue;`: the cast on the other arm is
+  retail's final `clrlwi`.
+- **Retail inlines other files' functions** of the unity, including a
+  `.cpp`'s constructor into another file's function: include that `.cpp`
+  (`#include "CCSGSCover.cpp"`) and define the header inlines it relies on
+  (`operator new` of Kaim's classes goes to `Kaim::Memory::pGlobalHeap`).
+- **A named local** can make a reload disappear: `UGwNavBotHandle *pHandle =
+  m_pGwNavBotHandle;` where re-reading the member reloads it after a branch.
+- **Zeroing order** of a local struct follows the statements: retail's
+  `CCSGameCharacter::GetOrientation` stores Roll, Yaw, Pitch, so the
+  assignments are written in that order.
 
 ## When it doesn't match
 

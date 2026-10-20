@@ -44,7 +44,7 @@ is Autodesk Gameware's middleware and stays out; the 159 functions n-Space
 added to Epic's classes (the CCS pawn interface on UDKPawn and its kin) are in,
 and so is the whole CCS layer (644 more functions, 99,024 bytes).
 
-Next: Phase 4 (the handheld), then Phase 5 (the UDK rebuild).
+Now: the rest of the CCS layer (468 functions). Then Phase 4 (the handheld) and Phase 5 (the UDK rebuild).
 
 ## What this is
 
@@ -65,8 +65,9 @@ The handheld goal: an Anbernic device, chosen by profiling the PC build.
 
 ## Status
 
-Phase 3 is done: **1,439 of n-Space's 2,061 functions match** byte for byte
-(55% of the bytes; the scope grew by the CCS layer's 644 functions), and
+**1,571 of n-Space's 2,061 functions match** byte for byte (59% of the
+bytes). Phase 3 finished the original scope; the CCS layer, brought in since
+(644 functions), is being written, and
 matched code can replace its recompiled version in the port. Phase 2
 made **the recompiled build run natively on Windows x86-64, from boot to the
 first level** (11 to 16 fps on an integrated GPU), and it builds on Linux.
@@ -76,7 +77,7 @@ The results are in `docs/specs/phase2-baseline.md`,
 | | |
 | --- | --- |
 | Inventory | 237,168 functions (215,944 from the PDB's procedures, 21,224 library functions with only a public symbol), 2,295 objects |
-| n-Space's C++ | 2,061 functions (248,492 bytes) in scope: **1,439 matched** (136,292 bytes, 55%), 11 near, 611 todo |
+| n-Space's C++ | 2,061 functions (248,492 bytes) in scope: **1,571 matched** (147,128 bytes, 59%), 16 near, 474 todo |
 | Native port | Windows: boots to the first level, playable with the build's own known issues. Linux: builds, and starts UE3 on a software Vulkan device |
 | Recompilation | 237,162 functions, 345 jump tables, no unimplemented instruction; 506 files compile in about 6 minutes |
 | UnrealScript | 2,597 classes export; the 758 that are n-Space's own or modified from UDK are committed, with every decompiler error fixed, and UDK's compiler checks them as far as stock UDK allows |
