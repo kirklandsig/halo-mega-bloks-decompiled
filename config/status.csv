@@ -163,6 +163,7 @@ address,status
 0x8331DCD0,matched
 0x8331DCF8,matched
 0x8331DD50,matched
+0x8331DE98,matched
 0x8331DF18,matched
 0x8331DF20,matched
 0x8331DFB0,matched
@@ -471,6 +472,7 @@ address,status
 0x833232B8,matched
 0x83323330,matched
 0x83323350,matched
+0x833233D0,matched
 0x83323430,matched
 0x83323438,matched
 0x83323448,matched
@@ -1114,6 +1116,7 @@ address,status
 0x833431D8,matched
 0x833436D8,matched
 0x83343780,matched
+0x833439E8,near
 0x83344128,matched
 0x83344160,matched
 0x83344180,matched

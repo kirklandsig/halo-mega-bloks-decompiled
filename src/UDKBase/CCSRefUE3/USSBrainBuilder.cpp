@@ -55,6 +55,49 @@ void USSBrainBuilder::SetUpBrain()
     }
 }
 
-// USSBrainBuilder::ConstructBrain (0x833439E8) is left as todo: it passes
-// the Cognition SDK's licence string to CCSRBTFactory, and that string is
-// game data this repository does not publish.
+// The Cognition SDK's licence string, which CCSRBTFactory checks. It is game
+// data, so the repository doesn't define it: the comparison masks the
+// relocation that addresses it, and a build that links this file defines it
+// from its own copy of the game (the basefile's string at 0x821F9240).
+extern const char GCognitionLicense[];
+
+#ifndef HAGGAR_HOST  // it builds guest objects; it stays recompiled in the port
+// Near: after the mediator's allocation retail copies the result to r11
+// before the null check, ours inside the constructor's path (so the vtable
+// addresses land in r5..r7 there, r6..r8 here). The new-expression's form
+// is the suspect; the mediator's constructor written with assignments
+// changes nothing.
+// @retail 0x833439E8
+void USSBrainBuilder::ConstructBrain(UObject *pOwner, UCCSBTTree *pBTTree, ICCSMeatPuppet *pMeatPuppet,
+                                     FCCSSystemConfigData *pSystemConfigData, UGripBTInterface *pBTInterface,
+                                     UGripBTScriptNodeCache *pScriptNodeCache)
+{
+    m_pBTInterface = pBTInterface;
+    m_pUnSystemConfigData = pSystemConfigData;
+    CCSSystemsConfig Config = CreateConfig(pSystemConfigData);
+    GripUnrealRBTFactory Factory(new CCSRBTFactory(GCognitionLicense), pBTInterface, pOwner);
+    GripRBTTree *pTree = Factory.Instantiate(pBTTree);
+    pTree->SetName(*pBTTree->GetName());
+    Grip_ArrayPOD<UGripBTScriptNode *, 2> &ScriptNodes = Factory.GetScriptNodeOwnership();
+    for (int i = 0; i < ScriptNodes.Num(); i++)
+    {
+        pScriptNodeCache->ScriptNodes.AddItem(ScriptNodes[i]);
+    }
+    IGripBTScriptNodeMediator *pMediator;
+    if (ScriptNodes.Num() > 0)
+    {
+        GripBTScriptNodeMediator *pScriptNodeMediator = new GripBTScriptNodeMediator;
+        pScriptNodeMediator->SetScriptNodeCache(pScriptNodeCache);
+        pScriptNodeMediator->SetBTInterface(pBTInterface);
+        pMediator = pScriptNodeMediator;
+        pMediator->InitializeAllNodes();
+    }
+    else
+    {
+        pMediator = 0;
+    }
+    pTree->SetScriptNodeMediator(pMediator);
+    pTree->GripBTInitialize();
+    CCSBrainBuilder::ConstructBrain(pTree, pMeatPuppet, Config);
+}
+#endif

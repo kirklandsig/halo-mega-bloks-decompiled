@@ -229,6 +229,7 @@ class CCSRBTEncircleTarget;
 class CCSRBTEnemyAware;
 class CCSRBTEnemyClosestRange;
 class CCSRBTEnemyLowestLKPAge;
+class CCSRBTFactory;
 class CCSRBTFlee;
 class CCSRBTIdle;
 class CCSRBTMoveTo;
@@ -700,6 +701,7 @@ class GripBBVisualization;
 struct GripBTScriptNodeCache_eventCacheAllConditions_Parms;
 struct GripBTScriptNodeCache_eventInitializeAllNodes_Parms;
 struct GripBTScriptNodeCache_eventSurveyUsedBBMembers_Parms;
+class GripBTScriptNodeMediator;
 class GripBTStack;
 class GripBTSystemFlags;
 class GripBlackboard;
@@ -724,8 +726,11 @@ class GripRBTAllocator;
 class GripRBTBehavior;
 class GripRBTBooleanCondition;
 class GripRBTCondition;
+class GripRBTFactory;
 class GripRBTNode;
 class GripRBTPriority;
+class GripRBTScriptNodeProxy;
+class GripRBTSizeInspector;
 class GripRBTTree;
 class GripScopeCycleCounter;
 struct GripSerializationMember;
@@ -736,6 +741,7 @@ struct GripSystemConfig;
 class GripSystemScheduler;
 class GripSystemTickGroup;
 class GripTGLowHigh;
+class GripUnrealRBTFactory;
 class GripUnrealSceneProxy;
 class GripVHeapObject;
 class Grip_Color;
@@ -18582,6 +18588,24 @@ public:
     HG_VIRTUAL bool TestPreCondition(IGripBTInterface *);
 };
 
+class GripRBTFactory : public GripVHeapObject  // size 0x4, opaque
+{
+public:
+    HG_VIRTUAL bool IsSupported(const EGripBTNodeType) const;
+    HG_VIRTUAL GripRBTNode *CreateNode(EGripBTNodeType) const;
+    void SetNodeAllocator(GripRBTAllocator *);
+    void TransferAllocatorOwnership(GripRBTAllocator *, GripRBTTree *);
+};
+
+class CCSRBTFactory : public GripRBTFactory  // size 0x4
+{
+public:
+    HG_VIRTUAL GripRBTNode *CreateNode(EGripBTNodeType) const;
+    #ifndef HAGGAR_HOST
+    CCSRBTFactory(const char *);
+    #endif
+};
+
 class CCSRBTFlee : public GripRBTBehavior  // size 0x68
 {
 public:
@@ -24702,6 +24726,36 @@ public:
     #endif
 };
 
+class IGripBTScriptNodeMediator  // size 0x4, opaque
+{
+    HG_VFPTR
+public:
+    HG_XDK(HG_VIRTUAL ~IGripBTScriptNodeMediator();)
+    HG_VIRTUAL void InitializeAllNodes() HG_PURE;
+    HG_VIRTUAL void SurveyUsedBBMembers() HG_PURE;
+    HG_VIRTUAL void CacheAllConditions(IGripBTInterface *) HG_PURE;
+};
+
+class GripBTScriptNodeMediator : public GripVHeapObject, public IGripBTScriptNodeMediator  // size 0x10
+{
+public:
+    HG_VIRTUAL void InitializeAllNodes();
+    HG_VIRTUAL void SurveyUsedBBMembers();
+    HG_VIRTUAL void CacheAllConditions(IGripBTInterface *);
+    void SetScriptNodeCache(UGripBTScriptNodeCache *);
+    void SetBTInterface(UGripBTInterface *);
+    #ifndef HAGGAR_HOST
+    GripBTScriptNodeMediator();
+    #endif
+    #ifndef HAGGAR_HOST
+    UGripBTScriptNodeCache *m_pCache;  // 0x8
+    UGripBTInterface *m_pBTInterface;  // 0xC
+    #else
+    hg::gptr<UGripBTScriptNodeCache> m_pCache;
+    hg::gptr<UGripBTInterface> m_pBTInterface;
+    #endif
+};
+
 class GripBTStack : public GripVHeapObject  // size 0x14
 {
 public:
@@ -24978,6 +25032,20 @@ public:
     #endif
 };
 
+class GripRBTSizeInspector : public GripRBTAllocator  // size 0x14, opaque
+{
+public:
+    unsigned int GetSize() const;
+HG_PROTECTED:
+    HG_VIRTUAL void *AllocateAlign(unsigned int);
+public:
+    #ifndef HAGGAR_HOST
+    GripRBTSizeInspector();
+    #endif
+HG_PRIVATE:
+    unsigned int GripRBTSizeInspectorData[0x1];
+};
+
 class GripRBTTree : public GripRBTPriority  // size 0xD4
 {
 public:
@@ -25147,6 +25215,40 @@ public:
     #else
     hg::be<int> m_budgetPerTick;
     hg::be<int> m_tickIdx;
+    #endif
+};
+
+class GripUnrealRBTFactory : public GripVHeapObject  // size 0x38
+{
+public:
+    GripRBTTree *Instantiate(UGripBTTree *);
+    GripRBTNode *InstantiateNode(UGripBTScriptNode *);
+    GripRBTNode *InstantiateNode(UGripBTNode *);
+    Grip_ArrayPOD<UGripBTScriptNode *,2> &GetScriptNodeOwnership();
+HG_PRIVATE:
+    GripRBTScriptNodeProxy *CopyScriptNode(UGripBTScriptNode *);
+    unsigned int GetTreeSizeAligned(UGripBTTree *);
+    void GetNodeSizeAligned(UGripBTNode *);
+public:
+    #ifndef HAGGAR_HOST
+    GripUnrealRBTFactory(GripRBTFactory *, UGripBTInterface *, UObject *);
+    HG_VIRTUAL ~GripUnrealRBTFactory();
+    #endif
+    #ifndef HAGGAR_HOST
+    GripRBTFactory *m_pRBTFactory;  // 0x4
+    UObject *m_pOwner;  // 0x8
+    UGripBTInterface *m_pScriptBTInterface;  // 0xC
+    Grip_ArrayPOD<UGripBTScriptNode *,2> m_scriptNodes;  // 0x10
+    bool m_scriptNodesOwner;  // 0x20
+    GripRBTSizeInspector m_sizeInspector;  // 0x24
+    #else
+    hg::gptr<GripRBTFactory> m_pRBTFactory;
+    hg::gptr<UObject> m_pOwner;
+    hg::gptr<UGripBTInterface> m_pScriptBTInterface;
+    Grip_ArrayPOD<UGripBTScriptNode *,2> m_scriptNodes;
+    bool m_scriptNodesOwner;
+    char _pad0[0x3];
+    GripRBTSizeInspector m_sizeInspector;
     #endif
 };
 

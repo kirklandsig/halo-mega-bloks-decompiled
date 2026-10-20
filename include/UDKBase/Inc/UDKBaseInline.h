@@ -106,6 +106,28 @@ inline GripVHeapObject::~GripVHeapObject() {}
 inline void GripAFModifier::Apply() {}
 inline void GripAFModifier::Revert() {}
 
+#ifndef HAGGAR_HOST
+// unobjbas.h
+inline FString UObject::GetName() const
+{
+    if (this == 0)
+    {
+        return FString(L"None");
+    }
+    if (Index == INDEX_NONE)
+    {
+        return FString(L"<uninitialized>");
+    }
+    return Name.ToString();
+}
+// gripbtscriptnodemediator.h, griprbttree.h: what USSBrainBuilder::ConstructBrain sets
+inline GripBTScriptNodeMediator::GripBTScriptNodeMediator() : m_pCache(0), m_pBTInterface(0) {}
+inline void GripBTScriptNodeMediator::SetScriptNodeCache(UGripBTScriptNodeCache *pCache) { m_pCache = pCache; }
+inline void GripBTScriptNodeMediator::SetBTInterface(UGripBTInterface *pBTInterface) { m_pBTInterface = pBTInterface; }
+inline void GripRBTTree::SetName(const Grip::String &Name) { m_name = Name; }
+inline void GripRBTTree::SetScriptNodeMediator(IGripBTScriptNodeMediator *pMediator) { m_pScriptNodeMediator = pMediator; }
+#endif
+
 // gripvheapobject.h, griprbtnode.h: allocation
 inline void *GripVHeapObject::operator new(unsigned int Size) { return Grip::Memory::pGlobalHeap->Alloc(Size, 0); }
 inline void *GripRBTNode::operator new(unsigned int Size)

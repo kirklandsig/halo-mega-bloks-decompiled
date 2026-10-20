@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-20 (n-Space's C++: 1,981 of 2,061 functions matched). Matching progress is
+Updated 2026-10-20 (n-Space's C++: 1,983 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -24,7 +24,7 @@ more; 12,808 bytes) are in scope now.
 
 Done in this order: the n-Space functions, the script compile, the formats
 and extraction tools, the scope checks, n-Space's additions to Epic's
-classes, the CCS layer (all of it written but one function). Now: the
+classes, the CCS layer (all of it written). Now: the
 leftovers. Then Phase 4 (handheld) and
 Phase 5 (UDK rebuild, later).
 
@@ -32,16 +32,16 @@ Phase 5 (UDK rebuild, later).
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **1,981 are matched (200,008 bytes, 80%), 42 are near
-(22,592 bytes) and 38 are todo (25,892 bytes)**; 1,994 functions match in
+isn't `todo`. **1,983 are matched (200,152 bytes, 80%), 43 are near
+(23,420 bytes) and 35 are todo (24,920 bytes)**; 1,996 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
-(156 match), and the CCS layer's other 644 functions (99,024 bytes; 588 of
+(156 match), and the CCS layer's other 644 functions (99,024 bytes; 590 of
 them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,528 | 37 | 38 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,530 | 38 | 35 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 351 | 3 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
@@ -55,11 +55,7 @@ them matched (4,844 bytes), 6 were near (1,236 bytes) and 8 todo.
 Each written function that doesn't match has a comment in its source file
 saying why. In short:
 
-- **Todo, not written:** `USSBrainBuilder::ConstructBrain` (it passes the
-  Cognition SDK's licence string, which is game data the repository doesn't
-  publish), `CCSAFAction`'s and `CCSAnalysisSystem`'s out-of-line
-  constructors (abstract classes, so no emitting use), four
-  `CCSCSMovementUnreal` functions (`DoMove`, `OrientationReached`,
+- **Todo, not written:** four `CCSCSMovementUnreal` functions (`DoMove`, `OrientationReached`,
   `GetNextMoveLocation`, `MoveToDestination`).
 - **Todo, written, registers, stack slots or inlining differ:** the
   controller's `Tick`, `SetState` and `RemoveState`, `AUSSController::PostPollMove`,
@@ -77,12 +73,14 @@ saying why. In short:
   actor-iterator loops (`CCSEngineServices::FindAllCovers`,
   `CCSRBTSearch::FindNavigationPoints`: retail loads the iterated actor
   straight into the register it keeps, ours copies it there).
-- **Near (42):** mostly a swapped register pair, an operand order, a
+- **Near (43):** mostly a swapped register pair, an operand order, a
   schedule or a stack slot; among them the target-awareness sensor's
   awareness and threat functions, the cover sensor's perception, the
   move-to and strafe nodes, `CCSBrain`'s scheduler registration, the
   blackboard's `GetSpecificTarget` and `UpdateTargetListsByRange`, and
-  AUDKVehicle's look-steer modes.
+  AUDKVehicle's look-steer modes, and `USSBrainBuilder::ConstructBrain`
+  (one register copy scheduled later; it passes the Cognition SDK's licence
+  string through an extern symbol the repository never defines).
 
 The inline layer they rest on is hand-written in `include/`: `Core/Inc/Core.h`
 (memory, `check()`, `Min`/`Max` with `fsel`, `appSqrt`), `Core/Inc/Array.h`

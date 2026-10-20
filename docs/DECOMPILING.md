@@ -320,6 +320,26 @@ written by it.
   temporaries (a 4-byte struct sharing a slot with a later string) and the
   operand order of a sum with `DeltaTime`.
 
+### From the leftovers (2026-10-20)
+
+- **An abstract class's out-of-line constructor** (retail keeps one though
+  every derived constructor inlines it) comes from MSVC's explicit
+  constructor call under `#pragma inline_depth(0)`:
+  `p->CCSAFAction::CCSAFAction();` (`src/UDKBase/CCSRef/CCSAnalysisSystem.cpp`).
+- **Game data the repository can't publish** (the Cognition SDK's licence
+  string) is an `extern const char[]` that nothing defines: the object still
+  compiles, its `lis`/`addi` pair is relocated, and the comparison masks it.
+  A build that links the file supplies the definition from its own copy.
+- **An implicit conversion** to a `const &` parameter
+  (`pTree->SetName(*Name)`, `FString` to `Grip::String`) passes the
+  temporary's address (`addi r4, r1, N`); an explicit `Grip::String(...)`
+  passes the constructor's returned pointer.
+- **`UObject::GetName`** inlines as three `if`/`return`s; a nested ternary of
+  `FString`s builds each arm in a flagged temporary instead.
+- **A pointer set in an `else`** (`if (...) { p = new ...; } else { p = 0; }`)
+  places the null at the join, where initializing it first loads it before
+  the `if`.
+
 ## When it doesn't match
 
 Try a few distinct ideas (member order, an inline helper, a different
