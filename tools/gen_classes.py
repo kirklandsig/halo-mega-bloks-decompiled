@@ -22,7 +22,6 @@ import gen_header
 import inventory
 import paths
 import pdbtype
-import script_compare
 from pdbfile import IMAGE_BASE
 
 # Classes the hand-written code of a package needs in its header as well:
@@ -86,12 +85,9 @@ EVENTS = {'UDKBase': ['ACoverLink::eventSetDisabled']}
 
 
 def function_rows():
-    """The inventory rows without n-Space's additions to Epic's
-    classes (UDKPawn's CCS natives): they need those classes rendered as
-    targets, which isn't done yet."""
-    additions = script_compare.nspace_additions()
-    return [r for r in inventory.read_functions()
-            if tuple(r['name'].split('::', 1)) not in additions]
+    if not hasattr(function_rows, 'cache'):
+        function_rows.cache = inventory.read_functions()
+    return function_rows.cache
 
 
 def code_rows(package):

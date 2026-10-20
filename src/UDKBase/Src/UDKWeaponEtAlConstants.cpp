@@ -3,6 +3,94 @@
 // Functions whose whole body returns a constant or a string, or does nothing.
 #include "UDKBase/Inc/UDKBaseClasses.h"
 
+// @retail 0x833830E0
+unsigned int AUDKPawn::IsCrouched()
+{ return 0; }
+
+// @retail 0x833830E8
+void AUDKPawn::SetCrouched(unsigned int)
+{}
+
+// @retail 0x83383108
+unsigned int AUDKPawn::PostureTransitionOver()
+{ return 1; }
+
+// @retail 0x83386D78
+void AUDKVehicle::moveTowardGWNavDefault(const FVector &)
+{}
+
+// @retail 0x83386D80
+void AUDKVehicle::moveTowardGwNavStrafe(const FVector &)
+{}
+
+// @retail 0x83387360
+unsigned int AUDKVehicle::IsCrouched()
+{ return 0; }
+
+// @retail 0x83387368
+void AUDKVehicle::SetCrouched(unsigned int)
+{}
+
+// @retail 0x83387388
+unsigned int AUDKVehicle::PostureTransitionOver()
+{ return 1; }
+
+// @retail 0x83387728
+unsigned int AUDKWeaponPawn::IsCrouched()
+{ return 0; }
+
+// @retail 0x83387730
+void AUDKWeaponPawn::SetCrouched(unsigned int)
+{}
+
+// @retail 0x83387738
+void AUDKWeaponPawn::SetPostureDefault()
+{}
+
+// @retail 0x83387740
+unsigned int AUDKWeaponPawn::PostureTransitionOver()
+{ return 1; }
+
+// @retail 0x83387748
+void AUDKWeaponPawn::SetIsPanicking(unsigned int)
+{}
+
+// @retail 0x83387750
+unsigned int AUDKWeaponPawn::GetIsPanicking()
+{ return 0; }
+
+// @retail 0x83387780
+void AUDKWeaponPawn::SetCoverPose(unsigned char, float)
+{}
+
+// @retail 0x83387788
+void AUDKWeaponPawn::SetNoCoverPose()
+{}
+
+// @retail 0x83387790
+unsigned int AUDKWeaponPawn::CoverPoseTransitionOver()
+{ return 1; }
+
+// @retail 0x83387850
+void AUDKWeaponPawn::MoveToInCover(FVector)
+{}
+
+// @retail 0x83387858
+unsigned int AUDKWeaponPawn::IsInCover()
+{ return 0; }
+
+// @retail 0x83387860
+unsigned char AUDKWeaponPawn::GetSpeed()
+{ return 1; }
+
+// @retail 0x83387868
+void AUDKWeaponPawn::SetSpeed(unsigned char)
+{}
+
+// @retail 0x83387870
+void AUDKWeaponPawn::SetMovementSpeedDefault()
+{}
+
 // @retail 0x833A23B8
 int UHaloAnimBlendByForwardMomentum::GetNumSliders() const
 { return 1; }

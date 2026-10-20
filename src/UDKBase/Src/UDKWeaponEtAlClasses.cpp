@@ -17,6 +17,79 @@ extern UClass *(*const EmitAUDKCoverStaticClass)() = &AUDKCover::StaticClass;
 extern decltype(&AUDKCover::execAddCoverLink) const EmitAUDKCover_execAddCoverLink = &AUDKCover::execAddCoverLink;
 extern decltype(&AUDKCover::execKillCoverLinks) const EmitAUDKCover_execKillCoverLinks = &AUDKCover::execKillCoverLinks;
 extern decltype(&AUDKCover::execRemoveCoverLink) const EmitAUDKCover_execRemoveCoverLink = &AUDKCover::execRemoveCoverLink;
+extern decltype(&AUDKPawn::execCanAim) const EmitAUDKPawn_execCanAim = &AUDKPawn::execCanAim;
+extern decltype(&AUDKPawn::execCoverPoseTransitionOver) const EmitAUDKPawn_execCoverPoseTransitionOver = &AUDKPawn::execCoverPoseTransitionOver;
+extern decltype(&AUDKPawn::execGetAlertness) const EmitAUDKPawn_execGetAlertness = &AUDKPawn::execGetAlertness;
+extern decltype(&AUDKPawn::execGetDefaultBehaviorTree) const EmitAUDKPawn_execGetDefaultBehaviorTree = &AUDKPawn::execGetDefaultBehaviorTree;
+extern decltype(&AUDKPawn::execGetIsPanicking) const EmitAUDKPawn_execGetIsPanicking = &AUDKPawn::execGetIsPanicking;
+extern decltype(&AUDKPawn::execGetMovementType) const EmitAUDKPawn_execGetMovementType = &AUDKPawn::execGetMovementType;
+extern decltype(&AUDKPawn::execGetSpeed) const EmitAUDKPawn_execGetSpeed = &AUDKPawn::execGetSpeed;
+extern decltype(&AUDKPawn::execGetYellingDistance) const EmitAUDKPawn_execGetYellingDistance = &AUDKPawn::execGetYellingDistance;
+extern decltype(&AUDKPawn::execIsCrouched) const EmitAUDKPawn_execIsCrouched = &AUDKPawn::execIsCrouched;
+extern decltype(&AUDKPawn::execIsInCover) const EmitAUDKPawn_execIsInCover = &AUDKPawn::execIsInCover;
+extern decltype(&AUDKPawn::execMoveToInCover) const EmitAUDKPawn_execMoveToInCover = &AUDKPawn::execMoveToInCover;
+extern decltype(&AUDKPawn::execPostureTransitionOver) const EmitAUDKPawn_execPostureTransitionOver = &AUDKPawn::execPostureTransitionOver;
+extern decltype(&AUDKPawn::execSetAlertness) const EmitAUDKPawn_execSetAlertness = &AUDKPawn::execSetAlertness;
+extern decltype(&AUDKPawn::execSetAlertnessDefault) const EmitAUDKPawn_execSetAlertnessDefault = &AUDKPawn::execSetAlertnessDefault;
+extern decltype(&AUDKPawn::execSetCoverPose) const EmitAUDKPawn_execSetCoverPose = &AUDKPawn::execSetCoverPose;
+extern decltype(&AUDKPawn::execSetCrouched) const EmitAUDKPawn_execSetCrouched = &AUDKPawn::execSetCrouched;
+extern decltype(&AUDKPawn::execSetDefaultBehaviorTree) const EmitAUDKPawn_execSetDefaultBehaviorTree = &AUDKPawn::execSetDefaultBehaviorTree;
+extern decltype(&AUDKPawn::execSetIsPanicking) const EmitAUDKPawn_execSetIsPanicking = &AUDKPawn::execSetIsPanicking;
+extern decltype(&AUDKPawn::execSetMovementSpeedDefault) const EmitAUDKPawn_execSetMovementSpeedDefault = &AUDKPawn::execSetMovementSpeedDefault;
+extern decltype(&AUDKPawn::execSetMovementType) const EmitAUDKPawn_execSetMovementType = &AUDKPawn::execSetMovementType;
+extern decltype(&AUDKPawn::execSetMovementTypeDefault) const EmitAUDKPawn_execSetMovementTypeDefault = &AUDKPawn::execSetMovementTypeDefault;
+extern decltype(&AUDKPawn::execSetNoCoverPose) const EmitAUDKPawn_execSetNoCoverPose = &AUDKPawn::execSetNoCoverPose;
+extern decltype(&AUDKPawn::execSetPostureDefault) const EmitAUDKPawn_execSetPostureDefault = &AUDKPawn::execSetPostureDefault;
+extern decltype(&AUDKPawn::execSetSpeed) const EmitAUDKPawn_execSetSpeed = &AUDKPawn::execSetSpeed;
+extern decltype(&AUDKPlayerController::execIsAlertedEnemyInRange) const EmitAUDKPlayerController_execIsAlertedEnemyInRange = &AUDKPlayerController::execIsAlertedEnemyInRange;
+extern decltype(&AUDKVehicle::execCanAim) const EmitAUDKVehicle_execCanAim = &AUDKVehicle::execCanAim;
+extern decltype(&AUDKVehicle::execCoverPoseTransitionOver) const EmitAUDKVehicle_execCoverPoseTransitionOver = &AUDKVehicle::execCoverPoseTransitionOver;
+extern decltype(&AUDKVehicle::execGetAlertness) const EmitAUDKVehicle_execGetAlertness = &AUDKVehicle::execGetAlertness;
+extern decltype(&AUDKVehicle::execGetDefaultBehaviorTree) const EmitAUDKVehicle_execGetDefaultBehaviorTree = &AUDKVehicle::execGetDefaultBehaviorTree;
+extern decltype(&AUDKVehicle::execGetIsPanicking) const EmitAUDKVehicle_execGetIsPanicking = &AUDKVehicle::execGetIsPanicking;
+extern decltype(&AUDKVehicle::execGetMovementType) const EmitAUDKVehicle_execGetMovementType = &AUDKVehicle::execGetMovementType;
+extern decltype(&AUDKVehicle::execGetSpeed) const EmitAUDKVehicle_execGetSpeed = &AUDKVehicle::execGetSpeed;
+extern decltype(&AUDKVehicle::execGetYellingDistance) const EmitAUDKVehicle_execGetYellingDistance = &AUDKVehicle::execGetYellingDistance;
+extern decltype(&AUDKVehicle::execIsCrouched) const EmitAUDKVehicle_execIsCrouched = &AUDKVehicle::execIsCrouched;
+extern decltype(&AUDKVehicle::execIsInCover) const EmitAUDKVehicle_execIsInCover = &AUDKVehicle::execIsInCover;
+extern decltype(&AUDKVehicle::execMoveToInCover) const EmitAUDKVehicle_execMoveToInCover = &AUDKVehicle::execMoveToInCover;
+extern decltype(&AUDKVehicle::execPostureTransitionOver) const EmitAUDKVehicle_execPostureTransitionOver = &AUDKVehicle::execPostureTransitionOver;
+extern decltype(&AUDKVehicle::execSetAlertness) const EmitAUDKVehicle_execSetAlertness = &AUDKVehicle::execSetAlertness;
+extern decltype(&AUDKVehicle::execSetAlertnessDefault) const EmitAUDKVehicle_execSetAlertnessDefault = &AUDKVehicle::execSetAlertnessDefault;
+extern decltype(&AUDKVehicle::execSetCoverPose) const EmitAUDKVehicle_execSetCoverPose = &AUDKVehicle::execSetCoverPose;
+extern decltype(&AUDKVehicle::execSetCrouched) const EmitAUDKVehicle_execSetCrouched = &AUDKVehicle::execSetCrouched;
+extern decltype(&AUDKVehicle::execSetDefaultBehaviorTree) const EmitAUDKVehicle_execSetDefaultBehaviorTree = &AUDKVehicle::execSetDefaultBehaviorTree;
+extern decltype(&AUDKVehicle::execSetIsPanicking) const EmitAUDKVehicle_execSetIsPanicking = &AUDKVehicle::execSetIsPanicking;
+extern decltype(&AUDKVehicle::execSetMovementSpeedDefault) const EmitAUDKVehicle_execSetMovementSpeedDefault = &AUDKVehicle::execSetMovementSpeedDefault;
+extern decltype(&AUDKVehicle::execSetMovementType) const EmitAUDKVehicle_execSetMovementType = &AUDKVehicle::execSetMovementType;
+extern decltype(&AUDKVehicle::execSetMovementTypeDefault) const EmitAUDKVehicle_execSetMovementTypeDefault = &AUDKVehicle::execSetMovementTypeDefault;
+extern decltype(&AUDKVehicle::execSetNoCoverPose) const EmitAUDKVehicle_execSetNoCoverPose = &AUDKVehicle::execSetNoCoverPose;
+extern decltype(&AUDKVehicle::execSetPostureDefault) const EmitAUDKVehicle_execSetPostureDefault = &AUDKVehicle::execSetPostureDefault;
+extern decltype(&AUDKVehicle::execSetSpeed) const EmitAUDKVehicle_execSetSpeed = &AUDKVehicle::execSetSpeed;
+extern decltype(&AUDKWeaponPawn::execCanAim) const EmitAUDKWeaponPawn_execCanAim = &AUDKWeaponPawn::execCanAim;
+extern decltype(&AUDKWeaponPawn::execCoverPoseTransitionOver) const EmitAUDKWeaponPawn_execCoverPoseTransitionOver = &AUDKWeaponPawn::execCoverPoseTransitionOver;
+extern decltype(&AUDKWeaponPawn::execGetAlertness) const EmitAUDKWeaponPawn_execGetAlertness = &AUDKWeaponPawn::execGetAlertness;
+extern decltype(&AUDKWeaponPawn::execGetDefaultBehaviorTree) const EmitAUDKWeaponPawn_execGetDefaultBehaviorTree = &AUDKWeaponPawn::execGetDefaultBehaviorTree;
+extern decltype(&AUDKWeaponPawn::execGetIsPanicking) const EmitAUDKWeaponPawn_execGetIsPanicking = &AUDKWeaponPawn::execGetIsPanicking;
+extern decltype(&AUDKWeaponPawn::execGetMovementType) const EmitAUDKWeaponPawn_execGetMovementType = &AUDKWeaponPawn::execGetMovementType;
+extern decltype(&AUDKWeaponPawn::execGetSpeed) const EmitAUDKWeaponPawn_execGetSpeed = &AUDKWeaponPawn::execGetSpeed;
+extern decltype(&AUDKWeaponPawn::execGetYellingDistance) const EmitAUDKWeaponPawn_execGetYellingDistance = &AUDKWeaponPawn::execGetYellingDistance;
+extern decltype(&AUDKWeaponPawn::execIsCrouched) const EmitAUDKWeaponPawn_execIsCrouched = &AUDKWeaponPawn::execIsCrouched;
+extern decltype(&AUDKWeaponPawn::execIsInCover) const EmitAUDKWeaponPawn_execIsInCover = &AUDKWeaponPawn::execIsInCover;
+extern decltype(&AUDKWeaponPawn::execMoveToInCover) const EmitAUDKWeaponPawn_execMoveToInCover = &AUDKWeaponPawn::execMoveToInCover;
+extern decltype(&AUDKWeaponPawn::execPostureTransitionOver) const EmitAUDKWeaponPawn_execPostureTransitionOver = &AUDKWeaponPawn::execPostureTransitionOver;
+extern decltype(&AUDKWeaponPawn::execSetAlertness) const EmitAUDKWeaponPawn_execSetAlertness = &AUDKWeaponPawn::execSetAlertness;
+extern decltype(&AUDKWeaponPawn::execSetAlertnessDefault) const EmitAUDKWeaponPawn_execSetAlertnessDefault = &AUDKWeaponPawn::execSetAlertnessDefault;
+extern decltype(&AUDKWeaponPawn::execSetCoverPose) const EmitAUDKWeaponPawn_execSetCoverPose = &AUDKWeaponPawn::execSetCoverPose;
+extern decltype(&AUDKWeaponPawn::execSetCrouched) const EmitAUDKWeaponPawn_execSetCrouched = &AUDKWeaponPawn::execSetCrouched;
+extern decltype(&AUDKWeaponPawn::execSetDefaultBehaviorTree) const EmitAUDKWeaponPawn_execSetDefaultBehaviorTree = &AUDKWeaponPawn::execSetDefaultBehaviorTree;
+extern decltype(&AUDKWeaponPawn::execSetIsPanicking) const EmitAUDKWeaponPawn_execSetIsPanicking = &AUDKWeaponPawn::execSetIsPanicking;
+extern decltype(&AUDKWeaponPawn::execSetMovementSpeedDefault) const EmitAUDKWeaponPawn_execSetMovementSpeedDefault = &AUDKWeaponPawn::execSetMovementSpeedDefault;
+extern decltype(&AUDKWeaponPawn::execSetMovementType) const EmitAUDKWeaponPawn_execSetMovementType = &AUDKWeaponPawn::execSetMovementType;
+extern decltype(&AUDKWeaponPawn::execSetMovementTypeDefault) const EmitAUDKWeaponPawn_execSetMovementTypeDefault = &AUDKWeaponPawn::execSetMovementTypeDefault;
+extern decltype(&AUDKWeaponPawn::execSetNoCoverPose) const EmitAUDKWeaponPawn_execSetNoCoverPose = &AUDKWeaponPawn::execSetNoCoverPose;
+extern decltype(&AUDKWeaponPawn::execSetPostureDefault) const EmitAUDKWeaponPawn_execSetPostureDefault = &AUDKWeaponPawn::execSetPostureDefault;
+extern decltype(&AUDKWeaponPawn::execSetSpeed) const EmitAUDKWeaponPawn_execSetSpeed = &AUDKWeaponPawn::execSetSpeed;
 extern decltype(&AUSSPawn::execCanAim) const EmitAUSSPawn_execCanAim = &AUSSPawn::execCanAim;
 extern decltype(&AUSSPawn::execCoverPoseTransitionOver) const EmitAUSSPawn_execCoverPoseTransitionOver = &AUSSPawn::execCoverPoseTransitionOver;
 extern decltype(&AUSSPawn::execGetAlertness) const EmitAUSSPawn_execGetAlertness = &AUSSPawn::execGetAlertness;
@@ -179,6 +252,159 @@ extern UClass *(*const EmitUUSSATBlendByPostureStaticClass)() = &UUSSATBlendByPo
 // AUDKCover::execKillCoverLinks (in the header)
 // @retail 0x833766E0
 // AUDKCover::execRemoveCoverLink (in the header)
+
+// @retail 0x833772B0
+// AUDKPawn::execCanAim (in the header)
+// @retail 0x83377420
+// AUDKPawn::execCoverPoseTransitionOver (in the header)
+// @retail 0x83376F38
+// AUDKPawn::execGetAlertness (in the header)
+// @retail 0x83377690
+// AUDKPawn::execGetDefaultBehaviorTree (in the header)
+// @retail 0x833775F0
+// AUDKPawn::execGetIsPanicking (in the header)
+// @retail 0x83376E30
+// AUDKPawn::execGetMovementType (in the header)
+// @retail 0x83377040
+// AUDKPawn::execGetSpeed (in the header)
+// @retail 0x83377640
+// AUDKPawn::execGetYellingDistance (in the header)
+// @retail 0x83377148
+// AUDKPawn::execIsCrouched (in the header)
+// @retail 0x83377500
+// AUDKPawn::execIsInCover (in the header)
+// @retail 0x83377470
+// AUDKPawn::execMoveToInCover (in the header)
+// @retail 0x83377260
+// AUDKPawn::execPostureTransitionOver (in the header)
+// @retail 0x83376F88
+// AUDKPawn::execSetAlertness (in the header)
+// @retail 0x83377018
+// AUDKPawn::execSetAlertnessDefault (in the header)
+// @retail 0x83377330
+// AUDKPawn::execSetCoverPose (in the header)
+// @retail 0x83377198
+// AUDKPawn::execSetCrouched (in the header)
+// @retail 0x833776E0
+// AUDKPawn::execSetDefaultBehaviorTree (in the header)
+// @retail 0x83377550
+// AUDKPawn::execSetIsPanicking (in the header)
+// @retail 0x83377120
+// AUDKPawn::execSetMovementSpeedDefault (in the header)
+// @retail 0x83376E80
+// AUDKPawn::execSetMovementType (in the header)
+// @retail 0x83376F10
+// AUDKPawn::execSetMovementTypeDefault (in the header)
+// @retail 0x833773F8
+// AUDKPawn::execSetNoCoverPose (in the header)
+// @retail 0x83377238
+// AUDKPawn::execSetPostureDefault (in the header)
+// @retail 0x83377090
+// AUDKPawn::execSetSpeed (in the header)
+
+// @retail 0x83396980
+// AUDKPlayerController::execFindPath (in the header)
+//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
+// @retail 0x83377C88
+// AUDKPlayerController::execIsAlertedEnemyInRange (in the header)
+
+// @retail 0x83379360
+// AUDKVehicle::execCanAim (in the header)
+// @retail 0x833794D0
+// AUDKVehicle::execCoverPoseTransitionOver (in the header)
+// @retail 0x83378FE8
+// AUDKVehicle::execGetAlertness (in the header)
+// @retail 0x83379740
+// AUDKVehicle::execGetDefaultBehaviorTree (in the header)
+// @retail 0x833796A0
+// AUDKVehicle::execGetIsPanicking (in the header)
+// @retail 0x83378EE0
+// AUDKVehicle::execGetMovementType (in the header)
+// @retail 0x833790F0
+// AUDKVehicle::execGetSpeed (in the header)
+// @retail 0x833796F0
+// AUDKVehicle::execGetYellingDistance (in the header)
+// @retail 0x833791F8
+// AUDKVehicle::execIsCrouched (in the header)
+// @retail 0x833795B0
+// AUDKVehicle::execIsInCover (in the header)
+// @retail 0x83379520
+// AUDKVehicle::execMoveToInCover (in the header)
+// @retail 0x83379310
+// AUDKVehicle::execPostureTransitionOver (in the header)
+// @retail 0x83379038
+// AUDKVehicle::execSetAlertness (in the header)
+// @retail 0x833790C8
+// AUDKVehicle::execSetAlertnessDefault (in the header)
+// @retail 0x833793E0
+// AUDKVehicle::execSetCoverPose (in the header)
+// @retail 0x83379248
+// AUDKVehicle::execSetCrouched (in the header)
+// @retail 0x83379790
+// AUDKVehicle::execSetDefaultBehaviorTree (in the header)
+// @retail 0x83379600
+// AUDKVehicle::execSetIsPanicking (in the header)
+// @retail 0x833791D0
+// AUDKVehicle::execSetMovementSpeedDefault (in the header)
+// @retail 0x83378F30
+// AUDKVehicle::execSetMovementType (in the header)
+// @retail 0x83378FC0
+// AUDKVehicle::execSetMovementTypeDefault (in the header)
+// @retail 0x833794A8
+// AUDKVehicle::execSetNoCoverPose (in the header)
+// @retail 0x833792E8
+// AUDKVehicle::execSetPostureDefault (in the header)
+// @retail 0x83379140
+// AUDKVehicle::execSetSpeed (in the header)
+
+// @retail 0x8337A1B8
+// AUDKWeaponPawn::execCanAim (in the header)
+// @retail 0x8337A328
+// AUDKWeaponPawn::execCoverPoseTransitionOver (in the header)
+// @retail 0x83379E40
+// AUDKWeaponPawn::execGetAlertness (in the header)
+// @retail 0x8337A598
+// AUDKWeaponPawn::execGetDefaultBehaviorTree (in the header)
+// @retail 0x8337A4F8
+// AUDKWeaponPawn::execGetIsPanicking (in the header)
+// @retail 0x83379D38
+// AUDKWeaponPawn::execGetMovementType (in the header)
+// @retail 0x83379F48
+// AUDKWeaponPawn::execGetSpeed (in the header)
+// @retail 0x8337A548
+// AUDKWeaponPawn::execGetYellingDistance (in the header)
+// @retail 0x8337A050
+// AUDKWeaponPawn::execIsCrouched (in the header)
+// @retail 0x8337A408
+// AUDKWeaponPawn::execIsInCover (in the header)
+// @retail 0x8337A378
+// AUDKWeaponPawn::execMoveToInCover (in the header)
+// @retail 0x8337A168
+// AUDKWeaponPawn::execPostureTransitionOver (in the header)
+// @retail 0x83379E90
+// AUDKWeaponPawn::execSetAlertness (in the header)
+// @retail 0x83379F20
+// AUDKWeaponPawn::execSetAlertnessDefault (in the header)
+// @retail 0x8337A238
+// AUDKWeaponPawn::execSetCoverPose (in the header)
+// @retail 0x8337A0A0
+// AUDKWeaponPawn::execSetCrouched (in the header)
+// @retail 0x8337A5E8
+// AUDKWeaponPawn::execSetDefaultBehaviorTree (in the header)
+// @retail 0x8337A458
+// AUDKWeaponPawn::execSetIsPanicking (in the header)
+// @retail 0x8337A028
+// AUDKWeaponPawn::execSetMovementSpeedDefault (in the header)
+// @retail 0x83379D88
+// AUDKWeaponPawn::execSetMovementType (in the header)
+// @retail 0x83379E18
+// AUDKWeaponPawn::execSetMovementTypeDefault (in the header)
+// @retail 0x8337A300
+// AUDKWeaponPawn::execSetNoCoverPose (in the header)
+// @retail 0x8337A140
+// AUDKWeaponPawn::execSetPostureDefault (in the header)
+// @retail 0x83379F98
+// AUDKWeaponPawn::execSetSpeed (in the header)
 
 // @retail 0x8337B1D0
 // AUSSPawn::execCanAim (in the header)

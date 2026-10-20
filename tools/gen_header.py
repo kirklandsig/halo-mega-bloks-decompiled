@@ -280,8 +280,8 @@ class Header:
                 self.templates.setdefault(base if base in self.templates else self._qualify(name, part, base), kinds)
             for a in args:
                 arg = re.sub(r'^(?:const |enum |class |struct |union )+', '', a.rstrip(' *&')).strip()
-                if re.fullmatch(r'-?\d+', a):
-                    continue
+                if re.fullmatch(r'-?\d+', a) or '(' in a:
+                    continue  # a constant, or a function (pointer) type: nothing to declare
                 if arg and arg not in pt_PRIMS and arg not in BUILTIN:
                     if arg in self.enums or self._enum_index(arg):
                         if arg not in self.enums:

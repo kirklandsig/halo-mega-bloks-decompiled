@@ -490,3 +490,9 @@ inline const wchar_t *UActorFactory::StaticConfigName() { return L"Editor"; }
 #define CLASS_Abstract 0x00000001
 inline AActor *UClass::GetDefaultActor() { return (AActor *)GetDefaultObject(0); }
 inline unsigned int FString::operator!=(const wchar_t *Other) const { return appStricmp(**this, Other) != 0; }
+
+// udkbaseclasses.h (cpptext of UDKPawn, UDKVehicle, UDKWeaponPawn): the CCS
+// pawn interface's object
+inline UObject *AUDKPawn::GetUObjectInterfaceCCSPawn() { return this; }
+inline UObject *AUDKVehicle::GetUObjectInterfaceCCSPawn() { return this; }
+inline UObject *AUDKWeaponPawn::GetUObjectInterfaceCCSPawn() { return this; }
