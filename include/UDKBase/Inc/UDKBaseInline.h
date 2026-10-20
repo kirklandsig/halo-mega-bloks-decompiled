@@ -644,3 +644,31 @@ inline IGripHUDRenderingComponent::~IGripHUDRenderingComponent() {}
 #endif
 // ccsafexitcover.h
 inline void CCSAFExitCover::SetObjective(const CCSAOExitCover &) {}
+inline int Grip_Rotation::NormalizeAxis(int Angle)
+{
+    Angle &= 0xFFFF;
+    if (Angle > 32767)
+    {
+        Angle -= 0x10000;
+    }
+    return Angle;
+}
+inline void Grip_Rotation::Normalize()
+{
+    Pitch = NormalizeAxis(Pitch);
+    Roll = NormalizeAxis(Roll);
+    Yaw = NormalizeAxis(Yaw);
+}
+// ccscsmovement.h
+inline void CCSCSMovement::SetIsPanicking(bool bPanicking) { m_pMeatPuppet->SetIsPanicking(bPanicking); }
+// gripsf_random.h
+namespace Grip
+{
+namespace Alg
+{
+namespace Random
+{
+unsigned long NextRandom();
+}
+}
+}
