@@ -36,7 +36,9 @@ TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FA
                        'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>',
                        # n-Space's additions to Epic's classes (config/nspace_additions.csv)
                        'AUDKPlayerController', 'AUDKJumpPad', 'Kaim::IPathFinderQuery', 'Kaim::Path',
-                       'FMatrix', 'FRotationTranslationMatrix', 'FRotationMatrix']}
+                       'FMatrix', 'FRotationTranslationMatrix', 'FRotationMatrix',
+                       # the CCS layer
+                       'GripSystemTickGroup', 'GripStatEntry', 'GripBrainSystem', 'CCSGSCover']}
 OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
           'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'GripEngineServices', 'IGripEngineServices', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
                        # the behaviour-tree nodes' runtime classes

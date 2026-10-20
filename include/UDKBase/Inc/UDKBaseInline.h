@@ -503,3 +503,31 @@ inline FVector FMatrix::GetAxis(int i) const { return FVector(M[i][0], M[i][1], 
 #ifndef HAGGAR_HOST
 inline FRotationMatrix::FRotationMatrix(const FRotator &Rot) : FRotationTranslationMatrix(Rot, FVector::ZeroVector) {}
 #endif
+
+// gripbrainsystem.h, gripsystemtickgroup.h (Gameware's Grip SDK)
+inline void GripBrainSystem::FlagAsUsed() { m_used = true; }
+inline void GripSystemTickGroup::SetStatId(GripStatEntry StatId) { m_statId = StatId; }
+#ifndef HAGGAR_HOST
+inline GripSystemTickGroup::GripSystemTickGroup() { m_statId.id = -1; }
+#endif
+
+// ccsstat.h
+inline GripStatEntry CCSStat::GetStatEntry(ECCSStat Stat) { return ms_statEntries[Stat]; }
+inline GripStatEntry CCSStat::GetStatEntry(int Stat)
+{
+    if (Stat >= 0 && Stat <= CCS_STAT_NumOf)
+    {
+        return ms_statEntries[Stat];
+    }
+    GripStatEntry Invalid = {-1, ""};
+    return Invalid;
+}
+inline Grip_ArrayPOD<GripBrainSystem *, 2> &GripSystemTickGroup::GetSystems() { return m_systems; }
+#ifndef HAGGAR_HOST
+inline GripSystemScheduler::GripSystemScheduler() {}
+#endif
+
+// ccsglobaldatascheduler.h
+#ifndef HAGGAR_HOST
+inline CCSGlobalDataScheduler::TickGroupInfo::TickGroupInfo() : pGDS(0), sensorCount(0), isActive(true) {}
+#endif

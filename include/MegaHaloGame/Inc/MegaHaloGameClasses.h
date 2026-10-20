@@ -1475,6 +1475,73 @@ public:
     #endif
 };
 
+class FName  // size 0x8
+{
+public:
+    int GetIndex() const;
+    int GetNumber() const;
+    const FString GetNameString() const;
+    void ToString(FString &) const;
+    FString ToString() const;
+    void AppendString(FString &) const;
+    unsigned int HasAnyFlags(unsigned __int64) const;
+    void SetFlags(unsigned __int64) const;
+    void ClearFlags(unsigned __int64) const;
+    unsigned int operator==(const wchar_t *) const;
+    unsigned int operator==(const FName &) const;
+    unsigned int operator!=(const FName &) const;
+    unsigned int IsValid() const;
+    int Compare(const FName &) const;
+    static void StaticInit();
+    static void DisplayHash(FOutputDevice &);
+    static void Hardcode(FNameEntry *);
+    static FString SafeString(EName, int);
+    static unsigned int SafeSuppressed(EName);
+    static int GetMaxNames();
+    static int GetNameEntryMemorySize();
+    static int GetNameTableMemorySize();
+    static int GetNumAnsiNames();
+    static int GetNumUnicodeNames();
+    static FNameEntry *GetEntry(int);
+    static unsigned int GetInitialized();
+    static void SplitOldName(const wchar_t *, FString &, int &);
+    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
+HG_PRIVATE:
+    static unsigned int &GetIsInitialized();
+    void Init(const char *, int, EFindName);
+    void Init(const wchar_t *, int, EFindName, unsigned int);
+public:
+    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
+    #ifndef HAGGAR_HOST
+    FName(ELinkerNameTableConstructor, const char *);
+    FName(ELinkerNameTableConstructor, const wchar_t *);
+    FName(const wchar_t *, int, EFindName);
+    FName(int);
+    FName(const char *, EFindName);
+    FName(const wchar_t *, EFindName, unsigned int);
+    FName();
+    FName(EName, int);
+    FName(EName);
+    #endif
+    #ifndef HAGGAR_HOST
+    static TArrayNoInit<FNameEntry *> Names;
+    static FNameEntry *NameHash[4096];
+    static int NameEntryMemorySize;
+    static int NumAnsiNames;
+    static int NumUnicodeNames;
+    int Index;  // 0x0
+    int Number;  // 0x4
+    #else
+    static TArrayNoInit<FNameEntry *> (&Names);
+    static hg::gptr<FNameEntry> (&NameHash)[4096];
+    static hg::be<int> (&NameEntryMemorySize);
+    static hg::be<int> (&NumAnsiNames);
+    static hg::be<int> (&NumUnicodeNames);
+    hg::be<int> Index;
+    hg::be<int> Number;
+    #endif
+};
+
 struct FFrame : public FOutputDevice  // size 0x28
 {
 public:
@@ -1622,73 +1689,6 @@ public:
     HG_VIRTUAL FString GetArchiveName() const;
     #ifndef HAGGAR_HOST
     FMemoryWriter(TArray<unsigned char,FDefaultAllocator> &, unsigned int);
-    #endif
-};
-
-class FName  // size 0x8
-{
-public:
-    int GetIndex() const;
-    int GetNumber() const;
-    const FString GetNameString() const;
-    void ToString(FString &) const;
-    FString ToString() const;
-    void AppendString(FString &) const;
-    unsigned int HasAnyFlags(unsigned __int64) const;
-    void SetFlags(unsigned __int64) const;
-    void ClearFlags(unsigned __int64) const;
-    unsigned int operator==(const wchar_t *) const;
-    unsigned int operator==(const FName &) const;
-    unsigned int operator!=(const FName &) const;
-    unsigned int IsValid() const;
-    int Compare(const FName &) const;
-    static void StaticInit();
-    static void DisplayHash(FOutputDevice &);
-    static void Hardcode(FNameEntry *);
-    static FString SafeString(EName, int);
-    static unsigned int SafeSuppressed(EName);
-    static int GetMaxNames();
-    static int GetNameEntryMemorySize();
-    static int GetNameTableMemorySize();
-    static int GetNumAnsiNames();
-    static int GetNumUnicodeNames();
-    static FNameEntry *GetEntry(int);
-    static unsigned int GetInitialized();
-    static void SplitOldName(const wchar_t *, FString &, int &);
-    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
-HG_PRIVATE:
-    static unsigned int &GetIsInitialized();
-    void Init(const char *, int, EFindName);
-    void Init(const wchar_t *, int, EFindName, unsigned int);
-public:
-    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
-    #ifndef HAGGAR_HOST
-    FName(ELinkerNameTableConstructor, const char *);
-    FName(ELinkerNameTableConstructor, const wchar_t *);
-    FName(const wchar_t *, int, EFindName);
-    FName(int);
-    FName(const char *, EFindName);
-    FName(const wchar_t *, EFindName, unsigned int);
-    FName();
-    FName(EName, int);
-    FName(EName);
-    #endif
-    #ifndef HAGGAR_HOST
-    static TArrayNoInit<FNameEntry *> Names;
-    static FNameEntry *NameHash[4096];
-    static int NameEntryMemorySize;
-    static int NumAnsiNames;
-    static int NumUnicodeNames;
-    int Index;  // 0x0
-    int Number;  // 0x4
-    #else
-    static TArrayNoInit<FNameEntry *> (&Names);
-    static hg::gptr<FNameEntry> (&NameHash)[4096];
-    static hg::be<int> (&NameEntryMemorySize);
-    static hg::be<int> (&NumAnsiNames);
-    static hg::be<int> (&NumUnicodeNames);
-    hg::be<int> Index;
-    hg::be<int> Number;
     #endif
 };
 

@@ -1603,6 +1603,73 @@ public:
     #endif
 };
 
+class FName  // size 0x8
+{
+public:
+    int GetIndex() const;
+    int GetNumber() const;
+    const FString GetNameString() const;
+    void ToString(FString &) const;
+    FString ToString() const;
+    void AppendString(FString &) const;
+    unsigned int HasAnyFlags(unsigned __int64) const;
+    void SetFlags(unsigned __int64) const;
+    void ClearFlags(unsigned __int64) const;
+    unsigned int operator==(const wchar_t *) const;
+    unsigned int operator==(const FName &) const;
+    unsigned int operator!=(const FName &) const;
+    unsigned int IsValid() const;
+    int Compare(const FName &) const;
+    static void StaticInit();
+    static void DisplayHash(FOutputDevice &);
+    static void Hardcode(FNameEntry *);
+    static FString SafeString(EName, int);
+    static unsigned int SafeSuppressed(EName);
+    static int GetMaxNames();
+    static int GetNameEntryMemorySize();
+    static int GetNameTableMemorySize();
+    static int GetNumAnsiNames();
+    static int GetNumUnicodeNames();
+    static FNameEntry *GetEntry(int);
+    static unsigned int GetInitialized();
+    static void SplitOldName(const wchar_t *, FString &, int &);
+    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
+HG_PRIVATE:
+    static unsigned int &GetIsInitialized();
+    void Init(const char *, int, EFindName);
+    void Init(const wchar_t *, int, EFindName, unsigned int);
+public:
+    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
+    #ifndef HAGGAR_HOST
+    FName(ELinkerNameTableConstructor, const char *);
+    FName(ELinkerNameTableConstructor, const wchar_t *);
+    FName(const wchar_t *, int, EFindName);
+    FName(int);
+    FName(const char *, EFindName);
+    FName(const wchar_t *, EFindName, unsigned int);
+    FName();
+    FName(EName, int);
+    FName(EName);
+    #endif
+    #ifndef HAGGAR_HOST
+    static TArrayNoInit<FNameEntry *> Names;
+    static FNameEntry *NameHash[4096];
+    static int NameEntryMemorySize;
+    static int NumAnsiNames;
+    static int NumUnicodeNames;
+    int Index;  // 0x0
+    int Number;  // 0x4
+    #else
+    static TArrayNoInit<FNameEntry *> (&Names);
+    static hg::gptr<FNameEntry> (&NameHash)[4096];
+    static hg::be<int> (&NameEntryMemorySize);
+    static hg::be<int> (&NumAnsiNames);
+    static hg::be<int> (&NumUnicodeNames);
+    hg::be<int> Index;
+    hg::be<int> Number;
+    #endif
+};
+
 struct FFrame : public FOutputDevice  // size 0x28
 {
 public:
@@ -1709,73 +1776,6 @@ struct FLevelGuids  // size 0x14, opaque
 {
 HG_PRIVATE:
     unsigned int FLevelGuidsData[0x5];
-};
-
-class FName  // size 0x8
-{
-public:
-    int GetIndex() const;
-    int GetNumber() const;
-    const FString GetNameString() const;
-    void ToString(FString &) const;
-    FString ToString() const;
-    void AppendString(FString &) const;
-    unsigned int HasAnyFlags(unsigned __int64) const;
-    void SetFlags(unsigned __int64) const;
-    void ClearFlags(unsigned __int64) const;
-    unsigned int operator==(const wchar_t *) const;
-    unsigned int operator==(const FName &) const;
-    unsigned int operator!=(const FName &) const;
-    unsigned int IsValid() const;
-    int Compare(const FName &) const;
-    static void StaticInit();
-    static void DisplayHash(FOutputDevice &);
-    static void Hardcode(FNameEntry *);
-    static FString SafeString(EName, int);
-    static unsigned int SafeSuppressed(EName);
-    static int GetMaxNames();
-    static int GetNameEntryMemorySize();
-    static int GetNameTableMemorySize();
-    static int GetNumAnsiNames();
-    static int GetNumUnicodeNames();
-    static FNameEntry *GetEntry(int);
-    static unsigned int GetInitialized();
-    static void SplitOldName(const wchar_t *, FString &, int &);
-    static unsigned int SplitNameWithCheck(const wchar_t *, wchar_t *, int, int &);
-HG_PRIVATE:
-    static unsigned int &GetIsInitialized();
-    void Init(const char *, int, EFindName);
-    void Init(const wchar_t *, int, EFindName, unsigned int);
-public:
-    static TArray<FNameEntry *,FDefaultAllocator> &GetPureNamesTable();
-    #ifndef HAGGAR_HOST
-    FName(ELinkerNameTableConstructor, const char *);
-    FName(ELinkerNameTableConstructor, const wchar_t *);
-    FName(const wchar_t *, int, EFindName);
-    FName(int);
-    FName(const char *, EFindName);
-    FName(const wchar_t *, EFindName, unsigned int);
-    FName();
-    FName(EName, int);
-    FName(EName);
-    #endif
-    #ifndef HAGGAR_HOST
-    static TArrayNoInit<FNameEntry *> Names;
-    static FNameEntry *NameHash[4096];
-    static int NameEntryMemorySize;
-    static int NumAnsiNames;
-    static int NumUnicodeNames;
-    int Index;  // 0x0
-    int Number;  // 0x4
-    #else
-    static TArrayNoInit<FNameEntry *> (&Names);
-    static hg::gptr<FNameEntry> (&NameHash)[4096];
-    static hg::be<int> (&NameEntryMemorySize);
-    static hg::be<int> (&NumAnsiNames);
-    static hg::be<int> (&NumUnicodeNames);
-    hg::be<int> Index;
-    hg::be<int> Number;
-    #endif
 };
 
 struct FNodeChild  // size 0x14, opaque
@@ -2160,7 +2160,6 @@ public:
     unsigned long ProbeMask;  // 0x2C
     unsigned short LatentAction;  // 0x30
     unsigned char bContinuedState;  // 0x32
-    char _pad0[0x1];
     TArray<FStateFrame::FPushedState,FDefaultAllocator> StateStack;  // 0x34
     UClass *LocalVarsOwner;  // 0x40
     #else
@@ -2416,7 +2415,6 @@ public:
     GripRBTNode::EBTExecutionResult m_execResultVisualization;  // 0x58
     Grip::String m_name;  // 0x5C
     bool m_isContextSwitch;  // 0x60
-    char _pad0[0x3];
     #else
     static hg::be<int> (&ms_IDCounter);
     static hg::gptr<GripRBTAllocator> (&ms_pAllocator);
@@ -3987,7 +3985,6 @@ public:
     FName DefaultTitle;  // 0x78
     unsigned char LastExecutionResult;  // 0x80
     unsigned char LastEvaluationResult;  // 0x81
-    char _pad0[0x2];
     int DummyVarJustSoBaseClassDontEndWithAByteToAvoidCompilerWarning;  // 0x84
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -4216,7 +4213,6 @@ public:
     unsigned long ProbeMask;  // 0x74
     unsigned long StateFlags;  // 0x78
     unsigned short LabelTableOffset;  // 0x7C
-    char _pad0[0x2];
     TMap<FName,UFunction *,FDefaultSetAllocator> FuncMap;  // 0x80
     #else
     static hg::gptr<UClass> (&PrivateStaticClass);
@@ -4423,7 +4419,6 @@ public:
     unsigned char NumParms;  // 0x7D
     unsigned short ParmsSize;  // 0x7E
     unsigned short ReturnValueOffset;  // 0x80
-    char _pad0[0x2];
     UStructProperty *FirstStructWithDefaults;  // 0x84
     void (UObject::*Func)(FFrame &, void *const);  // 0x88
     #else

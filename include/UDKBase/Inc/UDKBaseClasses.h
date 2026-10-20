@@ -6519,6 +6519,39 @@ HG_PRIVATE:
     unsigned int FTViewTargetData[0xB];
 };
 
+struct FIntPoint  // size 0x8
+{
+public:
+    static FIntPoint ZeroValue();
+    static FIntPoint NoneValue();
+    int &operator()(int);
+    const int &operator()(int) const;
+    static int Num();
+    unsigned int operator==(const FIntPoint &) const;
+    unsigned int operator!=(const FIntPoint &) const;
+    FIntPoint &operator*=(int);
+    FIntPoint &operator/=(int);
+    FIntPoint &operator+=(const FIntPoint &);
+    FIntPoint &operator-=(const FIntPoint &);
+    FIntPoint operator*(int) const;
+    FIntPoint operator/(int) const;
+    FIntPoint operator+(const FIntPoint &) const;
+    FIntPoint operator-(const FIntPoint &) const;
+    int Size() const;
+    #ifndef HAGGAR_HOST
+    FIntPoint(EEventParm);
+    FIntPoint(int, int);
+    FIntPoint();
+    #endif
+    #ifndef HAGGAR_HOST
+    int X;  // 0x0
+    int Y;  // 0x4
+    #else
+    hg::be<int> X;
+    hg::be<int> Y;
+    #endif
+};
+
 struct FVector2D  // size 0x8
 {
 public:
@@ -15935,6 +15968,60 @@ public:
 }
 
 namespace Kaim {
+class NavGraphVertexPtr  // size 0x8, opaque
+{
+public:
+    bool IsValid() const;
+    void Invalidate();
+    bool operator==(const Kaim::NavGraphVertexPtr &) const;
+    bool operator!=(const Kaim::NavGraphVertexPtr &) const;
+    bool operator<(const Kaim::NavGraphVertexPtr &) const;
+    bool operator<=(const Kaim::NavGraphVertexPtr &) const;
+    unsigned int GetNavGraphVertexIdx() const;
+    Kaim::NavGraph *GetNavGraph() const;
+    const Kaim::NavGraphBlob *GetNavGraphBlob() const;
+    Kaim::NavGraph *GetNavGraph_UnSafe() const;
+    const Kaim::NavGraphBlob *GetNavGraphBlob_UnSafe() const;
+    unsigned int GetNeihbourVertexCount() const;
+    Kaim::GraphVertexData &GetGraphVertexData() const;
+    const Kaim::NavTag &GetNavTag() const;
+    const Kaim::NavGraphVertex &GetNavGraphVertex() const;
+    const Kaim::Vec3f &GetGraphVertexPosition() const;
+    Kaim::NavGraphVertexRawPtr GetRawPtr() const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    NavGraphVertexPtr(const Kaim::NavGraphVertexRawPtr &);
+    NavGraphVertexPtr(const Kaim::NavGraphPtr &, unsigned int);
+    NavGraphVertexPtr();
+    #endif
+HG_PRIVATE:
+    unsigned int NavGraphVertexPtrData[0x2];
+};
+}
+
+namespace Kaim {
 class NavGraphEdgePtr  // size 0x8, opaque
 {
 public:
@@ -15990,60 +16077,6 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int NavGraphEdgePtrData[0x2];
-};
-}
-
-namespace Kaim {
-class NavGraphVertexPtr  // size 0x8, opaque
-{
-public:
-    bool IsValid() const;
-    void Invalidate();
-    bool operator==(const Kaim::NavGraphVertexPtr &) const;
-    bool operator!=(const Kaim::NavGraphVertexPtr &) const;
-    bool operator<(const Kaim::NavGraphVertexPtr &) const;
-    bool operator<=(const Kaim::NavGraphVertexPtr &) const;
-    unsigned int GetNavGraphVertexIdx() const;
-    Kaim::NavGraph *GetNavGraph() const;
-    const Kaim::NavGraphBlob *GetNavGraphBlob() const;
-    Kaim::NavGraph *GetNavGraph_UnSafe() const;
-    const Kaim::NavGraphBlob *GetNavGraphBlob_UnSafe() const;
-    unsigned int GetNeihbourVertexCount() const;
-    Kaim::GraphVertexData &GetGraphVertexData() const;
-    const Kaim::NavTag &GetNavTag() const;
-    const Kaim::NavGraphVertex &GetNavGraphVertex() const;
-    const Kaim::Vec3f &GetGraphVertexPosition() const;
-    Kaim::NavGraphVertexRawPtr GetRawPtr() const;
-    #ifndef HAGGAR_HOST
-    static void *operator new(unsigned int, void *);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
-    static void *operator new(unsigned int, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
-    static void *operator new(unsigned int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *);
-    static void *operator new(unsigned int);
-    static void operator delete(void *, void *);
-    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *);
-    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *);
-    static void operator delete(void *, int, const char *, int);
-    static void operator delete(void *, const char *, int);
-    static void operator delete(void *);
-    NavGraphVertexPtr(const Kaim::NavGraphVertexRawPtr &);
-    NavGraphVertexPtr(const Kaim::NavGraphPtr &, unsigned int);
-    NavGraphVertexPtr();
-    #endif
-HG_PRIVATE:
-    unsigned int NavGraphVertexPtrData[0x2];
 };
 }
 
@@ -19061,6 +19094,18 @@ public:
     #endif
 };
 
+struct GripStatEntry  // size 0x8
+{
+public:
+    #ifndef HAGGAR_HOST
+    int id;  // 0x0
+    const char *name;  // 0x4
+    #else
+    hg::be<int> id;
+    hg::gptr<const char> name;
+    #endif
+};
+
 class CCSStat  // size 0x1
 {
 public:
@@ -19821,6 +19866,50 @@ public:
     #endif
 };
 
+struct FPrimitiveViewRelevance  // size 0x4
+{
+public:
+    FPrimitiveViewRelevance &operator|=(const FPrimitiveViewRelevance &);
+    void SetDPG(unsigned int, unsigned int);
+    unsigned int GetDPG(unsigned int) const;
+    unsigned int IsRelevant() const;
+    unsigned int IsDecalRelevant() const;
+    #ifndef HAGGAR_HOST
+    FPrimitiveViewRelevance();
+    #endif
+    #ifndef HAGGAR_HOST
+    unsigned long bStaticRelevance : 1;  // 0x0
+    unsigned long bDynamicRelevance : 1;
+    unsigned long bStaticButFadingRelevance : 1;
+    unsigned long bShadowRelevance : 1;
+    unsigned long bDecalStaticRelevance : 1;
+    unsigned long bDecalDynamicRelevance : 1;
+    unsigned long bUnrealEdBackgroundDPG : 1;
+    unsigned long bWorldDPG : 1;
+    unsigned long bForegroundDPG : 1;
+    unsigned long bUnrealEdForegroundDPG : 1;
+    unsigned long bOpaqueRelevance : 1;
+    unsigned long bMaskedRelevance : 1;
+    unsigned long bTranslucentRelevance : 1;
+    unsigned long bDynamicLitTranslucencyPrepass : 1;
+    unsigned long bDynamicLitTranslucencyPostRenderDepthPass : 1;
+    unsigned long bDistortionRelevance : 1;
+    unsigned long bOneLayerDistortionRelevance : 1;
+    unsigned long bInheritDominantShadowsRelevance : 1;
+    unsigned long bLightingRelevance : 1;
+    unsigned long bUsesSceneColor : 1;
+    unsigned long bSceneTextureRenderBehindTranslucency : 1;
+    unsigned long bForceDirectionalLightsDynamic : 1;
+    unsigned long bNeedsPreRenderView : 1;
+    unsigned long bSoftMaskedRelevance : 1;
+    unsigned long bTranslucencyDoFRelevance : 1;
+    unsigned long bSeparateTranslucencyRelevance : 1;
+    unsigned long bInitializedThisFrame : 1;
+    #else
+    hg::be<unsigned int> _bits0;  // 0x0, from bStaticRelevance
+    #endif
+};
+
 class FPrimitiveSceneProxy  // size 0xB0
 {
 public:
@@ -20036,6 +20125,21 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int FCameraCutInfoData[0x4];
+};
+
+class FHitProxyId  // size 0x4, opaque
+{
+public:
+    FColor GetColor() const;
+    #ifndef HAGGAR_HOST
+HG_PRIVATE:
+    FHitProxyId(int);
+public:
+    FHitProxyId(FColor);
+    FHitProxyId();
+    #endif
+HG_PRIVATE:
+    unsigned int FHitProxyIdData[0x1];
 };
 
 template <> class TMapBase<int,int,0,FDefaultSetAllocator>  // size 0x3C, opaque
@@ -21197,21 +21301,6 @@ HG_PRIVATE:
     unsigned int FGuidPairData[0x5];
 };
 
-class FHitProxyId  // size 0x4, opaque
-{
-public:
-    FColor GetColor() const;
-    #ifndef HAGGAR_HOST
-HG_PRIVATE:
-    FHitProxyId(int);
-public:
-    FHitProxyId(FColor);
-    FHitProxyId();
-    #endif
-HG_PRIVATE:
-    unsigned int FHitProxyIdData[0x1];
-};
-
 struct FImplementedInterface  // size 0x8, opaque
 {
 public:
@@ -21221,39 +21310,6 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int FImplementedInterfaceData[0x2];
-};
-
-struct FIntPoint  // size 0x8
-{
-public:
-    static FIntPoint ZeroValue();
-    static FIntPoint NoneValue();
-    int &operator()(int);
-    const int &operator()(int) const;
-    static int Num();
-    unsigned int operator==(const FIntPoint &) const;
-    unsigned int operator!=(const FIntPoint &) const;
-    FIntPoint &operator*=(int);
-    FIntPoint &operator/=(int);
-    FIntPoint &operator+=(const FIntPoint &);
-    FIntPoint &operator-=(const FIntPoint &);
-    FIntPoint operator*(int) const;
-    FIntPoint operator/(int) const;
-    FIntPoint operator+(const FIntPoint &) const;
-    FIntPoint operator-(const FIntPoint &) const;
-    int Size() const;
-    #ifndef HAGGAR_HOST
-    FIntPoint(EEventParm);
-    FIntPoint(int, int);
-    FIntPoint();
-    #endif
-    #ifndef HAGGAR_HOST
-    int X;  // 0x0
-    int Y;  // 0x4
-    #else
-    hg::be<int> X;
-    hg::be<int> Y;
-    #endif
 };
 
 class FInterpEdInputInterface  // size 0x4
@@ -22812,50 +22868,6 @@ class FPrimitiveTriangleDefinitionInterface  // size 0x4
     HG_VFPTR
 public:
     HG_VIRTUAL void DefineTriangle(const FPrimitiveTriangleVertex &, const FPrimitiveTriangleVertex &, const FPrimitiveTriangleVertex &) HG_PURE;
-};
-
-struct FPrimitiveViewRelevance  // size 0x4
-{
-public:
-    FPrimitiveViewRelevance &operator|=(const FPrimitiveViewRelevance &);
-    void SetDPG(unsigned int, unsigned int);
-    unsigned int GetDPG(unsigned int) const;
-    unsigned int IsRelevant() const;
-    unsigned int IsDecalRelevant() const;
-    #ifndef HAGGAR_HOST
-    FPrimitiveViewRelevance();
-    #endif
-    #ifndef HAGGAR_HOST
-    unsigned long bStaticRelevance : 1;  // 0x0
-    unsigned long bDynamicRelevance : 1;
-    unsigned long bStaticButFadingRelevance : 1;
-    unsigned long bShadowRelevance : 1;
-    unsigned long bDecalStaticRelevance : 1;
-    unsigned long bDecalDynamicRelevance : 1;
-    unsigned long bUnrealEdBackgroundDPG : 1;
-    unsigned long bWorldDPG : 1;
-    unsigned long bForegroundDPG : 1;
-    unsigned long bUnrealEdForegroundDPG : 1;
-    unsigned long bOpaqueRelevance : 1;
-    unsigned long bMaskedRelevance : 1;
-    unsigned long bTranslucentRelevance : 1;
-    unsigned long bDynamicLitTranslucencyPrepass : 1;
-    unsigned long bDynamicLitTranslucencyPostRenderDepthPass : 1;
-    unsigned long bDistortionRelevance : 1;
-    unsigned long bOneLayerDistortionRelevance : 1;
-    unsigned long bInheritDominantShadowsRelevance : 1;
-    unsigned long bLightingRelevance : 1;
-    unsigned long bUsesSceneColor : 1;
-    unsigned long bSceneTextureRenderBehindTranslucency : 1;
-    unsigned long bForceDirectionalLightsDynamic : 1;
-    unsigned long bNeedsPreRenderView : 1;
-    unsigned long bSoftMaskedRelevance : 1;
-    unsigned long bTranslucencyDoFRelevance : 1;
-    unsigned long bSeparateTranslucencyRelevance : 1;
-    unsigned long bInitializedThisFrame : 1;
-    #else
-    hg::be<unsigned int> _bits0;  // 0x0, from bStaticRelevance
-    #endif
 };
 
 struct FPropertyChangedEvent  // size 0x14
@@ -24789,15 +24801,24 @@ public:
     #endif
 };
 
-struct GripStatEntry  // size 0x8
+class GripSystemTickGroup : public GripVHeapObject  // size 0x1C
 {
 public:
+    HG_VIRTUAL void TickInternal(float);
+    void SetStatId(GripStatEntry);
+    void Tick(float);
+    void Register(GripBrainSystem *);
+    void Unregister(GripBrainSystem *);
+    Grip_ArrayPOD<GripBrainSystem *,2> &GetSystems();
     #ifndef HAGGAR_HOST
-    int id;  // 0x0
-    const char *name;  // 0x4
+    GripSystemTickGroup();
+    #endif
+    #ifndef HAGGAR_HOST
+    GripStatEntry m_statId;  // 0x4
+    Grip_ArrayPOD<GripBrainSystem *,2> m_systems;  // 0xC
     #else
-    hg::be<int> id;
-    hg::gptr<const char> name;
+    GripStatEntry m_statId;
+    Grip_ArrayPOD<GripBrainSystem *,2> m_systems;
     #endif
 };
 

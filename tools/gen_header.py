@@ -756,6 +756,13 @@ class Header:
         for name, deps in self.deps.items():
             top = self._top(name)
             needs.setdefault(top, set()).update(self._top(d) for d in deps)
+        # a struct of up to 8 bytes returned by value comes back in r3 only if
+        # it is complete where the method is declared
+        for name, ti in self.classes.items():
+            for m in self.methods(ti):
+                ret = self._small_return(m['type'])
+                if ret and ret in self.classes and self._top(ret) != self._top(name):
+                    needs.setdefault(self._top(name), set()).add(self._top(ret))
         out, seen = [], set()
 
         def visit(n):
@@ -770,6 +777,16 @@ class Header:
         for n in sorted(needs):
             visit(n)
         return out
+
+    def _small_return(self, mtype):
+        """The record a member function returns by value, if 8 bytes or less."""
+        if mtype < self.t.begin or self.t.record(mtype)[0] != pt.LF_MFUNCTION:
+            return None
+        ret = struct.unpack_from('<I', self.t.data, self.t.record(mtype)[1])[0]
+        if ret < self.t.begin or self._kind(ret) not in (pt.LF_CLASS, pt.LF_STRUCTURE):
+            return None
+        ret = self.t._resolve(ret)
+        return self._rname(ret) if self.t.sizeof(ret) <= 8 else None
 
     @staticmethod
     def _wrap(ns, lines):
