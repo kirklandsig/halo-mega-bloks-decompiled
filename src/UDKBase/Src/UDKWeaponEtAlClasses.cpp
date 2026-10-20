@@ -41,6 +41,7 @@ extern decltype(&AUDKPawn::execSetMovementTypeDefault) const EmitAUDKPawn_execSe
 extern decltype(&AUDKPawn::execSetNoCoverPose) const EmitAUDKPawn_execSetNoCoverPose = &AUDKPawn::execSetNoCoverPose;
 extern decltype(&AUDKPawn::execSetPostureDefault) const EmitAUDKPawn_execSetPostureDefault = &AUDKPawn::execSetPostureDefault;
 extern decltype(&AUDKPawn::execSetSpeed) const EmitAUDKPawn_execSetSpeed = &AUDKPawn::execSetSpeed;
+extern decltype(&AUDKPlayerController::execFindPath) const EmitAUDKPlayerController_execFindPath = &AUDKPlayerController::execFindPath;
 extern decltype(&AUDKPlayerController::execIsAlertedEnemyInRange) const EmitAUDKPlayerController_execIsAlertedEnemyInRange = &AUDKPlayerController::execIsAlertedEnemyInRange;
 extern decltype(&AUDKVehicle::execCanAim) const EmitAUDKVehicle_execCanAim = &AUDKVehicle::execCanAim;
 extern decltype(&AUDKVehicle::execCoverPoseTransitionOver) const EmitAUDKVehicle_execCoverPoseTransitionOver = &AUDKVehicle::execCoverPoseTransitionOver;
@@ -304,7 +305,6 @@ extern UClass *(*const EmitUUSSATBlendByPostureStaticClass)() = &UUSSATBlendByPo
 
 // @retail 0x83396980
 // AUDKPlayerController::execFindPath (in the header)
-//   not matched yet: its parameters are of a kind the generator does not read yet (references, strings, arrays)
 // @retail 0x83377C88
 // AUDKPlayerController::execIsAlertedEnemyInRange (in the header)
 

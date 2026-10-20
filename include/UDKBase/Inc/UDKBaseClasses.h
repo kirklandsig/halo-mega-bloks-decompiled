@@ -572,6 +572,8 @@ struct FRigidBodyContactInfo;
 struct FRigidBodyState;
 struct FRigidSkinVertex;
 struct FRootMotionCurve;
+class FRotationMatrix;
+class FRotationTranslationMatrix;
 class FRotator;
 class FSHA1;
 class FSHVectorRGB;
@@ -3034,6 +3036,7 @@ class BotNavigation;
 class BotNavigationCollection;
 class BotNeedFullComputeFlags;
 class BotUpdateConfig;
+class Box2i;
 class BoxObstacle;
 class Channel;
 class ChannelArray;
@@ -3045,6 +3048,7 @@ class ColliderCollectorConfig;
 class CoordSystem;
 class CylinderObstacle;
 class Database;
+class DatabaseGenMetrics;
 class DefaultTraverseLogic;
 class DisplayListManager;
 class DynamicNavTag;
@@ -3117,10 +3121,12 @@ class SysAllocPaged;
 class TagVolume;
 class TraversalParameters;
 class Triangle3f;
+class Triangle3i;
 class Vec2LL;
 class Vec2f;
 class Vec2i;
 class Vec3f;
+class Vec3i;
 class VisualDebugAttributesManager;
 class VisualDebugRegistry;
 class VisualDebugServer;
@@ -3128,6 +3134,7 @@ class VisualDebugServerConfig;
 class WorkingMemory;
 class World;
 class WorldElement;
+class WorldIntegerPos;
 class WorldStatistics;
 enum AStarQueryResult
 {
@@ -15324,6 +15331,44 @@ public:
 };
 
 namespace Kaim {
+class ChannelComputerConfig  // size 0x10, opaque
+{
+public:
+    void SetDefaults();
+    bool operator==(const Kaim::ChannelComputerConfig &) const;
+    bool operator!=(const Kaim::ChannelComputerConfig &) const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    ChannelComputerConfig();
+    #endif
+HG_PRIVATE:
+    unsigned int ChannelComputerConfigData[0x4];
+};
+}
+
+namespace Kaim {
 class RefCountImplCore  // size 0x8, opaque
 {
     HG_VFPTR
@@ -15501,7 +15546,353 @@ HG_PRIVATE:
 }
 
 namespace Kaim {
-class IPathFinderQuery : public Kaim::ITimeSlicedQuery  // size 0x58, opaque
+class Box2i  // size 0x18, opaque
+{
+public:
+    bool IsValid() const;
+    void MakeZero();
+    void Set(const Kaim::Vec2i &, const Kaim::Vec2i &);
+    void SetSafe(const Kaim::Vec2i &, const Kaim::Vec2i &);
+    void SetMin(const Kaim::Vec2i &);
+    void SetMax(const Kaim::Vec2i &);
+    const Kaim::Vec2i &Min() const;
+    const Kaim::Vec2i &Max() const;
+    Kaim::Vec2i CornerSouthWest() const;
+    Kaim::Vec2i CornerNorthEast() const;
+    Kaim::Vec2i CornerSouthEast() const;
+    Kaim::Vec2i CornerNorthWest() const;
+    const Kaim::Vec2i &CountXY() const;
+    int CountX() const;
+    int CountY() const;
+    bool IsInside(const Kaim::Vec2i &) const;
+    bool FastIsInside(const Kaim::Vec2i &) const;
+    bool IsInsideStrictly(const Kaim::Vec2i &) const;
+    void Clear();
+    Kaim::Box2i &operator*=(int);
+    Kaim::Box2i &operator/=(int);
+    Kaim::Box2i &operator+=(const Kaim::Vec2i &);
+    Kaim::Box2i &operator-=(const Kaim::Vec2i &);
+    bool operator==(const Kaim::Box2i &) const;
+    bool operator!=(const Kaim::Box2i &) const;
+    int GetColumnMajorIndex(const Kaim::Vec2i &) const;
+    int GetRowMajorIndex(const Kaim::Vec2i &) const;
+    int GetColumnMajorIndexFromLocalPos(const Kaim::Vec2i &) const;
+    int GetRowMajorIndexFromLocalPos(const Kaim::Vec2i &) const;
+    void ExpandByVec2(const Kaim::Vec2i &);
+    void ExpandByVec3(const Kaim::Vec3i &);
+    void ExpandByTriangle(const Kaim::Triangle3i &);
+    void ExpandByBox2(const Kaim::Box2i &);
+    void Enlarge(int);
+    void GetEnlarged(int, Kaim::Box2i &) const;
+    bool IntersectWith(const Kaim::Box2i &);
+    bool SetAsIntersection(const Kaim::Box2i &, const Kaim::Box2i &);
+HG_PRIVATE:
+    void UpdateCountX();
+    void UpdateCountY();
+    void UpdateCountXY();
+    void ClearCountXY();
+    void UpdateCountXYSafe();
+    void ExpandByVec2_MinMaxOnly(const Kaim::Vec2i &);
+    void ExpandByVec3_MinMaxOnly(const Kaim::Vec3i &);
+public:
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    Box2i(int, int, int, int);
+    Box2i(const Kaim::Vec2i &, const Kaim::Vec2i &);
+    Box2i();
+    #endif
+HG_PRIVATE:
+    unsigned int Box2iData[0x6];
+};
+}
+
+namespace Kaim {
+template <> class RefCountBaseStatImpl<Kaim::RefCountImpl,138> : public Kaim::RefCountImpl  // size 0x8, opaque
+{
+public:
+    #ifndef HAGGAR_HOST
+    RefCountBaseStatImpl();
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    #endif
+};
+}
+
+namespace Kaim {
+template <> class RefCountBase<Kaim::ChannelArray,138> : public Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl,138>  // size 0x8, opaque
+{
+public:
+    enum
+    {
+        StatType = 138,
+    };
+    #ifndef HAGGAR_HOST
+    RefCountBase();
+    #endif
+};
+}
+
+namespace Kaim {
+class ChannelArray : public Kaim::RefCountBase<Kaim::ChannelArray,138>  // size 0x14, opaque
+{
+public:
+    void Clear();
+    unsigned int GetChannelCount() const;
+    const Kaim::Channel *GetChannel(unsigned int) const;
+    void SendVisualDebug(Kaim::World *, unsigned int) const;
+    void SendVisualDebug(Kaim::World *) const;
+    float FindClosestPositionOnPath(const Kaim::Vec3f &, Kaim::ChannelSectionPtr &, Kaim::Vec3f &);
+    bool IsInside(const Kaim::Vec3f &, Kaim::ChannelSectionPtr &);
+    #ifndef HAGGAR_HOST
+    ChannelArray();
+    HG_VIRTUAL ~ChannelArray();
+    #endif
+HG_PRIVATE:
+    unsigned int ChannelArrayData[0x3];
+};
+}
+
+namespace Kaim {
+class Path  // size 0x54
+{
+public:
+    class CreateConfig;
+HG_PRIVATE:
+    Kaim::Path &operator=(const Kaim::Path &);
+public:
+    static Kaim::Ptr<Kaim::Path> CreatePath(const Kaim::Path::CreateConfig &);
+    void SetNavigationProfileId(unsigned int);
+    unsigned int GetNavigationProfileId() const;
+    unsigned int GetNodeCount() const;
+    unsigned int GetEdgeCount() const;
+    float GetPathDistance() const;
+    float GetPathCost() const;
+    const Kaim::Vec3f &GetPathStartPosition() const;
+    const Kaim::Vec3f &GetPathEndPosition() const;
+    const Kaim::Vec3f *GetNodePositionBuffer() const;
+    Kaim::Vec3f &GetNodePosition(unsigned int);
+    const Kaim::Vec3f &GetNodePosition(unsigned int) const;
+    const Kaim::WorldIntegerPos *GetNodeIntegerPositionBuffer() const;
+    Kaim::WorldIntegerPos &GetNodeIntegerPosition(unsigned int);
+    const Kaim::WorldIntegerPos &GetNodeIntegerPosition(unsigned int) const;
+    Kaim::NavTrianglePtr &GetNodeNavTrianglePtr(unsigned int);
+    const Kaim::NavTrianglePtr &GetNodeNavTrianglePtr(unsigned int) const;
+    Kaim::NavGraphVertexPtr &GetNodeNavGraphVertexPtr(unsigned int);
+    const Kaim::NavGraphVertexPtr &GetNodeNavGraphVertexPtr(unsigned int) const;
+    const Kaim::Vec3f &GetPathEdgeStartPosition(unsigned int) const;
+    const Kaim::Vec3f &GetPathEdgeEndPosition(unsigned int) const;
+    const Kaim::NavTrianglePtr &GetPathEdgeStartNavTrianglePtr(unsigned int) const;
+    const Kaim::NavTrianglePtr &GetPathEdgeEndNavTrianglePtr(unsigned int) const;
+    Kaim::NavGraphEdgePtr &GetEdgeNavGraphEdgePtr(unsigned int);
+    const Kaim::NavGraphEdgePtr &GetEdgeNavGraphEdgePtr(unsigned int) const;
+    Kaim::PathEdgeType GetPathEdgeType(unsigned int) const;
+    void SetNodePosition(unsigned int, const Kaim::Vec3f &);
+    void SetNodeIntegerPosition(unsigned int, const Kaim::WorldIntegerPos &);
+    void SetNodeNavTrianglePtr(unsigned int, const Kaim::NavTrianglePtr &);
+    void SetNodeNavGraphVertexPtr(unsigned int, const Kaim::NavGraphVertexPtr &);
+    void SetNodePosition3fAndInteger(unsigned int, const Kaim::Vec3f &, const Kaim::WorldIntegerPos &);
+    void SetEdgeNavGraphEdgePtr(unsigned int, const Kaim::NavGraphEdgePtr &);
+    void SetPathEdgeType(unsigned int, Kaim::PathEdgeType);
+    void SetPathCostAndDistance(float, float);
+    Kaim::Box2i &GetPathCellBox();
+    const Kaim::Box2i &GetPathCellBox() const;
+    void SetPathCellBox(const Kaim::Box2i &);
+    void ComputeAllNodeIntegerPositionAndPathCellBox(const Kaim::DatabaseGenMetrics &);
+HG_PRIVATE:
+    static unsigned int ComputeByteSize(const Kaim::Path::CreateConfig &);
+    void InitBuffers();
+    void ClearAllBeforDestruction();
+public:
+    void AddRef();
+    void Release();
+    int GetRefCount() const;
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+HG_PRIVATE:
+    Path();
+    Path(const Kaim::Path &);
+    ~Path();
+public:
+    #endif
+    #ifndef HAGGAR_HOST
+    Kaim::Database *m_database;  // 0x0
+    Kaim::Ptr<Kaim::ChannelArray> m_channelArray;  // 0x4
+    unsigned int m_navigationProfileId;  // 0x8
+    unsigned int m_byteSize;  // 0xC
+    unsigned int m_nodesCount;  // 0x10
+    unsigned int m_edgesCount;  // 0x14
+    float m_pathDistance;  // 0x18
+    float m_pathCost;  // 0x1C
+    Kaim::Box2i m_pathCellBox;  // 0x20
+    Kaim::Vec3f *m_nodePositions;  // 0x38
+    Kaim::WorldIntegerPos *m_nodeIntegerPositions;  // 0x3C
+    Kaim::NavTrianglePtr *m_nodeTrianglePtrs;  // 0x40
+    Kaim::NavGraphVertexPtr *m_nodeGraphVertexPtrs;  // 0x44
+    Kaim::NavGraphEdgePtr *m_edgeNavGraphEdgePtr;  // 0x48
+    unsigned char *m_edgeTypes;  // 0x4C
+    unsigned int RefCount;  // 0x50
+    #else
+    hg::gptr<Kaim::Database> m_database;
+    Kaim::Ptr<Kaim::ChannelArray> m_channelArray;
+    hg::be<unsigned int> m_navigationProfileId;
+    hg::be<unsigned int> m_byteSize;
+    hg::be<unsigned int> m_nodesCount;
+    hg::be<unsigned int> m_edgesCount;
+    hg::be<float> m_pathDistance;
+    hg::be<float> m_pathCost;
+    Kaim::Box2i m_pathCellBox;
+    hg::gptr<Kaim::Vec3f> m_nodePositions;
+    hg::gptr<Kaim::WorldIntegerPos> m_nodeIntegerPositions;
+    hg::gptr<Kaim::NavTrianglePtr> m_nodeTrianglePtrs;
+    hg::gptr<Kaim::NavGraphVertexPtr> m_nodeGraphVertexPtrs;
+    hg::gptr<Kaim::NavGraphEdgePtr> m_edgeNavGraphEdgePtr;
+    hg::gptr<unsigned char> m_edgeTypes;
+    hg::be<unsigned int> RefCount;
+    #endif
+};
+}
+
+namespace Kaim {
+class Vec3f  // size 0xC, opaque
+{
+public:
+    void Set(const Kaim::Vec2f &);
+    void Set(float *);
+    void Set(float, float, float);
+    float operator[](int) const;
+    float &operator[](int);
+    bool operator==(const Kaim::Vec3f &) const;
+    bool operator!=(const Kaim::Vec3f &) const;
+    bool operator<(const Kaim::Vec3f &) const;
+    Kaim::Vec3f &operator*=(float);
+    Kaim::Vec3f &operator/=(float);
+    Kaim::Vec3f &operator+=(const Kaim::Vec2f &);
+    Kaim::Vec3f &operator+=(const Kaim::Vec3f &);
+    Kaim::Vec3f &operator-=(const Kaim::Vec2f &);
+    Kaim::Vec3f &operator-=(const Kaim::Vec3f &);
+    float operator*(const Kaim::Vec3f &) const;
+    Kaim::Vec3f operator*(float) const;
+    Kaim::Vec3f operator/(float) const;
+    Kaim::Vec3f operator+(const Kaim::Vec2f &) const;
+    Kaim::Vec3f operator+(const Kaim::Vec3f &) const;
+    Kaim::Vec3f operator-(const Kaim::Vec2f &) const;
+    Kaim::Vec3f operator-() const;
+    Kaim::Vec3f operator-(const Kaim::Vec3f &) const;
+    Kaim::Vec3f operator^(const Kaim::Vec3f &) const;
+    void Cross(const Kaim::Vec3f &, const Kaim::Vec3f &);
+    float GetSquareLength() const;
+    float GetSquareLength2d() const;
+    float GetLength() const;
+    float GetLength2d() const;
+    float Normalize();
+    float GetNormalized(Kaim::Vec3f &) const;
+    bool IsNormalized() const;
+    Kaim::Vec2f Get2d() const;
+    float GetNormalized2d(Kaim::Vec2f &) const;
+    bool IsZero() const;
+    static Kaim::Vec3f Zero();
+    static Kaim::Vec3f UnitX();
+    static Kaim::Vec3f UnitY();
+    static Kaim::Vec3f UnitZ();
+    #ifndef HAGGAR_HOST
+    static void *operator new(unsigned int, void *);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
+    static void *operator new(unsigned int, int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
+    static void *operator new(unsigned int, const char *, int);
+    static void *operator new(unsigned int, Kaim::MemAddressStub *);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
+    static void *operator new(unsigned int, Kaim::MemoryHeap *);
+    static void *operator new(unsigned int);
+    static void operator delete(void *, void *);
+    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *, int);
+    static void operator delete(void *, Kaim::MemAddressStub *);
+    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *, int);
+    static void operator delete(void *, Kaim::MemoryHeap *);
+    static void operator delete(void *, int, const char *, int);
+    static void operator delete(void *, const char *, int);
+    static void operator delete(void *);
+    Vec3f(const Kaim::Vec2f &);
+    Vec3f(float *);
+    Vec3f(float, float, float);
+    Vec3f();
+    #endif
+HG_PRIVATE:
+    unsigned int Vec3fData[0x3];
+};
+}
+
+namespace Kaim {
+class IPathFinderQuery : public Kaim::ITimeSlicedQuery  // size 0x58
 {
 public:
     enum PathFinderResult
@@ -15525,8 +15916,21 @@ public:
     IPathFinderQuery();
     HG_VIRTUAL ~IPathFinderQuery();
     #endif
-HG_PRIVATE:
-    unsigned int IPathFinderQueryData[0xB];
+    #ifndef HAGGAR_HOST
+    Kaim::Vec3f m_startPos3f;  // 0x2C
+    Kaim::Ptr<Kaim::Path> m_path;  // 0x38
+    unsigned int m_navigationProfileId;  // 0x3C
+    Kaim::PathFinderQueryComputeChannelMode m_computeChannelMode;  // 0x40
+    Kaim::ChannelComputerConfig m_channelComputerConfig;  // 0x44
+    unsigned int m_dataBaseChangeIdx;  // 0x54
+    #else
+    Kaim::Vec3f m_startPos3f;
+    Kaim::Ptr<Kaim::Path> m_path;
+    hg::be<unsigned int> m_navigationProfileId;
+    hg::be<Kaim::PathFinderQueryComputeChannelMode> m_computeChannelMode;
+    Kaim::ChannelComputerConfig m_channelComputerConfig;
+    hg::be<unsigned int> m_dataBaseChangeIdx;
+    #endif
 };
 }
 
@@ -15718,82 +16122,6 @@ public:
     #endif
 HG_PRIVATE:
     unsigned int TraversalParametersData[0x7];
-};
-}
-
-namespace Kaim {
-class Vec3f  // size 0xC, opaque
-{
-public:
-    void Set(const Kaim::Vec2f &);
-    void Set(float *);
-    void Set(float, float, float);
-    float operator[](int) const;
-    float &operator[](int);
-    bool operator==(const Kaim::Vec3f &) const;
-    bool operator!=(const Kaim::Vec3f &) const;
-    bool operator<(const Kaim::Vec3f &) const;
-    Kaim::Vec3f &operator*=(float);
-    Kaim::Vec3f &operator/=(float);
-    Kaim::Vec3f &operator+=(const Kaim::Vec2f &);
-    Kaim::Vec3f &operator+=(const Kaim::Vec3f &);
-    Kaim::Vec3f &operator-=(const Kaim::Vec2f &);
-    Kaim::Vec3f &operator-=(const Kaim::Vec3f &);
-    float operator*(const Kaim::Vec3f &) const;
-    Kaim::Vec3f operator*(float) const;
-    Kaim::Vec3f operator/(float) const;
-    Kaim::Vec3f operator+(const Kaim::Vec2f &) const;
-    Kaim::Vec3f operator+(const Kaim::Vec3f &) const;
-    Kaim::Vec3f operator-(const Kaim::Vec2f &) const;
-    Kaim::Vec3f operator-() const;
-    Kaim::Vec3f operator-(const Kaim::Vec3f &) const;
-    Kaim::Vec3f operator^(const Kaim::Vec3f &) const;
-    void Cross(const Kaim::Vec3f &, const Kaim::Vec3f &);
-    float GetSquareLength() const;
-    float GetSquareLength2d() const;
-    float GetLength() const;
-    float GetLength2d() const;
-    float Normalize();
-    float GetNormalized(Kaim::Vec3f &) const;
-    bool IsNormalized() const;
-    Kaim::Vec2f Get2d() const;
-    float GetNormalized2d(Kaim::Vec2f &) const;
-    bool IsZero() const;
-    static Kaim::Vec3f Zero();
-    static Kaim::Vec3f UnitX();
-    static Kaim::Vec3f UnitY();
-    static Kaim::Vec3f UnitZ();
-    #ifndef HAGGAR_HOST
-    static void *operator new(unsigned int, void *);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int, const char *, int);
-    static void *operator new(unsigned int, int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, const char *, int);
-    static void *operator new(unsigned int, const char *, int);
-    static void *operator new(unsigned int, Kaim::MemAddressStub *);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *, int);
-    static void *operator new(unsigned int, Kaim::MemoryHeap *);
-    static void *operator new(unsigned int);
-    static void operator delete(void *, void *);
-    static void operator delete(void *, Kaim::MemAddressStub *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, const char *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *, int);
-    static void operator delete(void *, Kaim::MemAddressStub *);
-    static void operator delete(void *, Kaim::MemoryHeap *, int, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, const char *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *, int);
-    static void operator delete(void *, Kaim::MemoryHeap *);
-    static void operator delete(void *, int, const char *, int);
-    static void operator delete(void *, const char *, int);
-    static void operator delete(void *);
-    Vec3f(const Kaim::Vec2f &);
-    Vec3f(float *);
-    Vec3f(float, float, float);
-    Vec3f();
-    #endif
-HG_PRIVATE:
-    unsigned int Vec3fData[0x3];
 };
 }
 
@@ -22828,6 +23156,22 @@ public:
     hg::gptr<AActor> Actor;
     hg::gptr<UPrimitiveComponent> Component;
     hg::be<int> BodyIndex;
+    #endif
+};
+
+class FRotationTranslationMatrix : public FMatrix  // size 0x40
+{
+public:
+    #ifndef HAGGAR_HOST
+    FRotationTranslationMatrix(const FRotator &, const FVector &);
+    #endif
+};
+
+class FRotationMatrix : public FRotationTranslationMatrix  // size 0x40
+{
+public:
+    #ifndef HAGGAR_HOST
+    FRotationMatrix(const FRotator &);
     #endif
 };
 
@@ -46964,6 +47308,22 @@ inline void ACCSController::execTriggerEvent(FFrame &Stack, void *const)
     Stack.Step(Stack.Object, &A0);
     Stack.Code++;
     TriggerEvent(A0);
+}
+
+inline void AUDKPlayerController::execFindPath(FFrame &Stack, void *const Result)
+{
+    FVector A0;
+    Stack.Step(Stack.Object, &A0);
+    TArray<FVector,FDefaultAllocator> A1T;
+    GPropAddr = 0;
+    Stack.Step(Stack.Object, &A1T);
+    if (GPropObject)
+    {
+        GPropObject->NetDirty(GProperty);
+    }
+    TArray<FVector,FDefaultAllocator> &A1 = GPropAddr ? *(TArray<FVector,FDefaultAllocator> *)GPropAddr : A1T;
+    Stack.Code++;
+    *(unsigned int *)Result = FindPath(A0, A1);
 }
 
 inline void UCCSBlackboard::execGetCovers(FFrame &Stack, void *const)

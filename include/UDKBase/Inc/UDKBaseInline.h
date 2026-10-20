@@ -324,6 +324,7 @@ inline void *Kaim::RefCountBaseStatImpl<Kaim::RefCountImpl, 139>::operator new(u
 
 // gwnavutils.h (UnrealEd's GwNav glue)
 Kaim::Vec3f UnrealToGwNavVector(const FVector &V);
+FVector GwNavToUnrealVector(const Kaim::Vec3f &V);
 #ifndef HAGGAR_HOST
 inline void *Kaim::IQuery::operator new(unsigned int Size) { return Kaim::Memory::pGlobalHeap->Alloc(Size, 0); }
 #endif
@@ -496,3 +497,9 @@ inline unsigned int FString::operator!=(const wchar_t *Other) const { return app
 inline UObject *AUDKPawn::GetUObjectInterfaceCCSPawn() { return this; }
 inline UObject *AUDKVehicle::GetUObjectInterfaceCCSPawn() { return this; }
 inline UObject *AUDKWeaponPawn::GetUObjectInterfaceCCSPawn() { return this; }
+
+// unmath.h: matrices
+inline FVector FMatrix::GetAxis(int i) const { return FVector(M[i][0], M[i][1], M[i][2]); }
+#ifndef HAGGAR_HOST
+inline FRotationMatrix::FRotationMatrix(const FRotator &Rot) : FRotationTranslationMatrix(Rot, FVector::ZeroVector) {}
+#endif

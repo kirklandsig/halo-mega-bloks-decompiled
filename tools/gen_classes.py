@@ -33,9 +33,12 @@ TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FA
                        'UUDKAnimBlendByPhysics', 'UUDKAnimBlendByTurnInPlace', 'UUDKAnimNodeCopyBoneTranslation',
                        'FAimOffsetProfile', 'USkeletalMeshComponent', 'UProperty', 'UClass', 'UObject', 'UStruct', 'UField',
                        'UAnimObject', 'AUDKPawn', 'Grip_Rotation', 'FRotator', 'Kaim::IQuery', 'Kaim::BaseAStarQuery', 'CCSTarget', 'CCSMeatPuppet', 'GwNavBot', 'UGwNavBotHandle', 'Kaim::Bot',
-                       'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>']}
+                       'GripRBTNumericCondition<float>', 'GripRBTNumericCondition<int>',
+                       # n-Space's additions to Epic's classes (config/nspace_additions.csv)
+                       'AUDKPlayerController', 'AUDKJumpPad', 'Kaim::IPathFinderQuery', 'Kaim::Path',
+                       'FMatrix', 'FRotationTranslationMatrix', 'FRotationMatrix']}
 OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
-          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'AUDKPlayerController', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'GripEngineServices', 'IGripEngineServices', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
+          'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripRBTAllocator', 'UWorld', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'GripEngineServices', 'IGripEngineServices', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
                        # the behaviour-tree nodes' runtime classes
                        'CCSRBTEnemyClosestRange',
                        'CCSRBTEnemyLowestLKPAge',
@@ -444,6 +447,8 @@ class Classes:
             return None
         lines = [f'inline void {cls}::{member}(FFrame &Stack, void *const{"" if ret == "void" else " Result"})', '{']
         for i, p in enumerate(params):
+            if p.startswith('const ') and not p.endswith(('&', '*')):
+                p = p[6:]  # a const by-value parameter reads like any other
             kind = parameter_kind(p)
             opt, default = optional[i]
             a = f'A{i}'
