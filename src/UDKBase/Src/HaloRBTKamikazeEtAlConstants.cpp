@@ -47,10 +47,6 @@ int CCSAnalysisSystem::SGetFamily()
 int CCSAnalysisSystem::GetFamily() const
 { return 1; }
 
-// @retail 0x83323448
-int CCSSensorSystem::SGetFamily()
-{ return 0; }
-
 // @retail 0x83323500
 int CCSASTarget::SGetId()
 { return 0; }

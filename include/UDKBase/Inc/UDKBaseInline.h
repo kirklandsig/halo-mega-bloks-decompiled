@@ -88,6 +88,9 @@ inline int CCSCSCover::GetId() const { return SGetId(); }
 inline int CCSCSMovement::SGetId() { return CST_MOVEMENT; }
 inline int CCSCSMovement::GetId() const { return SGetId(); }
 
+// ccssensorsystem.h
+inline int CCSSensorSystem::SGetFamily() { return 0; }
+
 #ifndef HAGGAR_HOST
 // ccsafaction.h
 inline CCSAFAction::CCSAFAction() : m_pMeatPuppet(0) {}

@@ -17210,6 +17210,7 @@ HG_PRIVATE:
     CCSBrain(GripRBTTree *);
 public:
     #endif
+    friend class CCSBrainBuilder;
     #ifndef HAGGAR_HOST
     ICCSMeatPuppet *m_meatPuppet;  // 0x9C
     GripBTSystemFlags m_ssFlags;  // 0xA0
@@ -35021,6 +35022,42 @@ public:
     #endif
 };
 
+class UGripActionFramework : public UObject  // size 0x40
+{
+public:
+    enum
+    {
+        IsIntrinsic = 0,
+    };
+    HG_VIRTUAL unsigned int Execute(UGripAFActionHandle *);
+    HG_VIRTUAL unsigned char GetStatus(UGripAFActionHandle *);
+    void execExecute(FFrame &, void *const);
+    void execGetStatus(FFrame &, void *const);
+HG_PRIVATE:
+    UGripActionFramework &operator=(const UGripActionFramework &);
+public:
+    static UClass *GetPrivateStaticClassUGripActionFramework(const wchar_t *);
+    static void InitializePrivateStaticClassUGripActionFramework();
+    static UClass *StaticClass();
+    static void InternalConstructor(void *);
+    #ifndef HAGGAR_HOST
+    static void *operator new(const unsigned int, EInternal *);
+    static void *operator new(const unsigned int, UObject *, FName, unsigned __int64);
+HG_PROTECTED:
+    HG_VIRTUAL ~UGripActionFramework();
+    UGripActionFramework();
+public:
+    #endif
+    typedef UObject Super;
+    #ifndef HAGGAR_HOST
+    static UClass *PrivateStaticClass;
+    GripAFFramework *NativeFramework;  // 0x3C
+    #else
+    static hg::gptr<UClass> (&PrivateStaticClass);
+    hg::gptr<GripAFFramework> NativeFramework;
+    #endif
+};
+
 class UGripBTInterface : public UObject  // size 0x4C
 {
 public:
@@ -45723,6 +45760,15 @@ inline UClass *UGameSkelCtrl_Recoil::StaticClass()
     {
         PrivateStaticClass = GetPrivateStaticClassUGameSkelCtrl_Recoil(L"GameFramework");
         InitializePrivateStaticClassUGameSkelCtrl_Recoil();
+    }
+    return PrivateStaticClass;
+}
+inline UClass *UGripActionFramework::StaticClass()
+{
+    if (!PrivateStaticClass)
+    {
+        PrivateStaticClass = GetPrivateStaticClassUGripActionFramework(L"Grip");
+        InitializePrivateStaticClassUGripActionFramework();
     }
     return PrivateStaticClass;
 }

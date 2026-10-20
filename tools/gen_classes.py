@@ -39,7 +39,7 @@ TARGETS = {'MegaHaloGame': ['FSystemSettings', 'FArchive', 'FMemoryArchive', 'FA
                        'FMatrix', 'FRotationTranslationMatrix', 'FRotationMatrix',
                        # the CCS layer
                        'GripSystemTickGroup', 'GripStatEntry', 'GripBrainSystem', 'CCSGSCover',
-                       'Kaim::SpatializedCylinder', 'Kaim::SpatializedPoint', 'FVehicleSeat', 'Grip_Matrix', 'Grip_RotationTranslationMatrix']}
+                       'Kaim::SpatializedCylinder', 'Kaim::SpatializedPoint', 'FVehicleSeat', 'Grip_Matrix', 'Grip_RotationTranslationMatrix', 'UGripBTInterface', 'UGripBlackboard', 'UGripActionFramework']}
 OPAQUE = {'MegaHaloGame': ['FMemoryWriter', 'FMemoryReader', 'FObjectAndNameAsStringProxyArchive'],
           'UDKBase': ['Grip::Memory', 'Grip::MemoryHeap', 'GripBrainDebugOptions', 'GripScopeCycleCounter', 'GripRBTAllocator', 'UWorld', 'CCSBlackboard', 'EPhysics', 'ECoverType', 'GwNavEngineServices', 'Kaim::World', 'Kaim::Memory', 'Kaim::MemoryHeap', 'GripEngineServices', 'IGripEngineServices', 'UAnimNodeAimOffset', 'UHaloAnimBlendByJumpLand', 'UByteProperty',
                        # the behaviour-tree nodes' runtime classes
@@ -82,6 +82,8 @@ EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard
                                           'template <class T0> T0 *GetMeatPuppetQuery();'],
                      'IGripAFInterface': ['template <class T0> T0 *GetSystem();'],
                      'GripEngineServices': ['template <class T0> static T0 *GetAIManagerSystem();'],
+                     # the brain builders construct the brain through its private constructor
+                     'CCSBrain': ['friend class CCSBrainBuilder;'],
                      # the action handles' CreateAction call it
                      'CCSAFFactory': ['template <class AO> int CreateAction(const AO &);',
                                       'HG_PRIVATE:', 'template <class AO, class AF> int CreateActionInternal(const AO &);', 'public:']
