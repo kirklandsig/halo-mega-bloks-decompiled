@@ -554,3 +554,16 @@ inline IGripAISystem *GripAIManager::GetSystem(int Id) const
     return 0;
 }
 inline bool CCSDebugOptions::IsOptionEnabled(CCSDebugOptions::EOptions Option) const { return m_options[Option]; }
+
+// UnClass.h
+inline unsigned int UStruct::IsChildOf(const UStruct *SomeBase) const
+{
+    for (const UStruct *Struct = this; Struct; Struct = (const UStruct *)Struct->SuperStruct)
+    {
+        if (Struct == SomeBase)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
