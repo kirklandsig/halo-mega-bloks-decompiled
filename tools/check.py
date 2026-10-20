@@ -16,6 +16,8 @@ todo). config/functions/ is never written. Exits 1 if any function is not
 matched.
 """
 import argparse
+import csv
+import difflib
 import re
 import subprocess
 import sys
@@ -42,6 +44,67 @@ def compare(ours, masks, retail):
                 a[off + i] &= keep
                 b[off + i] &= keep
     return 'matched' if a == b else 'near'
+
+
+D_FORM = {14, 24, 25, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 50, 51, 52, 53, 54, 55, 58, 62}
+
+
+def words(data):
+    return [int.from_bytes(data[i:i + 4], 'big') for i in range(0, len(data) - 3, 4)]
+
+
+def normalize(ws):
+    """Instruction words with the fields that relocations or layout fill in
+    cleared: branch displacements, lis immediates, and the low half of a
+    D-form instruction addressing through a register a recent lis set."""
+    out, hot = [], {}
+    for w in ws:
+        op = w >> 26
+        ra = (w >> 16) & 31
+        if op == 18:
+            k = w & 0xFC000003
+        elif op == 16:
+            k = w & 0xFFFF0003
+        elif op == 15 and ra == 0:
+            k = w & 0xFFFF0000
+            hot[(w >> 21) & 31] = 9
+        elif op in D_FORM and hot.get(ra):
+            k = w & 0xFFFF0000
+        else:
+            k = w
+        hot = {r: n - 1 for r, n in hot.items() if n > 1}
+        out.append(k)
+    return out
+
+
+def same_instruction(a, b):
+    """Same opcode (and extended opcode where there is one)."""
+    if a >> 26 != b >> 26:
+        return False
+    if a >> 26 in (19, 31, 59, 63, 4):
+        return (a >> 1) & 0x3FF == (b >> 1) & 0x3FF
+    return True
+
+
+def diff_score(ours, retail):
+    """Cost of turning our instruction words into retail's."""
+    a, b = normalize(words(ours)), normalize(words(retail))
+    cost = 0
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+        if tag == 'equal':
+            continue
+        n = min(i2 - i1, j2 - j1) if tag == 'replace' else 0
+        cost += sum(1 if same_instruction(x, y) else 2 for x, y in zip(a[i1:i1 + n], b[j1:j1 + n]))
+        cost += 2 * (max(i2 - i1, j2 - j1) - n)
+    return cost
+
+
+def score(status, data, retail):
+    """0 for a match; otherwise diff_score, at least 1. `data` is None when our
+    object lacks the function: every retail word counts as missing."""
+    if status == 'matched':
+        return 0
+    return max(1, diff_score(data or b'', retail))
 
 
 def parse_markers(path):
@@ -173,10 +236,11 @@ class Context:
 
 
 def function_status(ours, row, retail, same_name=None):
-    """(status, our bytes) of a row's function in our parsed object; KeyError
-    if the object has no (unique) symbol for it."""
+    """(status, our bytes, score) of a row's function in our parsed object;
+    KeyError if the object has no (unique) symbol for it."""
     data, masks = coff.function_bytes(ours, find_symbol(ours, row, same_name))
-    return compare(data, masks, retail), data
+    status = compare(data, masks, retail)
+    return status, data, score(status, data, retail)
 
 
 STATUS_COLUMNS = ['address', 'status']
@@ -207,38 +271,67 @@ def compile_file(cl, cmd, includes, src, obj):
                           capture_output=True, text=True, cwd=paths.ROOT)
 
 
+SCORE_COLUMNS = ['address', 'name', 'status', 'score']
+
+
+def check_file(ctx, src):
+    """{va: (row, status, score, note)} of a source file's marked functions."""
+    obj_name, addresses = parse_markers(src)
+    cmd = ctx.cmd(obj_name, f'{src}: ')
+    obj = paths.BUILD / 'obj' / src.relative_to(paths.ROOT).with_suffix('.obj')
+    obj.parent.mkdir(parents=True, exist_ok=True)
+    r = compile_file(ctx.cl, cmd, ctx.includes, src, obj)
+    if r.returncode:
+        print(r.stdout + r.stderr)
+        raise SystemExit(f'{src}: cl failed')
+    ours = coff.parse(obj.read_bytes())
+    out = {}
+    for va in addresses:
+        row = ctx.row(va, f'{src}: ')
+        retail = ctx.retail(row)
+        try:
+            status, data, sc = function_status(ours, row, retail, ctx.same_name)
+            note = '' if status == 'matched' else f' ({len(data)} bytes vs {len(retail)}, score {sc})'
+        except KeyError:
+            status, sc = 'todo', score('todo', None, retail)
+            note = (' (not in our object' if row['symbol'] else ' (no unique symbol of that name in our object') + f', score {sc})'
+        out[va] = (row, status, sc, note)
+    return out
+
+
+def all_sources():
+    return sorted((paths.ROOT / 'src').rglob('*.cpp'))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description='Compile sources and compare marked functions with retail.')
-    ap.add_argument('sources', nargs='+')
+    ap.add_argument('sources', nargs='*', help='source files (with --scores, default: every file under src/)')
+    ap.add_argument('--scores', action='store_true',
+                    help='print address,name,status,score of each near or todo function instead; without sources, '
+                         "of every near or todo nspace function, written or not")
     args = ap.parse_args(argv)
+    if not args.sources and not args.scores:
+        ap.error('name the source files to check')
     ctx = Context()
-    results = {}
-    failed = 0
-    for src in args.sources:
-        src = paths.require(Path(src).resolve())
-        obj_name, addresses = parse_markers(src)
-        cmd = ctx.cmd(obj_name, f'{src}: ')
-        obj = paths.BUILD / 'obj' / src.relative_to(paths.ROOT).with_suffix('.obj')
-        obj.parent.mkdir(parents=True, exist_ok=True)
-        r = compile_file(ctx.cl, cmd, ctx.includes, src, obj)
-        if r.returncode:
-            print(r.stdout + r.stderr)
-            raise SystemExit(f'{src}: cl failed')
-        ours = coff.parse(obj.read_bytes())
-        for va in addresses:
-            row = ctx.row(va, f'{src}: ')
-            size = int(row['size'])
-            try:
-                status, data = function_status(ours, row, ctx.retail(row), ctx.same_name)
-                note = '' if status == 'matched' else f' ({len(data)} bytes vs {size})'
-            except KeyError:
-                status = 'todo'
-                note = ' (not in our object)' if row['symbol'] else ' (no unique symbol of that name in our object)'
-            results[va] = status
-            failed += status != 'matched'
-            print(f'{status:8} 0x{va:08X} {row["name"] or row["symbol"]}{note}')
-    save(results)
-    return 1 if failed else 0
+    checked = {}
+    for src in args.sources or all_sources():
+        for va, (row, status, sc, note) in check_file(ctx, paths.require(Path(src).resolve())).items():
+            checked[va] = (row, status, sc)
+            if not args.scores:
+                print(f'{status:8} 0x{va:08X} {row["name"] or row["symbol"]}{note}')
+    save({va: status for va, (_, status, _) in checked.items()})
+    if args.scores:
+        rows = {va: v for va, v in checked.items() if v[1] != 'matched'}
+        if not args.sources:  # every nspace function: the unwritten ones score as missing
+            rows = {va: v for va, v in rows.items() if v[0]['owner'] == 'nspace'}
+            for va, row in ctx.by_address.items():
+                if row['owner'] == 'nspace' and va not in checked:
+                    rows[va] = (row, 'todo', score('todo', None, ctx.retail(row)))
+        writer = csv.writer(sys.stdout, lineterminator='\n')
+        writer.writerow(SCORE_COLUMNS)
+        for va, (row, status, sc) in sorted(rows.items()):
+            writer.writerow([f'0x{va:08X}', row['name'] or row['symbol'], status, sc])
+    return 1 if any(status != 'matched' for _, status, _ in checked.values()) else 0
 
 
 if __name__ == '__main__':

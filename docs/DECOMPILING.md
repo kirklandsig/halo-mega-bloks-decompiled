@@ -110,11 +110,36 @@ For each file, `check.py`:
    overloads, pair with ours in address order: the n-th in retail is the
    n-th our object defines);
 4. compares its bytes with the basefile's, masking relocated fields, and
-   prints `matched`, `near` (same length, other bytes) or `todo`;
+   prints `matched`, `near` (same length, other bytes) or `todo`, with a
+   score for the last two (below);
 5. merges the results into `config/status.csv`.
 
 It exits 1 while any marked function differs. `config/functions/` is never
 written by it.
+
+The **score** measures how far a function is from retail: an instruction
+diff in which a word that differs only in its registers or an immediate
+costs 1, and any other changed, inserted or deleted word costs 2 (branch
+displacements and `lis`/`addi` address halves are ignored, as relocations
+fill them). 0 is `matched`; a near function scores at least 1; one missing
+from our object scores 2 per retail word. `check.py --scores <files>` prints
+`address,name,status,score` for each near or todo function instead;
+without files it covers every near or todo `nspace` function, written or
+not, and `docs/scores.csv` is that list at the last snapshot. The permuter
+uses the same score.
+
+## Partial progress
+
+A function that doesn't match yet can still get closer, and that progress
+is kept rather than redone:
+
+- Keep the closest-scoring version in the source, even when another looks
+  more natural.
+- Start its cause comment with the score: `// score 65 (was 119): retail
+  keeps the rotator difference in a stack copy`.
+- Commit after every score improvement, and compare against
+  `docs/scores.csv` (a merge keeps main's version of any function the
+  branch made worse).
 
 ## The permuter
 
@@ -130,11 +155,9 @@ The function is named by its `// @retail` address (or its name, if that is
 unique in the file). Each worker applies one to three random rewrites to its
 current best version of the function, compiles the whole file with the
 object's command line, as `check.py` does, and scores our function against
-retail: an instruction diff in which a word that differs only in registers
-or an immediate costs 1 and any other changed, inserted or deleted word costs
-2 (branch displacements and `lis`/`addi` address halves are ignored, as
-relocations fill them). A lower score replaces the worker's best; an equal
-one sometimes does, so the walk can cross plateaus. Score 0 is `matched`.
+retail with check.py's score. A lower score replaces the worker's best; an
+equal one sometimes does, so the walk can cross plateaus. Score 0 is
+`matched`.
 
 | Kind | Rewrites |
 | --- | --- |

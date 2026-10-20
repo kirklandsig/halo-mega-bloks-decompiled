@@ -78,3 +78,46 @@ def test_find_symbol_pairs_namesakes_by_address():
     assert check.find_symbol(c, rows[1], same) == '?UnwindRot@@YA?AUFRotator@@U1@@Z'
     with pytest.raises(KeyError):  # without the namesakes it stays ambiguous
         check.find_symbol(c, rows[0])
+
+
+def test_diff_score():
+    ret = bytes.fromhex('7d6321d6' '7d432850' '7d2a5850' '4e800020')
+    assert check.diff_score(ret, ret) == 0
+    # a register-only difference costs 1, another instruction 2
+    assert check.diff_score(bytes.fromhex('7d6321d6' '7d432850' '7d2b5050' '4e800020'), ret) == 1
+    assert check.diff_score(bytes.fromhex('7d6321d6' '7d432850' '4e800020'), ret) == 2
+    # relocated fields don't count: bl targets, lis/addi pairs
+    a = bytes.fromhex('48000001' '3d600000' '396b0000')
+    b = bytes.fromhex('4bff0f05' '3d608200' '396b1234')
+    assert check.diff_score(a, b) == 0
+    assert check.score('matched', ret, ret) == 0
+    assert check.score('near', ret, ret) == 1  # near is never 0
+    assert check.score('todo', None, ret) == 8  # missing: every retail word
+
+
+def test_scores_lists_near_and_todo_and_unwritten_nspace(tmp_path, monkeypatch, capsys):
+    src = tmp_path / 'a.cpp'
+    src.write_text('')
+    rows = {0x82000100: {'address': '0x82000100', 'name': 'A::f', 'symbol': '', 'owner': 'nspace', 'size': '8'},
+            0x82000200: {'address': '0x82000200', 'name': 'A::g, h', 'symbol': '', 'owner': 'nspace', 'size': '8'},
+            0x82000300: {'address': '0x82000300', 'name': 'B::k', 'symbol': '', 'owner': 'nspace', 'size': '12'},
+            0x82000400: {'address': '0x82000400', 'name': 'Epic::x', 'symbol': '', 'owner': 'epic', 'size': '4'}}
+
+    class Ctx:
+        by_address = rows
+
+        def retail(self, row):
+            return bytes(int(row['size']))
+
+    monkeypatch.setattr(check, 'Context', Ctx)
+    monkeypatch.setattr(check, 'all_sources', lambda: [src])
+    monkeypatch.setattr(check, 'save', lambda results: None)
+    monkeypatch.setattr(check, 'check_file', lambda ctx, path: {
+        0x82000100: (rows[0x82000100], 'matched', 0, ''), 0x82000200: (rows[0x82000200], 'near', 3, ''),
+        0x82000400: (rows[0x82000400], 'near', 1, '')})
+    assert check.main(['--scores']) == 1
+    # the matched one is left out, the epic one too; B::k isn't written: all 3 words missing
+    assert capsys.readouterr().out == ('address,name,status,score\n0x82000200,"A::g, h",near,3\n'
+                                       '0x82000300,B::k,todo,6\n')
+    assert check.main(['--scores', str(src)]) == 1
+    assert capsys.readouterr().out == 'address,name,status,score\n0x82000200,"A::g, h",near,3\n0x82000400,Epic::x,near,1\n'

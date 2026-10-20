@@ -150,18 +150,6 @@ def test_specific_rewrites():
     assert [s.kind for s in g.body] == ['if']
 
 
-def test_diff_score():
-    ret = bytes.fromhex('7d6321d6' '7d432850' '7d2a5850' '4e800020')
-    assert permute.diff_score(ret, ret) == 0
-    # a register-only difference costs 1, another instruction 2
-    assert permute.diff_score(bytes.fromhex('7d6321d6' '7d432850' '7d2b5050' '4e800020'), ret) == 1
-    assert permute.diff_score(bytes.fromhex('7d6321d6' '7d432850' '4e800020'), ret) == 2
-    # relocated fields don't count: bl targets, lis/addi pairs
-    a = bytes.fromhex('48000001' '3d600000' '396b0000')
-    b = bytes.fromhex('4bff0f05' '3d608200' '396b1234')
-    assert permute.diff_score(a, b) == 0
-
-
 @pytest.mark.orig
 def test_permute_finds_a_commuted_compare(tmp_path):
     xdk = paths.xdk()

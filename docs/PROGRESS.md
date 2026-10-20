@@ -52,6 +52,10 @@ Four of the CCS files (`ccsbrain.cpp`, `ccscsmovementunreal.cpp`,
 separate lane, written by the MiniMax-M3.1-Flash model; at its merge 46 of
 them matched (4,844 bytes), 6 were near (1,236 bytes) and 8 todo.
 
+`docs/scores.csv` lists every near and todo function with its score (how
+far it is from retail; see `docs/DECOMPILING.md`), regenerated with
+`python tools/check.py --scores > docs/scores.csv`.
+
 Each written function that doesn't match has a comment in its source file
 saying why. In short:
 

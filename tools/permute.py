@@ -7,11 +7,9 @@ The function is the one whose "// @retail" marker names the address (or the
 name). Each worker starts from the source as written, applies one to three
 random rewrites to its current best, compiles the file with the object's
 command line (check.py's machinery), and scores our function against
-retail's bytes: an instruction diff, where a word that differs only in its
-registers or immediate costs 1 and any other inserted, deleted or replaced
-word costs 2. A candidate that scores lower becomes the worker's best; one
-that scores the same is kept now and then, to walk plateaus. Score 0 is a
-match.
+retail with check.py's score. A candidate that scores lower becomes the
+worker's best; one that scores the same is kept now and then, to walk
+plateaus. Score 0 is a match.
 
 The rewrites (--kinds picks some; all by default):
 
@@ -41,7 +39,6 @@ only by --time; with --seed and --iterations it is deterministic.
 import argparse
 import collections
 import copy
-import difflib
 import json
 import multiprocessing
 import os
@@ -1309,61 +1306,6 @@ def _params(header):
     return names
 
 
-# --------------------------------------------------------------- scoring
-
-D_FORM = {14, 24, 25, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 50, 51, 52, 53, 54, 55, 58, 62}
-
-
-def words(data):
-    return [int.from_bytes(data[i:i + 4], 'big') for i in range(0, len(data) - 3, 4)]
-
-
-def normalize(ws):
-    """Instruction words with the fields that relocations or layout fill in
-    cleared: branch displacements, lis immediates, and the low half of a
-    D-form instruction addressing through a register a recent lis set."""
-    out, hot = [], {}
-    for w in ws:
-        op = w >> 26
-        ra = (w >> 16) & 31
-        if op == 18:
-            k = w & 0xFC000003
-        elif op == 16:
-            k = w & 0xFFFF0003
-        elif op == 15 and ra == 0:
-            k = w & 0xFFFF0000
-            hot[(w >> 21) & 31] = 9
-        elif op in D_FORM and hot.get(ra):
-            k = w & 0xFFFF0000
-        else:
-            k = w
-        hot = {r: n - 1 for r, n in hot.items() if n > 1}
-        out.append(k)
-    return out
-
-
-def same_instruction(a, b):
-    """Same opcode (and extended opcode where there is one)."""
-    if a >> 26 != b >> 26:
-        return False
-    if a >> 26 in (19, 31, 59, 63, 4):
-        return (a >> 1) & 0x3FF == (b >> 1) & 0x3FF
-    return True
-
-
-def diff_score(ours, retail):
-    """Cost of turning our instruction words into retail's."""
-    a, b = normalize(words(ours)), normalize(words(retail))
-    cost = 0
-    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
-        if tag == 'equal':
-            continue
-        n = min(i2 - i1, j2 - j1) if tag == 'replace' else 0
-        cost += sum(1 if same_instruction(x, y) else 2 for x, y in zip(a[i1:i1 + n], b[j1:j1 + n]))
-        cost += 2 * (max(i2 - i1, j2 - j1) - n)
-    return cost
-
-
 class Target:
     """What a candidate is compiled with and compared against."""
 
@@ -1391,10 +1333,10 @@ class Target:
         if r.returncode or not obj.exists():
             return None
         try:
-            status, data = check.function_status(coff.parse(obj.read_bytes()), self.row, self.retail, self.same_name)
+            status, _, sc = check.function_status(coff.parse(obj.read_bytes()), self.row, self.retail, self.same_name)
         except KeyError:
             return None
-        return (0 if status == 'matched' else max(1, diff_score(data, self.retail))), status
+        return sc, status
 
 
 # ---------------------------------------------------------------- search
