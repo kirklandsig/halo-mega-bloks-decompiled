@@ -58,3 +58,4 @@ inline FRotator FRotator::GetNormalized() const
     Rot.Yaw = NormalizeAxis(Rot.Yaw);
     return Rot;
 }
+inline int FVector::IsNearlyZero(float Tolerance) const { return Abs(X) < Tolerance && Abs(Y) < Tolerance && Abs(Z) < Tolerance; }
