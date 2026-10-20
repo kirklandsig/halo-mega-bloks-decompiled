@@ -14689,6 +14689,8 @@ public:
     friend class UCCSAFGetOutCover;
     friend class HaloRBTKamikaze;
     friend class CCSRBTMoveToCover;
+    friend class CCSRBTStrafeTarget;
+    friend class CCSRBTEncircleTarget;
     #ifndef HAGGAR_HOST
     ICCSMeatPuppet *m_pMeatPuppet;  // 0x8
     IGripAFInterface *m_pAFInterface;  // 0xC

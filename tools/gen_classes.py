@@ -87,7 +87,8 @@ EXTRA = {'UDKBase': {'IGripBTInterface': ['template <class T0> T0 *GetBlackboard
                                       'HG_PRIVATE:', 'template <class AO, class AF> int CreateActionInternal(const AO &);', 'public:']
                      + [f'friend class UCCSAF{a};' for a in ('ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor',
                                                              'StrafeTarget', 'EncircleTarget', 'FireBurst', 'EnterCover', 'GetInCover', 'GetOutCover')]
-                     + ['friend class HaloRBTKamikaze;', 'friend class CCSRBTMoveToCover;']}}
+                     + ['friend class HaloRBTKamikaze;', 'friend class CCSRBTMoveToCover;', 'friend class CCSRBTStrafeTarget;',
+                        'friend class CCSRBTEncircleTarget;']}}
 # the factory makes every action, through their protected constructors and SetObjective
 EXTRA['UDKBase'].update({f'CCSAF{a}': ['friend class CCSAFFactory;'] for a in (
     'ExitCover', 'Idle', 'MoveTo', 'StrafeTo', 'Flee', 'OrientToward', 'MoveToActor', 'StrafeTarget', 'EncircleTarget', 'FireBurst',
