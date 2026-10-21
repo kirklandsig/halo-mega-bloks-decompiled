@@ -142,17 +142,17 @@ void CCSCSCover::Tick(float)
     }
 }
 
-// score 21 (was 24): the zeroing stores are in a different order, the two
-// position vectors are loaded component by component instead of one vector
-// at a time, and the cover orientations are written to fresh stack slots
-// instead of the ones the difference vector and the rotation have vacated.
+// score 19 (was 21): the two position vectors are still loaded component by
+// component instead of one vector at a time, and the cover orientation is
+// written to a fresh stack slot instead of the one the difference vector has
+// vacated. The zeroing matches now: retail's Grip_Rotation constructor zeroes
+// Roll, Yaw and Pitch in that order, so the shared header's constructor zeroes
+// them in that order too (a member initialiser list zeroes them the other way
+// round, and then the stores come out in the wrong order).
 // @retail 0x8332F4B0
 Grip_Rotation CCSCSCover::GetCrouchCoverRot()
 {
-    Grip_Rotation Rotation;  // zeroed again below, in the order retail stores it
-    Rotation.Roll = 0;
-    Rotation.Yaw = 0;
-    Rotation.Pitch = 0;
+    Grip_Rotation Rotation;  // the constructor zeroes it
     Grip_Vector TargetPosition = m_target.GetPosition();
     Grip_Vector CharPosition = m_pMeatPuppet->GetCharacter().GetPosition();
     Rotation = (TargetPosition - CharPosition).Rotation();

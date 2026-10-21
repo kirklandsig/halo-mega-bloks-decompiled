@@ -56,15 +56,16 @@ int CCSRBTShootFromCover::ExitCover(CCSAFFactory *pFactory, GripAFScheduler *pSc
 }
 
 // @retail 0x83345E10
-// Near: retail keeps the shared "return false" block between the character test
-// and the cover code; ours merges the two early exits into one block that the
-// compiler sinks to the end of the function.
 bool CCSRBTShootFromCover::TestPreCondition(IGripBTInterface *pInterface)
 {
     CCSBlackboard *pBB = pInterface->GetBlackboard<CCSBlackboard>();
     CCSMeatPuppetQuery *pQuery = pInterface->GetMeatPuppetQuery<CCSMeatPuppetQuery>();
     CCSTarget *pTarget = pBB->m_currentTarget.Get();
-    if (pTarget == 0 || pTarget->character == CCSCharacter::NONE)
+    if (pTarget != 0 && pTarget->character == CCSCharacter::NONE)
+    {
+        return false;
+    }
+    if (pTarget == 0)
     {
         return false;
     }

@@ -118,9 +118,17 @@ void CCSMessengerWorker::SetDebugOptions(const Grip::String &Options)
 // score 11 (was 33): retail forms the value pointer with one add of a clamped
 // offset (the name plus the smaller of dot+1 and the size); ours keeps the
 // dot's address from the scan loop and adds it in each arm, so the loop
-// carries an extra add and the pointer is built twice. Computing the clamped
-// offset instead matches retail's instruction count but moves the "yes" literal
-// setup ahead of the add, which shifts every register after it.
+// carries an extra add and the pointer is built twice. Clamping an offset
+// instead (unsigned int ValueOffset = Dot + 1; if (Size < ValueOffset)
+// ValueOffset = Size; pValue = pName + ValueOffset) reproduces retail's
+// instruction sequence and length exactly, but the compiler then hands r30 to
+// the string pointer instead of r31 (r31 keeps the option reference), swaps
+// the two operands of the pointer add and hoists the "yes" literal setup
+// above the add, which costs 13 register differences (near, score 33). The
+// clamp spelling does not change that: int or unsigned offset, a ternary
+// clamp, pointer casts, +=, an index expression, const locals, the two calls
+// swapped, the tail inside an if (Dot != -1) block, hoisted strncmp
+// temporaries and a 10 minute permuter run all give the same near 33 code.
 // @retail 0x8333C538
 void CCSMessengerWorker::SetDebugOption(const Grip::String &Option)
 {

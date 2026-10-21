@@ -118,7 +118,13 @@ void CCSRBTSearch::MoveToRandomLocation(IGripBTInterface *pInterface)
 }
 
 // near, score 5 (was 8): retail hands the Cast the actor it kept in r31,
-// ours reloads the iterator's member after the checks' calls
+// ours reloads the iterator's member after the checks' calls. The actor's two
+// reads (the checks' and the Cast's) are one value in retail and two in ours;
+// every shape that makes them one value splits it instead, into a load and a
+// copy to r31 (mr r31, r11). Tried: the actor in a local in the caller, the
+// checks moved out of operator* into the caller, operator* returning the
+// local instead of the member, the checks in an always-inline helper taking
+// the actor, a reference to the member, and no local at all.
 // @retail 0x83339098
 void CCSRBTSearch::FindNavigationPoints()
 {

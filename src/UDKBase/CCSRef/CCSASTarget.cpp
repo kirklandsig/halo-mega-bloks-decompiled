@@ -128,9 +128,10 @@ CCSTarget *CCSASTarget::GetClosestEntryVehicle(CCSBlackboard *pBB)
     return pClosest == &Closest ? 0 : pClosest;
 }
 
-// Todo: retail copies each new target into a register of its own before it
-// stores it, so the four blocks are a register copy longer than ours; the
-// rest of the blocks matches.
+// Retail tests the old target on its own before it looks at the new one, so
+// the compiler keeps the new target in a register of its own and copies it
+// into the blackboard; the single condition lets it use the returned register
+// directly instead.
 // @retail 0x83343D60
 void CCSASTarget::Tick(float)
 {
@@ -139,7 +140,11 @@ void CCSASTarget::Tick(float)
     CCSTarget *pRawEnemy = pBB->m_closestEnemy.Get();
     CCSTarget *pEnemy = (pRawEnemy == 0 || pRawEnemy->character == CCSCharacter::NONE) ? 0 : pRawEnemy;
     CCSTarget *pClosestEnemy = GetClosestEnemy(pBB);
-    if (pEnemy == 0 || pClosestEnemy == 0 || (pEnemy->range2D - pClosestEnemy->range2D) / pEnemy->range2D > CCSAnalysisTargetRangeFraction)
+    if (pEnemy == 0)
+    {
+        pBB->m_closestEnemy.Set(pClosestEnemy);
+    }
+    else if (pClosestEnemy == 0 || (pEnemy->range2D - pClosestEnemy->range2D) / pEnemy->range2D > CCSAnalysisTargetRangeFraction)
     {
         pBB->m_closestEnemy.Set(pClosestEnemy);
     }
@@ -147,7 +152,11 @@ void CCSASTarget::Tick(float)
     CCSTarget *pRawObjective = pBB->m_closestObjective.Get();
     CCSTarget *pObjective = (pRawObjective == 0 || pRawObjective->character == CCSCharacter::NONE) ? 0 : pRawObjective;
     CCSTarget *pClosestObjective = GetClosestObjective(pBB);
-    if (pObjective == 0 || pClosestObjective == 0 || (pObjective->range2D - pClosestObjective->range2D) / pObjective->range2D > CCSAnalysisTargetRangeFraction)
+    if (pObjective == 0)
+    {
+        pBB->m_closestObjective.Set(pClosestObjective);
+    }
+    else if (pClosestObjective == 0 || (pObjective->range2D - pClosestObjective->range2D) / pObjective->range2D > CCSAnalysisTargetRangeFraction)
     {
         pBB->m_closestObjective.Set(pClosestObjective);
     }
@@ -155,14 +164,22 @@ void CCSASTarget::Tick(float)
     CCSTarget *pRawReactive = pBB->m_closestReactiveTarget.Get();
     CCSTarget *pReactive = (pRawReactive == 0 || pRawReactive->character == CCSCharacter::NONE) ? 0 : pRawReactive;
     CCSTarget *pClosestReactive = GetReactiveTarget(pBB);
-    if (pReactive == 0 || pClosestReactive == 0 || (pReactive->range2D - pClosestReactive->range2D) / pReactive->range2D > CCSAnalysisTargetRangeFraction)
+    if (pReactive == 0)
+    {
+        pBB->m_closestReactiveTarget.Set(pClosestReactive);
+    }
+    else if (pClosestReactive == 0 || (pReactive->range2D - pClosestReactive->range2D) / pReactive->range2D > CCSAnalysisTargetRangeFraction)
     {
         pBB->m_closestReactiveTarget.Set(pClosestReactive);
     }
 
     CCSTarget *pVehicle = pBB->m_closestEntryVehicle.Get();
     CCSTarget *pClosestVehicle = GetClosestEntryVehicle(pBB);
-    if (pVehicle == 0 || pClosestVehicle == 0 || (pVehicle->range2D - pClosestVehicle->range2D) / pVehicle->range2D > CCSAnalysisTargetRangeFraction)
+    if (pVehicle == 0)
+    {
+        pBB->m_closestEntryVehicle.Set(pClosestVehicle);
+    }
+    else if (pClosestVehicle == 0 || (pVehicle->range2D - pClosestVehicle->range2D) / pVehicle->range2D > CCSAnalysisTargetRangeFraction)
     {
         pBB->m_closestEntryVehicle.Set(pClosestVehicle);
     }

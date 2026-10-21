@@ -257,7 +257,18 @@ CCSBrain::~CCSBrain()
 // picks it per loop. Tried: a named element, a pointer to the data, the
 // const overload of operator[], a while loop, an unsigned index, the
 // guard as a truth test and inside the loop condition, the shared
-// operator[] inline itself, and the permuter (6.7k rewrites).
+// operator[] inline itself, and the permuter (6.7k rewrites); also a
+// reference binding, address-of, a hoisted Num(), GetData()[i] and
+// m_ContainerContent[i], the offset written before the base in the
+// pointer arithmetic, the guard in its other spellings, the declaration
+// order, and a file-local helper that indexes the array. Newly tried:
+// GetData()[i] written out, the data pointer bound before the loop, the
+// element read through pointer arithmetic with the offset written both
+// ways round, the guard as a truth test and as 0 != p, the two bindings
+// swapped, and a const reference to the array. None of them moves the
+// order of the two registers; the same source shape compiles to one
+// order in the perception loop and the other in the control loop, so it
+// is the compiler's choice, not the spelling.
 void CCSBrain::SchedulerRegistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();
@@ -305,7 +316,18 @@ void CCSBrain::SchedulerRegistration()
 // inside the inlined Grip_Array::operator[], and MSVC picks it per loop.
 // Tried: a named element, a pointer to the data, the const overload of
 // operator[], a while loop, an unsigned index, the shared operator[]
-// inline itself, and the permuter (6.7k rewrites).
+// inline itself, and the permuter (6.7k rewrites); also a reference
+// binding, address-of, a hoisted Num(), GetData()[i] and
+// m_ContainerContent[i], the offset written before the base in the
+// pointer arithmetic, the guard in its other spellings, the declaration
+// order, and a file-local helper that indexes the array. Newly tried:
+// GetData()[i] written out, the data pointer bound before the loop, the
+// element read through pointer arithmetic with the offset written both
+// ways round, the guard as a truth test and as 0 != p, the two bindings
+// swapped, and a const reference to the array. None of them moves the
+// order of the two registers. Retail's own two loops here differ in the
+// order although the source of the two is symmetric, so the choice is
+// the compiler's and the spelling of the loop cannot reach it.
 void CCSBrain::SchedulerUnregistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();

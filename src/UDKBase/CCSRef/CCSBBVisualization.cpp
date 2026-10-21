@@ -50,11 +50,16 @@ bool CCSBBTargetVisualization::GetIsVisible()
     return m_pTarget != 0 ? m_pTarget->isVisible : false;
 }
 
-// score 7 (was 14): the members array address is computed at the top of the
-// function here (addi r27, r30, 8) where retail computes it just before its
-// first use, and the three global heap accesses keep the relocation
-// displacement instead of the linked one retail shows (if-else, ternary and
-// nested-if value forms tried)
+// score 7 (was 14): apart from the placement of one instruction the code is
+// retail's. Retail computes the members array address (addi r27, r30, 8) just
+// before the first AddItem; a reference bound anywhere at or before that use
+// moves the address to retail's place but the allocator then numbers the
+// members pointer r29 and the two "YES"/"NO" string pointers r28 and r27
+// (retail: r27, r29, r28), which scores 14; the reference at the top keeps
+// retail's numbering but leaves the address at the top of the function. Tried:
+// no reference, a pointer assigned at the first use, the same through -> and
+// (*), this->m_members, the address spelled as a cast, the reference bound
+// after the member constructor, and the string temporaries reshaped
 // @retail 0x8334BDA8
 void CCSBBTargetVisualization::Refresh()
 {

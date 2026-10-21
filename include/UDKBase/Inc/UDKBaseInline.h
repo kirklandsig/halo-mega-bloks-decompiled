@@ -161,7 +161,7 @@ inline Grip_ArrayPOD<GripAFModifier *, 2> &GripAFAction::GetModifiers() { return
 
 // grip_rotation.h
 #ifndef HAGGAR_HOST
-inline Grip_Rotation::Grip_Rotation() : Pitch(0), Yaw(0), Roll(0) {}
+inline Grip_Rotation::Grip_Rotation() { Roll = 0; Yaw = 0; Pitch = 0; }
 inline Grip_Rotation::Grip_Rotation(int InPitch, int InYaw, int InRoll) : Pitch(InPitch), Yaw(InYaw), Roll(InRoll) {}
 inline Grip_Rotation::Grip_Rotation(const FRotator &R) : Pitch(R.Pitch), Yaw(R.Yaw), Roll(R.Roll) {}
 #endif

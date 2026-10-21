@@ -124,7 +124,9 @@ void CCSCSMovementGwNav::DoStop()
 // stores ahead of the loads, which leaves only the interleaving itself. A
 // named FVector, const locals, an explicit FVector cast, casting the position
 // copy, swapping the two statements and a permuter run all leave the order
-// alone.
+// alone; so do copying the destination into a named FVector, converting it
+// in place, taking the position or the destination by value, a memcpy of the
+// position and an explicit Vec3f constructor.
 // @retail 0x8334B5B8
 bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 {

@@ -10,7 +10,7 @@ A proper decomp of the game's own code and scripts: n-Space's native C++ (2,061 
 
 - Game: Project Haggar, the Halo Mega Bloks game by n-Space for the Xbox 360, cancelled in 2013. Engine: Unreal Engine 3, exactly UDK July 2012 BETA 2 (engine version 10246, changelist 1340247).
 - Inputs: a development build with a full private PDB (237,168 functions, 759,808 type records). The executable is a devkit-signed XEX2.
-- Matching compiler: XDK 21076, cl 16.00.11886 for PowerPC, with each object's command line from the PDB. 2,061 n-Space functions (248,492 bytes) in scope, 2,007 of them matched (212,400 bytes), 34 near and 20 todo. tools/check.py compares a source file's functions with retail; tools/permute.py searches random source rewrites for a closer match (docs/DECOMPILING.md).
+- Matching compiler: XDK 21076, cl 16.00.11886 for PowerPC, with each object's command line from the PDB. 2,061 n-Space functions (248,492 bytes) in scope, 2,012 of them matched (215,456 bytes), 31 near and 18 todo. tools/check.py compares a source file's functions with retail; tools/permute.py searches random source rewrites for a closer match (docs/DECOMPILING.md).
 - Port: the recompiled build runs natively on Windows x86-64 from boot to the first level (ReXGlue SDK codegen and its Xenia-derived runtime; 237,162 functions, no unimplemented instruction), and builds on Linux. Next: Linux on real GPUs, then a native renderer for handhelds.
 - Scripts: 758 UnrealScript classes (n-Space's own and those modified from UDK) are in script/, with every decompiler error fixed; tools/udk_compile.py checks them with UDK's compiler.
 - Data: docs/FORMATS.md documents the package and map formats; tools/map_export.py exports actor placements from your own copy.

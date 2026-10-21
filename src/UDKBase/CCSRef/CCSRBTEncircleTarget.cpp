@@ -72,7 +72,10 @@ GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBT
 // score 8 (was 36): the meat puppet is read into a local and tested with an
 // integer compare (retail's cmpwi), and the blackboard and the scheduler end
 // up in swapped registers (r26/r27) against retail's choice. The declaration
-// order, const pointers and fetching them through the brain leave it alone.
+// order, const pointers and fetching them through the brain leave it alone;
+// so do swapping the two accessor calls, making the blackboard or the
+// scheduler const, an auto or a copied temporary for either of them, and
+// splitting the puppet's null test into two tests.
 // @retail 0x83330CE0
 GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *, bool bInterrupt)
 {

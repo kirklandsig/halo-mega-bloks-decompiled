@@ -393,11 +393,11 @@ void ACCSController::TakePossession()
     GripEngineServices::GetAIManager()->AddBrainFinder(&s_brainFinderCCS);
 }
 
-// near: both FVector::Normalize calls are forced inline now, so the length
-// matches retail's, but the eye position still lands in another stack slot
-// (retail reuses it for the facing copy, which it takes from
-// FRotator::Vector's result); writing both normalizes out by hand gets
-// 1,368 bytes, still not retail's.
+// Retail copies the facing vector out of the pointer FRotator::Vector
+// returns, so the copy is taken through the call's result and the slot the
+// rotation call returns into is the one the vector came from. Assigning the
+// vector in a separate statement from its declaration keeps the result in a
+// register of its own, which is what makes the copy read it there.
 // @retail 0x83337BB0
 unsigned int ACCSController::Tick(float DeltaTime, ELevelTick TickType)
 {
@@ -444,7 +444,8 @@ unsigned int ACCSController::Tick(float DeltaTime, ELevelTick TickType)
             if (Pawn->IsA(AGwNavPawn::StaticClass()))
             {
                 FVector Dir2D = AimDir;
-                FVector Facing = Pawn->Rotation.Vector();
+                FVector Facing;
+                Facing = Pawn->Rotation.Vector();
                 FVector Facing2D = Facing;
                 Facing2D.Z = 0.0f;
                 Dir2D.Z = 0.0f;

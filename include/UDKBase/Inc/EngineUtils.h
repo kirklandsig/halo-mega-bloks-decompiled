@@ -21,11 +21,14 @@ protected:
 public:
     __forceinline AActor *operator*()
     {
-        AActor *const Actor = CurrentActor;
+        // The actor is read once, through a volatile pointer, so that the
+        // compiler keeps it in a register: the checks call out, and retail
+        // hands the same copy to the caller's cast.
+        AActor *const Actor = *(AActor * volatile *)&CurrentActor;
 #line 272
         check(Actor);
         checkf(!Actor->HasAnyFlags(RF_Unreachable), L"%s", *Actor->GetFullName(0));
-        return CurrentActor;
+        return Actor;
     }
     __forceinline operator unsigned int() { return !ReachedEnd; }
 };

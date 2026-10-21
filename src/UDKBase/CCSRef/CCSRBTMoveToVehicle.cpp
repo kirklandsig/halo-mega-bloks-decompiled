@@ -7,8 +7,17 @@
 
 extern FFeedbackContext *GWarn;
 
-// score 8 (was 8), near: retail places the in-progress return after the
-// epilogue and we before it; the permuter (6.7k rewrites) found nothing
+// score 8 (was 8), near: the block graph is ours, only the order of the
+// last three blocks is not. Retail keeps the in-progress return after the
+// shared epilogue (it branches back to it) and lets the failure return fall
+// into the epilogue; we keep the in-progress return before the epilogue and
+// branch the failure return over it. That is the compiler's block ordering,
+// not the code: splitting the pawn test into its own early return, an else
+// with its own in-progress return, an else on the outer test, moving the log
+// out of the else, inverting the actor and the vehicle test, a local bool for
+// the pawn condition, the inverted condition, the cast in a temporary, the
+// result in a local and a permuter run (6.7k rewrites) all give the same
+// near 8 code.
 // @retail 0x8333F9D0
 GripRBTNode::EBTExecutionResult CCSRBTMoveToVehicle::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {

@@ -192,14 +192,26 @@ bool CCSCSMovement::IsVehicleAndCloseEnough()
     return false;
 }
 
-// score 14 (was 14), todo: 8 bytes short; retail's inlined system lookup
-// keeps a separate null result for each failed test. Seventeen caller-side
-// forms and the polarity and temporary forms of the shared
-// GetAIManagerSystem inline all compile to the same code.
+// The system lookup is written as an if / else-if / else chain: retail keeps a
+// separate null result for each failed test, where the shared
+// GetAIManagerSystem inline folds them into one block.
 // @retail 0x8333BE98
 bool CCSCSMovement::IsProxyVisible()
 {
-    CCSDebugOptions *pOptions = GripEngineServices::GetAIManagerSystem<CCSDebugOptions>();
+    GripAIManager *pManager = GripEngineServices::GetAIManager();
+    CCSDebugOptions *pOptions;
+    if (pManager == 0)
+    {
+        pOptions = 0;
+    }
+    else if (pManager->m_aiSystems.Num() <= CCSDebugOptions::SGetId())
+    {
+        pOptions = 0;
+    }
+    else
+    {
+        pOptions = static_cast<CCSDebugOptions *>(pManager->m_aiSystems[CCSDebugOptions::SGetId()]);
+    }
     return m_activationState == AS_ACTIVE && pOptions != 0 && pOptions->IsOptionEnabled(CCSDebugOptions::MOVEMENT);
 }
 

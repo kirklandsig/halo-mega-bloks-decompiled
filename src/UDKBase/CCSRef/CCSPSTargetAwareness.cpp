@@ -301,12 +301,10 @@ void CCSPSTargetAwareness::UpdateCurrentTarget()
     }
 }
 
-// near: retail adds DeltaTime to the target's CNTAge the other way round
-// (fadds f13, f31, f0); the age is read into a local, which also makes the
-// threat array's element address match (the sum's operand order, += and
-// named temporaries tried; the compiler canonicalises a commutative float
-// sum, so the source order and a cast on either side all give the same
-// code)
+// score 2 (was 2): the CNTAge sum has its two operands the other way round;
+// the compiler loads the age into f0 and always adds it first, and every
+// source spelling of the sum (both orders, +=, a temporary, a cast) gives
+// the same code
 // @retail 0x8333D9D0
 int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
 {
@@ -489,12 +487,11 @@ void CCSPSTargetAwareness::AddThreatTarget(AActor *pActor)
     }
 }
 
-// near: retail adds the element's offset to the array's base (add r11, r11,
-// r31) and ours the base to the offset; the address comes from
-// Grip_Array::DestructItems, and no array-access form tried (operator[],
-// GetData()[i], GetData() + i, a typed pointer, a char* cast in
-// DestructItems) changes the order; the count of the out-of-range targets
-// is now kept in a register across OnThreatTargetDestroyed
+// score 1 (was 1): retail adds the element's offset to the array's base (add
+// r11, r11, r31) and ours the base to the offset; no array-access form tried
+// (operator[], GetData()[i], GetData() + i, a typed pointer, a char* cast in
+// DestructItems), a reference to the blackboard or a ten minute permuter run
+// changes the order
 // @retail 0x833579B8
 void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
 {
@@ -663,26 +660,26 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
     }
 }
 
-// near: three fadds have their operands the other way round (DeltaTime
-// first in retail, for the first loop's and the threat target's LKPAge and
-// the distance square first for the friendly limit); the compiler
-// canonicalises a commutative float sum, so +=, = a + b, both operand
-// orders and named locals all give the same code; the threat target's
-// position is stored X, Z, Y (the member stores written out give other
-// code)
+// score 6 (was 14): the vehicles loop's LKPAge sum still has its operands
+// the other way round, and the friendly limit's comparison is compared the
+// other way round (a while loop over the targets, the position read into a
+// named local and the sums written with DeltaTime first are what the
+// compiler needs for the other two sums)
 // @retail 0x8333CD70
 void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
 {
     CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
     ICCSMeatPuppet *pMeatPuppet = m_pBrain->m_meatPuppet;
-    for (int i = 0; i < pBB->m_targets.Num(); i++)
+    int i = 0;
+    while (i < pBB->m_targets.Num())
     {
         CCSTarget &Target = pBB->m_targets[i];
-        Target.position = Target.character.GetPosition();
+        const Grip_Vector Position = Target.character.GetPosition();
+        Target.position = Position;
         Target.range2D = (Target.position - pMeatPuppet->GetCharacter().GetPosition()).Size2D();
         if (!Target.isVisible)
         {
-            Target.LKPAge += DeltaTime;
+            Target.LKPAge = DeltaTime + Target.LKPAge;
         }
         if (Target.isVisible || Target.isHeard)
         {
@@ -694,7 +691,7 @@ void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
         if (pBB->m_friendlies.Num() > 0)
         {
             Grip_Vector Eyes = Target.character.GetEyesPosition();
-            Grip_Vector Weapon = pMeatPuppet->GetWeaponStartPosition();
+            const Grip_Vector Weapon = pMeatPuppet->GetWeaponStartPosition();
             Grip_Vector Direction = Eyes - Weapon;
             const float Radius = pMeatPuppet->GetCharacter().GetSize() * 2.0f;
             const float DistanceSq = Direction.SizeSquared2D();
@@ -705,13 +702,13 @@ void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
                 for (int j = 0; j < pBB->m_friendlies.Num(); j++)
                 {
                     Grip_Vector FriendDirection = pBB->m_friendlies[j].character.GetEyesPosition() - Weapon;
-                    const float FriendDistanceSq = FriendDirection.SizeSquared2D();
+                    const float FriendDistanceSq = (float)(FriendDirection.SizeSquared2D());
                     if (FriendDistanceSq >= Limit)
                     {
                         continue;
                     }
                     const float Dot = FriendDirection | Direction;
-                    if (Dot > 0.0f && Dot * Dot / (FriendDistanceSq * DistanceSq) >= (Ratio - 0.75f) / DistanceSq * FriendDistanceSq + 0.75f)
+                    if (0.0f < Dot && 0.75f + (Ratio - 0.75f) / DistanceSq * FriendDistanceSq <= Dot * Dot / (FriendDistanceSq * DistanceSq))
                     {
                         Target.canShoot = false;
                         Target.ClearOfFriendlies = false;
@@ -720,6 +717,7 @@ void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
                 }
             }
         }
+        i += 1;
     }
     for (int i = 0; i < pBB->m_Vehicles.Num(); i++)
     {
@@ -734,14 +732,14 @@ void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
             pVehicle = (AUDKVehicle *)Vehicle.character.GetActor();
         }
         Vehicle.position = Vehicle.character.GetPosition();
-        Vehicle.range2D = (Vehicle.position - pMeatPuppet->GetCharacter().GetPosition()).Size2D();
+        Vehicle.range2D = ((Vehicle.position - pMeatPuppet->GetCharacter().GetPosition()).Size2D());
         if (pVehicle != 0)
         {
             Vehicle.isAvailableVehicle = pVehicle->Seats(0).SeatPawn == 0 || pVehicle->Seats(0).SeatPawn->Controller == 0;
         }
         if (!Vehicle.isVisible)
         {
-            Vehicle.LKPAge = Vehicle.LKPAge + DeltaTime;
+            Vehicle.LKPAge = DeltaTime + Vehicle.LKPAge;
         }
     }
     if (pBB->GetHighestThreatTarget() != 0)
@@ -749,15 +747,16 @@ void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
         CCSTarget *pTarget = pBB->GetHighestThreatTarget();
         if (pTarget->character != CCSCharacter::NONE)
         {
-            pTarget->position = pTarget->character.GetPosition();
-            Grip_Vector Position = pMeatPuppet->GetCharacter().GetPosition();
+            const Grip_Vector ThreatPosition = pTarget->character.GetPosition();
+            pTarget->position = ThreatPosition;
+            const Grip_Vector Position = pMeatPuppet->GetCharacter().GetPosition();
             const float DeltaX = pTarget->position.X - Position.X;
-            const float DeltaY = pTarget->position.Y - Position.Y;
+            const float DeltaY = (float)((pTarget->position.Y - Position.Y));
             pTarget->range2D = appSqrt(DeltaX * DeltaX + DeltaY * DeltaY);
         }
-        if (!pTarget->isVisible)
+        if ((bool)(!pTarget->isVisible))
         {
-            pTarget->LKPAge += DeltaTime;
+            pTarget->LKPAge = DeltaTime + pTarget->LKPAge;
         }
     }
 }

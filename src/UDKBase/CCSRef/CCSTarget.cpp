@@ -112,9 +112,12 @@ void EmitTargetMembers(void *pMem, const CCSTarget &Target, CCSTarget *pTarget)
 // CCSTarget::`scalar deleting destructor'
 
 // score 12 (was 12), near: the two FVector temporaries' loads and stores
-// interleave in ours; retail builds one, then the other. Named locals, named
-// FVector conversions, explicit conversions and both at once all regress to
-// todo.
+// interleave in ours; retail builds one, then the other (the registers match
+// exactly). Tried and all worse: named Kaim::Vec3f locals in both orders,
+// named FVector and Grip_Vector locals, references to both, this->position,
+// static_cast<FVector> on either or both arguments, and the two arguments
+// swapped (a diagnostic, and it scores the same, so the schedule is not tied
+// to the argument order). The permuter (600s) found nothing.
 // @retail 0x8334D020
 void CCSTarget::FindDestinationReachable(Grip_Vector Destination)
 {
