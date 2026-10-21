@@ -492,11 +492,11 @@ CCSTarget *CCSBlackboard::GetSpecificTarget(FString TargetName)
     return 0;
 }
 
-// Near: the new out-of-range element's address is computed in the other
-// two registers than retail uses (3 bytes): retail loads the count into
-// r10 and the data pointer into r11, ours the other way round. The
-// inlined position copies match once the position is read before the
-// target reference.
+// score 8 (was 8), near: the new out-of-range element's address is computed
+// in the other two registers than retail uses (3 bytes): retail loads the
+// count into r10 and the data pointer into r11, ours the other way round.
+// The order is the commutative add inside the inlined Grip_Array::AddItem,
+// so it cannot be flipped from this file without changing the shared header.
 // Moves targets beyond OutRange to the out-of-range list, and those back
 // within InRange to the target list.
 // @retail 0x83356838

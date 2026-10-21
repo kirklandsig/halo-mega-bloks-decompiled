@@ -155,10 +155,17 @@ bool CCSCSMovementUnreal::DoMove()
     return true;
 }
 
+// score 20 (was 30): the retail keeps four stack slots (the character's
+// result at 0x90, the position at 0x78, the difference at 0x68 and the
+// orientation at 0x50 in a 0xc0 frame) where ours puts the difference at
+// 0x60 and the rotation at 0x70, and it copies the rotation's pointer
+// into r9 before the second character call where ours reads it from r3.
 // @retail 0x8332AFE8
 bool CCSCSMovementUnreal::OrientationReached() const
 {
-    const int TargetYaw = (m_orientObj.target - m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition()).Rotation().Yaw;
+    const CCSCharacter Character = m_pMeatPuppet->GetCharacter();
+    const Grip_Vector Position = Character.m_gameCharacter.GetPosition();
+    const int TargetYaw = (m_orientObj.target - Position).Rotation().Yaw;
     const int Yaw = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetOrientation().Yaw;
     const int Delta = Abs((TargetYaw & 0xFFFF) - (Yaw & 0xFFFF));
     return Delta < s_orientationTolerance || Delta > 0xFFFF - s_orientationTolerance;

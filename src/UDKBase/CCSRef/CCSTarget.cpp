@@ -111,8 +111,10 @@ void EmitTargetMembers(void *pMem, const CCSTarget &Target, CCSTarget *pTarget)
 // @retail 0x83334D00
 // CCSTarget::`scalar deleting destructor'
 
-// Near: the two FVector temporaries' loads and stores interleave in ours;
-// retail builds one, then the other (tried named locals).
+// score 12 (was 12), near: the two FVector temporaries' loads and stores
+// interleave in ours; retail builds one, then the other. Named locals, named
+// FVector conversions, explicit conversions and both at once all regress to
+// todo.
 // @retail 0x8334D020
 void CCSTarget::FindDestinationReachable(Grip_Vector Destination)
 {

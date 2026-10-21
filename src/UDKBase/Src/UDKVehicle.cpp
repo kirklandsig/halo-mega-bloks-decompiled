@@ -174,9 +174,13 @@ void AUDKVehicle::moveTowardGwNavLookSteer(const FVector &Direction)
     }
 }
 
-// Near: retail's normalize of Right multiplies X * Scale where ours has
-// Scale * X, and two float registers swap (tried statement orders, building
-// Right from the matrix row, and the dot products written out).
+// score 51 (was 33), near: FVector::Normalize sums X, Z, Y (UnMath.h), which
+// matches moveTowardGwNavLSEncircle; X, Y, Z gave this function 33 and
+// Encircle 18. Retail's normalize of Dir fuses the Z and X squares (it loads X, then
+// Z) where the shared inline fuses Y and X here, so the whole tree of the
+// sum differs; the two float registers also swap (tried the six operand
+// orders of the sum, parenthesised groupings, a hand-written normalization
+// and permuting the three Normalize calls).
 // @retail 0x83386E18
 void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
 {
@@ -226,15 +230,14 @@ void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
     }
 }
 
-// Near: retail loads Dir.X before Dir.Y, so the two swap registers (tried
-// declaration order).
 // @retail 0x83387040
 void AUDKVehicle::moveTowardGwNavLSDefault(const FVector &Direction)
 {
     FVector Dir = Direction;
     float Radius, Height;
     GetBoundingCylinder(Radius, Height);
-    const float Distance = Dir.Size2D() - Radius;
+    // the size is written out: retail squares Dir.X first
+    const float Distance = appSqrt(Dir.X * Dir.X + Dir.Y * Dir.Y) - Radius;
     if (Distance != 0.0f)
     {
         if (Throttle == 0.0f)
@@ -254,9 +257,6 @@ void AUDKVehicle::moveTowardGwNavLSDefault(const FVector &Direction)
     }
 }
 
-// Near: retail sums Dir's squares (and the forward dot) Y, Z, X where ours
-// goes Z, Y, X (tried normalizing first and a temporary focal point, which
-// fixed the stack layout).
 // @retail 0x83387168
 void AUDKVehicle::moveTowardGwNavLSEncircle(const FVector &Direction)
 {

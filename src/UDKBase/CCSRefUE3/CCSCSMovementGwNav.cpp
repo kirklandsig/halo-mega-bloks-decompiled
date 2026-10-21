@@ -117,9 +117,10 @@ void CCSCSMovementGwNav::DoStop()
     }
 }
 
-// Near (and FindNavMeshDistance): retail interleaves converting the
-// destination with copying the bot's position; ours copies first (tried a
-// named FVector, const locals, the conversion inline in the call).
+// score 12 (was 12), near: retail interleaves converting the destination
+// with copying the bot's position; ours copies first. A named FVector, const
+// locals, the conversion inline in the call, swapping the two statements and
+// copying the position through a reference all leave it alone.
 // @retail 0x8334B5B8
 bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 {
@@ -141,6 +142,7 @@ bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
     return true;
 }
 
+// score 12 (was 12), near: the same interleaving as FindNavMeshPath.
 // @retail 0x8334B6B8
 bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Distance, float) const
 {
@@ -163,8 +165,9 @@ bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Dis
     return true;
 }
 
-// Todo (304 bytes vs 308): retail keeps the rotation result in memory and
-// a 16-byte larger frame (tried named locals for each step).
+// score 21 (was 21), todo: retail's frame is 16 bytes larger and it reuses
+// the position's stack slot for the second Character temporary, keeping the
+// first one separate (named locals for each step do not move it).
 // @retail 0x8332ABA8
 bool CCSCSMovementGwNav::OrientationReached() const
 {
@@ -185,14 +188,14 @@ bool CCSCSMovementGwNav::DestinationReached() const
     return pHandle->BotPointer->IsArrived();
 }
 
-// Todo (120 bytes vs 112): retail tests the bot's and the query's Kaim::Ptr
-// with signed compares (cmpwi, as a safe-bool conversion would) and without
-// our forwarded copies (slwi 0); tried the tests nested with named locals.
+// The two Kaim::Ptr tests are boolean operands, not comparisons with 0: that
+// is what makes the compiler test them with a signed compare (cmpwi) and
+// without the extra copy (slwi) that a != 0 comparison costs.
 // @retail 0x8332ACE0
 bool CCSCSMovementGwNav::PathFailed() const
 {
-    return m_pGwNavBotHandle != 0 && m_pGwNavBotHandle->BotPointer != 0 && m_pGwNavBotHandle->BotPointer->m_kaimbot != 0
-        && m_pGwNavBotHandle->BotPointer->m_kaimbot->m_pathFinderQuery != 0
+    return m_pGwNavBotHandle != 0 && m_pGwNavBotHandle->BotPointer != 0 && m_pGwNavBotHandle->BotPointer->m_kaimbot
+        && m_pGwNavBotHandle->BotPointer->m_kaimbot->m_pathFinderQuery
         && m_pGwNavBotHandle->BotPointer->m_kaimbot->m_pathFinderQuery->GetPathFinderResult() == Kaim::IPathFinderQuery::PathFinderFailure;
 }
 

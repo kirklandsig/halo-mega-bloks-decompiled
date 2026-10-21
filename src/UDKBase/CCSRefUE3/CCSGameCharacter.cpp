@@ -79,9 +79,8 @@ UUDKTargetableComponent *CCSGameCharacter::GetTargetableComponent()
     return m_targetableComponent;
 }
 
-// todo: ours repeats the epilogue in each branch (60 bytes longer) where
-// retail joins them; else-if chains, a combined condition and building the
-// raised position in an FVector tried
+// score 45 (was 159): the register allocation and the order of the word
+// stores still differ from retail
 // @retail 0x83321100
 Grip_Vector CCSGameCharacter::GetEyesPosition() const
 {
@@ -89,12 +88,17 @@ Grip_Vector CCSGameCharacter::GetEyesPosition() const
     if (m_pawn != 0)
     {
         Position = m_pawn->GetPawnViewLocation();
+        return Position;
     }
-    else if (m_actor != 0)
+    if (m_actor != 0)
     {
         if (m_targetableComponent != 0)
         {
-            Position = Grip_Vector(m_actor->Location.X, m_actor->Location.Y, m_actor->Location.Z + m_targetableComponent->fAITargetHeight);
+            FVector Loc;
+            Loc.X = m_actor->Location.X;
+            Loc.Y = m_actor->Location.Y;
+            Loc.Z = m_actor->Location.Z + m_targetableComponent->fAITargetHeight;
+            Position = Loc;
         }
         else
         {

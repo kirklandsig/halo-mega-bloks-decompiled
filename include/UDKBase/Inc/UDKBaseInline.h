@@ -328,7 +328,14 @@ inline void CCSBlackboard::FlagReactiveTarget() { m_closestReactiveTarget.FlagAs
 inline void CCSBlackboard::FlagHasBecomeAware() { m_bHasBecomeAware.FlagAsUsed(); }
 inline void CCSBlackboard::SetHeatGenerated(float Heat) { m_heatGenerated.Set(Heat); }
 inline float CCSBlackboard::GetHeatGenerated() const { return m_heatGenerated.Get(); }
-inline void CCSBlackboard::ClearMoveCommand() { m_moveCommand.Set(MOVE_CMD_NONE); }
+// Spelled out rather than m_moveCommand.Set(MOVE_CMD_NONE): retail stores the
+// value through the blackboard's address (blackboard + 0x638) and calls
+// DirtyBlackboard on the member, which Set's own form does not produce.
+inline void CCSBlackboard::ClearMoveCommand()
+{
+    m_moveCommand.m_value = MOVE_CMD_NONE;
+    m_moveCommand.DirtyBlackboard();
+}
 inline void CCSBlackboard::FlagMoveCommandAsUsed()
 {
     m_moveCommand.FlagAsUsed();

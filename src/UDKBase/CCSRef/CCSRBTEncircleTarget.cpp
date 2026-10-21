@@ -69,15 +69,19 @@ GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBT
     return ER_INPROGRESS;
 }
 
-// todo: 4 bytes long; retail tests the meat puppet with a signed compare
-// (cmpwi) and its saved registers differ (this, the interface, the brain)
+// score 8 (was 36): the meat puppet is read into a local and tested with an
+// integer compare (retail's cmpwi), and the blackboard and the scheduler end
+// up in swapped registers (r26/r27) against retail's choice. The declaration
+// order, const pointers and fetching them through the brain leave it alone.
 // @retail 0x83330CE0
 GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *, bool bInterrupt)
 {
     CCSBrain *pBrain = static_cast<CCSBrain *>(pInterface);
     CCSBlackboard *pBB = pInterface->GetBlackboard<CCSBlackboard>();
     GripAFScheduler *pScheduler = pInterface->GetActionScheduler();
-    if (pBrain->m_meatPuppet == 0 || pBrain->m_meatPuppet->GetCharacter().GetActor() == 0)
+    // The puppet is compared as an integer, as retail does.
+    ICCSMeatPuppet *pPuppet = pBrain->m_meatPuppet;
+    if (reinterpret_cast<int>(pPuppet) == 0 || pPuppet->GetCharacter().GetActor() == 0)
     {
         return ER_FAILURE;
     }

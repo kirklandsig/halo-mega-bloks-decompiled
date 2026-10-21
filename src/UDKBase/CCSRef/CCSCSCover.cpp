@@ -142,9 +142,10 @@ void CCSCSCover::Tick(float)
     }
 }
 
-// near: the zeroing stores and the two position temporaries are laid out
-// differently (a 0x10 bigger frame; zeroing orders and a named target
-// position tried)
+// score 21 (was 24): the zeroing stores are in a different order, the two
+// position vectors are loaded component by component instead of one vector
+// at a time, and the cover orientations are written to fresh stack slots
+// instead of the ones the difference vector and the rotation have vacated.
 // @retail 0x8332F4B0
 Grip_Rotation CCSCSCover::GetCrouchCoverRot()
 {
@@ -153,7 +154,8 @@ Grip_Rotation CCSCSCover::GetCrouchCoverRot()
     Rotation.Yaw = 0;
     Rotation.Pitch = 0;
     Grip_Vector TargetPosition = m_target.GetPosition();
-    Rotation = (TargetPosition - m_pMeatPuppet->GetCharacter().GetPosition()).Rotation();
+    Grip_Vector CharPosition = m_pMeatPuppet->GetCharacter().GetPosition();
+    Rotation = (TargetPosition - CharPosition).Rotation();
     Rotation = Rotation - m_currentCover.GetOrientation();
     Rotation.Normalize();
     if (Rotation.Yaw > 0)

@@ -249,8 +249,9 @@ CCSBrain::~CCSBrain()
 }
 
 // @retail 0x8333B960
-// Near: retail loads the array element with the other order of the indexed
-// load's two registers.
+// score 1 (was 1): the indexed load of the array element has its two
+// registers the other way round (rewriting the shared
+// Grip_Array::operator[] inline and the permuter change nothing)
 void CCSBrain::SchedulerRegistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();
@@ -291,8 +292,9 @@ void CCSBrain::SchedulerRegistration()
 }
 
 // @retail 0x8333BA88
-// Near: retail loads the array element with the other order of the indexed
-// load's two registers.
+// score 1 (was 1): the indexed load of the array element has its two
+// registers the other way round (rewriting the shared
+// Grip_Array::operator[] inline and the permuter change nothing)
 void CCSBrain::SchedulerUnregistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();

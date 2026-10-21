@@ -56,10 +56,11 @@ bool CCSAFMoveToActor::TransitionTo(GripAFAction *)
     return true;
 }
 
-// Todo: the same code as retail but for the constant 1.0, which ours keeps
-// in a saved FPR across the GetNavAdjustedLocation call and retail reloads
-// (16 bytes of save and restore; comparing Camo with a double 1.0 or with
-// >= changes nothing).
+// score 49 (was 49), todo: the same code as retail but for the constant 1.0,
+// which ours keeps in a saved FPR across the GetNavAdjustedLocation call and
+// retail reloads (16 bytes of save and restore; comparing Camo with a double
+// 1.0 or with >= changes nothing). Retail also opens with the _savegprs_14
+// helper (r14-r31 saved in one call) where ours saves the registers by hand.
 // @retail 0x8332D4E0
 void CCSAFMoveToActor::Tick(float DeltaTime)
 {

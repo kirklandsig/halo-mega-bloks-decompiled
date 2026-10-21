@@ -9,9 +9,14 @@ inline FVector FVector::operator-(const FVector &V) const { return FVector(X - V
 inline float FVector::SizeSquared() const { return X * X + Y * Y + Z * Z; }
 inline float FVector::operator|(const FVector &V) const { return X * V.X + Y * V.Y + Z * V.Z; }
 inline FRotator::FRotator(int InPitch, int InYaw, int InRoll) : Pitch(InPitch), Yaw(InYaw), Roll(InRoll) {}
+// The square sum is written Z before Y on purpose: the compiler fuses the
+// last two products of the sum into a single multiply-add, so the order of
+// the terms decides which pair it fuses. Retail fuses Z and Y here, which is
+// what AUDKVehicle::moveTowardGwNavLSEncircle needs; the same inline is
+// compiled the other way round in moveTowardGwNavLSStrafe.
 inline unsigned int FVector::Normalize(float Tolerance)
 {
-    const float SquareSum = X * X + Y * Y + Z * Z;
+    const float SquareSum = X * X + Z * Z + Y * Y;
     if (SquareSum > Tolerance)
     {
         const float Scale = appInvSqrt(SquareSum);

@@ -117,8 +117,8 @@ void CCSRBTSearch::MoveToRandomLocation(IGripBTInterface *pInterface)
     pScheduler->Execute(m_actionHandle);
 }
 
-// todo: 4 bytes long, as CCSEngineServices::FindAllCovers (the actor
-// iterator's checked actor)
+// near, score 5 (was 8): retail hands the Cast the actor it kept in r31,
+// ours reloads the iterator's member after the checks' calls
 // @retail 0x83339098
 void CCSRBTSearch::FindNavigationPoints()
 {

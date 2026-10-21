@@ -6,32 +6,48 @@
 #include "../Src/HaloRBTKamikaze.cpp"
 #include "CCSBlackboard.cpp"
 
+static __forceinline bool FrontZone(float Forward, float Right)
+{
+    return Forward >= 0.0f && Right <= 0.0f;
+}
+static __forceinline bool RightZone(float Forward, float Right)
+{
+    return Forward >= 0.0f && Right >= 0.0f;
+}
+static __forceinline bool BehindZone(float Forward, float Right)
+{
+    return Forward <= 0.0f && Right >= 0.0f;
+}
+static __forceinline bool LeftZone(float Forward, float Right)
+{
+    return Forward <= 0.0f && Right <= 0.0f;
+}
+
 // @retail 0x83324F88
 void CCSRBTTargetAngle::FlagUsedBBMembers(GripBlackboard *pBlackboard)
 {
     static_cast<CCSBlackboard *>(pBlackboard)->FlagCurrentTarget();
 }
 
-// todo: 20 bytes short; retail builds each quadrant flag in r11 and copies it
-// masked into its own register (as an inlined helper's result would be);
-// ours computes each in place (if/else forms, negated tests and a result
-// variable tried)
+// each quadrant flag comes from an inlined bool helper, so it is masked
+// twice: once where it is built and once where it is used
 // @retail 0x833327F8
 bool CCSRBTTargetAngle::TestPreCondition(IGripBTInterface *pInterface)
 {
     CCSBlackboard *pBB = pInterface->GetBlackboard<CCSBlackboard>();
-    if (pBB->GetCurrentTarget() == 0)
+    if (pBB->GetCurrentTarget() != 0)
     {
-        return false;
+        const float Forward = pBB->GetCurrentTarget()->forwardDot;
+        const float Right = pBB->GetCurrentTarget()->rightDot;
+        const bool bFront = FrontZone(Forward, Right);
+        const bool bRight = RightZone(Forward, Right);
+        const bool bBehind = BehindZone(Forward, Right);
+        const bool bLeft = LeftZone(Forward, Right);
+        bool bValue = (checkFront && bFront) || (checkRight && bRight) || (checkBehind && bBehind) || (checkLeft && bLeft);
+        bool bResult = m_negate ? !bValue : bValue;
+        return bResult;
     }
-    const float Forward = pBB->GetCurrentTarget()->forwardDot;
-    const float Right = pBB->GetCurrentTarget()->rightDot;
-    const bool bFront = Forward >= 0.0f && Right <= 0.0f;
-    const bool bRight = Forward >= 0.0f && Right >= 0.0f;
-    const bool bBehind = Forward <= 0.0f && Right >= 0.0f;
-    const bool bLeft = Forward <= 0.0f && Right <= 0.0f;
-    const bool bValue = (checkFront && bFront) || (checkRight && bRight) || (checkBehind && bBehind) || (checkLeft && bLeft);
-    return m_negate ? !bValue : (bool)bValue;
+    return false;
 }
 
 // ccsrbttargetangle.h's inline setter, out of line as in retail

@@ -62,10 +62,10 @@ void USSBrainBuilder::SetUpBrain()
 extern const char GCognitionLicense[];
 
 #ifndef HAGGAR_HOST  // it builds guest objects; it stays recompiled in the port
-// score 19, near: after the mediator's allocation retail copies the result to r11
-// before the null check, ours inside the constructor's path (so the vtable
-// addresses land in r5..r7 there, r6..r8 here). The new-expression's form
-// is the suspect; the mediator's constructor written with assignments
+// score 19 (was 19), near: after the mediator's allocation retail copies the
+// result to r11 before the null check, ours inside the constructor's path (so
+// the vtable addresses land in r5..r7 there, r6..r8 here). The new-expression's
+// form is the suspect; the mediator's constructor written with assignments
 // changes nothing.
 // @retail 0x833439E8
 void USSBrainBuilder::ConstructBrain(UObject *pOwner, UCCSBTTree *pBTTree, ICCSMeatPuppet *pMeatPuppet,

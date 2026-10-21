@@ -194,12 +194,13 @@ void AUSSPawn::SetMovementSpeedDefault()
     SetSpeed(CCS::MovementSpeed_Walk);
 }
 
-// score 65 (was 119), todo, 620 bytes against 656: the unwinding is the file's UnwindRot,
-// inlined (retail's sequence, other registers; it is __forceinline here, as
-// plain inline it stays a call). Retail also keeps the rotator difference in
-// a stack copy (all three components stored, the pawn's Roll held in r30);
-// neither GetNormalized (which fixed CanAim), an inline operator-=, nor
-// `Delta = UnwindRot(Delta)` reproduces it.
+// score 65 (was 65), todo, 620 bytes against 656: the unwinding is the file's
+// UnwindRot, inlined (retail's sequence, other registers; it is __forceinline
+// here, as plain inline it stays a call). Retail also keeps the rotator
+// difference in a stack copy (all three components stored, the pawn's Roll
+// held in r30); ten source forms (GetNormalized, an inline operator-=,
+// `Delta = UnwindRot(Delta)`, component-wise assignment, the address taken,
+// default-construct and assign, direct-init) reproduce none of it.
 // @retail 0x8336D540
 void AUSSPawn::TickSpecial(float DeltaTime)
 {

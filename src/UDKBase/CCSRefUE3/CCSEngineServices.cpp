@@ -6,9 +6,8 @@
 #include "UDKBase/Inc/EngineUtils.h"
 #include "../CCSRef/CCSCover.cpp"
 
-// todo: 4 bytes long; retail loads the iterator's actor straight into the
-// register it keeps across the checks, ours copies it there (the member
-// read, a local in operator* and a local here tried)
+// near, score 4 (was 7): retail hands the Cast the actor it kept in r31,
+// ours reloads the iterator's member after the checks' calls
 // @retail 0x833387C0
 void CCSEngineServices::FindAllCovers(Grip_Array<CCSCover, Grip::AllocatorGH<CCSCover, 2> > &Covers)
 {

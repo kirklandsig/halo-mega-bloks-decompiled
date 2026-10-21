@@ -25,7 +25,7 @@ public:
 #line 272
         check(Actor);
         checkf(!Actor->HasAnyFlags(RF_Unreachable), L"%s", *Actor->GetFullName(0));
-        return Actor;
+        return CurrentActor;
     }
     __forceinline operator unsigned int() { return !ReachedEnd; }
 };

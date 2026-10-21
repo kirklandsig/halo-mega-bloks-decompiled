@@ -165,7 +165,8 @@ void CCSCSMovement::Tick(float)
     m_state = MS_IDLE;
 }
 
-// near: retail loads the move target before the pawn's location
+// The delta is a whole vector so that the compiler drops the dead Z
+// component exactly as retail does.
 // @retail 0x8332F7A8
 bool CCSCSMovement::IsVehicleAndCloseEnough()
 {
@@ -179,8 +180,11 @@ bool CCSCSMovement::IsVehicleAndCloseEnough()
         return false;
     }
     AUDKVehicle *pVehicle = Cast<AUDKVehicle>(pPawn);
-    const float DeltaX = pPawn->Location.X - m_moveObj.target.X;
-    const float DeltaY = pPawn->Location.Y - m_moveObj.target.Y;
+    // The delta is a whole vector: retail subtracts the pawn's location from
+    // the move target and keeps only the two horizontal components.
+    const FVector Delta = pPawn->Location - m_moveObj.target;
+    const float DeltaX = Delta.X;
+    const float DeltaY = Delta.Y;
     if (appSqrt(DeltaX * DeltaX + DeltaY * DeltaY) < pVehicle->MoveToRadius)
     {
         return true;
@@ -188,8 +192,10 @@ bool CCSCSMovement::IsVehicleAndCloseEnough()
     return false;
 }
 
-// todo: 8 bytes short; retail's inlined system lookup keeps a separate
-// null result for each failed test (a written-out lookup tried)
+// score 14 (was 14), todo: 8 bytes short; retail's inlined system lookup
+// keeps a separate null result for each failed test. Seventeen caller-side
+// forms and the polarity and temporary forms of the shared
+// GetAIManagerSystem inline all compile to the same code.
 // @retail 0x8333BE98
 bool CCSCSMovement::IsProxyVisible()
 {

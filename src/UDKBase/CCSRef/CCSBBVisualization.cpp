@@ -50,12 +50,15 @@ bool CCSBBTargetVisualization::GetIsVisible()
     return m_pTarget != 0 ? m_pTarget->isVisible : false;
 }
 
-// near: retail keeps the members array in r27 and the YES and NO strings in
-// r28 and r29, ours the array in r29 (if-else, ternary and nested-if value
-// forms tried)
+// score 7 (was 14): the members array address is computed at the top of the
+// function here (addi r27, r30, 8) where retail computes it just before its
+// first use, and the three global heap accesses keep the relocation
+// displacement instead of the linked one retail shows (if-else, ternary and
+// nested-if value forms tried)
 // @retail 0x8334BDA8
 void CCSBBTargetVisualization::Refresh()
 {
+    Grip_Array<GripSerializationMember, Grip::AllocatorGH<GripSerializationMember, 2> > &Members = m_members;
     Grip::String Value;
     char Buffer[64];
     if (m_pTarget != 0)
@@ -69,7 +72,7 @@ void CCSBBTargetVisualization::Refresh()
         Value = "No target.";
     }
     GripSerializationMember Member("   LKP Time", Value.ToCStr());
-    m_members.AddItem(Member);
+    Members.AddItem(Member);
     if (m_pTarget != 0)
     {
         int Range = (int)GetRange2D();
@@ -82,7 +85,7 @@ void CCSBBTargetVisualization::Refresh()
         Value = "No target.";
     }
     Member = GripSerializationMember("   2D Range", Value.ToCStr());
-    m_members.AddItem(Member);
+    Members.AddItem(Member);
     if (m_pTarget != 0)
     {
         Value = GetShootable() ? "YES" : "NO";
@@ -92,7 +95,7 @@ void CCSBBTargetVisualization::Refresh()
         Value = "No target.";
     }
     Member = GripSerializationMember("   Shootable", Value.ToCStr());
-    m_members.AddItem(Member);
+    Members.AddItem(Member);
     if (m_pTarget != 0)
     {
         Value = GetIsVisible() ? "YES" : "NO";
@@ -102,7 +105,7 @@ void CCSBBTargetVisualization::Refresh()
         Value = "No target.";
     }
     Member = GripSerializationMember("   Visible", Value.ToCStr());
-    m_members.AddItem(Member);
+    Members.AddItem(Member);
 }
 
 // The blackboard's members as the console shows them: the states, the

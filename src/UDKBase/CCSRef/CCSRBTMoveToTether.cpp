@@ -92,9 +92,6 @@ GripRBTNode::EBTExecutionResult CCSRBTMoveToTether::ExecuteInternal(IGripBTInter
     return pScheduler->GetStatus(m_actionHandle) == GripAFAction::AS_DONE ? ER_SUCCESS : ER_INPROGRESS;
 }
 
-// todo: 4 bytes short; retail keeps the blackboard pointer in r11 for
-// ClearMoveCommand's store where ours stores through the member's address
-// (a named blackboard and Set written out tried)
 // @retail 0x83331FB8
 void CCSRBTMoveToTether::ExecutePostInternal(IGripBTInterface *pInterface, bool bAborted)
 {

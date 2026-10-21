@@ -203,11 +203,6 @@ bool CCSPSTargetAwareness::IsTargetVisible(const CCSTarget &Target, ICCSMeatPupp
         && pMeatPuppet->HasLineOfSightTo(Target.character);
 }
 
-// near: retail adds the element offset to the array's base (add r31, r29,
-// r11), ours the base to the offset; operator[], GetData()[i], a hoisted data
-// pointer, the content pointer, a late reference, ++i and a reversed loop all
-// give ours, and the same source in CCSBlackboard::UpdateTargetPointers
-// matches retail, so the order is the compiler's tie-break, not the source's
 // @retail 0x833459A0
 void CCSPSTargetAwareness::UpdateHighestThreatTarget(float DeltaTime)
 {
@@ -218,6 +213,7 @@ void CCSPSTargetAwareness::UpdateHighestThreatTarget(float DeltaTime)
     {
         return;
     }
+    CCSBlackboard &BB = *pBB;
     APawn *pPawn = static_cast<CCSMeatPuppet *>(m_pBrain->m_meatPuppet)->m_pUnPawn;
     if (pPawn == 0)
     {
@@ -225,7 +221,7 @@ void CCSPSTargetAwareness::UpdateHighestThreatTarget(float DeltaTime)
     }
     for (int i = 0; i < pBB->m_targets.Num(); i++)
     {
-        CCSTarget &Target = pBB->m_targets[i];
+        CCSTarget &Target = BB.m_targets[i];
         float Weight;
         switch (Target.m_aiTargetType)
         {
@@ -306,11 +302,11 @@ void CCSPSTargetAwareness::UpdateCurrentTarget()
 }
 
 // near: retail adds DeltaTime to the target's CNTAge the other way round
-// (fadds f13, f31, f0) and adds the threat array's index to its base the
-// other way round; the frame, the team number in r23 and the store of CNTAge
-// now match (the sum's operand order, += and named temporaries tried; the
-// compiler canonicalises a commutative float sum, so the source order, a
-// named local and += against = a + b all give the same code)
+// (fadds f13, f31, f0); the age is read into a local, which also makes the
+// threat array's element address match (the sum's operand order, += and
+// named temporaries tried; the compiler canonicalises a commutative float
+// sum, so the source order and a cast on either side all give the same
+// code)
 // @retail 0x8333D9D0
 int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
 {
@@ -335,7 +331,8 @@ int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
     }
     Target.position = Target.character.GetPosition();
     Target.range2D = (Target.position - Grip_Vector(pController->Pawn->Location)).Size2D();
-    Target.CNTAge = DeltaTime + Target.CNTAge;
+    const float Age = Target.CNTAge;
+    Target.CNTAge = DeltaTime + Age;
     Target.UpdateDestinationReachable();
     if (pActor->IsValid() && pTargetable != 0 && pController->Pawn != 0)
     {

@@ -48,7 +48,11 @@ void UCCSBlackboard::SetHealth(int Health)
     CCSBB(BB)->m_health.Set(Health);
 }
 
-// Near: retail adds the array base and the element offset the other way round.
+// score 1 (was 1): the add of the array base and the element offset has its
+// two operands the other way round; rewriting the shared
+// Grip_Array::operator[] inline (plain indexing, pointer arithmetic, a
+// scaled index), the call site forms (the inner array, the accessor, the
+// address by hand) and the permuter change nothing
 // @retail 0x83339360
 void UCCSBlackboard::GetCovers(TArray<FCCSCoverData> &Covers) const
 {
@@ -124,7 +128,9 @@ FCCSTargetData UCCSBlackboard::GetClosestVisibleEnemy() const
     return Data;
 }
 
-// Near: retail adds the array base and the element offset the other way round.
+// score 1 (was 1): the add of the array base and the element offset has its
+// two operands the other way round (the shared Grip_Array::operator[] inline
+// rewritten and the permuter change nothing)
 // @retail 0x83339680
 void UCCSBlackboard::GetTargets(TArray<FCCSTargetData> &Targets) const
 {

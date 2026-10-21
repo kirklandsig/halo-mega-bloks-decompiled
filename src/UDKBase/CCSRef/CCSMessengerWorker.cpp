@@ -34,9 +34,6 @@ void CCSMessengerWorker::OnMessage(EGripConsoleMessageID Id, Grip::String Messag
     }
 }
 
-// near: retail loads the four flags before storing any and builds the
-// message string in the data's frame slot (aggregate init, a scope and a
-// flag pointer tried)
 // @retail 0x83344648
 void CCSMessengerWorker::SendDebugOptions()
 {
@@ -45,14 +42,24 @@ void CCSMessengerWorker::SendDebugOptions()
     {
         return;
     }
-    CCSDebugOptionsData Data;
-    Data.m_cover = pOptions->m_options[CCSDebugOptions::COVER];
-    Data.m_movement = pOptions->m_options[CCSDebugOptions::MOVEMENT];
-    Data.m_actionScheduler = pOptions->m_options[CCSDebugOptions::ACTION_SCHEDULER];
-    Data.m_animationFlags = pOptions->m_options[CCSDebugOptions::ANIM_FLAGS];
+    const bool bCover = pOptions->m_options[CCSDebugOptions::COVER];
+    const bool bMovement = pOptions->m_options[CCSDebugOptions::MOVEMENT];
+    const bool bScheduler = pOptions->m_options[CCSDebugOptions::ACTION_SCHEDULER];
+    const bool bAnim = pOptions->m_options[CCSDebugOptions::ANIM_FLAGS];
+    // The retail ends the data struct's scope before the write, so the frame
+    // slot it lives in is free again for the string the serializer hands back.
+    CCSDebugOptionsData *pData;
+    {
+        CCSDebugOptionsData Data;
+        Data.m_cover = bCover;
+        Data.m_movement = bMovement;
+        Data.m_actionScheduler = bScheduler;
+        Data.m_animationFlags = bAnim;
+        pData = &Data;
+    }
     GripSerializer Serializer;
     Serializer.Initialize();
-    Serializer.Write("ccsdebugoptionsdata", &Data);
+    Serializer.Write("ccsdebugoptionsdata", pData);
     m_pMessenger->AddOutgoingMessage(msgCCSDebugOptionsData, Serializer.GetStringRepresentation());
 }
 
@@ -108,8 +115,10 @@ void CCSMessengerWorker::SetDebugOptions(const Grip::String &Options)
     } while (Remaining != 0);
 }
 
-// near: retail keeps the name in r31 and the value in r30, ours the other
-// way round (declaration orders and value forms tried)
+// score 33 (was 33), near: retail keeps the name in r31 and the value in
+// r30, ours the other way round, and it builds the "yes" pointer before
+// loading the literal. Declaration orders, value forms and the compare's
+// argument order all leave it alone.
 // @retail 0x8333C538
 void CCSMessengerWorker::SetDebugOption(const Grip::String &Option)
 {

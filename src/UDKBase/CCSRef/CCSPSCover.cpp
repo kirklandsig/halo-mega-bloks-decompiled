@@ -84,8 +84,6 @@ bool CCSPSCover::TickBudget(float, int &Budget)
     return bDone;
 }
 
-// near: the loop's two counters are incremented in the other order (i++,
-// ++i, i += 1, i = i + 1 and a while-loop form tried)
 // @retail 0x83356F20
 void CCSPSCover::LowCostPerception()
 {
@@ -119,12 +117,13 @@ void CCSPSCover::LowCostPerception()
         if (!DefensiveAngleCulling(Cover))
         {
             Cover.m_validPath = false;
+            i++;
         }
         else
         {
             AttackAngleCulling(Cover);
+            i++;
         }
-        i++;
     }
 }
 

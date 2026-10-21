@@ -144,9 +144,6 @@ void ACCSController::DisableBrain(unsigned int bDisable)
     }
 }
 
-// Near: retail zero-extends the collision component pointer (slwi 0) where
-// ours computes the unused address of its bounds (a named reference to the
-// bounds gets the length right; a reference to the extent loses 4 bytes).
 // @retail 0x83329F30
 void ACCSController::CalcAccuracyAngles(AActor *Target)
 {
@@ -164,9 +161,10 @@ void ACCSController::CalcAccuracyAngles(AActor *Target)
     }
     else if (Target->CollisionComponent != 0)
     {
-        const FBoxSphereBounds &B = Target->CollisionComponent->Bounds;
-        Radius = B.BoxExtent.Size2D();
-        Height = B.BoxExtent.Z;
+        // a reference to the member: retail forms the bounds address in 64 bits
+        UPrimitiveComponent *&pComp = Target->CollisionComponent;
+        Radius = pComp->Bounds.BoxExtent.Size2D();
+        Height = pComp->Bounds.BoxExtent.Z;
     }
     else
     {

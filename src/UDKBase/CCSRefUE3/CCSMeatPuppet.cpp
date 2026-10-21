@@ -107,12 +107,12 @@ bool CCSMeatPuppet::CanAim(Grip_Rotation Rotation)
     return m_pCCSPawn->CanAim(Rotation) != 0;
 }
 
-// near: as HasLineOfSightTo below
 // @retail 0x833219C8
 bool CCSMeatPuppet::CanFireAt(CCSCharacter Character)
 {
     // through a member pointer: retail calls the event thunk here rather than inlining it
-    return (m_pCCSCtrl->*(&ACCSController::eventCanFireAt))(Character.m_gameCharacter.m_actor != 0 ? Character.m_gameCharacter.m_actor
+    ACCSController *pCtrl = m_pCCSCtrl;
+    return (pCtrl->*(&ACCSController::eventCanFireAt))(Character.m_gameCharacter.m_actor != 0 ? Character.m_gameCharacter.m_actor
                                                                                                      : Character.m_gameCharacter.m_pawn)
         != 0;
 }
@@ -123,13 +123,14 @@ Grip_Vector CCSMeatPuppet::GetWeaponStartPosition()
     return Grip_Vector(m_pUnPawn->eventGetWeaponStartTraceLocation(0));
 }
 
-// near: retail loads the controller and its vtable entry before it picks
-// the actor; ours picks it first (named locals, an if and the ternary tried)
 // @retail 0x83321A68
 bool CCSMeatPuppet::HasLineOfSightTo(CCSCharacter Character)
 {
-    return m_pCCSCtrl->LineOfSightTo(Character.m_gameCharacter.m_actor != 0 ? Character.m_gameCharacter.m_actor : Character.m_gameCharacter.m_pawn, 0, 0, 0)
-        != 0;
+    if (Character.m_gameCharacter.m_actor != 0)
+    {
+        return m_pCCSCtrl->LineOfSightTo(Character.m_gameCharacter.m_actor, 0, 0, 0) != 0;
+    }
+    return m_pCCSCtrl->LineOfSightTo(Character.m_gameCharacter.m_pawn, 0, 0, 0) != 0;
 }
 
 // @retail 0x83321AC8

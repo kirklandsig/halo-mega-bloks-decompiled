@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-20 (n-Space's C++: 1,988 of 2,061 functions matched). Matching progress is
+Updated 2026-10-20 (n-Space's C++: 2,002 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -32,16 +32,16 @@ Phase 5 (UDK rebuild, later).
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **1,988 are matched (205,044 bytes, 82%), 46 are near
-(26,116 bytes) and 27 are todo (17,332 bytes)**; 2,001 functions match in
+isn't `todo`. **2,002 are matched (209,560 bytes, 84%), 37 are near
+(24,072 bytes) and 22 are todo (14,860 bytes)**; 2,015 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
-(156 match), and the CCS layer's other 644 functions (99,024 bytes; 592 of
+(156 match), and the CCS layer's other 644 functions (99,024 bytes; 603 of
 them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,535 | 41 | 27 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,547 | 34 | 22 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 351 | 3 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
@@ -50,42 +50,21 @@ them match).
 Four of the CCS files (`ccsbrain.cpp`, `ccscsmovementunreal.cpp`,
 `ccsastarget.cpp`, `ccsrbtshootfromcover.cpp`, 60 functions) came from a
 separate lane, written by the MiniMax-M3.1-Flash model; at its merge 46 of
-them matched (4,844 bytes), 6 were near (1,236 bytes) and 8 todo.
+them matched (4,844 bytes), 6 were near (1,236 bytes) and 8 todo. Two
+more MiniMax-M3.1-Flash lanes then worked on the leftovers, merged in two
+rounds (19 functions matched, 14 others brought closer).
 
 `docs/scores.csv` lists every near and todo function with its score (how
 far it is from retail; see `docs/DECOMPILING.md`), regenerated with
 `python tools/check.py --scores > docs/scores.csv`.
 
 Each written function that doesn't match has a comment in its source file
-saying why. In short:
-
-- **Todo, not written:** two `CCSCSMovementUnreal` functions
-  (`GetNextMoveLocation`, `MoveToDestination`).
-- **Todo, written, registers, stack slots or inlining differ:** the
-  controller's `Tick` and `RemoveState`, `AUSSController::PostPollMove`,
-  `AUSSPawn::TickSpecial`, the `CCSAF*` actions' `UpdateGoal`,
-  `UpdateMoveTarget` and `Tick`,
-  `UCCSActorFactory::CreateActor`, `HaloRBTKamikaze::ExecuteInternal`,
-  `CCSGlobalDataScheduler::Initialize`, the cover control system's
-  `DoGetInCover`, `DoGetOutCover` and `TakeCoverPose`, the GwNav movement's
-  `OrientationReached` and `PathFailed`, `CCSGameCharacter::GetEyesPosition`,
-  `CCSASTarget::Tick`,
-  `CCSRBTShootFromCover::ExecuteInternal`, `CCSRBTEncircleTarget::ExecuteInternal`,
-  `CCSRBTTargetAngle::TestPreCondition`, `CCSRBTMoveToTether::ExecutePostInternal`,
-  `CCSCSMovement::IsProxyVisible`, and the two
-  actor-iterator loops (`CCSEngineServices::FindAllCovers`,
-  `CCSRBTSearch::FindNavigationPoints`: retail loads the iterated actor
-  straight into the register it keeps, ours copies it there).
-- **Near (46):** mostly a swapped register pair, an operand order, a
-  schedule or a stack slot; among them the target-awareness sensor's
-  awareness and threat functions, the cover sensor's perception, the
-  move-to and strafe nodes, `CCSBrain`'s scheduler registration, the
-  blackboard's `UpdateTargetListsByRange`, the cover sensor's attack and
-  defensive angle checks, `CCSCSMovementUnreal::DoMove` and
-  `OrientationReached`, and
-  AUDKVehicle's look-steer modes, and `USSBrainBuilder::ConstructBrain`
-  (one register copy scheduled later; it passes the Cognition SDK's licence
-  string through an extern symbol the repository never defines).
+saying why. Two `CCSCSMovementUnreal` functions
+(`GetNextMoveLocation`, `MoveToDestination`) aren't written yet. Of the
+rest, most are a swapped register pair, an operand order, a schedule or a
+stack slot away; the largest gaps are in the CCS actions' `UpdateGoal`
+and `UpdateMoveTarget`, the controllers' `Tick` and `PostPollMove`, and
+`UCCSActorFactory::CreateActor`. `docs/scores.csv` has the full list.
 
 The inline layer they rest on is hand-written in `include/`: `Core/Inc/Core.h`
 (memory, `check()`, `Min`/`Max` with `fsel`, `appSqrt`), `Core/Inc/Array.h`

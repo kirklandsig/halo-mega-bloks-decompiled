@@ -7,7 +7,8 @@
 
 extern FFeedbackContext *GWarn;
 
-// near: retail places the in-progress return after the epilogue
+// score 8 (was 8), near: retail places the in-progress return after the
+// epilogue and we before it; the permuter (6.7k rewrites) found nothing
 // @retail 0x8333F9D0
 GripRBTNode::EBTExecutionResult CCSRBTMoveToVehicle::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {

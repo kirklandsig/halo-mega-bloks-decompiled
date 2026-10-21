@@ -94,13 +94,13 @@ void CCSRBTMoveToInitialCover::FlagUsedBBMembers(GripBlackboard *pBlackboard)
     static_cast<CCSBlackboard *>(pBlackboard)->m_initialCover.FlagAsUsed();
 }
 
-// near: the initial cover's state is loaded before its address is formed
-// (a named reference, Get() and the member written out tried)
 // @retail 0x8333F128
 CCSCover CCSRBTMoveToInitialCover::FindBestCover(IGripBTInterface *pInterface) const
 {
-    CCSCover &Initial = pInterface->GetBlackboard<CCSBlackboard>()->m_initialCover.GetReference();
-    if (Initial.IsValid() && !Initial.IsLocked())
+    CCSBlackboard *pBB = pInterface->GetBlackboard<CCSBlackboard>();
+    CCSCover &Initial = pBB->m_initialCover.GetReference();
+    // the state is read through the property, the address of the cover is formed later
+    if (pBB->m_initialCover.Get().IsValid() && !Initial.IsLocked())
     {
         return Initial;
     }
