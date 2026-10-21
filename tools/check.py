@@ -16,6 +16,8 @@ todo). config/functions/ is never written. Exits 1 if any function is not
 matched.
 """
 import argparse
+import bisect
+import collections
 import csv
 import difflib
 import re
@@ -86,11 +88,26 @@ def same_instruction(a, b):
     return True
 
 
+def align(ours, retail):
+    """(our normalized words, retail's, SequenceMatcher opcodes aligning them)."""
+    a, b = normalize(words(ours)), normalize(words(retail))
+    return a, b, difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes()
+
+
+def aligned_rows(opcodes):
+    """(our index or None, retail index or None, equal) for each row of an
+    alignment: a replaced block pairs its words in order, the longer side's
+    rest pairs with nothing."""
+    for tag, i1, i2, j1, j2 in opcodes:
+        for k in range(max(i2 - i1, j2 - j1)):
+            yield (i1 + k if i1 + k < i2 else None), (j1 + k if j1 + k < j2 else None), tag == 'equal'
+
+
 def diff_score(ours, retail):
     """Cost of turning our instruction words into retail's."""
-    a, b = normalize(words(ours)), normalize(words(retail))
+    a, b, opcodes = align(ours, retail)
     cost = 0
-    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+    for tag, i1, i2, j1, j2 in opcodes:
         if tag == 'equal':
             continue
         n = min(i2 - i1, j2 - j1) if tag == 'replace' else 0
@@ -273,10 +290,228 @@ def compile_file(cl, cmd, includes, src, obj):
 
 SCORE_COLUMNS = ['address', 'name', 'status', 'score']
 
+DEBUG_S_STRINGTABLE = 0xF3
 
-def check_file(ctx, src):
-    """{va: (row, status, score, note)} of a source file's marked functions."""
-    obj_name, addresses = parse_markers(src)
+
+def object_lines(c, symbol):
+    """[(offset, line, file)] of `symbol`'s function in our object, from the
+    C13 line tables cl -Z7 writes to .debug$S (the objects' own command
+    lines already ask for them)."""
+    import pdbfile
+    checksums = strings = None
+    found = []
+    for sec in c.sections:
+        if sec.name != '.debug$S' or sec.data[:4] != b'\x04\0\0\0':
+            continue
+        targets = {off: sym for off, sym, _ in c.relocations(sec) if sym is not None}
+        for kind, sub, pos in pdbfile.c13_subsections(sec.data, 4):
+            if kind == pdbfile.DEBUG_S_FILECHKSMS:
+                checksums = sub
+            elif kind == DEBUG_S_STRINGTABLE:
+                strings = sub
+            elif kind == pdbfile.DEBUG_S_LINES and getattr(targets.get(pos), 'name', None) == symbol:
+                found.append(pdbfile.parse_lines(sub))
+    out = []
+    for offset, _seg, _size, blocks in found:
+        for file_id, entries in blocks:
+            name = pdbfile.file_name(checksums, file_id, strings)
+            out += [(offset + off, line, name) for off, line in entries]
+    return sorted(out)
+
+
+def _line_at(table, offset):
+    """The entry of an offset-sorted line table that covers `offset`."""
+    i = bisect.bisect_right([e[0] for e in table], offset) - 1
+    return table[max(i, 0)] if table else None
+
+
+def line_report(ours, our_lines, retail, retail_lines, source_text=None):
+    """Text lines comparing our function with retail's statement by
+    statement: the aligned disassembly, each side annotated with its source
+    lines (retail's as L+n from the function's first line, ours as L+n and
+    the line itself), then a summary per retail line: its bytes and first
+    offset, the line of ours its instructions align with, and where the
+    byte counts or the order differ."""
+    import capstone
+    md = capstone.Cs(capstone.CS_ARCH_PPC, capstone.CS_MODE_32 | capstone.CS_MODE_BIG_ENDIAN)
+
+    def text(data):
+        out = []
+        for i in range(0, len(data) - 3, 4):
+            ins = next(md.disasm(data[i:i + 4], i), None)
+            out.append(f'{ins.mnemonic} {ins.op_str}'.strip() if ins else f'.long 0x{data[i:i + 4].hex()}')
+        return out
+
+    r_base = retail_lines[0][1] if retail_lines else 0
+    main_file = our_lines[0][2] if our_lines else None
+    o_base = our_lines[0][1] if our_lines else 0
+    r_key = lambda j: _line_at(retail_lines, 4 * j)[1] - r_base if retail_lines else None
+    o_entry = lambda i: _line_at(our_lines, 4 * i)
+
+    def o_key(i):
+        e = o_entry(i)
+        return None if e is None else (e[1] - o_base if e[2] == main_file else (e[2], e[1]))
+
+    def o_name(key):
+        if key is None:
+            return '?'
+        if isinstance(key, tuple):
+            return f'{key[0].replace(chr(92), "/").split("/")[-1]}:{key[1]}'
+        return f'L+{key}'
+
+    def r_name(key):
+        return '?' if key is None else f'L+{key}'
+
+    a, b, opcodes = align(ours, retail)
+    rows = list(aligned_rows(opcodes))
+    ot, rt = text(ours), text(retail)
+    out = [f'{"":2}{"retail":>5} {"":6} {"":34} | {"ours":>5} {"":6} {"":34} source of ours']
+    shown = None
+    for i, j, equal in rows:
+        left = f'{4 * j:5x} {r_name(r_key(j)):>6} {rt[j]:34}' if j is not None else f'{"":5} {"":6} {"":34}'
+        right = f'{4 * i:5x} {o_name(o_key(i)):>6} {ot[i]:34}' if i is not None else f'{"":5} {"":6} {"":34}'
+        src = ''
+        e = o_entry(i) if i is not None else None
+        if e is not None and (e[2], e[1]) != shown:
+            shown = (e[2], e[1])
+            line = source_text(e[2], e[1]) if source_text else None
+            src = f'{e[1]}: {line.strip()[:60]}' if line else f'{e[1]}'
+        out.append(f'{"  " if equal else "* "}{left} | {right} {src}'.rstrip())
+
+    # per statement: each line of ours belongs to the retail line most of its
+    # aligned instructions come from
+    r_bytes, r_first, o_bytes, o_first, votes, votes_r = {}, {}, {}, {}, {}, {}
+    for j in range(len(rt)):
+        r_bytes[r_key(j)] = r_bytes.get(r_key(j), 0) + 4
+        r_first.setdefault(r_key(j), 4 * j)
+    for i in range(len(ot)):
+        o_bytes[o_key(i)] = o_bytes.get(o_key(i), 0) + 4
+        o_first.setdefault(o_key(i), 4 * i)
+    for i, j, _ in rows:
+        if i is not None and j is not None:
+            v = votes.setdefault(o_key(i), {})
+            v[r_key(j)] = v.get(r_key(j), 0) + 1
+            v = votes_r.setdefault(r_key(j), {})
+            v[o_key(i)] = v.get(o_key(i), 0) + 1
+    owner = {o: max(v, key=lambda k: (v[k], -r_first[k])) for o, v in votes.items()}
+    # a statement moved elsewhere can't align (the alignment keeps order):
+    # pair the leftovers of both sides by the instructions they share
+    r_words, o_words = {}, {}
+    for j, w in enumerate(b):
+        r_words.setdefault(r_key(j), collections.Counter())[w] += 1
+    for i, w in enumerate(a):
+        o_words.setdefault(o_key(i), collections.Counter())[w] += 1
+    lone_r = [k for k in r_first if k not in votes_r]
+    lone_o = [o for o in o_first if o not in owner]
+    for shared, k, o in sorted(((sum((r_words[k] & o_words[o]).values()), k, o) for k in lone_r for o in lone_o),
+                               key=lambda t: (-t[0], r_first[t[1]], o_first[t[2]])):
+        if k in lone_r and o in lone_o and 2 * shared >= min(sum(r_words[k].values()), sum(o_words[o].values())):
+            owner[o] = k
+            lone_r.remove(k)
+            lone_o.remove(o)
+    claimed = {}
+    for o in sorted(owner, key=o_first.get):
+        claimed.setdefault(owner[o], []).append(o)
+    order = sorted(r_first, key=r_first.get)
+    pos = {k: (o_first[claimed[k][0]] if k in claimed else
+               o_first[max(votes_r[k], key=votes_r[k].get)] if k in votes_r else None) for k in order}
+    out += ['', 'statements in retail order: retail line, its bytes @ first offset; the lines of ours whose code '
+                'aligns with it (^ retail runs it after the line above it)']
+    flagged = 0
+    for n, k in enumerate(order):
+        note = []
+        if k in claimed:
+            total = sum(o_bytes[o] for o in claimed[k])
+            right = ', '.join(f'{o_name(o)} {o_bytes[o]} B' for o in claimed[k])
+            if len(claimed[k]) > 1:
+                right += f' (= {total} B)'
+            if total != r_bytes[k]:
+                note.append(f'ours {total - r_bytes[k]:+d} B')
+        elif k in votes_r:
+            right = f'inside {o_name(max(votes_r[k], key=votes_r[k].get))}'
+        else:
+            right = 'nothing aligned'
+        if pos[k] is not None:
+            early = [m for m in order[n + 1:] if pos[m] is not None and pos[m] < pos[k]]
+            if early:
+                note.append(f'ours runs it after {r_name(early[0])}')
+        prev = order[n - 1] if n else None
+        mark = '^' if isinstance(prev, int) and isinstance(k, int) and prev > k else ' '
+        flagged += bool(note) or right == 'nothing aligned'
+        out.append(f'  {mark}{r_name(k):>6} {r_bytes[k]:4d} B @{r_first[k]:<4x} {right}' + (f'   <- {"; ".join(note)}' if note else ''))
+    extra = sorted((o for o in o_bytes if o not in owner), key=o_first.get)
+    if extra:
+        out.append('  ours only: ' + ', '.join(f'{o_name(o)} {o_bytes[o]} B @{o_first[o]:x}' for o in extra))
+    if not flagged and not extra:
+        out.append("  every statement has retail's size and order: what differs is registers, operands or "
+                   'scheduling within statements')
+    return out
+
+
+def name_matches(want, row, va):
+    """Does `want` (0x address, a full name, or its last ::part) name this row?"""
+    if re.fullmatch(r'0x[0-9A-Fa-f]+', want):
+        return int(want, 16) == va
+    name = row['name'] or row['symbol']
+    return want == name or name.endswith('::' + want)
+
+
+def show_lines(ctx, names, sources):
+    """Print line_report for each marked function `names` pick out."""
+    import pdbfile
+    hits = []
+    for src in sources:
+        src = Path(src).resolve()
+        try:
+            _, addresses = parse_markers(src)
+        except SystemExit:
+            continue
+        hits += [(src, va) for va in addresses if va in ctx.by_address
+                 and any(name_matches(n, ctx.by_address[va], va) for n in names)]
+    if not hits:
+        raise SystemExit(f'no marked function named {" or ".join(names)}')
+    pdb = pdbfile.Pdb(paths.pdb())
+    procs = {p.rva: p for p in pdb.procedures()}
+    files = {}
+
+    def source_text(path, line):
+        if path not in files:
+            try:
+                files[path] = Path(path).read_text(encoding='utf-8', errors='replace').splitlines()
+            except OSError:
+                files[path] = []
+        lines = files[path]
+        return lines[line - 1] if 0 < line <= len(lines) else None
+
+    for src in dict.fromkeys(s for s, _ in hits):
+        ours = compile_source(ctx, src)
+        for _, va in (h for h in hits if h[0] == src):
+            row = ctx.row(va)
+            retail = ctx.retail(row)
+            proc = procs.get(va - IMAGE_BASE)
+            module = pdb.modules[proc.module] if proc else None
+            retail_lines = pdb.line_table(module, va - IMAGE_BASE) if module else []
+            try:
+                symbol = find_symbol(ours, row, ctx.same_name)
+                data, masks = coff.function_bytes(ours, symbol)
+                status = compare(data, masks, retail)
+                our_lines = object_lines(ours, symbol)
+            except KeyError:
+                data, status, our_lines = b'', 'todo', []
+            print(f'{row["name"] or row["symbol"]} 0x{va:08X} ({src.relative_to(paths.ROOT)}): {status}, '
+                  f'score {score(status, data, retail)}, {len(data)} bytes vs {len(retail)}')
+            if module:
+                named = pdb.proc_locals(module, va - IMAGE_BASE)
+                if named:
+                    print('retail locals: ' + ', '.join(f'{n} {r}' + (f'{o:+d}' if o is not None else '') for n, r, o in named))
+            for line in line_report(data, our_lines, retail, retail_lines, source_text):
+                print(line)
+            print()
+
+
+def compile_source(ctx, src):
+    """Our object for a source file, parsed."""
+    obj_name, _ = parse_markers(src)
     cmd = ctx.cmd(obj_name, f'{src}: ')
     obj = paths.BUILD / 'obj' / src.relative_to(paths.ROOT).with_suffix('.obj')
     obj.parent.mkdir(parents=True, exist_ok=True)
@@ -284,7 +519,13 @@ def check_file(ctx, src):
     if r.returncode:
         print(r.stdout + r.stderr)
         raise SystemExit(f'{src}: cl failed')
-    ours = coff.parse(obj.read_bytes())
+    return coff.parse(obj.read_bytes())
+
+
+def check_file(ctx, src):
+    """{va: (row, status, score, note)} of a source file's marked functions."""
+    _, addresses = parse_markers(src)
+    ours = compile_source(ctx, src)
     out = {}
     for va in addresses:
         row = ctx.row(va, f'{src}: ')
@@ -309,7 +550,15 @@ def main(argv=None):
     ap.add_argument('--scores', action='store_true',
                     help='print address,name,status,score of each near or todo function instead; without sources, '
                          "of every near or todo nspace function, written or not")
+    ap.add_argument('--lines', nargs='+', metavar='NAME',
+                    help='compare marked functions (0x address, full name or last ::part) with retail statement '
+                         'by statement, using the PDB\'s line table and ours; searches every file under src/ '
+                         'unless source files are named')
     args = ap.parse_args(argv)
+    if args.lines:
+        sources = args.sources + [n for n in args.lines if n.endswith('.cpp')]
+        show_lines(Context(), [n for n in args.lines if not n.endswith('.cpp')], sources or all_sources())
+        return 0
     if not args.sources and not args.scores:
         ap.error('name the source files to check')
     ctx = Context()

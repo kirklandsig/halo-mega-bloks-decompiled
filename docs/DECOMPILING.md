@@ -128,6 +128,30 @@ without files it covers every near or todo `nspace` function, written or
 not, and `docs/scores.csv` is that list at the last snapshot. The permuter
 uses the same score.
 
+## Statement by statement
+
+`python tools/check.py --lines <name or 0x address> [file.cpp]` compares one
+function with retail through both line tables: the PDB's C13 lines for
+retail, and for ours the ones `cl -Z7` already writes to the object's
+`.debug$S` (the objects' own command lines ask for them, so nothing changes
+in the code). It prints:
+
+- the aligned disassembly (aligned as the score aligns it), retail's
+  instructions marked with their original line as `L+n` from the
+  function's first line, ours with `L+n`, our line number and its text;
+- retail's named locals (parameters in registers, stack locals with their
+  `r1` offsets);
+- a summary per retail line, in retail's order: its bytes and first
+  offset, the lines of ours whose code goes with it, and notes where ours
+  has more or fewer bytes, or runs it in another order. `^` marks a retail
+  line that runs after the line above it (scheduling, a loop condition, a
+  shared return).
+
+Inlined code carries the calling line on both sides, so one retail line
+with many bytes is an inlined helper or a heavy expression. Two retail
+lines landing in one of ours ("inside L+n") usually mean the original
+split a condition over two lines; the notes are where to look first.
+
 ## Partial progress
 
 A function that doesn't match yet can still get closer, and that progress

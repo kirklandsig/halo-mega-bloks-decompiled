@@ -121,3 +121,51 @@ def test_scores_lists_near_and_todo_and_unwritten_nspace(tmp_path, monkeypatch, 
                                        '0x82000300,B::k,todo,6\n')
     assert check.main(['--scores', str(src)]) == 1
     assert capsys.readouterr().out == 'address,name,status,score\n0x82000200,"A::g, h",near,3\n0x82000400,Epic::x,near,1\n'
+
+
+def test_line_report_maps_statements():
+    # retail: two statements of 8 bytes; ours puts the second one's code on
+    # the first line, and one line more
+    retail = bytes.fromhex('7d6321d6' '7d432850' '7d2a5850' '4e800020')
+    ours = bytes.fromhex('7d6321d6' '7d432850' '7d2a5850' '4e800020')
+    report = check.line_report(ours, [(0, 20, 'a.cpp'), (12, 22, 'a.cpp')], retail, [(0, 100), (8, 101)],
+                               lambda f, n: {20: 'x = a;', 22: 'return;'}.get(n))
+    assert report[1].split() [:4] == ['0', 'L+0', 'mullw', 'r11,']
+    assert '20: x = a;' in report[1] and '22: return;' in report[4]
+    summary = report[report.index('') + 2:]
+    assert summary[0].split()[:4] == ['L+0', '8', 'B', '@0']
+    assert 'L+0 12 B' in summary[0] and 'ours +4 B' in summary[0]
+    assert 'L+2 4 B' in summary[1] and 'ours -4 B' in summary[1]
+
+
+def test_line_report_flags_order():
+    # retail runs statement B (line 2) before C (line 3); ours the other way
+    a, b, c, ret = ['7d6321d6'], ['7d432850', '7d2a5850', '38630001'], ['38840002', '38a50003', '38c00004'], ['4e800020']
+    retail = bytes.fromhex(''.join(a + b + c + ret))
+    ours = bytes.fromhex(''.join(a + c + b + ret))
+    report = check.line_report(ours, [(0, 1, 'a.cpp'), (4, 3, 'a.cpp'), (16, 2, 'a.cpp'), (28, 4, 'a.cpp')],
+                               retail, [(0, 1), (4, 2), (16, 3), (28, 4)])
+    summary = report[report.index('') + 2:]
+    assert 'L+1 12 B' in summary[1] and 'ours runs it after L+2' in summary[1]
+    assert 'L+2 12 B' in summary[2]
+    assert not any('every statement' in line for line in summary)
+    same = check.line_report(retail, [(0, 5, 'a.cpp'), (16, 6, 'a.cpp')], retail, [(0, 9), (16, 10)])
+    assert 'every statement' in same[-1]
+
+
+@pytest.mark.orig
+def test_object_lines_from_our_compile(tmp_path):
+    import paths
+    xdk = paths.xdk()
+    if not (xdk / 'bin' / 'win32' / 'cl.exe').exists():
+        pytest.skip('needs the XDK')
+    import coff
+    import inventory
+    cmd = {r['object']: r for r in inventory.read_csv(paths.CONFIG / 'objects.csv')}['Unity_HaloRBTKamikazeEtAl.cpp.obj']['cmd']
+    src = tmp_path / 'lines.cpp'
+    src.write_text('int Lines(int a, int b)\n{\n    int x = a * b;\n\n    return x - a;\n}\n')
+    obj = tmp_path / 'lines.obj'
+    assert check.compile_file(xdk / 'bin' / 'win32' / 'cl.exe', cmd, [xdk / 'include' / 'xbox'], src, obj).returncode == 0
+    lines = check.object_lines(coff.parse(obj.read_bytes()), '?Lines@@YAHHH@Z')
+    assert lines and lines[0][0] == 0 and all(f.lower() == str(src).lower() for _, _, f in lines)
+    assert {n for _, n, _ in lines} <= {2, 3, 5, 6} and 5 in {n for _, n, _ in lines}

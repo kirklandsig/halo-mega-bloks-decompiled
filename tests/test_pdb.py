@@ -74,3 +74,45 @@ def test_first_line_has_original_cpp(real):
     cpp = [(s, n) for s, n in filter(None, lines) if s.lower().endswith('.cpp')]
     assert cpp
     assert all('unity_' not in s.lower() and n > 0 for s, n in cpp)
+
+
+def lines_subsection(offset, size, blocks):
+    body = b''
+    for file_id, entries in blocks:
+        body += struct.pack('<III', file_id, len(entries), 12 + 8 * len(entries))
+        body += b''.join(struct.pack('<II', off, line | 0x80000000) for off, line in entries)
+    return struct.pack('<IHHI', offset, 1, 0, size) + body
+
+
+def test_parse_lines_blocks_and_flags():
+    sub = lines_subsection(0x40, 0x30, [(0, [(0, 10), (8, 11)]), (24, [(16, 3)])])
+    # the statement flag in the top bits is dropped
+    assert pdb.parse_lines(sub) == (0x40, 1, 0x30, [(0, [(0, 10), (8, 11)]), (24, [(16, 3)])])
+
+
+def test_c13_subsections_align_and_report_positions():
+    a, b = b'abcde', b'xyz'
+    data = struct.pack('<II', 0xF2, len(a)) + a + b'\0\0\0' + struct.pack('<II', 0xF4, len(b)) + b
+    assert list(pdb.c13_subsections(data)) == [(0xF2, a, 8), (0xF4, b, 24)]
+
+
+def test_records_give_positions():
+    data = b'\4\0\0\0' + record(0x1106, b'\x01') + record(0x1111, b'\x02\x03')
+    assert [(pos, kind) for pos, kind, _ in pdb.records(data)] == [(4, 0x1106), (9, 0x1111)]
+    assert pdb.register_name(4) == 'r3' and pdb.register_name(100) == 'reg100'
+
+
+@pytest.mark.orig
+def test_line_table_starts_at_first_line(real):
+    mod = next(m for m in real.modules if r'\UDKBase\Unity_' in m.name)
+    procs = [p for p in real.procedures() if p.module == mod.index][:50]
+    checked = 0
+    for p in procs:
+        table = real.line_table(mod, p.rva)
+        if not table:
+            continue
+        assert table == sorted(table) and table[0][0] == 0
+        assert table[0][1] == real.first_line(mod, p.rva)[1]
+        assert all(0 <= off < max(p.size, 1) for off, _ in table)
+        checked += 1
+    assert checked

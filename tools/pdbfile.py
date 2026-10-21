@@ -1,6 +1,6 @@
 """Reads what the inventory needs from a PDB: the DBI header and modules,
 section headers, procedure and public symbols, each module's compiler
-environment strings, and C13 line information.
+environment strings, C13 line information, and a procedure's named locals.
 
 Named pdbfile, not pdb, so that it never shadows the Python debugger.
 
@@ -23,6 +23,8 @@ S_GPROC32 = 0x1110
 S_COMPILE2 = 0x1116
 S_COMPILE3 = 0x113C
 S_ENVBLOCK = 0x113D
+S_REGISTER = 0x1106
+S_REGREL32 = 0x1111
 
 DEBUG_S_LINES = 0xF2
 DEBUG_S_FILECHKSMS = 0xF4
@@ -59,17 +61,57 @@ def _cstr(data, pos):
     return bytes(data[pos:end]).decode('latin1'), end + 1
 
 
-def iter_symbols(data, start=4):
-    """(kind, payload) for each CodeView record from `start`. Unknown kinds
-    are yielded too; the walk follows each record's length, so it stays in
-    sync, and stops at trailing padding (a length under 2)."""
+def records(data, start=4):
+    """(position, kind, payload) for each CodeView record from `start`.
+    Unknown kinds are yielded too; the walk follows each record's length, so
+    it stays in sync, and stops at trailing padding (a length under 2)."""
     pos = start
     while pos + 4 <= len(data):
         length, kind = struct.unpack_from('<HH', data, pos)
         if length < 2:
             break
-        yield kind, bytes(data[pos + 4:pos + 2 + length])
+        yield pos, kind, bytes(data[pos + 4:pos + 2 + length])
         pos += 2 + length
+
+
+def iter_symbols(data, start=4):
+    """(kind, payload) for each CodeView record from `start` (see records)."""
+    for _, kind, payload in records(data, start):
+        yield kind, payload
+
+
+def c13_subsections(data, pos=0):
+    """(kind, payload, payload position) of each C13 debug subsection in
+    `data`: a PDB module's C13 block, or an object's .debug$S after its
+    4-byte signature."""
+    while pos + 8 <= len(data):
+        kind, length = struct.unpack_from('<II', data, pos)
+        yield kind, data[pos + 8:pos + 8 + length], pos + 8
+        pos += 8 + ((length + 3) & ~3)
+
+
+def parse_lines(sub):
+    """(code offset, segment, code size, [(file id, [(offset, line)])]) of a
+    DEBUG_S_LINES subsection; offsets are from the block's start."""
+    offset, seg, _flags, size = struct.unpack_from('<IHHI', sub, 0)
+    blocks, pos = [], 12
+    while pos + 12 <= len(sub):
+        file_id, count, block_size = struct.unpack_from('<III', sub, pos)
+        entries = [struct.unpack_from('<II', sub, pos + 12 + 8 * i) for i in range(count)]
+        blocks.append((file_id, [(off, line & 0xFFFFFF) for off, line in entries]))
+        pos += max(block_size, 12)
+    return offset, seg, size, blocks
+
+
+def file_name(checksums, file_id, strings):
+    """The name a DEBUG_S_FILECHKSMS entry gives, from a string table."""
+    name_off, = struct.unpack_from('<I', checksums, file_id)
+    return _cstr(strings, name_off)[0]
+
+
+def register_name(reg):
+    """A CodeView PowerPC register number as rN (other registers by number)."""
+    return f'r{reg - 1}' if 1 <= reg <= 32 else f'reg{reg}'
 
 
 def parse_proc(payload):
@@ -268,31 +310,64 @@ class Pdb:
     def _c13(self, module):
         data = self._module_stream(module)
         start = module.sym_size + module.c11_size
-        data = data[start:start + module.c13_size]
-        pos = 0
-        while pos + 8 <= len(data):
-            kind, length = struct.unpack_from('<II', data, pos)
-            yield kind, data[pos + 8:pos + 8 + length]
-            pos += 8 + ((length + 3) & ~3)
+        for kind, sub, _ in c13_subsections(data[start:start + module.c13_size]):
+            yield kind, sub
 
-    def first_line(self, module, rva):
-        """(source file, line) of the line block covering `rva`, or None."""
+    def _line_blocks(self, module, rva):
+        """(file checksums, start rva, [(file id, [(offset, line)])]) of the
+        line block covering `rva`, or None."""
         checksums, hit = None, None
         for kind, sub in self._c13(module):
             if kind == DEBUG_S_FILECHKSMS:
                 checksums = sub
-            elif kind == DEBUG_S_LINES and hit is None and len(sub) >= 32:
-                offset, seg, _flags, size = struct.unpack_from('<IHHI', sub, 0)
+            elif kind == DEBUG_S_LINES and hit is None and len(sub) >= 12:
+                offset, seg, size, blocks = parse_lines(sub)
                 start = self.rva(seg, offset)
-                if start <= rva < start + max(size, 1):
-                    file_id, nlines = struct.unpack_from('<II', sub, 12)
-                    if nlines:
-                        line, = struct.unpack_from('<I', sub, 28)
-                        hit = file_id, line & 0xFFFFFF
+                if start <= rva < start + max(size, 1) and any(entries for _, entries in blocks):
+                    hit = start, blocks
         if hit is None or checksums is None:
             return None
-        name_off, = struct.unpack_from('<I', checksums, hit[0])
-        return _cstr(self._names, name_off)[0], hit[1]
+        return checksums, hit[0], hit[1]
+
+    def first_line(self, module, rva):
+        """(source file, line) of the line block covering `rva`, or None."""
+        found = self._line_blocks(module, rva)
+        if found is None:
+            return None
+        checksums, _, blocks = found
+        file_id, entries = next((f, e) for f, e in blocks if e)
+        return file_name(checksums, file_id, self._names), entries[0][1]
+
+    def line_table(self, module, rva):
+        """[(offset from `rva`, line)] of the function at `rva`, every file's
+        entries in offset order (inlined code carries the calling line)."""
+        found = self._line_blocks(module, rva)
+        if found is None:
+            return []
+        _, start, blocks = found
+        return sorted((start + off - rva, line) for _, entries in blocks for off, line in entries)
+
+    def proc_locals(self, module, rva):
+        """The named S_REGISTER and S_REGREL32 records of the procedure at
+        `rva`: [(name, register, stack offset or None)]."""
+        data = self._module_stream(module)[:module.sym_size]
+        end, out = None, []
+        for pos, kind, payload in records(data):
+            if end is None:
+                if kind in (S_GPROC32, S_LPROC32):
+                    _, offset, seg, _ = parse_proc(payload)
+                    if self.rva(seg, offset) == rva:
+                        end, = struct.unpack_from('<I', payload, 4)
+                continue
+            if pos >= end:
+                break
+            if kind == S_REGISTER:
+                _type, reg = struct.unpack_from('<IH', payload, 0)
+                out.append((_cstr(payload, 6)[0], register_name(reg), None))
+            elif kind == S_REGREL32:
+                offset, _type, reg = struct.unpack_from('<iIH', payload, 0)
+                out.append((_cstr(payload, 10)[0], register_name(reg), offset))
+        return out
 
 
 def main(argv=None):
