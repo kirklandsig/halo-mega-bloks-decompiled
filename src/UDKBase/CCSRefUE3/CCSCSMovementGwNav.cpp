@@ -117,10 +117,14 @@ void CCSCSMovementGwNav::DoStop()
     }
 }
 
-// score 12 (was 12), near: retail interleaves converting the destination
-// with copying the bot's position; ours copies first. A named FVector, const
-// locals, the conversion inline in the call, swapping the two statements and
-// copying the position through a reference all leave it alone.
+// score 8 (was 12): retail interleaves the destination's FVector store with
+// the bot position's loads (stfs, lwz, stfs, lwz, stfs, lwz) while ours emits
+// the three stores first and the three loads after them. Binding the position
+// and the destination to const references before the two copies moves our
+// stores ahead of the loads, which leaves only the interleaving itself. A
+// named FVector, const locals, an explicit FVector cast, casting the position
+// copy, swapping the two statements and a permuter run all leave the order
+// alone.
 // @retail 0x8334B5B8
 bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 {
@@ -131,8 +135,10 @@ bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
     Kaim::Bot *pBot = m_pGwNavBotHandle->BotPointer->m_kaimbot;
     Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > Query = *new Kaim::AStarQuery<Kaim::DefaultTraverseLogic>;
     Query->BindToDatabase(pBot->m_database);
-    Kaim::Vec3f Start = pBot->GetPosition();
-    Kaim::Vec3f Dest = UnrealToGwNavVector(Destination);
+    const Kaim::Vec3f &RefStart = pBot->GetPosition();
+    const FVector &V = Destination;
+    Kaim::Vec3f Start = RefStart;
+    Kaim::Vec3f Dest = UnrealToGwNavVector(V);
     Query->Initialize(Start, Dest);
     Query->PerformQueryBlocking(m_workingMemory);
     if (Query->m_result != Kaim::ASTAR_DONE_PATH_FOUND)
@@ -142,7 +148,8 @@ bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
     return true;
 }
 
-// score 12 (was 12), near: the same interleaving as FindNavMeshPath.
+// score 8 (was 12): the same interleaving of the destination store with the
+// position loads as FindNavMeshPath.
 // @retail 0x8334B6B8
 bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Distance, float) const
 {
@@ -153,8 +160,10 @@ bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Dis
     Kaim::Bot *pBot = m_pGwNavBotHandle->BotPointer->m_kaimbot;
     Kaim::Ptr<Kaim::AStarQuery<Kaim::DefaultTraverseLogic> > Query = *new Kaim::AStarQuery<Kaim::DefaultTraverseLogic>;
     Query->BindToDatabase(pBot->m_database);
-    Kaim::Vec3f Start = pBot->GetPosition();
-    Kaim::Vec3f Dest = UnrealToGwNavVector(Destination);
+    const Kaim::Vec3f &RefStart = pBot->GetPosition();
+    const FVector &V = Destination;
+    Kaim::Vec3f Start = RefStart;
+    Kaim::Vec3f Dest = UnrealToGwNavVector(V);
     Query->Initialize(Start, Dest);
     Query->PerformQueryBlocking(m_workingMemory);
     if (Query->m_result != Kaim::ASTAR_DONE_PATH_FOUND)
@@ -165,16 +174,18 @@ bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Dis
     return true;
 }
 
-// score 21 (was 21), todo: retail's frame is 16 bytes larger and it reuses
-// the position's stack slot for the second Character temporary, keeping the
-// first one separate (named locals for each step do not move it).
+// score 20 (was 21): retail keeps the rotation live across the second
+// GetCharacter call and gives that call the position's stack slot, so the
+// delta and the rotation sit eight bytes higher (0x68 and 0x78 against our
+// 0x60 and 0x70) and the second Character lands in the position's slot.
 // @retail 0x8332ABA8
 bool CCSCSMovementGwNav::OrientationReached() const
 {
-    const int TargetYaw = (m_orientObj.target - m_pMeatPuppet->GetCharacter().GetPosition()).Rotation().Yaw;
+    const CCSCharacter Character = m_pMeatPuppet->GetCharacter();
+    const int TargetYaw = (m_orientObj.target - Character.GetPosition()).Rotation().Yaw;
     const int Yaw = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetOrientation().Yaw;
-    const int Delta = Abs((TargetYaw & 0xFFFF) - (Yaw & 0xFFFF));
-    return Delta < s_orientationTolerance || Delta > 0xFFFF - s_orientationTolerance;
+    const int Difference = Abs((TargetYaw & 0xFFFF) - (Yaw & 0xFFFF));
+    return Difference < s_orientationTolerance || Difference > 0xFFFF - s_orientationTolerance;
 }
 
 // @retail 0x83320D50

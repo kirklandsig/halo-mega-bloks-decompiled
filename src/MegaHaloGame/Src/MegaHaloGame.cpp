@@ -65,8 +65,14 @@ FSystemSettings &GetSystemSettings()
 // BasicSerializeObject and BasicDeserializeObject are near: the same
 // instructions as retail but for one swapped pair (the TArray's zero and
 // FArchive's vtable) and two registers swapped around the proxy archive's
-// vtable. Tried: the order of the archive flags, an initializer list, a
-// temporary proxy, the writer through an FArchive reference, a scope block.
+// vtable. Retail keeps the proxy archive's vtable in r11 and the object's
+// in r5, ours the other way round, and retail computes the FArchive
+// vtable's address in two halves (the lis at the top, the addi next to
+// the store) where ours hoists both. Tried: the order of the archive
+// flags, an initializer list, a temporary proxy, the writer through an
+// FArchive reference, a scope block, the copy constructor of the array, a
+// serialize call in place of the operator, an initialized version
+// variable, the comparison the other way round, and the permuter.
 // @retail 0x833C9E98
 TArray<unsigned char, FDefaultAllocator> UHaloSaveGame::BasicSerializeObject(UObject *Obj, int Version)
 {

@@ -26,6 +26,14 @@ static __forceinline FRotator UnwindRot(FRotator Rot)
     Result.Pitch = UnwindRot(Rot.Pitch);
     return Result;
 }
+// TickSpecial's own unwinding helper: it edits its by-value copy in place
+// instead of copying the rotator into a second local.
+static __forceinline FRotator UnwindRotCopy(FRotator Rot)
+{
+    Rot.Pitch = UnwindRot(Rot.Pitch);
+    Rot.Yaw = UnwindRot(Rot.Yaw);
+    return Rot;
+}
 #pragma inline_depth(0)
 extern int (*const EmitUnwindRotInt)(int) = &UnwindRot;
 extern FRotator (*const EmitUnwindRot)(FRotator) = &UnwindRot;
@@ -194,13 +202,15 @@ void AUSSPawn::SetMovementSpeedDefault()
     SetSpeed(CCS::MovementSpeed_Walk);
 }
 
-// score 65 (was 65), todo, 620 bytes against 656: the unwinding is the file's
-// UnwindRot, inlined (retail's sequence, other registers; it is __forceinline
-// here, as plain inline it stays a call). Retail also keeps the rotator
-// difference in a stack copy (all three components stored, the pawn's Roll
-// held in r30); ten source forms (GetNormalized, an inline operator-=,
-// `Delta = UnwindRot(Delta)`, component-wise assignment, the address taken,
-// default-construct and assign, direct-init) reproduce none of it.
+// score 50 (was 65): the rotator difference is unwound by a private copy of
+// UnwindRot (the shared FRotator overload is a matched retail function and
+// must stay as it is); retail unwinds yaw first and pitch second and keeps
+// the difference in a stack copy (pitch at 0x50, yaw at 0x54, roll at 0x58,
+// the unwound pitch written back) while holding the pawn's Roll in r30; ours
+// unwinds pitch first, stores only the pitch and the roll and loads Roll
+// early. Helpers that take the rotator by reference or keep it in an array
+// slot do keep it in memory, but they score 64-150 (the yaw first order
+// alone gives 60).
 // @retail 0x8336D540
 void AUSSPawn::TickSpecial(float DeltaTime)
 {
@@ -210,7 +220,8 @@ void AUSSPawn::TickSpecial(float DeltaTime)
     {
         return;
     }
-    FRotator Delta = UnwindRot(pController->AimingRot - pController->Pawn->Rotation);
+    const FRotator Diff = pController->AimingRot - pController->Pawn->Rotation;
+    FRotator Delta = UnwindRotCopy(Diff);
     if (!bNoWeaponFiring)
     {
         const float InvDeltaTime = 1.0f / DeltaTime;

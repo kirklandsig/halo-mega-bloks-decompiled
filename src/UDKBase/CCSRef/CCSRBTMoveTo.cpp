@@ -42,8 +42,12 @@ GripRBTNode::EBTExecutionResult CCSRBTMoveTo::ExecutePreInternal(IGripBTInterfac
     return ER_INPROGRESS;
 }
 
-// near: the node, the interface and the brain get their saved registers in
-// another order (r27/r28/r29); declaration orders tried
+// score 49 (was 49): the node, the interface and the brain get their saved
+// registers in another order (retail: this r29, interface r28, adjusted r27;
+// ours: interface r29, adjusted r28, this r27); the emitted code is
+// otherwise identical, so only MSVC's choice of the callee-saved registers
+// differs (declaration orders, a `this` local, const locals, c-style casts
+// and an interface local were tried)
 // @retail 0x8333E5E8
 GripRBTNode::EBTExecutionResult CCSRBTMoveTo::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *, bool)
 {

@@ -115,10 +115,12 @@ void CCSMessengerWorker::SetDebugOptions(const Grip::String &Options)
     } while (Remaining != 0);
 }
 
-// score 33 (was 33), near: retail keeps the name in r31 and the value in
-// r30, ours the other way round, and it builds the "yes" pointer before
-// loading the literal. Declaration orders, value forms and the compare's
-// argument order all leave it alone.
+// score 11 (was 33): retail forms the value pointer with one add of a clamped
+// offset (the name plus the smaller of dot+1 and the size); ours keeps the
+// dot's address from the scan loop and adds it in each arm, so the loop
+// carries an extra add and the pointer is built twice. Computing the clamped
+// offset instead matches retail's instruction count but moves the "yes" literal
+// setup ahead of the add, which shifts every register after it.
 // @retail 0x8333C538
 void CCSMessengerWorker::SetDebugOption(const Grip::String &Option)
 {
@@ -142,8 +144,8 @@ void CCSMessengerWorker::SetDebugOption(const Grip::String &Option)
     {
         return;
     }
-    unsigned int Value = Size >= (unsigned int)Dot + 1 ? Dot + 1 : Size;
-    bool bValue = strncmp(pName + Value, "yes", 3) == 0;
+    const char *pValue = Size >= (unsigned int)Dot + 1 ? pName + Dot + 1 : pName + Size;
+    bool bValue = strncmp(pValue, "yes", 3) == 0;
     if (strncmp(pName, "cover", 5) == 0)
     {
         pOptions->m_options[CCSDebugOptions::COVER] = bValue;

@@ -20,25 +20,29 @@ CCSCSCoverUnreal::CCSCSCoverUnreal(CCSCSInterface *pInterface)
 }
 #endif
 
-// Todo (520 bytes vs 548): the calls are retail's, but retail keeps the
-// slot position and the unused results in other stack slots.
+// score 94 (was 175): the calls are the retail's, but the retail keeps the
+// direction and the character position in the slot the position copy and the
+// rotator used, and passes the rotator on in a register pair instead of
+// through its pointer.
 // @retail 0x833432A8
 bool CCSCSCoverUnreal::DoGetInCover()
 {
     OverrideFocus();
-    Grip_Vector Position = m_currentCover.m_gameCover.m_coverInfo.Link->GetSlotLocation(m_currentCover.m_gameCover.m_coverInfo.SlotIdx, 0);
+    FVector Position = m_currentCover.m_gameCover.m_coverInfo.Link->GetSlotLocation(m_currentCover.m_gameCover.m_coverInfo.SlotIdx, 0);
     switch (m_currentCover.GetType())
     {
     case CCS::CoverType_Stand:
     {
-        FRotator Rotation = m_currentCover.m_gameCover.m_coverInfo.Link->GetSlotRotation(m_currentCover.m_gameCover.m_coverInfo.SlotIdx, 0);
-        m_pMeatPuppet->GetCharacter().m_gameCharacter.m_pawn->SetDesiredRotation(Rotation, 1, 1, 0.1f, 0);
+        m_pMeatPuppet->GetCharacter().m_gameCharacter.m_pawn->SetDesiredRotation(
+            m_currentCover.m_gameCover.m_coverInfo.Link->GetSlotRotation(m_currentCover.m_gameCover.m_coverInfo.SlotIdx, 0), 1, 1, 0.1f, 0);
         if (!m_pMeatPuppet->ReachedPoint(Position))
         {
-            Grip_Vector Direction = Position - m_pMeatPuppet->GetCharacter().GetPosition();
+            auto TempPosition = Grip_Vector(Position);
+            Grip_Vector Direction = TempPosition - (m_pMeatPuppet->GetCharacter().GetPosition());
             Direction.Z = 0.0f;
+            Grip_Rotation Facing;
             Direction.Normalize();
-            Grip_Rotation Facing = Direction.Rotation();
+            Facing = Direction.Rotation();
             m_pMeatPuppet->GetCharacter();
         }
         break;
@@ -51,10 +55,6 @@ bool CCSCSCoverUnreal::DoGetInCover()
     return true;
 }
 
-// Todo (512 bytes vs 580): retail shares one TakeCoverPose call between the
-// cases and keeps the character copy in another slot; inlined there,
-// CCSGameCharacter::GetHeight also reads the pawn's cylinder first (its
-// out-of-line copy doesn't), which ours doesn't reproduce.
 // @retail 0x8334B370
 void CCSCSCoverUnreal::DoGetOutCover()
 {
@@ -66,19 +66,22 @@ void CCSCSCoverUnreal::DoGetOutCover()
         TakeCoverPose(CCS::CoverPose_ShootOver, m_pMeatPuppet->GetCharacter().GetOrientation(), m_pMeatPuppet->GetCharacter().GetPosition());
         break;
     case CCS::CoverType_Stand:
-        switch (GetLeaningSide())
+    {
+        CCSCSCover::ELeaningSide Side = GetLeaningSide();
+        if (Side == LS_RIGHT)
         {
-        case LS_RIGHT:
-            TakeCoverPose(CCS::CoverPose_SideStepRight, Me.GetOrientation(), m_currentCover.GetShootPosition(CCS::CoverShootConfig_Right, Me.GetHeight()));
-            break;
-        case LS_LEFT:
-            TakeCoverPose(CCS::CoverPose_SideStepLeft, Me.GetOrientation(), m_currentCover.GetShootPosition(CCS::CoverShootConfig_Left, Me.GetHeight()));
-            break;
-        case LS_CENTER:
+            TakeCoverPose(CCS::CoverPose_SideStepRight, Me.GetOrientation(), m_currentCover.GetShootPosition(CCS::CoverShootConfig_Right, Me.GetSize()));
+        }
+        else if (Side == LS_LEFT)
+        {
+            TakeCoverPose(CCS::CoverPose_SideStepLeft, Me.GetOrientation(), m_currentCover.GetShootPosition(CCS::CoverShootConfig_Left, Me.GetSize()));
+        }
+        else if (Side == LS_CENTER)
+        {
             TakeCoverPose(CCS::CoverPose_ShootOver, Me.GetOrientation(), Me.GetPosition());
-            break;
         }
         break;
+    }
     }
 }
 
@@ -143,14 +146,13 @@ bool CCSCSCoverUnreal::CoverPoseReached()
     return bResult;
 }
 
-// Todo (296 bytes vs 292): retail normalizes the rotation straight from the
-// parameter's stack slots; ours stores a copy first (tried a named rotator,
-// normalizing in place, and NormalizeAxis on each component).
 // @retail 0x833208F8
 void CCSCSCoverUnreal::TakeCoverPose(CCS::ECoverPose Pose, Grip_Rotation Rotation, Grip_Vector Location)
 {
     m_pUnMeatPuppet->SetCoverPose(Pose, -1.0f);
-    m_pBasePawn->SetDesiredRotation(FRotator(Rotation).GetNormalized(), 0, 0, -1.0f, 1);
+    Grip_Rotation Normalized = Rotation;
+    Normalized.Normalize();
+    m_pBasePawn->SetDesiredRotation(FRotator(Normalized), 0, 0, -1.0f, 1);
     m_pBasePawn->bReducedSpeed = 0;
     m_pBasePawn->DesiredSpeed = m_pBasePawn->MaxDesiredSpeed;
     m_pBasePawn->DestinationOffset = 0.0f;

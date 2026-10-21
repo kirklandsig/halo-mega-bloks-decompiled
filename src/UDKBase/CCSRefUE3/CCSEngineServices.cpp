@@ -6,8 +6,17 @@
 #include "UDKBase/Inc/EngineUtils.h"
 #include "../CCSRef/CCSCover.cpp"
 
-// near, score 4 (was 7): retail hands the Cast the actor it kept in r31,
-// ours reloads the iterator's member after the checks' calls
+// score 4 (was 7): two differences are left. Retail hands the Cast the
+// actor it kept in r31 across the iterator's checks; ours reloads the
+// iterator's member (0x90(r1)), because the shared operator* returns
+// CurrentActor, which the checks' calls may have changed. The two loads of
+// Grip::Memory::pGlobalHeap carry the displacement of the unresolved
+// relocation (0 against the linked -0xc08); check.py only ignores it when
+// the load is within nine instructions of the lis that sets the base.
+// Tried in the shared EngineUtils.h: returning the local copy of the actor
+// (the compiler then copies it into r31 and the function grows by four
+// bytes), the checks without the local, the checks on the member, and a
+// local actor in the caller; all of them make it worse.
 // @retail 0x833387C0
 void CCSEngineServices::FindAllCovers(Grip_Array<CCSCover, Grip::AllocatorGH<CCSCover, 2> > &Covers)
 {

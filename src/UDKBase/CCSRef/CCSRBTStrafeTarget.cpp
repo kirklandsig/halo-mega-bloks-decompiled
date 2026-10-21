@@ -33,10 +33,12 @@ bool CCSRBTStrafeTarget::TestPreCondition(IGripBTInterface *pInterface)
     return true;
 }
 
-// near: the node and the blackboard get their saved registers the other way
-// round (r28/r29), and the objective's zeroing is scheduled around the
-// target test differently (split tests, a named target and an earlier
-// objective tried)
+// score 12 (was 44): the blackboard's current-target reload (0x108(r29)) is
+// scheduled before the objective's six zeroing stores in retail and after them
+// here, and the `mr r31, r3` that keeps the action factory lands between the
+// second and third store instead of between the first and second; everything
+// else (the 748 byte body, the register assignment, the single call to
+// GetCurrentTarget) matches
 // @retail 0x83340438
 GripRBTNode::EBTExecutionResult CCSRBTStrafeTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool)
 {
@@ -52,7 +54,8 @@ GripRBTNode::EBTExecutionResult CCSRBTStrafeTarget::ExecutePreInternal(IGripBTIn
     {
         return ER_FAILURE;
     }
-    Objective.pTarget = pBB->GetCurrentTarget()->character.GetActor();
+    CCSTarget *pCurTarget = pBB->GetCurrentTarget();
+    Objective.pTarget = (pCurTarget->character != CCSCharacter::NONE) ? pCurTarget->character.GetActor() : 0;
     Objective.chargeChance = m_chargeChance;
     Objective.moveLeft = m_canStrafeLeft;
     Objective.moveRight = m_canStrafeRight;

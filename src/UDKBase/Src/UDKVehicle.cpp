@@ -174,13 +174,15 @@ void AUDKVehicle::moveTowardGwNavLookSteer(const FVector &Direction)
     }
 }
 
-// score 51 (was 33), near: FVector::Normalize sums X, Z, Y (UnMath.h), which
-// matches moveTowardGwNavLSEncircle; X, Y, Z gave this function 33 and
-// Encircle 18. Retail's normalize of Dir fuses the Z and X squares (it loads X, then
-// Z) where the shared inline fuses Y and X here, so the whole tree of the
-// sum differs; the two float registers also swap (tried the six operand
-// orders of the sum, parenthesised groupings, a hand-written normalization
-// and permuting the three Normalize calls).
+// score 42 (was 51): the only difference left is the float register the two
+// constants get - retail keeps 0.0f in f8 and SMALL_NUMBER in f7, ours keeps
+// them the other way round - and that swap cascades into the operand order of
+// the multiplies (fmuls f0, f0, f6 against fmuls f0, f6, f0), the register
+// the sqrt and the division use and the order of the three terms in the two
+// dot products. The normalize of Dir sums X, Z, Y (UnMath.h), which is what
+// moveTowardGwNavLSEncircle needs (the six operand orders of the sum,
+// parenthesised groupings, a hand-written normalization, permuting the three
+// Normalize calls and writing the dot products out by hand were tried).
 // @retail 0x83386E18
 void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
 {
@@ -194,11 +196,20 @@ void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
     FVector Forward = Rotation.Vector();
     Right.Z = 0.0f;
     Forward.Z = 0.0f;
-    Dir.Normalize(SMALL_NUMBER);
+    {
+        const float SquareSum = (Dir.X * Dir.X + Dir.Z * Dir.Z) + Dir.Y * Dir.Y;
+        if (SquareSum > SMALL_NUMBER)
+        {
+            const float Scale = appInvSqrt(SquareSum);
+            Dir.X *= Scale;
+            Dir.Y *= Scale;
+            Dir.Z *= Scale;
+        }
+    }
     Right.Normalize(SMALL_NUMBER);
     Forward.Normalize(SMALL_NUMBER);
     Steering = -(Right | Dir);
-    const float ForwardDot = Forward | Dir;
+    const float ForwardDot = (Forward.X * Dir.X + Forward.Z * Dir.Z) + Forward.Y * Dir.Y;
     if (Steering > 0.1)
     {
         Steering = 1.0f;

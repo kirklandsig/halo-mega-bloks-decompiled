@@ -54,6 +54,7 @@ bool CCSAFStrafeTarget::UpdateGoal()
     FVector Goal = pPawn->Location;
     float BestTime = 0.0f;
     FVector Points[4];
+    FVector Extent(0, 0, 0);
     for (int i = 0, Angle = 0; Angle < 360; Angle += 90, i++)
     {
         Points[i] = FVector(3.402823466e+38F, 3.402823466e+38F, 3.402823466e+38F);
@@ -61,10 +62,10 @@ bool CCSAFStrafeTarget::UpdateGoal()
         {
             continue;
         }
-        const Grip_Vector Direction = ToTarget.RotateAngleAxis((int)(Angle * 182.0444f), FVector(0, 0, 1));
+        FVector Direction = ToTarget.RotateAngleAxis((int)(Angle * 182.0444f), FVector(0, 0, 1));
         FVector End = pPawn->Location + Direction * 2000.0f;
         FCheckResult Hit;
-        if (GWorld->SingleLineCheck(Hit, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), End, pPawn->Location, 0x209F, FVector(0, 0, 0), 0))
+        if (GWorld->SingleLineCheck(Hit, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), End, pPawn->Location, 0x209F, Extent, 0))
         {
             Points[i] = End;
         }

@@ -46,18 +46,15 @@ void CCSPSCover::Initialize(const GripSystemConfig *pConfig)
     CCSNorman::getInstance()->AddCoverSeeker(this);
 }
 
-// near: the element address adds the offset to the base the other way
-// round (offset + base against base + offset); a reference to the element,
-// a pointer to the element and the operand order in Grip_Array::operator[]
-// tried
 // @retail 0x8333C698
 void CCSPSCover::Finalize()
 {
     CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
     CCSCharacter Self = m_pBrain->m_meatPuppet->GetCharacter();
+    CCSBlackboard &BB = *pBB;
     for (int i = 0; i < pBB->m_covers.Num(); i++)
     {
-        pBB->m_covers[i].VacateCover(Self);
+        BB.m_covers[i].VacateCover(Self);
     }
     CCSNorman::getInstance()->RemoveCoverSeeker(this);
     CCSAISystem *pAISystem = GripEngineServices::GetAIManagerSystem<CCSAISystem>();
@@ -316,28 +313,29 @@ bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover
     {
         return true;
     }
-    bool bValid = false;
+    bool bValid;
+    bValid = false;
     const CCS::ECoverShootConfig Config = Cover.m_gameCover.GetShootConfig();
     if (Config == CCS::CoverShootConfig_All)
     {
         Grip_Vector Eyes = pTarget->character.GetEyesPosition();
-        const Grip_Vector &Pos = Cover.GetPosition();
-        Grip_Vector Delta;
-        Delta.X = Eyes.X - Pos.X;
-        Delta.Y = Eyes.Y - Pos.Y;
-        Delta.Z = Eyes.Z - Pos.Z;
+        Grip_Vector Delta = Eyes - Cover.GetPosition();
         Grip_Rotation R = Delta.Rotation();
         Grip_Rotation Rotation;
         Rotation.Pitch = R.Pitch - Orientation.Pitch;
+        int RollDelta = R.Roll - Orientation.Roll;
         Rotation.Yaw = R.Yaw - Orientation.Yaw;
-        Rotation.Roll = R.Roll - Orientation.Roll;
+        Rotation.Roll = RollDelta;
         Rotation.Normalize();
-        bValid = (Abs(Rotation.Yaw) < 0x4000) & (Rotation.Pitch < 0x2000);
+        int AbsYaw = Abs(Rotation.Yaw);
+        bValid = AbsYaw < 0x4000;
+        bValid = (0x2000 > Rotation.Pitch) & bValid;
     }
-    CCSCharacter Self = pMeatPuppet->GetCharacter();
+    const CCSCharacter Self = pMeatPuppet->GetCharacter();
     if (Config == CCS::CoverShootConfig_Left || Config == CCS::CoverShootConfig_LeftOrRight)
     {
-        const Grip_Vector &Pos = Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Left, Self.GetSize());
+        float Size = Self.GetSize();
+        const Grip_Vector &Pos = Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Left, Size);
         Grip_Vector Delta;
         Delta.X = pTarget->position.X - Pos.X;
         Delta.Y = pTarget->position.Y - Pos.Y;
@@ -345,10 +343,12 @@ bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover
         Grip_Rotation R = Delta.Rotation();
         Grip_Rotation Rotation;
         Rotation.Pitch = R.Pitch - Orientation.Pitch;
-        Rotation.Yaw = R.Yaw - Orientation.Yaw;
-        Rotation.Roll = R.Roll - Orientation.Roll;
+        int RollDelta = R.Roll - Orientation.Roll;
+        int YawDelta = R.Yaw - Orientation.Yaw;
+        Rotation.Yaw = YawDelta;
+        Rotation.Roll = RollDelta;
         Rotation.Normalize();
-        bValid = Rotation.Yaw < 0 && Rotation.Yaw > -0x2000;
+        bValid = 0 > Rotation.Yaw && Rotation.Yaw > -0x2000;
     }
     if (Config == CCS::CoverShootConfig_Right || (Config == CCS::CoverShootConfig_LeftOrRight && !bValid))
     {
@@ -357,9 +357,10 @@ bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover
         Delta.X = pTarget->position.X - Pos.X;
         Delta.Y = pTarget->position.Y - Pos.Y;
         Delta.Z = pTarget->position.Z - Pos.Z;
-        Grip_Rotation R = Delta.Rotation();
+        const Grip_Rotation R = Delta.Rotation();
         Grip_Rotation Rotation;
-        Rotation.Pitch = R.Pitch - Orientation.Pitch;
+        int PitchDelta = R.Pitch - Orientation.Pitch;
+        Rotation.Pitch = PitchDelta;
         Rotation.Yaw = R.Yaw - Orientation.Yaw;
         Rotation.Roll = R.Roll - Orientation.Roll;
         Rotation.Normalize();
@@ -374,66 +375,73 @@ bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover
 // @retail 0x83344EB8
 bool CCSPSCover::HighCostPerception(int &Budget)
 {
-    CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
-    m_pBrain->GetMeatPuppetQuery<IGripMeatPuppetQuery>();
-    for (; m_coverIdx < pBB->m_covers.Num() && Budget > 0; m_coverIdx++)
+    CCSBlackboard *pBB;
+    pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
     {
-        bool bSpent = false;
-        CCSCover &Cover = pBB->m_covers[m_coverIdx];
-        if (Cover.IsValid() || Cover.m_state == CCS::CoverState_NoPath)
+        m_pBrain->GetMeatPuppetQuery<IGripMeatPuppetQuery>();
+        for (; m_coverIdx < pBB->m_covers.Num() && 0 < Budget; ++m_coverIdx)
         {
-            Cover.m_validPath = true;
-            Cover.m_pathDistance = appSqrt(Cover.m_directDistance);
-        }
-        if (Cover.IsValid() || Cover.m_state == CCS::CoverState_BadDefensiveAngle)
-        {
-            bSpent = true;
-            Grip_Rotation Orientation = Cover.GetOrientation();
-            Grip_Vector Position = Cover.GetPosition();
-            Grip_RotationTranslationMatrix Matrix(Orientation, Grip_Vector(0.0f, 0.0f, 0.0f));
-            Grip_Vector ShootPosition = Position + Matrix.TransformNormal(Grip_Vector(128.0f, 0.0f, 0.0f));
-            const CCS::ECoverShootConfig Config = Cover.m_gameCover.GetShootConfig();
-            float MaxYaw = 16384.0f;
-            float MinYaw = -16384.0f;
-            if (Config == CCS::CoverShootConfig_Left)
+            bool bSpent = false;
+            CCSCover &Cover = pBB->m_covers[m_coverIdx];
+            if (Cover.IsValid() || Cover.m_state == CCS::CoverState_NoPath)
             {
-                MinYaw = -8192.0f;
+                Cover.m_validPath = true;
+                Cover.m_pathDistance = appSqrt(Cover.m_directDistance);
             }
-            else if (Config == CCS::CoverShootConfig_Right)
+            if (Cover.IsValid() || Cover.m_state == CCS::CoverState_BadDefensiveAngle)
             {
-                MaxYaw = 8192.0f;
-            }
-            else if (Config == CCS::CoverShootConfig_LeftOrRight || Config == CCS::CoverShootConfig_All)
-            {
-                MaxYaw = 8192.0f;
-                MinYaw = -8192.0f;
-            }
-            Cover.m_validDefense = true;
-            for (int i = 0; i < pBB->m_targets.Num(); i++)
-            {
-                CCSTarget &Target = pBB->m_targets[i];
-                if (Target.m_aiTargetType == AITargetType_PassiveObjective || Target.m_aiTargetType == AITargetType_PassiveSecondary)
+                bSpent = true;
+                const Grip_Rotation Orientation = (Grip_Rotation)(Cover.GetOrientation());
+                Grip_Vector Position;
+                Position = (Cover.GetPosition());
+                Grip_RotationTranslationMatrix Matrix(Orientation, Grip_Vector(0.0f, 0.0f, 0.0f));
+                auto permTemp1 = Grip_Vector(128.0f, 0.0f, 0.0f);
+                const Grip_Vector ShootPosition = (Matrix.TransformNormal(permTemp1)) + Position;
+                auto permTemp3 = Cover.m_gameCover.GetShootConfig();
+                CCS::ECoverShootConfig Config = (CCS::ECoverShootConfig)(permTemp3);
+                float MinYaw = -16384.0f;
+                float MaxYaw = 16384.0f;
+                if (Config == CCS::CoverShootConfig_Left)
                 {
-                    continue;
+                    MinYaw = -8192.0f;
                 }
-                Grip_Vector Eyes = Target.character.GetEyesPosition();
-                Grip_Vector ToCover = Position - Eyes;
-                Grip_Vector ToMe = m_pBrain->m_meatPuppet->GetCharacter().GetPosition() - Eyes;
-                const float Dot = ToMe | ToCover;
-                if (Dot <= 0.0f || Dot * Dot / ((ToCover | ToCover) * (ToMe | ToMe)) <= 0.49999997f
-                    || !HasValidDefensiveAngle(MinYaw, MaxYaw, ShootPosition, Orientation, &Target))
+                else if (Config == CCS::CoverShootConfig_Right)
                 {
-                    Cover.m_validDefense = false;
-                    break;
+                    MaxYaw = 8192.0f;
+                }
+                else if (Config == CCS::CoverShootConfig_LeftOrRight || Config == CCS::CoverShootConfig_All)
+                {
+                    MinYaw = -8192.0f;
+                    MaxYaw = 8192.0f;
+                }
+                Cover.m_validDefense = true;
+                for (int i = 0; i < pBB->m_targets.Num(); i++)
+                {
+                    const CCSTarget &Target = pBB->m_targets[i];
+                    if (Target.m_aiTargetType == AITargetType_PassiveObjective || Target.m_aiTargetType == AITargetType_PassiveSecondary)
+                    {
+                        continue;
+                    }
+                    Grip_Vector ToMe;
+                    Grip_Vector Eyes = Target.character.GetEyesPosition();
+                    const Grip_Vector ToCover = Position - Eyes;
+                    ToMe = m_pBrain->m_meatPuppet->GetCharacter().GetPosition() - Eyes;
+                    float Dot = ToMe | ToCover;
+                    if (Dot <= 0.0f || Dot * Dot / ((ToCover | ToCover) * (ToMe | ToMe)) <= 0.49999997f
+                        || !HasValidDefensiveAngle(MinYaw, MaxYaw, ShootPosition, Orientation, &Target))
+                    {
+                        Cover.m_validDefense = false;
+                        break;
+                    }
                 }
             }
-        }
-        if (bSpent)
-        {
-            Budget--;
+            if (bSpent)
+            {
+                Budget--;
+            }
         }
     }
-    return m_coverIdx >= pBB->m_covers.Num();
+    return pBB->m_covers.Num() <= m_coverIdx;
 }
 
 // @retail 0x83345280

@@ -425,8 +425,6 @@ void CCSBlackboard::SetHasBecomeAware(bool bAware)
     }
 }
 
-// Todo (the three below): retail calls ~Grip_Array<Grip::String> where ours
-// inlines it (and calls its DeleteContainerContent).
 // @retail 0x8335F1E8
 // GripBlackboard::~GripBlackboard
 // @retail 0x83362F08
@@ -492,11 +490,6 @@ CCSTarget *CCSBlackboard::GetSpecificTarget(FString TargetName)
     return 0;
 }
 
-// score 8 (was 8), near: the new out-of-range element's address is computed
-// in the other two registers than retail uses (3 bytes): retail loads the
-// count into r10 and the data pointer into r11, ours the other way round.
-// The order is the commutative add inside the inlined Grip_Array::AddItem,
-// so it cannot be flipped from this file without changing the shared header.
 // Moves targets beyond OutRange to the out-of-range list, and those back
 // within InRange to the target list.
 // @retail 0x83356838
@@ -505,29 +498,34 @@ void CCSBlackboard::UpdateTargetListsByRange(const Grip_Vector &Origin, const fl
     const float InRangeSq = InRange * InRange;
     const float OutRangeSq = OutRange * OutRange;
     int NumOutRange = m_OutRangeThreatTargets.Num();
-    for (int i = 0; i < m_targets.Num();)
     {
-        const Grip_Vector Position = m_targets[i].character.GetPosition();
-        CCSTarget &Target = m_targets[i];
-        const float DeltaX = Position.X - Origin.X;
-        const float DeltaY = Position.Y - Origin.Y;
-        if (DeltaX * DeltaX + DeltaY * DeltaY > OutRangeSq)
+        int i = 0;
+        while (i < m_targets.Num())
         {
-            m_OutRangeThreatTargets.AddItem(Target);
-            m_targets.RemoveItemSwap(i);
-        }
-        else
-        {
-            i++;
+            const Grip_Vector Position = (Grip_Vector)(m_targets[i].character.GetPosition());
+            const float DeltaX = Position.X - Origin.X;
+            const CCSTarget &Target = m_targets[i];
+            const float DeltaY = (float)(Position.Y - Origin.Y);
+            if (DeltaX * DeltaX + DeltaY * DeltaY > OutRangeSq)
+            {
+                m_OutRangeThreatTargets.AddItem(Target);
+                m_targets.RemoveItemSwap(i);
+            }
+            else
+            {
+                i++;
+            }
         }
     }
     for (int i = 0; i < NumOutRange;)
     {
         const Grip_Vector Position = m_OutRangeThreatTargets[i].character.GetPosition();
-        CCSTarget &Target = m_OutRangeThreatTargets[i];
         const float DeltaX = Position.X - Origin.X;
+        CCSTarget &Target = m_OutRangeThreatTargets[i];
         const float DeltaY = Position.Y - Origin.Y;
-        if (DeltaX * DeltaX + DeltaY * DeltaY < InRangeSq)
+        const float SumX = DeltaX * DeltaX;
+        const float Sum = (DeltaY * DeltaY) + SumX;
+        if (Sum < InRangeSq)
         {
             m_targets.AddItem(Target);
             m_OutRangeThreatTargets.RemoveItemSwap(i);

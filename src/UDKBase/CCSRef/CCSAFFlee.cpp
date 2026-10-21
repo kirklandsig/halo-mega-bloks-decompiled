@@ -48,32 +48,42 @@ void CCSAFFlee::UpdateMoveTarget()
     m_fleeRotation = m_initialRotation;
     m_fleeRotation.Yaw = (int)(m_fleeRotation.Yaw + 180 * 182.0444);
     Grip_Vector Target;
+    float BestTime;
     FCheckResult Hit;
-    float BestTime = 0.0f;
+    BestTime = 0.0f;
     FRotator Rotations[3] = {
         FRotator(m_fleeRotation.Pitch, (int)(m_fleeRotation.Yaw - 45 * 182.0444), m_fleeRotation.Roll),
         m_fleeRotation,
         FRotator(m_fleeRotation.Pitch, (int)(m_fleeRotation.Yaw + 45 * 182.0444), m_fleeRotation.Roll),
     };
-    int Index = rand() % 3;
-    for (int i = 0; i < 3; i++)
+    int Index;
+    const int Random = rand();
+    Index = Random % 3;
     {
-        FRotator &Rotation = Rotations[Index];
-        FVector Direction = Rotation.Vector();
-        FVector Start = pPawn->Location;
-        FVector End = Start + Direction * 1000.0f;
-        if (GWorld->SingleLineCheck(Hit, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), End, Start, 0x209F, FVector(0, 0, 0), 0))
+        int i;
+        for (i = 0; (bool)(3 > i); i++)
         {
-            Target = End;
-            m_fleeRotation = Rotation;
-            break;
+            FVector Direction;
+            FRotator &Rotation = Rotations[Index];
+            Direction = Rotation.Vector();
+            FVector Start = pPawn->Location;
+            FVector Offset = Direction * 1000.0f;
+            FVector End;
+            End = Start + Offset;
+            FVector Extent = FVector(0, 0, 0);
+            if (GWorld->SingleLineCheck(Hit, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), End, Start, 0x209F, Extent, 0))
+            {
+                m_fleeRotation = Rotation;
+                Target = End;
+                break;
+            }
+            if (BestTime < Hit.Time)
+            {
+                BestTime = Hit.Time;
+                Target = Hit.Location;
+            }
+            Index = (Index + 1) % 3;
         }
-        if (BestTime < Hit.Time)
-        {
-            BestTime = Hit.Time;
-            Target = Hit.Location;
-        }
-        Index = (Index + 1) % 3;
     }
     m_objective.moveTarget = Target;
     m_objective.movementType = CCS::MovementType_Run;

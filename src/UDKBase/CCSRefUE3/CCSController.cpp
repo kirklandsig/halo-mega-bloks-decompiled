@@ -18,6 +18,20 @@ static inline Grip::String MakeStateString(const wchar_t *Text)
     return Grip::String(Text);
 }
 
+// The empty state: returning it by value makes the compiler keep it in the
+// frame instead of taking the constructor's returned pointer.
+static inline FString MakeEmptyStateString()
+{
+    return FString("");
+}
+
+// The retail inlines FVector::Normalize; the header only marks it inline, so
+// the compiler is free to leave it out of line. Force it in.
+static __forceinline void NormalizeVector(FVector &V)
+{
+    V.Normalize(1.e-8f);
+}
+
 // @retail 0x83329C50
 void ACCSController::SetState(const FString &State)
 {
@@ -31,7 +45,7 @@ void ACCSController::SetState(const FString &State)
 // @retail 0x83337990
 void ACCSController::RemoveState(const FString &State)
 {
-    if (State == FString(""))
+    if (State == MakeEmptyStateString())
     {
         Brain->GetBlackboard<CCSBlackboard>()->ClearAllState();
         return;
@@ -379,12 +393,11 @@ void ACCSController::TakePossession()
     GripEngineServices::GetAIManager()->AddBrainFinder(&s_brainFinderCCS);
 }
 
-// Todo (1,328 bytes vs 1,376): the code is retail's, but retail inlines both
-// FVector::Normalize calls, which ours calls out of line (CCSAFStrafeTarget
-// calls it out of line in retail, so it isn't FORCEINLINE). With it forced
-// inline, the eye position still lands in another stack slot (retail reuses
-// it for the facing copy, which it takes from FRotator::Vector's result).
-// Writing both normalizes out by hand gets 1,368 bytes, still not retail's.
+// near: both FVector::Normalize calls are forced inline now, so the length
+// matches retail's, but the eye position still lands in another stack slot
+// (retail reuses it for the facing copy, which it takes from
+// FRotator::Vector's result); writing both normalizes out by hand gets
+// 1,368 bytes, still not retail's.
 // @retail 0x83337BB0
 unsigned int ACCSController::Tick(float DeltaTime, ELevelTick TickType)
 {
@@ -430,12 +443,16 @@ unsigned int ACCSController::Tick(float DeltaTime, ELevelTick TickType)
             const FVector AimDir = AimPoint - Pawn->GetPawnViewLocation();
             if (Pawn->IsA(AGwNavPawn::StaticClass()))
             {
-                FVector Dir = AimDir;
+                FVector Dir2D = AimDir;
                 FVector Facing = Pawn->Rotation.Vector();
-                FVector Facing2D(Facing.X, Facing.Y, 0.0f);
-                Facing2D.Normalize(1.e-8f);
-                FVector Dir2D(Dir.X, Dir.Y, 0.0f);
-                Dir2D.Normalize(1.e-8f);
+                FVector Facing2D = Facing;
+                Facing2D.Z = 0.0f;
+                Dir2D.Z = 0.0f;
+                // The retail inlines FVector::Normalize here, so the two
+                // vectors stay in registers instead of being passed by
+                // address to the out-of-line normalizer.
+                NormalizeVector(Facing2D);
+                NormalizeVector(Dir2D);
                 if ((Dir2D | Facing2D) >= 0.5f)
                 {
                     DesiredRot = AimDir.Rotation();

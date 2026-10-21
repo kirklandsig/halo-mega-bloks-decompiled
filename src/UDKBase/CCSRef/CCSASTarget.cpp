@@ -128,7 +128,7 @@ CCSTarget *CCSASTarget::GetClosestEntryVehicle(CCSBlackboard *pBB)
     return pClosest == &Closest ? 0 : pClosest;
 }
 
-// Near: retail copies each new target into a register of its own before it
+// Todo: retail copies each new target into a register of its own before it
 // stores it, so the four blocks are a register copy longer than ours; the
 // rest of the blocks matches.
 // @retail 0x83343D60

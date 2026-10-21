@@ -250,8 +250,14 @@ CCSBrain::~CCSBrain()
 
 // @retail 0x8333B960
 // score 1 (was 1): the indexed load of the array element has its two
-// registers the other way round (rewriting the shared
-// Grip_Array::operator[] inline and the permuter change nothing)
+// registers the other way round: retail loads the element with the byte
+// offset first (lwzx r10, r31, r11), ours with the data pointer first
+// (lwzx r10, r11, r31) in the second loop only. The order is the
+// commutative add inside the inlined Grip_Array::operator[], and MSVC
+// picks it per loop. Tried: a named element, a pointer to the data, the
+// const overload of operator[], a while loop, an unsigned index, the
+// guard as a truth test and inside the loop condition, the shared
+// operator[] inline itself, and the permuter (6.7k rewrites).
 void CCSBrain::SchedulerRegistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();
@@ -293,8 +299,13 @@ void CCSBrain::SchedulerRegistration()
 
 // @retail 0x8333BA88
 // score 1 (was 1): the indexed load of the array element has its two
-// registers the other way round (rewriting the shared
-// Grip_Array::operator[] inline and the permuter change nothing)
+// registers the other way round: retail loads the element with the data
+// pointer first (lwzx r4, r11, r31) in the first loop, ours with the byte
+// offset first (lwzx r4, r31, r11). The order is the commutative add
+// inside the inlined Grip_Array::operator[], and MSVC picks it per loop.
+// Tried: a named element, a pointer to the data, the const overload of
+// operator[], a while loop, an unsigned index, the shared operator[]
+// inline itself, and the permuter (6.7k rewrites).
 void CCSBrain::SchedulerUnregistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();

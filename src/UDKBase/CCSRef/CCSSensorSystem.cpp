@@ -44,8 +44,6 @@ void CCSSensorSystem::BecomeAware(bool bForce)
     }
 }
 
-// near: retail copies the friend's location word by word in X, Y, Z order,
-// ours starts with Z (a cast copy, an FVector copy and assignment tried)
 // Wakes the friendlies within yelling distance (plus their hearing range) and
 // hands an idle one this brain's current target.
 // @retail 0x8336D820
@@ -69,7 +67,8 @@ void CCSSensorSystem::AlertFriends()
         }
         float Range = pPawn->HearingThreshold + YellingDistance;
         Grip_Vector Location = *(const Grip_Vector *)&pPawn->Location;
-        if ((Location - Position).SizeSquared() > Range * Range)
+        Grip_Vector Delta = Location - Position;
+        if (Delta.Y * Delta.Y + Delta.Z * Delta.Z + Delta.X * Delta.X > Range * Range)
         {
             continue;
         }
