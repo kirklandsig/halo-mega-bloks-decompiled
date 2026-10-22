@@ -44,10 +44,15 @@ GripRBTNode::EBTExecutionResult CCSRBTMoveTo::ExecutePreInternal(IGripBTInterfac
 
 // score 49 (was 49): the node, the interface and the brain get their saved
 // registers in another order (retail: this r29, interface r28, adjusted r27;
-// ours: interface r29, adjusted r28, this r27); the emitted code is
-// otherwise identical, so only MSVC's choice of the callee-saved registers
-// differs (declaration orders, a `this` local, const locals, c-style casts
-// and an interface local were tried)
+// ours: interface r29, adjusted r28, this r27), and the init case's float
+// roll loads the 1/32767 constant before the weight*chance product where
+// retail loads it after (so the float registers then number differently too);
+// the emitted code is otherwise identical, so only MSVC's choice of the
+// callee-saved registers and the order of two scheduled float nodes differ
+// (declaration orders, a `this` local, const locals, c-style casts, an
+// interface local, nested and short-circuit roll forms, a named roll local,
+// swapped comparison and product operands, the case order, the breaks and a
+// named constant were tried, and the permuter found nothing)
 // @retail 0x8333E5E8
 GripRBTNode::EBTExecutionResult CCSRBTMoveTo::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *, bool)
 {
