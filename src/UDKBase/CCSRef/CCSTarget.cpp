@@ -113,11 +113,18 @@ void EmitTargetMembers(void *pMem, const CCSTarget &Target, CCSTarget *pTarget)
 
 // score 12 (was 12), near: the two FVector temporaries' loads and stores
 // interleave in ours; retail builds one, then the other (the registers match
-// exactly). Tried and all worse: named Kaim::Vec3f locals in both orders,
-// named FVector and Grip_Vector locals, references to both, this->position,
-// static_cast<FVector> on either or both arguments, and the two arguments
-// swapped (a diagnostic, and it scores the same, so the schedule is not tied
-// to the argument order). The permuter (600s) found nothing.
+// exactly). Ours lifts the destination copy's three loads above the position
+// copy's three stores and interleaves the six stores; retail keeps each copy
+// together. A probe shows the scheduler only keeps copies apart when they
+// come from the same source or from separate statements. Retail's PDB names
+// the parameter fromPosition and retail converts the member first, so the
+// argument order is right. Tried by both lanes, all worse or equal: named
+// Kaim::Vec3f, FVector or Grip_Vector locals in both orders (30, 36),
+// references to both, a const FVector reference (12), this->position,
+// static_cast<FVector>, explicit FVector temporaries and hand-built copies
+// (29 to 45), the copies assigned instead of initialised, the shared FVector
+// constructor and Grip_Vector conversion reshaped, a helper building the
+// FVector, the arguments swapped (15), and the permuter (600s).
 // @retail 0x8334D020
 void CCSTarget::FindDestinationReachable(Grip_Vector Destination)
 {

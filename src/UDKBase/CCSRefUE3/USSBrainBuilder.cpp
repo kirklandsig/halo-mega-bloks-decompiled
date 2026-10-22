@@ -62,16 +62,6 @@ void USSBrainBuilder::SetUpBrain()
 extern const char GCognitionLicense[];
 
 #ifndef HAGGAR_HOST  // it builds guest objects; it stays recompiled in the port
-// score 19 (was 19), near: after the mediator's allocation retail copies the
-// result to r11 before the null check, ours inside the constructor's path (so
-// the vtable addresses land in r5..r7 there, r6..r8 here). The new-expression's
-// form is the suspect; the mediator's constructor written with assignments
-// changes nothing. Everything else in the function matches byte for byte, so
-// only the copy's place differs. Tried: the mediator assigned to the
-// interface pointer first, the interface pointer initialised before the if,
-// the two setters swapped, an explicit cast in the assignment, new T() with
-// parentheses, the concrete pointer declared outside the if, an explicit null
-// check, and the permuter (600s).
 // @retail 0x833439E8
 void USSBrainBuilder::ConstructBrain(UObject *pOwner, UCCSBTTree *pBTTree, ICCSMeatPuppet *pMeatPuppet,
                                      FCCSSystemConfigData *pSystemConfigData, UGripBTInterface *pBTInterface,
@@ -94,8 +84,8 @@ void USSBrainBuilder::ConstructBrain(UObject *pOwner, UCCSBTTree *pBTTree, ICCSM
         GripBTScriptNodeMediator *pScriptNodeMediator = new GripBTScriptNodeMediator;
         pScriptNodeMediator->SetScriptNodeCache(pScriptNodeCache);
         pScriptNodeMediator->SetBTInterface(pBTInterface);
+        pScriptNodeMediator->InitializeAllNodes();
         pMediator = pScriptNodeMediator;
-        pMediator->InitializeAllNodes();
     }
     else
     {

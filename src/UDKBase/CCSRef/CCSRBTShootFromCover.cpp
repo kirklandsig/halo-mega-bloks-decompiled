@@ -99,9 +99,13 @@ int CCSRBTShootFromCover::GetInCover(CCSTarget *pTarget, CCSCover *pCover, CCSAF
 }
 
 // @retail 0x8334C928
-// Near: retail calls CCSCharacter::GetActor out of line here (its inline copy
-// was not expanded at this call site) and keeps the meat puppet query in r24
-// where ours uses r25; ours is 56 bytes short.
+// Matched. Three things had to be spelled the way they are: the fire burst
+// count is compared the other way round so that the state change stays
+// inline and the branch out of line; the shooting state has a failure path
+// (the action status is AS_FAILURE) that leaves cover and leaves ER_FAILURE
+// as the behaviour result; and the actor is asked for twice, once to test it
+// and once to look at it. The heat is read out of the blackboard after the
+// old heat is read, so that the sum's operands come out in retail's order.
 GripRBTNode::EBTExecutionResult CCSRBTShootFromCover::ExecuteInternal(IGripBTInterface *pInterface, bool bInterrupt)
 {
     CCSBlackboard *pBB = pInterface->GetBlackboard<CCSBlackboard>();
@@ -148,32 +152,43 @@ GripRBTNode::EBTExecutionResult CCSRBTShootFromCover::ExecuteInternal(IGripBTInt
         }
         break;
     case CCSRBTShootFromCover::BTCoverShootState_Shooting:
-        if (pScheduler->GetStatus(m_actionHandle) == GripAFAction::AS_DONE)
+    {
+        GripAFAction::EGripAFActionStatus Status = pScheduler->GetStatus(m_actionHandle);
+        if (Status == GripAFAction::AS_DONE)
         {
             m_fireBurstCount++;
-            if (m_fireBurstCount >= m_fireBurstPerShot)
+            if (m_fireBurstCount < m_fireBurstPerShot)
+            {
+                m_state = CCSRBTShootFromCover::BTCoverShootState_ShootingDelay;
+                m_delayTimer = 0.0f;
+            }
+            else
             {
                 CCSCover Cover = pQuery->GetCurrentCover();
                 m_actionHandle = GetInCover(pTarget, &Cover, pFactory, pScheduler);
                 m_state = CCSRBTShootFromCover::BTCoverShootState_ReturningToCover;
             }
-            else
-            {
-                m_state = CCSRBTShootFromCover::BTCoverShootState_ShootingDelay;
-                m_delayTimer = 0.0f;
-            }
+            return GripRBTNode::ER_INPROGRESS;
+        }
+        else if (Status == GripAFAction::AS_FAILURE)
+        {
+            m_actionHandle = ExitCover(pFactory, pScheduler);
+            m_state = CCSRBTShootFromCover::BTCoverShootState_ExitingCover;
+            m_behaviorResult = GripRBTNode::ER_FAILURE;
             return GripRBTNode::ER_INPROGRESS;
         }
         break;
+    }
     case CCSRBTShootFromCover::BTCoverShootState_ShootingDelay:
+    {
         m_delayTimer += pInterface->GetDeltaTime();
         if (m_delayTimer > m_delayBetweenBursts)
         {
-            AActor *pActor = (AActor *)pTarget->character.GetActor();
-            if (pActor == 0)
+            if ((AActor *)pTarget->character.GetActor() == 0)
             {
                 return GripRBTNode::ER_FAILURE;
             }
+            AActor *pActor = (AActor *)pTarget->character.GetActor();
             UUDKTargetableComponent *pTargetable = Cast<UUDKTargetableComponent>(pActor->GetComponentOfType(UUDKTargetableComponent::StaticClass()));
             if (pTarget == 0 || pTargetable == 0)
             {
@@ -181,20 +196,20 @@ GripRBTNode::EBTExecutionResult CCSRBTShootFromCover::ExecuteInternal(IGripBTInt
                 m_state = CCSRBTShootFromCover::BTCoverShootState_ExitingCover;
                 return GripRBTNode::ER_INPROGRESS;
             }
-            float fHeat = pBB->m_heatGenerated.Get();
-            if (pTargetable->MaxAIHeat - pTargetable->CurAIHeat <= fHeat)
+            if (pTargetable->MaxAIHeat - pTargetable->CurAIHeat <= pBB->m_heatGenerated.Get())
             {
                 m_actionHandle = ExitCover(pFactory, pScheduler);
                 m_state = CCSRBTShootFromCover::BTCoverShootState_ExitingCover;
                 return GripRBTNode::ER_INPROGRESS;
             }
-            pTargetable->CurAIHeat += fHeat;
+            pTargetable->CurAIHeat += pBB->m_heatGenerated.Get();
             CCSAOFireBurst Objective = {pTarget->character, m_chargeChance, true, pTarget->character != CCSCharacter::NONE ? pTarget->isBehindCover : false};
             m_actionHandle = FireBurst(Objective, pFactory, pScheduler);
             m_state = CCSRBTShootFromCover::BTCoverShootState_Shooting;
             return GripRBTNode::ER_INPROGRESS;
         }
         break;
+    }
     case CCSRBTShootFromCover::BTCoverShootState_ReturningToCover:
         if (pScheduler->GetStatus(m_actionHandle) == GripAFAction::AS_DONE)
         {

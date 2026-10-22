@@ -56,10 +56,18 @@ bool CCSBBTargetVisualization::GetIsVisible()
 // moves the address to retail's place but the allocator then numbers the
 // members pointer r29 and the two "YES"/"NO" string pointers r28 and r27
 // (retail: r27, r29, r28), which scores 14; the reference at the top keeps
-// retail's numbering but leaves the address at the top of the function. Tried:
-// no reference, a pointer assigned at the first use, the same through -> and
-// (*), this->m_members, the address spelled as a cast, the reference bound
-// after the member constructor, and the string temporaries reshaped
+// retail's numbering but leaves the address at the top of the function. The
+// two go together: the address is defined where the source names m_members
+// (never sunk or rematerialised), and a value born before the first if/else
+// gets r27, one born at the AddItem r29; the PDB puts retail's address on the
+// AddItem's line, yet it has r27. Tried by both lanes, none better than 7: no
+// reference; a pointer, reference or const reference bound at the top, after
+// the member constructor, before the first member or just before the first
+// AddItem; m_members used directly at all, some or only the first call;
+// this->, (*), casts, base-class pointers or references; the buffer per if
+// block; the locals in the other order; the ?: as an if/else; the first
+// member split into declaration and assignment; the string temporaries
+// reshaped; two ten-minute permuter runs.
 // @retail 0x8334BDA8
 void CCSBBTargetVisualization::Refresh()
 {

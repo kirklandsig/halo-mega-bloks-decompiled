@@ -142,13 +142,18 @@ void CCSCSCover::Tick(float)
     }
 }
 
-// score 19 (was 21): the two position vectors are still loaded component by
-// component instead of one vector at a time, and the cover orientation is
-// written to a fresh stack slot instead of the one the difference vector has
-// vacated. The zeroing matches now: retail's Grip_Rotation constructor zeroes
-// Roll, Yaw and Pitch in that order, so the shared header's constructor zeroes
-// them in that order too (a member initialiser list zeroes them the other way
-// round, and then the stores come out in the wrong order).
+// score 19 (was 21): the zeroing matches (retail's Grip_Rotation constructor
+// zeroes Roll, Yaw, Pitch in that order, so the shared header's does too).
+// Left: retail loads the target's three components, then the character's,
+// and subtracts; ours interleaves the two vectors pair by pair. And the cover
+// orientation goes to a fresh stack slot instead of the one the difference
+// vector vacated. The load order is the compiler's: both lanes tried a named
+// delta, the delta by components, explicit Grip_Vector temporaries, float
+// locals for the components and the differences, a const reference, the
+// character's position first, no position locals, the rotations in locals or
+// in one expression, and the shared operator- rewritten three ways (swapping
+// its operands changes the subtraction order, not the schedule); a ten-minute
+// permuter run found nothing.
 // @retail 0x8332F4B0
 Grip_Rotation CCSCSCover::GetCrouchCoverRot()
 {

@@ -301,10 +301,17 @@ void CCSPSTargetAwareness::UpdateCurrentTarget()
     }
 }
 
-// score 2 (was 2): the CNTAge sum has its two operands the other way round;
-// the compiler loads the age into f0 and always adds it first, and every
-// source spelling of the sum (both orders, +=, a temporary, a cast) gives
-// the same code
+// score 2 (was 2): the CNTAge sum has its operands the other way round
+// (retail fadds f13, f31, f0; ours f13, f0, f31); the float constant is a
+// relocation and masked. The XDK puts the operand loaded from memory first in
+// every spelling tried (the member read directly, in a local or a temporary,
+// read and stored in one expression, +=, a cast, x * 1, a helper, the
+// statement moved), and retail has the age second; only a load through a
+// global pointer keeps the parameter first. Reading and storing the age
+// through a pointer or a reference turns the sum but also turns the six array
+// index adds of the damage loop (7 or 8): they are one decision of the XDK's
+// commutative ordering. Also worse: volatile (29), a pointer to member (44),
+// the loop index in a local (331).
 // @retail 0x8333D9D0
 int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
 {
@@ -488,10 +495,17 @@ void CCSPSTargetAwareness::AddThreatTarget(AActor *pActor)
 }
 
 // score 1 (was 1): retail adds the element's offset to the array's base (add
-// r11, r11, r31) and ours the base to the offset; no array-access form tried
-// (operator[], GetData()[i], GetData() + i, a typed pointer, a char* cast in
-// DestructItems), a reference to the blackboard or a ten minute permuter run
-// changes the order
+// r11, r11, r31) and ours the base to the offset, in the inlined
+// Grip_Array::DestructItems of the removal; the standalone DestructItems and
+// RemoveItemSwap and the other inlined copies match, and the move of the last
+// friendly has the other order in both. Tried by both lanes, none changes the
+// order: operator[], GetData()[i], GetData() + i, a typed or char* pointer,
+// the offset or index in a local (some change the code), unsigned or
+// hand-scaled indexes, the element read directly or through a reference or a
+// pointer, the blackboard or the array through a reference, the shared
+// DestructItems, operator[] and AddItem in many spellings, and a ten-minute
+// permuter run. (UCCSBlackboard::GetCovers matched the same kind of add by
+// reading the blackboard through a reference in its loop.)
 // @retail 0x833579B8
 void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
 {
@@ -660,11 +674,18 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
     }
 }
 
-// score 6 (was 14): the vehicles loop's LKPAge sum still has its operands
-// the other way round, and the friendly limit's comparison is compared the
-// other way round (a while loop over the targets, the position read into a
-// named local and the sums written with DeltaTime first are what the
-// compiler needs for the other two sums)
+// score 5 (was 6): the friendly limit's comparison (retail fcmpu f8, f7 with
+// bge; ours fcmpu f7, f8 with ble) and three masked pre-link displacements.
+// The limit's sum matches since RadiusSq is named before the distance. The
+// comparison keeps its operands' order and only the branch follows the
+// operator: retail's compare wants the ratio first with >=, which moves the
+// stores of the threat position copy (Z before Y in retail) and costs 6 to 9
+// more. Tried by both lanes: the comparison negated, reversed, in
+// parentheses, through temporaries or locals, the tests nested or reordered,
+// '>', the dot test last, the flags swapped, the copy through a local, by
+// fields (134) or read earlier, the range through a local or without
+// parentheses, the subtraction and the threshold's division and
+// multiplication reversed, and a ten-minute permuter run.
 // @retail 0x8333CD70
 void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
 {
@@ -694,10 +715,11 @@ void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
             const Grip_Vector Weapon = pMeatPuppet->GetWeaponStartPosition();
             Grip_Vector Direction = Eyes - Weapon;
             const float Radius = pMeatPuppet->GetCharacter().GetSize() * 2.0f;
+            const float RadiusSq = Radius * Radius;
             const float DistanceSq = Direction.SizeSquared2D();
-            if (DistanceSq > Radius * Radius)
+            if (DistanceSq > RadiusSq)
             {
-                const float Limit = Radius * Radius + DistanceSq;
+                const float Limit = DistanceSq + RadiusSq;
                 const float Ratio = DistanceSq / Limit;
                 for (int j = 0; j < pBB->m_friendlies.Num(); j++)
                 {

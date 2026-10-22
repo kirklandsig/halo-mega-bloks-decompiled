@@ -117,14 +117,18 @@ void CCSRBTSearch::MoveToRandomLocation(IGripBTInterface *pInterface)
     pScheduler->Execute(m_actionHandle);
 }
 
-// near, score 5 (was 8): retail hands the Cast the actor it kept in r31,
-// ours reloads the iterator's member after the checks' calls. The actor's two
-// reads (the checks' and the Cast's) are one value in retail and two in ours;
-// every shape that makes them one value splits it instead, into a load and a
-// copy to r31 (mr r31, r11). Tried: the actor in a local in the caller, the
-// checks moved out of operator* into the caller, operator* returning the
-// local instead of the member, the checks in an always-inline helper taking
-// the actor, a reference to the member, and no local at all.
+// near, score 3 (was 8): the indexed store of the inlined Grip_Array::AddItem
+// has base and offset swapped (retail stwx r28, r9, r10; ours stwx r28, r10,
+// r9); the two loads of Grip::Memory::pGlobalHeap differ only by the linker's
+// anchor, which the comparison masks. Retail itself emits both orders (69 of
+// its 90 indexed stores offset first; CCSBrain's CreateDebugRenderingProxies,
+// the same shape, matches). Tried by both lanes, none changes the store: the
+// shared AddItem in many spellings (pointer or char* arithmetic, the address
+// or index in a local, a void pointer, a direct assignment), the item in an
+// if-initializer or read again, a pointer local, the array through a
+// reference (60), a while loop, the condition folded, the actor in a local or
+// a reference, the checks moved out of operator* or into a helper, and a
+// ten-minute permuter run.
 // @retail 0x83339098
 void CCSRBTSearch::FindNavigationPoints()
 {

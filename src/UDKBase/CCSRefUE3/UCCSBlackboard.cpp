@@ -48,22 +48,19 @@ void UCCSBlackboard::SetHealth(int Health)
     CCSBB(BB)->m_health.Set(Health);
 }
 
-// score 1 (was 1): the add of the array base and the element offset has its
-// two operands the other way round; rewriting the shared
-// Grip_Array::operator[] inline (plain indexing, pointer arithmetic, a
-// scaled index), the call site forms (the inner array, the accessor, the
-// address by hand), a reference to the blackboard, the data in the loop and
-// a ten minute permuter run change nothing
+// The loop reads the blackboard through a reference: the compiler then adds
+// the array base to the element offset the other way round, as retail does.
 // @retail 0x83339360
 void UCCSBlackboard::GetCovers(TArray<FCCSCoverData> &Covers) const
 {
     CCSBlackboard *pBB = CCSBB(BB);
-    CHECK_USED(pBB->m_covers, "Covers");
+    CCSBlackboard &Ref = *pBB;
+    CHECK_USED(Ref.m_covers, "Covers");
     Covers.Reserve(pBB->m_covers.Num());
     FCCSCoverData Data;
-    for (int i = 0; i < pBB->m_covers.Num(); i++)
+    for (int i = 0; i < Ref.m_covers.Num(); i++)
     {
-        const CCSCover &Cover = pBB->m_covers[i];
+        const CCSCover &Cover = Ref.m_covers[i];
         Data.TargetDist = Cover.m_targetDist;
         Data.DirectDistance = Cover.m_directDistance;
         Data.ValidPath = Cover.m_validPath;
@@ -129,20 +126,20 @@ FCCSTargetData UCCSBlackboard::GetClosestVisibleEnemy() const
     return Data;
 }
 
-// score 1 (was 1): the add of the array base and the element offset has its
-// two operands the other way round (the shared Grip_Array::operator[] inline
-// rewritten, the call site forms, a reference to the blackboard and the
-// permuter change nothing)
+// The loop reads the blackboard through a reference: the compiler then adds
+// the array base to the element offset the other way round, as retail does.
 // @retail 0x83339680
 void UCCSBlackboard::GetTargets(TArray<FCCSTargetData> &Targets) const
 {
     CCSBlackboard *pBB = CCSBB(BB);
     CHECK_USED(pBB->m_targets, "Targets");
     Targets.Reserve(pBB->m_targets.Num());
-    for (int i = 0; i < pBB->m_targets.Num(); i++)
+    CCSBlackboard &Ref = *pBB;
+    for (int i = 0; i < Ref.m_targets.Num(); i++)
     {
         FCCSTargetData Data;
-        CCSTargetCopy(pBB->m_targets[i], Data);
+        const CCSTarget &Target = Ref.m_targets[i];
+        CCSTargetCopy(Target, Data);
         Targets.AddItem(Data);
     }
 }

@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-20 (n-Space's C++: 2,012 of 2,061 functions matched). Matching progress is
+Updated 2026-10-20 (n-Space's C++: 2,016 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -32,16 +32,16 @@ Phase 5 (UDK rebuild, later).
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **2,012 are matched (215,456 bytes, 86%), 31 are near
-(20,788 bytes) and 18 are todo (12,248 bytes)**; 2,025 functions match in
+isn't `todo`. **2,016 are matched (218,180 bytes, 87%), 30 are near
+(20,120 bytes) and 15 are todo (10,192 bytes)**; 2,029 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
-(156 match), and the CCS layer's other 644 functions (99,024 bytes; 611 of
+(156 match), and the CCS layer's other 644 functions (99,024 bytes; 613 of
 them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,557 | 28 | 18 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,561 | 27 | 15 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 351 | 3 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
@@ -51,18 +51,16 @@ Four of the CCS files (`ccsbrain.cpp`, `ccscsmovementunreal.cpp`,
 `ccsastarget.cpp`, `ccsrbtshootfromcover.cpp`, 60 functions) came from a
 separate lane, written by the MiniMax-M3.1-Flash model; at its merge 46 of
 them matched (4,844 bytes), 6 were near (1,236 bytes) and 8 todo. Two
-more MiniMax-M3.1-Flash lanes then worked on the leftovers, merged in four
-rounds (29 functions matched, and most of the rest brought closer).
+more MiniMax-M3.1-Flash lanes then worked on the leftovers, merged in five
+rounds (33 functions matched, and most of the rest brought closer).
 
 `docs/scores.csv` lists every near and todo function with its score (how
 far it is from retail; see `docs/DECOMPILING.md`), regenerated with
 `python tools/check.py --scores > docs/scores.csv`.
 
 Each written function that doesn't match has a comment in its source file
-saying why. Two `CCSCSMovementUnreal` functions
-(`GetNextMoveLocation`, `MoveToDestination`) aren't written yet. Of the
-rest, most are a swapped register pair, an operand order, a schedule or a
-stack slot away; the largest gaps are in the CCS actions' `UpdateGoal`
+saying why; every function is written. Most are a swapped register pair,
+an operand order, a schedule or a stack slot away; the largest gaps are in the CCS actions' `UpdateGoal`
 and `UpdateMoveTarget`, `AUSSController::PostPollMove`, and
 `UCCSActorFactory::CreateActor`. `docs/scores.csv` has the full list.
 
