@@ -738,3 +738,50 @@ public:
 };
 }
 }
+// enginecontrollerclasses.h, enginepawnclasses.h: the engine's own event
+// wrappers. Retail inlines them at the call site, so they are written here
+// rather than left as calls to the engine's out-of-line copies.
+struct Controller_eventPossess_Parms
+{
+#ifndef HAGGAR_HOST
+    APawn *inPawn;              // 0x0
+    unsigned int bVehicleTransition;  // 0x4
+#else
+    hg::gptr<APawn> inPawn;
+    hg::be<unsigned int> bVehicleTransition;
+#endif
+};
+
+struct Pawn_eventCreateInventory_Parms
+{
+#ifndef HAGGAR_HOST
+    UClass *NewInvClass;        // 0x0
+    unsigned int bDoNotActivate;  // 0x4
+    AInventory *ReturnValue;    // 0x8
+#else
+    hg::gptr<UClass> NewInvClass;
+    hg::be<unsigned int> bDoNotActivate;
+    hg::gptr<AInventory> ReturnValue;
+#endif
+};
+
+extern FName UDKBASE_Possess;
+extern FName UDKBASE_CreateInventory;
+
+inline void AController::eventPossess(APawn *NewPawn, unsigned int bVehicleTransition)
+{
+    Controller_eventPossess_Parms Parms;
+    Parms.inPawn = NewPawn;
+    Parms.bVehicleTransition = bVehicleTransition ? FIRST_BITFIELD : 0;
+    ProcessEvent(FindFunctionChecked(UDKBASE_Possess, 0), &Parms, 0);
+}
+
+inline AInventory *APawn::eventCreateInventory(UClass *NewInvClass, unsigned int bDoNotActivate)
+{
+    Pawn_eventCreateInventory_Parms Parms;
+    Parms.NewInvClass = NewInvClass;
+    Parms.bDoNotActivate = bDoNotActivate ? FIRST_BITFIELD : 0;
+    Parms.ReturnValue = 0;
+    ProcessEvent(FindFunctionChecked(UDKBASE_CreateInventory, 0), &Parms, 0);
+    return Parms.ReturnValue;
+}
