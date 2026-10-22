@@ -36,9 +36,13 @@ void CCSAFStrafeTarget::OnActivate()
     m_pMovementCS->Activate();
 }
 
-// Todo: the code is retail's but retail has 0x20 more bytes of frame and
-// reads the rotated direction from a fixed slot (another temporary somewhere;
-// tried the direction as an FVector, a named axis and a named offset).
+// score 274 (was 293): the extent is now a temporary (retail's PDB names no
+// extent local), the objective's alertness/movementType are set before
+// moveTarget, the best-time test uses <= where retail branches on bgt and the
+// best time is declared before the direction is normalised; still 0x20 bytes
+// of frame short, the rotated direction and the direction to pivot sit in
+// different slots than retail's and retail keeps the direction in registers
+// across the trace while we reload it from the stack.
 // @retail 0x8332DAD0
 bool CCSAFStrafeTarget::UpdateGoal()
 {
@@ -49,12 +53,11 @@ bool CCSAFStrafeTarget::UpdateGoal()
     }
     FVector ToTarget = GripEngineServices::GetActorPosition(m_objective.pTarget) - pPawn->Location;
     ToTarget.Z = 0.0f;
+    float BestTime = 0.0f;
     ToTarget.Normalize(SMALL_NUMBER);
     bool Allowed[4] = {m_objective.moveForward, m_objective.moveRight, m_objective.moveBack, m_objective.moveLeft};
     FVector Goal = pPawn->Location;
-    float BestTime = 0.0f;
     FVector Points[4];
-    FVector Extent(0, 0, 0);
     for (int i = 0, Angle = 0; Angle < 360; Angle += 90, i++)
     {
         Points[i] = FVector(3.402823466e+38F, 3.402823466e+38F, 3.402823466e+38F);
@@ -65,7 +68,7 @@ bool CCSAFStrafeTarget::UpdateGoal()
         FVector Direction = ToTarget.RotateAngleAxis((int)(Angle * 182.0444f), FVector(0, 0, 1));
         FVector End = pPawn->Location + Direction * 2000.0f;
         FCheckResult Hit;
-        if (GWorld->SingleLineCheck(Hit, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), End, pPawn->Location, 0x209F, Extent, 0))
+        if (GWorld->SingleLineCheck(Hit, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), End, pPawn->Location, 0x209F, FVector(0, 0, 0), 0))
         {
             Points[i] = End;
         }
@@ -74,7 +77,7 @@ bool CCSAFStrafeTarget::UpdateGoal()
             Points[i] = Hit.Location;
         }
         Points[i] = Points[i] - Direction * 100.0f;
-        if (BestTime < Hit.Time || (BestTime == Hit.Time && rand() % 2 == 0))
+        if (BestTime < Hit.Time || (BestTime <= Hit.Time && rand() % 2 == 0))
         {
             Goal = Points[i];
             BestTime = Hit.Time;
@@ -85,9 +88,9 @@ bool CCSAFStrafeTarget::UpdateGoal()
     {
         return false;
     }
-    m_objective.moveTarget = Grip_Vector(Goal.X, Goal.Y, Goal.Z - pPawn->CollisionComponent->Bounds.SphereRadius * 0.5f);
     m_objective.alertness = CCS::AlertnessState_Alert;
     m_objective.movementType = CCS::MovementType_Strafe;
+    m_objective.moveTarget = Grip_Vector(Goal.X, Goal.Y, Goal.Z - pPawn->CollisionComponent->Bounds.SphereRadius * 0.5f);
     m_objective.orientTarget = GripEngineServices::GetActorPosition(m_objective.pTarget);
     m_pMovementCS->SetObjective(m_objective);
     return true;
