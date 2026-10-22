@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-20 (n-Space's C++: 2,016 of 2,061 functions matched). Matching progress is
+Updated 2026-10-22 (n-Space's C++: 2,018 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -32,17 +32,17 @@ Phase 5 (UDK rebuild, later).
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **2,016 are matched (218,180 bytes, 87%), 30 are near
-(20,120 bytes) and 15 are todo (10,192 bytes)**; 2,029 functions match in
+isn't `todo`. **2,018 are matched (218,872 bytes, 88%), 28 are near
+(19,792 bytes) and 15 are todo (9,828 bytes)**; 2,031 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
-(156 match), and the CCS layer's other 644 functions (99,024 bytes; 613 of
+(156 match), and the CCS layer's other 644 functions (99,024 bytes; 615 of
 them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,561 | 27 | 15 |
-| `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 351 | 3 | 0 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,563 | 25 | 15 |
+| `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 353 | 1 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
 | `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 25 | 0 | 0 |
@@ -52,7 +52,9 @@ Four of the CCS files (`ccsbrain.cpp`, `ccscsmovementunreal.cpp`,
 separate lane, written by the MiniMax-M3.1-Flash model; at its merge 46 of
 them matched (4,844 bytes), 6 were near (1,236 bytes) and 8 todo. Two
 more MiniMax-M3.1-Flash lanes then worked on the leftovers, merged in five
-rounds (33 functions matched, and most of the rest brought closer).
+rounds, then through a queue that gives each session one file and takes its
+work only after re-checking every source (35 functions matched, and most of
+the rest brought closer).
 
 `docs/scores.csv` lists every near and todo function with its score (how
 far it is from retail; see `docs/DECOMPILING.md`), regenerated with
