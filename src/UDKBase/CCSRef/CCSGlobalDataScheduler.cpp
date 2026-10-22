@@ -39,8 +39,10 @@ CCSGlobalDataScheduler::CCSGlobalDataScheduler() : m_pGlobalBB(0)
 }
 #endif
 
-// Todo (372 bytes vs 608): retail inlines the info array's AddItem, with
-// its ResizeTo, and CCSGSCover's constructor; ours calls all three.
+// score 157 (was 157): retail inlines the info array's AddItem, with its
+// ResizeTo, and CCSGSCover's constructor; ours calls all three. A blanket
+// __forceinline on Grip_Array::AddItem gave 112 (448 bytes) but regressed
+// other files, so it needs this instantiation alone.
 // @retail 0x8335F260
 void CCSGlobalDataScheduler::Initialize(CCSGlobalBlackboard *pGlobalBB)
 {
