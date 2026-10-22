@@ -26,8 +26,9 @@ static __forceinline FRotator UnwindRot(FRotator Rot)
     Result.Pitch = UnwindRot(Rot.Pitch);
     return Result;
 }
-// TickSpecial's own unwinding helper: it edits its by-value copy in place
-// instead of copying the rotator into a second local.
+
+// TickSpecial's own unwinding helper: the same wrap as UnwindRot, forced
+// inline so the pawn's aim delta can be unwound in place.
 static __forceinline FRotator UnwindRotCopy(FRotator Rot)
 {
     Rot.Pitch = UnwindRot(Rot.Pitch);
@@ -211,6 +212,13 @@ void AUSSPawn::SetMovementSpeedDefault()
 // early. Helpers that take the rotator by reference or keep it in an array
 // slot do keep it in memory, but they score 64-150 (the yaw first order
 // alone gives 60).
+// Retried this round: a by-value helper that unwinds the yaw first scores 60,
+// a by-reference helper that writes the unwound pitch back scores 122, a
+// member-wise delta assignment scores 150 and plain UnwindRot calls leave the
+// wrap out of line (150). Our compiler scalarizes a local FRotator in every
+// shape (plain, by reference, through a pointer), while retail keeps
+// DeltaRot in a stack slot at r1+0x50 (pitch, yaw, roll) and writes the
+// unwound pitch back into it.
 // @retail 0x8336D540
 void AUSSPawn::TickSpecial(float DeltaTime)
 {
@@ -221,7 +229,7 @@ void AUSSPawn::TickSpecial(float DeltaTime)
         return;
     }
     const FRotator Diff = pController->AimingRot - pController->Pawn->Rotation;
-    FRotator Delta = UnwindRotCopy(Diff);
+    const FRotator Delta = UnwindRotCopy(Diff);
     if (!bNoWeaponFiring)
     {
         const float InvDeltaTime = 1.0f / DeltaTime;
@@ -261,3 +269,7 @@ UObject *AUSSPawn::GetUObjectInterfaceCCSPawn()
 }
 // @retail 0x8335BDD0
 // AUSSPawn::GetUObjectInterfaceCCSPawn
+
+// @retail 0x8335BDD0
+// AUSSPawn::GetUObjectInterfaceCCSPawn
+
