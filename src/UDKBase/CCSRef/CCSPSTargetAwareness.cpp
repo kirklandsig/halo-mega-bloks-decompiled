@@ -312,6 +312,9 @@ void CCSPSTargetAwareness::UpdateCurrentTarget()
 // index adds of the damage loop (7 or 8): they are one decision of the XDK's
 // commutative ordering. Also worse: volatile (29), a pointer to member (44),
 // the loop index in a local (331).
+// This session: re-checked at the baseline (2), no spelling of the sum moves
+// the operand order; the shared operator[] spellings that would change it
+// break the other functions (see below), so the two words stay.
 // @retail 0x8333D9D0
 int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
 {
@@ -506,6 +509,16 @@ void CCSPSTargetAwareness::AddThreatTarget(AActor *pActor)
 // DestructItems, operator[] and AddItem in many spellings, and a ten-minute
 // permuter run. (UCCSBlackboard::GetCovers matched the same kind of add by
 // reading the blackboard through a reference in its loop.)
+// This session: the difference is in the copy of Grip_Array::DestructItems
+// inlined from CCSBlackboard::OnFriendlyDestroyed (the two copies inlined
+// from OnThreatTargetDestroyed keep the other order and match); the add uses
+// the same registers in both, so it is the XDK's commutative ordering of the
+// inline expansion, not the spelling of the address. Calling the removal in
+// this file instead (m_friendlies.RemoveItemSwap plus UpdateTargetPointers)
+// does not compile: UpdateTargetPointers is private. The shared operator[]
+// as pointer arithmetic (both const and non-const) leaves this at 1 but
+// breaks ComputeTotalThreat (2 to 8), UpdateTargetList (matched to 3) and
+// ComputeLowCostAwareness (5 to 11), so the header stays as it is.
 // @retail 0x833579B8
 void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
 {
@@ -604,6 +617,10 @@ void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
 // takes bAware without masking it (the comparison's operand order, a
 // distance written out and an int flag tried; a direct assignment shifts the
 // code, and | keeps the same code)
+// This session: the permuter ran for ten minutes over the whole function and
+// helped nothing (base score 51); the pragma that silences the bool/int
+// warning with an int flag gives 54, and the reorderings of the team test,
+// the pawn, the query and the heard/visible calls all keep 51.
 // @retail 0x8336F5E0
 void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 {
@@ -686,6 +703,10 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 // fields (134) or read earlier, the range through a local or without
 // parentheses, the subtraction and the threshold's division and
 // multiplication reversed, and a ten-minute permuter run.
+// This session: re-checked at the baseline (5); the comparison cannot be
+// turned without moving the three stores of the position copy, and the
+// shared operator[] spellings that touch the addresses only make it worse
+// (5 to 11), so the source stays as it is.
 // @retail 0x8333CD70
 void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
 {
