@@ -702,7 +702,7 @@ address,status
 0x8332AA90,matched
 0x8332AB38,matched
 0x8332ACE0,matched
-0x8332ADD0,near
+0x8332ADD0,matched
 0x8332AFE8,near
 0x8332B180,matched
 0x8332B3B0,matched
@@ -976,7 +976,7 @@ address,status
 0x833381F8,matched
 0x83338348,matched
 0x83338388,matched
-0x83338540,near
+0x83338540,matched
 0x833385E8,matched
 0x83338628,matched
 0x833387C0,matched
@@ -1166,6 +1166,7 @@ address,status
 0x8334B370,matched
 0x8334B5B8,near
 0x8334B6B8,near
+0x8334B7C8,near
 0x8334BA38,matched
 0x8334BCA8,matched
 0x8334BDA8,near

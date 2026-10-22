@@ -13,9 +13,12 @@ const FVector CCSCSMovementUnreal::INVALID_LOCATION = FVector(0.0f, 0.0f, -1.701
 // reads as a number larger than a full turn.
 static int s_orientationTolerance = 2000;
 
-// Near: retail keeps the meat puppet's base pointer (the -4) and loads the
-// invalid location through it; ours folds the offset into the accesses and
-// loads the meat puppet after the invalid location instead of before it.
+// score 0 (was 64): the constructor now matches the retail. The shape that
+// matches is the one CCSCSMovementGwNav uses: the meat puppet is cast into a
+// named CCSMeatPuppet local and read without a null test, so the compiler
+// keeps the base adjustment (-4) in a register and reads both members through
+// it. With the "if (m_pMeatPuppet != 0)" guard the compiler folds the
+// adjustment into the displacements and drops the branch.
 // @retail 0x83338540
 CCSCSMovementUnreal::CCSCSMovementUnreal(CCSCSInterface *pCSInterface)
     : CCSCSMovement(pCSInterface)
@@ -24,12 +27,9 @@ CCSCSMovementUnreal::CCSCSMovementUnreal(CCSCSInterface *pCSInterface)
     , m_nextMoveLocation(INVALID_LOCATION)
     , m_overridenMovementType(CCS::MovementType_MAX)
 {
-    if (m_pMeatPuppet != 0)
-    {
-        ICCSMeatPuppet *pPuppet = m_pMeatPuppet;
-        m_pCCSCtrl = static_cast<CCSMeatPuppet *>(pPuppet)->m_pCCSCtrl;
-        m_pBasePawn = static_cast<CCSMeatPuppet *>(pPuppet)->m_pUnPawn;
-    }
+    CCSMeatPuppet *pMeatPuppet = static_cast<CCSMeatPuppet *>(m_pMeatPuppet);
+    m_pCCSCtrl = pMeatPuppet->m_pCCSCtrl;
+    m_pBasePawn = pMeatPuppet->m_pUnPawn;
 }
 
 // @retail 0x83320D78
@@ -133,12 +133,14 @@ bool CCSCSMovementUnreal::DoMove()
         m_validFinalDestination = m_moveObj.target;
         if (m_pCCSCtrl->NavigationHandle->ComputeValidFinalDestination(m_validFinalDestination) == 0)
         {
-            m_validFinalDestination = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
+            const Grip_Vector Position = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
+            m_validFinalDestination = Position;
         }
     }
     else
     {
-        m_validFinalDestination = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
+        const Grip_Vector Position = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
+        m_validFinalDestination = Position;
     }
     if (m_overridenMovementType < CCS::MovementType_MAX)
     {
@@ -172,6 +174,18 @@ bool CCSCSMovementUnreal::DoMove()
 // (12), the rotation unnamed (21), the yaw read before the position (123) and
 // the position kept alive by a use of its own (11): the slot order is the
 // compiler's, and the source only decides which slots the values share.
+// Also tried here: a named Grip_Rotation for the orientation (11), the
+// second character named (23: the character is then read back from the
+// stack instead of the returned pointer), the whole body and the yaw part
+// in nested blocks (11), the difference in the Grip_Vector domain with and
+// without a converted target (44, 44) and in the FVector domain (58). The
+// retail's layout needs the second character's 20 byte slot to land on the
+// position's 12 byte slot at 0x50, which the compiler only does when that
+// slot is wide enough: the frame is the compiler's decision and the source
+// cannot reach it from here.
+// Also tried here: both characters named (27), the character named and the
+// second one unnamed with the rotation after it (15) and the permuter over
+// the whole body (11, it found nothing).
 // @retail 0x8332AFE8
 bool CCSCSMovementUnreal::OrientationReached() const
 {
@@ -185,18 +199,24 @@ bool CCSCSMovementUnreal::OrientationReached() const
 // The log the retail writes when the path search fails.
 extern FOutputDeviceRedirectorBase *GLog;
 
-// score 43 (was 258, the function was not written): the code and its order
-// now match the retail; what is left is the register allocation and the
-// stack slots. The retail keeps the address of the next move location in
-// r29 and reads its Y and Z through that register, ours reads them through
-// r3; the retail's frame is 0xa0 bytes and reuses the slot of the log
-// string for the character, ours is 0xb0 and puts the character above it.
-// Still tried: a reference for the next move location (59), the character
-// read before the path request (78), the actor's radius tested before the
-// pawn's (63), the two radius tests as an if/else (46), the log argument
-// without a copy of the destination (71), the log argument as a temporary
-// (43), the path request spelled as "!" (43), the two "!= 0" tests
-// without the comparison (43), the character and the copy not const (43).
+// score 9 (was 43): the code and its order match the retail; what is left is
+// the stack slots and two register choices. The retail keeps the navigation
+// handle in a local, so it is loaded once and stays in r30 across the calls;
+// it reuses the slot of the log string (0x60) for the character, so its
+// frame is 0xa0 bytes while ours is 0xb0 with the character at 0x70; and it
+// reads the character through the address the call returns in r3 while ours
+// reads it through the frame, and it reads the location's Y and Z through
+// r29 while ours reads them through r3. The shape that matches the code is
+// the navigation handle in a local, declared before the character.
+// Still tried: a reference for the character (9, no change), the character
+// read directly (11, the address of a temporary cannot be taken), the
+// character before the navigation handle (25), a reference for the next
+// move location (24: the location and the handle swap r29 and r30), the
+// next move location and the navigation handle together (24).
+// Also tried here: the handle declared first and the location referenced
+// (24 again), the reference without a named handle (50) and the handle
+// unnamed on its own (43), so the register the location and the handle get
+// is the compiler's and the source cannot reach it from here.
 // @retail 0x833434D0
 bool CCSCSMovementUnreal::GetNextMoveLocation()
 {
@@ -217,6 +237,7 @@ bool CCSCSMovementUnreal::GetNextMoveLocation()
             return true;
         }
     }
+    UNavigationHandle *pNavigationHandle = m_pCCSCtrl->NavigationHandle;
     const CCSCharacter Character = m_pMeatPuppet->GetCharacter();
     float Radius = 0.0f;
     if (Character.m_gameCharacter.m_pawn != 0)
@@ -227,75 +248,86 @@ bool CCSCSMovementUnreal::GetNextMoveLocation()
     {
         Radius = 1.0f;
     }
-    if (m_pCCSCtrl->NavigationHandle->GetNextMoveLocation(m_nextMoveLocation, Radius) != 0)
+    if (pNavigationHandle->GetNextMoveLocation(m_nextMoveLocation, Radius) != 0)
     {
         return true;
     }
     GLog->Logf__VA(L"Controller: Unable to follow Path");
-    m_pCCSCtrl->NavigationHandle->SetFinalDestination(m_validFinalDestination);
+    pNavigationHandle->SetFinalDestination(m_validFinalDestination);
     m_nextMoveLocation = m_validFinalDestination;
     return true;
 }
 
-// score 67 (was 312, the function was not written): the code and its order
-// match the retail; what is left is the block layout and the register
-// allocation. The retail puts the "not the invalid location" arm inline and
-// the "the invalid location" arm out of line, and it keeps the result of
-// GetNextMoveLocation in a register across the two arms; ours does the
-// opposite. The retail passes the pawn's bIsWalking to MoveTo and stores the
-// negated result of moveToward in bAdjusting.
+// score 10 (was 67): the code, its order and the block layout now match the
+// retail; what is left is the register allocation (the retail keeps the flag
+// in r28 and the invalid location in r29, ours the other way round) and the
+// displacement of the 0.0f constant. The shape that matches: the condition is
+// the conjunction of the three equalities (so the retail's "not the invalid
+// location" arm is the fallthrough), a bool flag that holds the result of
+// GetNextMoveLocation (so the two calls merge into one block), and a named
+// reference for the next move location (so the loads go through r30).
 // Still tried: the condition as the negated conjunction (67), the arms
 // swapped with the location in a reference (67), the "||" form with the
 // position computed in the second operand (75), a flag that holds the
 // result of GetNextMoveLocation (125), the same flag with the arms swapped
-// (130), a goto around the move code (104).
+// (130), a goto around the move code (104), the "||" form with the flag
+// (27), the flag declared before the reference (10).
+// Also tried here: a named reference and a pointer to the invalid location
+// (10, the address of the constant stays in the same register), the flag
+// and the reference declared in every order (10), the flag left out of its
+// initializer (does not compile: C4701) and no reference at all (12); the
+// permuter over the whole body found nothing (10).
 // @retail 0x8334B7C8
 void CCSCSMovementUnreal::MoveToDestination()
 {
     const FVector &NextMoveLocation = m_nextMoveLocation;
-    if (NextMoveLocation.X != INVALID_LOCATION.X ||
-        NextMoveLocation.Y != INVALID_LOCATION.Y ||
-        NextMoveLocation.Z != INVALID_LOCATION.Z)
+    bool bMoving = false;
+    if (NextMoveLocation.X == INVALID_LOCATION.X &&
+        NextMoveLocation.Y == INVALID_LOCATION.Y &&
+        NextMoveLocation.Z == INVALID_LOCATION.Z)
     {
-        const Grip_Vector Position = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
-        if (m_pBasePawn->ReachedDestination(Position, m_nextMoveLocation, 0, 1) != 0)
+        bMoving = GetNextMoveLocation();
+        if (!bMoving)
         {
-            if (!GetNextMoveLocation())
-            {
-                return;
-            }
-            m_pCCSCtrl->MoveTo(m_nextMoveLocation, 0, 0.0f, m_pBasePawn->bIsWalking);
-            m_pCCSCtrl->StateFrame->LatentAction = 0;
-        }
-        else
-        {
-            if (m_pCCSCtrl->MoveTimer < 0.0f && m_pBasePawn->Physics != PHYS_Falling)
-            {
-                m_nextMoveLocation = INVALID_LOCATION;
-                return;
-            }
-            if (m_pCCSCtrl->bAdjusting)
-            {
-                m_pCCSCtrl->bAdjusting = !m_pBasePawn->moveToward(m_pCCSCtrl->GetAdjustLocation(), 0);
-            }
-            if (!m_pCCSCtrl->bAdjusting)
-            {
-                m_pCCSCtrl->PrePollMove();
-                if (m_pBasePawn->moveToward(m_pCCSCtrl->GetDestinationPosition(), 0) == 0)
-                {
-                    m_pCCSCtrl->PostPollMove();
-                }
-            }
+            return;
         }
     }
     else
     {
-        if (!GetNextMoveLocation())
+        const Grip_Vector Position = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
+        if (m_pBasePawn->ReachedDestination(Position, m_nextMoveLocation, 0, 1) != 0)
         {
-            return;
+            bMoving = GetNextMoveLocation();
+            if (!bMoving)
+            {
+                return;
+            }
         }
+    }
+    if (bMoving)
+    {
         m_pCCSCtrl->MoveTo(m_nextMoveLocation, 0, 0.0f, m_pBasePawn->bIsWalking);
         m_pCCSCtrl->StateFrame->LatentAction = 0;
+    }
+    else
+    {
+        if (m_pCCSCtrl->MoveTimer < 0.0f && m_pBasePawn->Physics != PHYS_Falling)
+        {
+            m_nextMoveLocation = INVALID_LOCATION;
+            return;
+        }
+        if (m_pCCSCtrl->bAdjusting)
+        {
+            m_pCCSCtrl->bAdjusting = !m_pBasePawn->moveToward(m_pCCSCtrl->GetAdjustLocation(), 0);
+        }
+        if (!m_pCCSCtrl->bAdjusting)
+        {
+            m_pCCSCtrl->PrePollMove();
+            if (m_pBasePawn->moveToward(m_pCCSCtrl->GetDestinationPosition(), 0) == 0)
+            {
+                m_pCCSCtrl->PostPollMove();
+            }
+        }
     }
     if (!m_pMeatPuppet->IsMoving())
     {
