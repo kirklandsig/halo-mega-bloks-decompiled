@@ -39,6 +39,11 @@ void CCSAFEncircleTarget::OnActivate()
 
 // Todo: as CCSAFStrafeTarget::UpdateGoal (retail has 0x20 more bytes of
 // frame and reads the rotated direction from a fixed slot).
+// score 115 (was 115): tried a named loop-local rotation axis (115),
+// the permuter's best rewrite (127) and a const loop-local Direction to
+// force the RotateAngleAxis result into the variable (172); retail still
+// keeps the rotated direction in one fixed slot (0xf8) that MSVC does not
+// reproduce here, so the frame layout and the constant-pool offsets differ.
 // @retail 0x8332BE08
 void CCSAFEncircleTarget::UpdateGoal()
 {
