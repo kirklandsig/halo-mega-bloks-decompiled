@@ -4,6 +4,11 @@
 #include "CCSCSMovement.cpp"
 #include "CCSAFModifiers.cpp"
 
+// One named constant for the two 1.0f of Tick (the Camo test and the update
+// timer): retail keeps the constant's address in a register and reloads the
+// value around the call in GetNavAdjustedLocation, which a literal does not.
+static const float kOne = 1.0f;
+
 // @retail 0x8332D348
 CCSAFMoveToActor::CCSAFMoveToActor() : m_pMovementCS(0), m_updateTimer(1.0f) {}
 
@@ -56,17 +61,14 @@ bool CCSAFMoveToActor::TransitionTo(GripAFAction *)
     return true;
 }
 
-// score 49 (was 49), todo: the same code as retail but for the constant 1.0,
-// which ours keeps in a saved FPR across the GetNavAdjustedLocation call and
-// retail reloads (16 bytes of save and restore; comparing Camo with a double
-// 1.0 or with >= changes nothing). Retail also opens with the _savegprs_14
-// helper (r14-r31 saved in one call) where ours saves the registers by hand.
 // @retail 0x8332D4E0
 void CCSAFMoveToActor::Tick(float DeltaTime)
 {
     m_updateTimer -= DeltaTime;
     AActor *pTarget = (AActor *)m_objective.pTarget;
-    if (pTarget == 0 || m_pMovementCS->PathFailed() || !pTarget->IsValid() || pTarget->bDeleteMe)
+    // the null test reads the member, so retail keeps the target in a copy
+    // of its own register for the calls that follow
+    if (m_objective.pTarget == 0 || m_pMovementCS->PathFailed() || !pTarget->IsValid() || pTarget->bDeleteMe)
     {
         m_status = AS_FAILURE;
         return;
@@ -76,7 +78,7 @@ void CCSAFMoveToActor::Tick(float DeltaTime)
         m_targetPawn = (AUDKPawn *)m_objective.pTarget;
     }
     FVector Destination;
-    if (m_targetPawn != 0 && m_targetPawn->Camo == 1.0f)
+    if (m_targetPawn != 0 && m_targetPawn->Camo == kOne)
     {
         Destination = m_targetPawn->CamoVanishingPoint;
     }
@@ -91,7 +93,7 @@ void CCSAFMoveToActor::Tick(float DeltaTime)
     }
     if (m_moveToObjective.target != Destination && m_updateTimer < 0.0f)
     {
-        m_updateTimer = 1.0f;
+        m_updateTimer = kOne;
         m_moveToObjective.target = Destination;
         m_pMovementCS->SetObjective(m_moveToObjective);
         m_pMovementCS->Activate();
