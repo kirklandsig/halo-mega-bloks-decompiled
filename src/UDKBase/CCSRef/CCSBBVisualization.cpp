@@ -68,6 +68,15 @@ bool CCSBBTargetVisualization::GetIsVisible()
 // block; the locals in the other order; the ?: as an if/else; the first
 // member split into declaration and assignment; the string temporaries
 // reshaped; two ten-minute permuter runs.
+// This session: m_members used directly, this->m_members, and a pointer or a
+// reference bound just before the first AddItem all put the address at
+// retail's place but number the members pointer r29 (score 14); the same with
+// the accessors replaced by the members they read, and with the "YES"/"NO"
+// ternary through a named const char*, also score 14. A reference at the top
+// with the first AddItem written directly does give retail's r27 (score 7)
+// but still computes the address at the top, from r3 before the first call.
+// The register follows the place the address is born, and the source cannot
+// have both.
 // @retail 0x8334BDA8
 void CCSBBTargetVisualization::Refresh()
 {
