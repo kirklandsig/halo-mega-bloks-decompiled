@@ -38,9 +38,15 @@ void CCSAFFlee::OnActivate()
     m_pMovementCS->Activate();
 }
 
-// Todo: the logic is retail's, but retail builds the rotations from members
-// it stores and reloads, and copies the trace vectors through more stack
-// temporaries (a larger frame); not yet found.
+// score 168 (was 178): the loop is a do/while with the counter bumped before
+// the time test; what is left is the order in which MSVC schedules the setup
+// and the trace.  Retail stores the new yaw with stfiwx and reloads it from
+// the member, ours materialises the int in a GPR first, and retail computes
+// the trace vectors in Y,Z,X order where ours does X,Z,Y.  Tried, all 168 or
+// worse: the permuter (no change), the yaw as a named int, an explicit
+// (double) cast, End = Offset + Start, End = Start + Direction * 1000.0f, the
+// vector written out component by component, the candidates built from
+// m_initialRotation, and the Direction declared outside the loop.
 // @retail 0x8332C770
 void CCSAFFlee::UpdateMoveTarget()
 {
@@ -60,8 +66,8 @@ void CCSAFFlee::UpdateMoveTarget()
     const int Random = rand();
     Index = Random % 3;
     {
-        int i;
-        for (i = 0; (bool)(3 > i); i++)
+        int i = 0;
+        do
         {
             FVector Direction;
             FRotator &Rotation = Rotations[Index];
@@ -77,13 +83,14 @@ void CCSAFFlee::UpdateMoveTarget()
                 Target = End;
                 break;
             }
+            i++;
             if (BestTime < Hit.Time)
             {
                 BestTime = Hit.Time;
                 Target = Hit.Location;
             }
             Index = (Index + 1) % 3;
-        }
+        } while (i < 3);
     }
     m_objective.moveTarget = Target;
     m_objective.movementType = CCS::MovementType_Run;
