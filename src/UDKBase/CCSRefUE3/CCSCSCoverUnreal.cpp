@@ -24,6 +24,12 @@ CCSCSCoverUnreal::CCSCSCoverUnreal(CCSCSInterface *pInterface)
 // direction and the character position in the slot the position copy and the
 // rotator used, and passes the rotator on in a register pair instead of
 // through its pointer.
+// Tried: a `const CCSGameCover &` plus a `const ECoverType` result variable
+// and the crouch case first reproduce retail's first 216 bytes exactly but
+// score 152, because the direction then takes a frame slot of its own
+// instead of the cover location's; a copy of the cover location, a
+// case-scope copy, an uninitialised direction, a function-scope rotator and an
+// inline rotator all scored 149 to 198, so this stays the lowest.
 // @retail 0x833432A8
 bool CCSCSCoverUnreal::DoGetInCover()
 {
