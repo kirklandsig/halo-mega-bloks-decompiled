@@ -4,6 +4,7 @@
 // cover to take (the best scored, the closest by path, or the initial one).
 #pragma once
 #include "CCSRBTMoveToCover.cpp"
+#include "CCSMeatPuppetQuery.cpp"
 
 // @retail 0x83331CC8
 void CCSRBTMoveToBestCover::FlagUsedBBMembers(GripBlackboard *pBlackboard)
@@ -13,8 +14,10 @@ void CCSRBTMoveToBestCover::FlagUsedBBMembers(GripBlackboard *pBlackboard)
     pBB->m_covers.FlagAsUsed();
 }
 
-// near: retail keeps the current cover's slot and both constants in saved
-// registers across the loop (a bigger frame); ours reloads them
+// matched: including ccsmeatpuppetquery.cpp lets the compiler see
+// GetCurrentCover's body, so it hoists the current cover's two words into
+// r21/r22 before the loop; the score is declared at the top of the loop
+// body, as in retail, so it stays in r30 across the loop's call
 // @retail 0x8333EB60
 CCSCover CCSRBTMoveToBestCover::FindBestCover(IGripBTInterface *pInterface) const
 {
@@ -25,6 +28,7 @@ CCSCover CCSRBTMoveToBestCover::FindBestCover(IGripBTInterface *pInterface) cons
     for (int i = 0; i < pBB->m_covers.Num(); i++)
     {
         CCSCover &Cover = pBB->m_covers[i];
+        int Score = 0;
         if (!Cover.IsValid() || Cover.IsLocked())
         {
             continue;
@@ -33,7 +37,6 @@ CCSCover CCSRBTMoveToBestCover::FindBestCover(IGripBTInterface *pInterface) cons
         {
             continue;
         }
-        int Score = 0;
         if (Cover.m_state == CCS::CoverState_Valid)
         {
             Score = 20000;
