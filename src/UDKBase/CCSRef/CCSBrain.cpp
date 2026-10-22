@@ -262,13 +262,18 @@ CCSBrain::~CCSBrain()
 // m_ContainerContent[i], the offset written before the base in the
 // pointer arithmetic, the guard in its other spellings, the declaration
 // order, and a file-local helper that indexes the array. Newly tried:
-// GetData()[i] written out, the data pointer bound before the loop, the
-// element read through pointer arithmetic with the offset written both
-// ways round, the guard as a truth test and as 0 != p, the two bindings
-// swapped, and a const reference to the array. None of them moves the
-// order of the two registers; the same source shape compiles to one
-// order in the perception loop and the other in the control loop, so it
-// is the compiler's choice, not the spelling.
+// the source shape the retail line table implies (the loop variable
+// declared before the loop, the element in a named temporary, one test
+// per line, the second loop with a variable of its own), the element
+// read through a pointer to the array, the count hoisted out of the
+// condition, the index as unsigned and the loop variable renamed through
+// twelve names, the index into m_aiSystems spelled four ways, ten other
+// unity translation units included, the shared operator[] inline
+// respelled three ways (char* arithmetic, a scaled index, a plain
+// pointer add), and the two functions swapped in the file. None of them
+// moves the order of the two registers; the same source shape compiles
+// to one order in the perception loop and the other in the control loop,
+// so it is the compiler's choice, not the spelling.
 void CCSBrain::SchedulerRegistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();
@@ -321,13 +326,16 @@ void CCSBrain::SchedulerRegistration()
 // m_ContainerContent[i], the offset written before the base in the
 // pointer arithmetic, the guard in its other spellings, the declaration
 // order, and a file-local helper that indexes the array. Newly tried:
-// GetData()[i] written out, the data pointer bound before the loop, the
-// element read through pointer arithmetic with the offset written both
-// ways round, the guard as a truth test and as 0 != p, the two bindings
-// swapped, and a const reference to the array. None of them moves the
-// order of the two registers. Retail's own two loops here differ in the
-// order although the source of the two is symmetric, so the choice is
-// the compiler's and the spelling of the loop cannot reach it.
+// the element read through a pointer to the array, the count hoisted out
+// of the condition, the index as unsigned, the loop variable renamed
+// through twelve names, the index into m_aiSystems spelled four ways,
+// ten other unity translation units included, the shared operator[]
+// inline respelled three ways, and the two functions swapped in the
+// file. None of them moves the order of the two registers; taking the
+// guard away flips the order of the *other* loop instead, and changes
+// the code. Retail's own two loops here differ in the order although the
+// source of the two is symmetric, so the choice is the compiler's and
+// the spelling of the loop cannot reach it.
 void CCSBrain::SchedulerUnregistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();
