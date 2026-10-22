@@ -63,16 +63,21 @@ FSystemSettings &GetSystemSettings()
 // `GetSystemSettings'::`2'::`dynamic atexit destructor for 'SystemSettingsSingleton''
 
 // BasicSerializeObject and BasicDeserializeObject are near: the same
-// instructions as retail but for one swapped pair (the TArray's zero and
-// FArchive's vtable) and two registers swapped around the proxy archive's
-// vtable. Retail keeps the proxy archive's vtable in r11 and the object's
-// in r5, ours the other way round, and retail computes the FArchive
-// vtable's address in two halves (the lis at the top, the addi next to
-// the store) where ours hoists both. Tried: the order of the archive
-// flags, an initializer list, a temporary proxy, the writer through an
-// FArchive reference, a scope block, the copy constructor of the array, a
-// serialize call in place of the operator, an initialized version
-// variable, the comparison the other way round, and the permuter.
+// instructions as retail, only ordered differently. Serialize score 12 (was
+// 12): retail materializes the TArray's zero constant first (the pool holds
+// the zero, then the FArchive vtable's lis with its addi next to the
+// store) where ours hoists the whole vtable constant ahead of the zero.
+// Deserialize score 8 (was 8): retail stores the archive's Offset before
+// materializing the constant 1, ours the other way round. In both retail
+// keeps the proxy archive's vtable in r11 and the object's vtable in r5,
+// ours the other way round. Tried: the order of the archive flags, an
+// initializer list, a temporary proxy, the writer through an FArchive
+// reference, a scope block, the copy constructor of the array, a serialize
+// call in place of the operator, an initialized version variable, the
+// comparison the other way round, an explicit temporary for the array, the
+// TArray's constructor as an assignment, the retail's line spacing (from
+// the PDB's line table), casts and named locals around the serialize call,
+// and the permuter (once per function): none of them move the score.
 // @retail 0x833C9E98
 TArray<unsigned char, FDefaultAllocator> UHaloSaveGame::BasicSerializeObject(UObject *Obj, int Version)
 {
