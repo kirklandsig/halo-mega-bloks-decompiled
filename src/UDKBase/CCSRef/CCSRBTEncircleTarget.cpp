@@ -33,7 +33,17 @@ bool CCSRBTEncircleTarget::TestPreCondition(IGripBTInterface *pInterface)
     return true;
 }
 
-// near: saved registers differ as in CCSRBTStrafeTarget::ExecutePreInternal
+// score 29 (was 97): the objective's target comes from a local with the
+// explicit `character != NONE` test retail uses, which gives the compiler the
+// shared zero constant it keeps in r29 -- and with it retail's r28..r25
+// locals, the -0x48(r1) frame slot and the 0x100 frame. Left is scheduling:
+// retail loads the blackboard's current target (0x108(r27)) before the
+// objective's six stores and copies the factory in the middle of them, its
+// two objective flags are stored in the other order, and it loads the
+// circle-left slot before storing the circle distance. Tried this session:
+// a Grip_Vector default-constructor form in the shared header (no change) and
+// tracing the 0x108 load to m_currentTarget's value slot, read by the
+// blackboard accessor - neither moved the score.
 // @retail 0x8333E1F8
 GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool)
 {
@@ -49,7 +59,8 @@ GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBT
     {
         return ER_FAILURE;
     }
-    Objective.pTarget = pBB->GetCurrentTarget()->character.GetActor();
+    CCSTarget *pCurTarget = pBB->GetCurrentTarget();
+    Objective.pTarget = (pCurTarget->character != CCSCharacter::NONE) ? pCurTarget->character.GetActor() : 0;
     Objective.moveRight = m_canEncircleRight;
     Objective.moveLeft = m_canEncircleLeft;
     AActor *pActor = (AActor *)pBrain->m_meatPuppet->GetCharacter().GetActor();
@@ -70,12 +81,12 @@ GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBT
 }
 
 // score 8 (was 36): the meat puppet is read into a local and tested with an
-// integer compare (retail's cmpwi), and the blackboard and the scheduler end
-// up in swapped registers (r26/r27) against retail's choice. The declaration
-// order, const pointers and fetching them through the brain leave it alone;
-// so do swapping the two accessor calls, making the blackboard or the
-// scheduler const, an auto or a copied temporary for either of them, and
-// splitting the puppet's null test into two tests.
+// integer compare (retail's cmpwi); what is left is the blackboard and the
+// scheduler ending up in swapped registers (r26/r27) against retail's choice.
+// Tried: declaring the scheduler first, deferring its assignment, making it
+// const, taking the blackboard by reference, a named status local, swapping
+// the two accessor calls, dropping the pPuppet local and a 480 s permuter run
+// (base 8, best 8) - none of them flips the allocation.
 // @retail 0x83330CE0
 GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *, bool bInterrupt)
 {
