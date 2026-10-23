@@ -38,44 +38,49 @@ void CCSAFFlee::OnActivate()
     m_pMovementCS->Activate();
 }
 
-// score 168 (was 178): the loop is a do/while with the counter bumped before
-// the time test; what is left is the order in which MSVC schedules the setup
-// and the trace.  Retail stores the new yaw with stfiwx and reloads it from
-// the member, ours materialises the int in a GPR first, and retail computes
-// the trace vectors in Y,Z,X order where ours does X,Z,Y.  Tried, all 168 or
-// worse: the permuter (no change), the yaw as a named int, an explicit
-// (double) cast, End = Offset + Start, End = Start + Direction * 1000.0f, the
-// vector written out component by component, the candidates built from
-// m_initialRotation, and the Direction declared outside the loop.
+// score 130 (was 178): the loop is a do/while with the counter bumped before
+// the time test, and the declarations and the tail stores have to sit in the
+// order MSVC schedules them in - the yaw assignment after BestTime = 0.0f
+// (130), the objective's movementType, moveTarget and alertness in that order
+// (161), the FCheckResult after the rotator candidates (134) and the rotator
+// candidates built from separate assignments (233).  The permuter (600s, 4
+// jobs) found the same 130.
+// What is left is the order in which MSVC schedules the setup and the trace.
+// Retail stores the new yaw with stfiwx and reloads it from the member, ours
+// materialises the int in a GPR first, and retail computes the trace vectors
+// in Y,Z,X order where ours does X,Z,Y.  Tried, all 130 or worse: the yaw as
+// a named int, an explicit (double) cast, End = Offset + Start, End = Start +
+// Direction * 1000.0f, the vector written out component by component, the
+// candidates built from m_initialRotation, the Direction declared outside the
+// loop, and the members of the initial rotation copied one by one.
 // @retail 0x8332C770
 void CCSAFFlee::UpdateMoveTarget()
 {
     APawn *pPawn = m_pMeatPuppet->GetCharacter().m_gameCharacter.m_pawn;
     m_fleeRotation = m_initialRotation;
-    m_fleeRotation.Yaw = (int)(m_fleeRotation.Yaw + 180 * 182.0444);
-    Grip_Vector Target;
     float BestTime;
-    FCheckResult Hit;
     BestTime = 0.0f;
+    m_fleeRotation.Yaw = (int)(m_fleeRotation.Yaw + 180 * 182.0444);
     FRotator Rotations[3] = {
         FRotator(m_fleeRotation.Pitch, (int)(m_fleeRotation.Yaw - 45 * 182.0444), m_fleeRotation.Roll),
         m_fleeRotation,
         FRotator(m_fleeRotation.Pitch, (int)(m_fleeRotation.Yaw + 45 * 182.0444), m_fleeRotation.Roll),
     };
+    FCheckResult Hit;
+    int i = 0;
+    Grip_Vector Target;
     int Index;
     const int Random = rand();
     Index = Random % 3;
     {
-        int i = 0;
         do
         {
             FVector Direction;
             FRotator &Rotation = Rotations[Index];
             Direction = Rotation.Vector();
             FVector Start = pPawn->Location;
-            FVector Offset = Direction * 1000.0f;
             FVector End;
-            End = Start + Offset;
+            End = Start + Direction * 1000.0f;
             FVector Extent = FVector(0, 0, 0);
             if (GWorld->SingleLineCheck(Hit, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), End, Start, 0x209F, Extent, 0))
             {
@@ -92,8 +97,8 @@ void CCSAFFlee::UpdateMoveTarget()
             Index = (Index + 1) % 3;
         } while (i < 3);
     }
-    m_objective.moveTarget = Target;
     m_objective.movementType = CCS::MovementType_Run;
+    m_objective.moveTarget = Target;
     m_objective.alertness = CCS::AlertnessState_Alert;
     m_pMovementCS->SetObjective(m_objective);
 }
