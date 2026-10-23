@@ -18,6 +18,11 @@ extern FFeedbackContext *GWarn;
 // the pawn condition, the inverted condition, the cast in a temporary, the
 // result in a local and a permuter run (6.7k rewrites) all give the same
 // near 8 code.
+// This session: an else-branch in-progress return, a nested else, a no-brace
+// else and an else-with-failure around the log all compile to the same tail
+// (near 8); only a variant that lets the outer else fall into the final
+// failure moves the in-progress block, and it changes the return value of
+// the no-target path, so it is not kept.
 // @retail 0x8333F9D0
 GripRBTNode::EBTExecutionResult CCSRBTMoveToVehicle::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {
@@ -48,7 +53,7 @@ GripRBTNode::EBTExecutionResult CCSRBTMoveToVehicle::ExecuteInternal(IGripBTInte
         }
         else
         {
-            GWarn->Logf__VA(L"@#@#@#@#@#@#@#@# MoveToVehicle Failed: Target was not a AGwNavVehicle @#@#@#@#@#@#@#@#@#@#");
+            GWarn->Logf__VA(L"@#@#@#@#@#@#@#@# MoveToVehicle Failed: Target was not a AGwNavVehicle @#@#@#@#@#@#@#@#@#@");
             return ER_FAILURE;
         }
     }
