@@ -38,10 +38,15 @@ void ACCSController::SetState(const FString &State)
     Brain->GetBlackboard<CCSBlackboard>()->AddState(MakeStateString(*State));
 }
 
-// Todo (252 bytes vs 236): retail reads the temporary FString back from the
+// Todo (248 bytes vs 236): retail reads the temporary FString back from the
 // frame and frees only its data (UE3's FString), ours inlines
 // ~TArray/~ForAnyElementType, which also zeroes the fields, and takes the
 // constructor's result from r3 instead of the frame.
+// Tried: the empty state as a named local in a scope (score 24, frame
+// addressed like retail), as FString("") (25), as a temporary in the
+// condition (25); retail's build drops the three dead stores of the
+// temporary, which it can only do when it sees the constructor's body, so
+// the FString temporary cannot be built here.
 // @retail 0x83337990
 void ACCSController::RemoveState(const FString &State)
 {
