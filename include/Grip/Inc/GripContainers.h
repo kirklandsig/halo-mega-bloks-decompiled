@@ -137,6 +137,29 @@ public:
         Allocator::Construct(&m_ContainerContent[m_ContainingNum], Item);
         m_ContainingNum++;
     }
+    // Retail inlines the add and the resize that goes with it at the call
+    // site in CCSGlobalDataScheduler::Initialize; the compiler's own budget
+    // keeps both out of line, so they are forced here.
+    __forceinline void AddItemInlined(const T &Item)
+    {
+        if (m_ContainingNum + 1 > m_ContainingMax)
+        {
+            ResizeToInlined(m_ContainingMax + increment);
+        }
+        Allocator::Construct(&m_ContainerContent[m_ContainingNum], Item);
+        m_ContainingNum++;
+    }
+    __forceinline void ResizeToInlined(int NewMax)
+    {
+        T *pNewContent = (T *)Grip::Memory::pGlobalHeap->Alloc(NewMax * sizeof(T), 0);
+        if (m_ContainerContent)
+        {
+            memcpy(pNewContent, m_ContainerContent, m_ContainingMax * sizeof(T));
+        }
+        Grip::Memory::pGlobalHeap->Free(m_ContainerContent);
+        m_ContainerContent = pNewContent;
+        m_ContainingMax = NewMax;
+    }
     void AddUniqueItem(const T &Item)
     {
         if (FindObject(Item) == -1)

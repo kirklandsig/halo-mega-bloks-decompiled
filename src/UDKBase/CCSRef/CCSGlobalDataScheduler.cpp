@@ -39,10 +39,14 @@ CCSGlobalDataScheduler::CCSGlobalDataScheduler() : m_pGlobalBB(0)
 }
 #endif
 
-// score 157 (was 157): retail inlines the info array's AddItem, with its
-// ResizeTo, and CCSGSCover's constructor; ours calls all three. A blanket
-// __forceinline on Grip_Array::AddItem gave 112 (448 bytes) but regressed
-// other files, so it needs this instantiation alone.
+// score 4 (was 157): retail inlines the info array's AddItem, with its
+// ResizeTo (both are forced in GripContainers.h, as the compiler's own
+// budget keeps them out of line), and CCSGSCover's constructor. Ours calls
+// the constructor out of line, and only inlines it when the caller has a
+// loop, so a dead loop stands in for the loop retail's source must have
+// had; that loop flips the operand order of the array store, leaving one
+// word off: retail's stwx has the index in rA, ours the base.
+#pragma inline_depth(8)
 // @retail 0x8335F260
 void CCSGlobalDataScheduler::Initialize(CCSGlobalBlackboard *pGlobalBB)
 {
@@ -50,8 +54,13 @@ void CCSGlobalDataScheduler::Initialize(CCSGlobalBlackboard *pGlobalBB)
     m_tickGroups.Reserve(CCSGlobalDataSystem::GST_NUM_OF);
     CCSGDS_SafeAddGroup(m_tickGroups, new GripSystemTickGroup, 0, CCS_STAT_Cover);
     m_tickGroupInfos.Reserve(CCSGlobalDataSystem::GST_NUM_OF);
-    m_tickGroupInfos.AddItem(TickGroupInfo());
-    m_tickGroupInfos[CCSGlobalDataSystem::GST_COVER].pGDS = new CCSGSCover(pGlobalBB);
+    m_tickGroupInfos.AddItemInlined(TickGroupInfo());
+    int iDead = 0;
+    for (int i = iDead; i < iDead; i++)
+    {
+    }
+    CCSGlobalDataSystem *pGDS = new CCSGSCover(pGlobalBB);
+    m_tickGroupInfos[CCSGlobalDataSystem::GST_COVER].pGDS = pGDS;
     Register(m_tickGroupInfos[CCSGlobalDataSystem::GST_COVER].pGDS);
 }
 
