@@ -127,6 +127,11 @@ void CCSCSMovementGwNav::DoStop()
 // alone; so do copying the destination into a named FVector, converting it
 // in place, taking the position or the destination by value, a memcpy of the
 // position and an explicit Vec3f constructor.
+// Copying the destination into a named FVector is the only shape that makes
+// the compiler interleave a float store with a word load (the retail shape),
+// but it copies the FVector twice and moves every slot with it (score 82);
+// taking the position by value, or binding the destination to a named
+// reference, only swaps the two copies' order (score 12 and 17).
 // @retail 0x8334B5B8
 bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 {
@@ -151,7 +156,9 @@ bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 }
 
 // score 8 (was 12): the same interleaving of the destination store with the
-// position loads as FindNavMeshPath.
+// position loads as FindNavMeshPath, and the same attempts (a named FVector
+// interleaves the copies but wrecks the slots, score 82; a by-value position
+// swaps the copies' order, score 12).
 // @retail 0x8334B6B8
 bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Distance, float) const
 {
@@ -176,15 +183,25 @@ bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Dis
     return true;
 }
 
-// score 20 (was 21): retail keeps the rotation live across the second
-// GetCharacter call and gives that call the position's stack slot, so the
-// delta and the rotation sit eight bytes higher (0x68 and 0x78 against our
-// 0x60 and 0x70) and the second Character lands in the position's slot.
+// score 11 (was 20): the shape is retail's: the position is a named
+// Grip_Vector, the target rotation is a named FRotator whose Yaw is read back
+// with lwz r31, 4(r9), and the character is used straight from the temporary
+// the virtual call returns (mr r4, r3). What is left is the stack layout:
+// retail puts the second Character in the position's slot (0x50), the
+// character's own rotator in the delta's slot (0x68) and the first Character
+// alone at the top (0x90), while ours puts the second Character at 0x90, the
+// rotator in the position's slot (0x50) and the first Character in the
+// rotation's slot (0x70). The frame size now matches (0xc0).
+// Retrying the shapes that failed before (a by-value position, the three- and
+// four-statement forms, the sibling file's shape, the character used through a
+// named local) all land at 11 or worse, and a 540 s permuter run found
+// nothing below 11: the slot pairing is not reachable from the source.
 // @retail 0x8332ABA8
 bool CCSCSMovementGwNav::OrientationReached() const
 {
-    const CCSCharacter Character = m_pMeatPuppet->GetCharacter();
-    const int TargetYaw = (m_orientObj.target - Character.GetPosition()).Rotation().Yaw;
+    const Grip_Vector Position = m_pMeatPuppet->GetCharacter().GetPosition();
+    const FRotator TargetRotation = (m_orientObj.target - Position).Rotation();
+    const int TargetYaw = TargetRotation.Yaw;
     const int Yaw = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetOrientation().Yaw;
     const int Difference = Abs((TargetYaw & 0xFFFF) - (Yaw & 0xFFFF));
     return Difference < s_orientationTolerance || Difference > 0xFFFF - s_orientationTolerance;
