@@ -115,20 +115,24 @@ void CCSMessengerWorker::SetDebugOptions(const Grip::String &Options)
     } while (Remaining != 0);
 }
 
-// score 11 (was 33): retail forms the value pointer with one add of a clamped
-// offset (the name plus the smaller of dot+1 and the size); ours keeps the
-// dot's address from the scan loop and adds it in each arm, so the loop
-// carries an extra add and the pointer is built twice. Clamping an offset
-// instead (unsigned int ValueOffset = Dot + 1; if (Size < ValueOffset)
-// ValueOffset = Size; pValue = pName + ValueOffset) reproduces retail's
-// instruction sequence and length exactly, but the compiler then hands r30 to
-// the string pointer instead of r31 (r31 keeps the option reference), swaps
-// the two operands of the pointer add and hoists the "yes" literal setup
-// above the add, which costs 13 register differences (near, score 33). The
-// clamp spelling does not change that: int or unsigned offset, a ternary
-// clamp, pointer casts, +=, an index expression, const locals, the two calls
-// swapped, the tail inside an if (Dot != -1) block, hoisted strncmp
-// temporaries and a 10 minute permuter run all give the same near 33 code.
+// score 7 (was 11): retail forms the value pointer with one add of a clamped
+// offset (the name plus the smaller of dot+1 and the size). Selecting the
+// pointer itself (pName + Size vs pName + Offset) keeps the value in a
+// register instead of letting the compiler fold it into the strncmp call,
+// which restores retail's register plan (the string pointer in r31, the
+// option in r30, the literals in r11 and r10). What is left: the compiler
+// builds one pointer per arm (an extra add, hoisted above the compare) and
+// picks the arm with a branch, where retail clamps the offset in a register
+// (mr r11, r10) and adds once; the add's operands are swapped as well.
+// Clamping the offset in a register instead (if (Size < Offset) Offset =
+// Size; pValue = pName + Offset) does give retail's mr and its single add,
+// but then the compiler folds the pointer into the strncmp argument, the
+// offset stays live across the "yes" literal setup and every register
+// shifts (score 33). Also tried this session, all score 7 or 33: the clamp
+// as a ternary, the pointer through an inline helper, the pointer
+// assigned in both arms of the clamp, &pName[Offset] and Offset + pName
+// spellings, a non-const pointer, and a 10 minute permuter run (4147
+// rewrites, no improvement).
 // @retail 0x8333C538
 void CCSMessengerWorker::SetDebugOption(const Grip::String &Option)
 {
@@ -152,7 +156,8 @@ void CCSMessengerWorker::SetDebugOption(const Grip::String &Option)
     {
         return;
     }
-    const char *pValue = Size >= (unsigned int)Dot + 1 ? pName + Dot + 1 : pName + Size;
+    unsigned int Offset = (unsigned int)Dot + 1;
+    const char *pValue = Size < Offset ? pName + Size : pName + Offset;
     bool bValue = strncmp(pValue, "yes", 3) == 0;
     if (strncmp(pName, "cover", 5) == 0)
     {
