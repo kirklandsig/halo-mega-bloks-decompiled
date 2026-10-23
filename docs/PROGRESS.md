@@ -32,8 +32,8 @@ Phase 5 (UDK rebuild, later).
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **2,023 are matched (223,228 bytes, 90%), 30 are near
-(19,416 bytes) and 8 are todo (5,848 bytes)**; 2,036 functions match in
+isn't `todo`. **2,023 are matched (223,228 bytes, 90%), 31 are near
+(19,952 bytes) and 7 are todo (5,312 bytes)**; 2,036 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
 (156 match), and the CCS layer's other 644 functions (99,024 bytes; 617 of
@@ -41,7 +41,7 @@ them match).
 
 | Object | `nspace` functions | Bytes | Matched | Near | Todo |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,568 | 27 | 8 |
+| `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,568 | 28 | 7 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 353 | 1 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
 | `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |

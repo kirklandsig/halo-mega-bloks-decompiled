@@ -17,7 +17,7 @@ address,name,status,score
 0x8333CD70,CCSPSTargetAwareness::ComputeLowCostAwareness,near,5
 0x8333E1F8,CCSRBTEncircleTarget::ExecutePreInternal,near,29
 0x8333E5E8,CCSRBTMoveTo::ExecuteInternal,near,49
-0x8333F270,CCSRBTMoveToTarget::ExecutePreInternal,todo,31
+0x8333F270,CCSRBTMoveToTarget::ExecutePreInternal,near,12
 0x8333F9D0,CCSRBTMoveToVehicle::ExecuteInternal,near,8
 0x83340438,CCSRBTStrafeTarget::ExecutePreInternal,near,12
 0x83340B78,HaloRBTKamikaze::ExecuteInternal,todo,14
@@ -33,7 +33,7 @@ address,name,status,score
 0x833579B8,CCSPSTargetAwareness::RemoveThreatTarget,near,1
 0x8336D540,AUSSPawn::TickSpecial,todo,50
 0x8336E868,AUSSController::PostPollMove,near,9
-0x8336F5E0,CCSPSTargetAwareness::ComputeHighCostAwareness,near,51
-0x83386E18,AUDKVehicle::moveTowardGwNavLSStrafe,near,42
+0x8336F5E0,CCSPSTargetAwareness::ComputeHighCostAwareness,near,34
+0x83386E18,AUDKVehicle::moveTowardGwNavLSStrafe,near,37
 0x833C9E98,UHaloSaveGame::BasicSerializeObject,near,12
 0x833C9F50,UHaloSaveGame::BasicDeserializeObject,near,8
