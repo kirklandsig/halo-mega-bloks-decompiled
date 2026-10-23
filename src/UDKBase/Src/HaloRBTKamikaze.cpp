@@ -89,6 +89,17 @@ bool HaloRBTKamikaze::TestPreCondition(IGripBTInterface *pInterface)
 // (92). A scratch build shows the same call writing straight into the
 // origin slot when the whole pattern sits in one small function, so
 // something in this function's shape stops the copy from being elided.
+// This session: a scratch file with the same pattern in a small function
+// shows MSVC does unify the GetPosition result with the origin's slot
+// (0x50) when the origin is read once, but not when it is read twice
+// (then the result gets its own slot right above the origin, and the
+// character temporary lands above that, as retail's 0x60/0x70 layout
+// does). Still tried here: the character taken by value (25, its local
+// at 0x80), the same with const or auto (25 each), a named Grip_Vector
+// temporary for the position (25), and the chained
+// GetCharacter().GetPosition() (23, kept earlier but it gives the
+// GetPosition result a slot of its own at 0x70 instead of the origin's
+// 0x60), so the reference to the character (14) stays the best.
 // @retail 0x83340B78
 GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {
