@@ -39,48 +39,51 @@ void CCSAFEncircleTarget::OnActivate()
 
 // Todo: as CCSAFStrafeTarget::UpdateGoal (retail has 0x20 more bytes of
 // frame and reads the rotated direction from a fixed slot).
-// score 115 (was 115): tried a named loop-local rotation axis (115),
-// the permuter's best rewrite (127) and a const loop-local Direction to
-// force the RotateAngleAxis result into the variable (172); retail still
-// keeps the rotated direction in one fixed slot (0xf8) that MSVC does not
-// reproduce here, so the frame layout and the constant-pool offsets differ.
+// score 34 (was 115): copying the rotation result into dirToTest component
+// by component makes MSVC promote it into f27-f29 like retail (a plain
+// assignment copies through memory, a loop-local declaration spills it to
+// volatile registers), but the copy leaves three fmr's and flips two fmuls
+// operands; retail loads the result straight into those registers.
 // @retail 0x8332BE08
 void CCSAFEncircleTarget::UpdateGoal()
 {
     APawn *pPawn = m_pMeatPuppet->GetCharacter().m_gameCharacter.m_pawn;
-    FVector ToTarget = GripEngineServices::GetActorPosition(m_objective.pTarget) - pPawn->Location;
-    ToTarget.Z = 0.0f;
-    ToTarget.Normalize(SMALL_NUMBER);
-    bool Allowed[4] = {false, m_objective.moveRight, false, m_objective.moveLeft};
-    FVector Goal = pPawn->Location;
+    FVector dirToPivot = GripEngineServices::GetActorPosition(m_objective.pTarget) - pPawn->Location;
+    dirToPivot.Z = 0.0f;
+    dirToPivot.Normalize(SMALL_NUMBER);
+    FVector potentialStrafeLocations[4];
+    FVector bestStrafeLocation = pPawn->Location;
     float BestTime = 0.0f;
     int Best = -1;
-    FVector Points[4];
-    FVector Direction;
-    FVector Extent(0, 0, 0);
+    FVector dirToTest;
+    bool canTest[4] = {false, m_objective.moveRight, false, m_objective.moveLeft};
     for (int i = 0, Angle = 0; Angle < 360; Angle += 90, i++)
     {
-        Points[i] = FVector(3.402823466e+38F, 3.402823466e+38F, 3.402823466e+38F);
-        if (!Allowed[i])
+        potentialStrafeLocations[i] = FVector(3.402823466e+38F, 3.402823466e+38F, 3.402823466e+38F);
+        if (!canTest[i])
         {
             continue;
         }
-        Direction = ToTarget.RotateAngleAxis((int)(Angle * 182.0444f), FVector(0, 0, 1));
-        FVector End = pPawn->GetPawnViewLocation() + Direction * 2000.0f;
-        FCheckResult Hit;
-        if (GWorld->SingleLineCheck(Hit, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), End, pPawn->GetPawnViewLocation(), 0x209F, Extent, 0))
+        FVector rotTemp = dirToPivot.RotateAngleAxis((int)(Angle * 182.0444f), FVector(0, 0, 1));
+        dirToTest.X = rotTemp.X;
+        dirToTest.Y = rotTemp.Y;
+        dirToTest.Z = rotTemp.Z;
+
+        FVector strafeTestEnd = pPawn->GetPawnViewLocation() + dirToTest * 2000.0f;
+        FCheckResult traceResult;
+        if (GWorld->SingleLineCheck(traceResult, (AActor *)m_pMeatPuppet->GetCharacter().GetActor(), strafeTestEnd, pPawn->GetPawnViewLocation(), 0x209F, FVector(0, 0, 0), 0))
         {
-            Points[i] = End;
+            potentialStrafeLocations[i] = strafeTestEnd;
         }
         else
         {
-            Points[i] = Hit.Location;
+            potentialStrafeLocations[i] = traceResult.Location;
         }
-        Points[i] = Points[i] - Direction * pPawn->CollisionComponent->Bounds.SphereRadius;
-        if (BestTime < Hit.Time && (i == currentCircleDirection || rand() % 2 == 0))
+        potentialStrafeLocations[i] = potentialStrafeLocations[i] - dirToTest * pPawn->CollisionComponent->Bounds.SphereRadius;
+        if (BestTime < traceResult.Time && (i == currentCircleDirection || rand() % 2 == 0))
         {
-            BestTime = Hit.Time;
-            Goal = Points[i];
+            BestTime = traceResult.Time;
+            bestStrafeLocation = potentialStrafeLocations[i];
             Best = i;
             currentCircleDirection = i;
         }
@@ -93,7 +96,7 @@ void CCSAFEncircleTarget::UpdateGoal()
     {
         m_objective.moveRight = false;
     }
-    m_objective.moveTarget = Goal;
+    m_objective.moveTarget = bestStrafeLocation;
     m_objective.alertness = CCS::AlertnessState_Alert;
     m_objective.movementType = CCS::MovementType_Encircle;
     m_objective.orientTarget = GripEngineServices::GetActorPosition(m_objective.pTarget);
