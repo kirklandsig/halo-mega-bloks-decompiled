@@ -154,6 +154,15 @@ void CCSCSCover::Tick(float)
 // in one expression, and the shared operator- rewritten three ways (swapping
 // its operands changes the subtraction order, not the schedule); a ten-minute
 // permuter run found nothing.
+// This session: every spelling MSVC accepts compiles to the same interleaved
+// schedule - named delta, delta by components, explicit Grip_Vector temporary,
+// float locals, a const reference, the positions fetched inline, FVector
+// arithmetic, an arg-first helper, the shared operator- reversed in the
+// header (right values, same schedule): all score 19. A copy-then-subtract
+// helper scores 79. Retail's shape is the one of the vendor's out-of-line
+// Grip_Vector::operator* (0x8331B338): one vector's three components load as
+// a group, the other's interleave with the arithmetic, so the vendor's
+// operator- probably copies *this and subtracts into the copy.
 // @retail 0x8332F4B0
 Grip_Rotation CCSCSCover::GetCrouchCoverRot()
 {
