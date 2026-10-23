@@ -39,6 +39,13 @@ bool CCSRBTStrafeTarget::TestPreCondition(IGripBTInterface *pInterface)
 // second and third store instead of between the first and second; everything
 // else (the 748 byte body, the register assignment, the single call to
 // GetCurrentTarget) matches
+// tried: hoisting the reload into a named local (todo 69), moving the
+// objective's declaration after the check (24) / after pTarget, pScheduler or
+// pFactory (24) / to the function top (todo 34), splitting the check into two
+// ifs (41) or nesting it (24), reading the blackboard's m_currentTarget
+// directly (todo 89), and const locals (12, no change) - none reproduced
+// retail's schedule; the permuter (600 s, 4 jobs) found no better rewrite
+// ("base score 12, best score 12, helped: none")
 // @retail 0x83340438
 GripRBTNode::EBTExecutionResult CCSRBTStrafeTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool)
 {
