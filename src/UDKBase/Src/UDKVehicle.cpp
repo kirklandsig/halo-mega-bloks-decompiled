@@ -174,15 +174,37 @@ void AUDKVehicle::moveTowardGwNavLookSteer(const FVector &Direction)
     }
 }
 
-// score 42 (was 51): the only difference left is the float register the two
-// constants get - retail keeps 0.0f in f8 and SMALL_NUMBER in f7, ours keeps
-// them the other way round - and that swap cascades into the operand order of
-// the multiplies (fmuls f0, f0, f6 against fmuls f0, f6, f0), the register
-// the sqrt and the division use and the order of the three terms in the two
-// dot products. The normalize of Dir sums X, Z, Y (UnMath.h), which is what
-// moveTowardGwNavLSEncircle needs (the six operand orders of the sum,
-// parenthesised groupings, a hand-written normalization, permuting the three
-// Normalize calls and writing the dot products out by hand were tried).
+// score 42 (was 51): two differences are left. First, the float register the
+// two constants get: retail keeps 0.0f in f8 and SMALL_NUMBER in f7, ours
+// keeps them the other way round, and that swap cascades into the fmr copies
+// (f4 before f5 against f5 before f4), the fcmpu operands, the register the
+// sqrt and the division use, the register the Forward scale lands in (f4
+// against f5), the operand order of the multiplies (fmuls f0, f0, f6 against
+// fmuls f0, f6, f0), the register the Right/Forward Z times scale product
+// lands in and the three stores of 0.0f - 18 of the 30 differing lines.
+// Second, the order of the three terms in the two dot products: retail groups
+// the steering sum as (Right.X * Dir.X + Right.Z * Dir.Z) - Right.Y * Dir.Y,
+// the negated term being Y, and the forward dot as (Forward.X * Dir.X +
+// Forward.Y * Dir.Y) + Forward.Z * Dir.Z; ours groups them the other way
+// round, the steering as (X + Y) - Z and the forward dot as (X + Z) + Y.
+// The normalize of Dir sums X, Z, Y (UnMath.h), which is what
+// moveTowardGwNavLSEncircle needs. The steering sum is written as
+// -(Right | Dir) on purpose: MSVC reassociates a three term float sum and
+// negates the last term of the canonical order, and only a named temporary
+// for the inner sum reproduces retail's (X + Z) - Y grouping - that costs
+// four lines elsewhere (the normalize of Right then squares X first instead
+// of Y, and its scaling multiplies swap their operands), so it scores 46.
+// Tried and rejected: the permuter (base 42, best 42), the steering sum
+// written out in six term orders with and without parentheses, the forward
+// dot in five term orders and with a named temporary, swapping the order of
+// the two dot statements, of the two Normalize calls and of the two Z
+// assignments, moving the Dir normalization block in front of the Z
+// assignments (161) or using Dir.Normalize(SMALL_NUMBER) from UnMath.h
+// (61), hand-written Right/Forward normalizations with four square sum
+// orders (48), the scaling written as *=, x = x * s and s = x, the zeroing
+// written as 0.0f, 0, 0.0, as a chained assignment and as -0.0f, the
+// SMALL_NUMBER comparison hoisted into a bool in front of the zeroing (68),
+// and the body wrapped in if (bCanStrafe) instead of the early return (466).
 // @retail 0x83386E18
 void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
 {
