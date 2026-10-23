@@ -277,6 +277,17 @@ file.
 - **Vector (VMX128) constants** match: the dynamic initializers of UE3's
   `static const VectorRegister` globals (`include/Core/Inc/UnMathXe.h`).
   Other vector code is untested.
+- **A parameter block built inside an inlined wrapper is a call temporary.**
+  MSVC gives it a stack slot and reuses that slot as soon as the call is set
+  up, so the next block lands on top of it and the frame stays small. Retail
+  keeps the block in the caller's scope, where it gets a slot of its own (and
+  the frame grows to match). Declare the block in the caller and fill it there
+  instead of calling a wrapper that declares its own
+  (`UCCSActorFactory::CreateActor` matched this way).
+- **In that same function, the stores to a block's fields** came out in
+  retail's order only with the assignments written back to front, because
+  the constant fields were stored first. It has been seen once, so treat it as
+  something to try rather than a rule.
 
 ### From the AI code (2026-10-19)
 
