@@ -40,10 +40,17 @@ bool CCSRBTEncircleTarget::TestPreCondition(IGripBTInterface *pInterface)
 // retail loads the blackboard's current target (0x108(r27)) before the
 // objective's six stores and copies the factory in the middle of them, its
 // two objective flags are stored in the other order, and it loads the
-// circle-left slot before storing the circle distance. Tried this session:
-// a Grip_Vector default-constructor form in the shared header (no change) and
-// tracing the 0x108 load to m_currentTarget's value slot, read by the
-// blackboard accessor - neither moved the score.
+// circle-left slot before storing the circle distance. Tried since: a
+// Grip_Vector default-constructor form in the shared header and tracing the
+// 0x108 load to m_currentTarget's value slot (no change); swapping the two
+// objective flags (no change - the compiler orders that pair by address);
+// the actor statement between or before the flags (36 / 29); an early target
+// local ahead of the objective declaration (720 bytes - the six float stores
+// die as dead stores, but that form does put the load first, the two flags
+// in retail's order and the circle-left load before the circle distance);
+// the objective declared after the condition (37 - the load lands first but
+// the stores sink past the branch); two separate ifs instead of the || (46);
+// a 600 s permuter run (base 29, best 29).
 // @retail 0x8333E1F8
 GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool)
 {
@@ -85,8 +92,14 @@ GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBT
 // scheduler ending up in swapped registers (r26/r27) against retail's choice.
 // Tried: declaring the scheduler first, deferring its assignment, making it
 // const, taking the blackboard by reference, a named status local, swapping
-// the two accessor calls, dropping the pPuppet local and a 480 s permuter run
-// (base 8, best 8) - none of them flips the allocation.
+// the two accessor calls, dropping the pPuppet local, a 480 s permuter run
+// (base 8, best 8) - none of them flips the allocation. Swapping the two
+// accessor calls shows the choice follows the variables and not the
+// positions (the blackboard lands in r26 and the scheduler in r27 either
+// way, and the same two locals take r27/r26 in ExecutePreInternal), so it is
+// the allocator's own preference, not the source order. Tried since: the
+// switch rewritten as if/else if (73), a pointer compare instead of the
+// integer one (10) and a 600 s permuter run (base 8, best 8).
 // @retail 0x83330CE0
 GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *, bool bInterrupt)
 {
