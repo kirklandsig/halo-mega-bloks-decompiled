@@ -20,31 +20,35 @@ CCSCSCoverUnreal::CCSCSCoverUnreal(CCSCSInterface *pInterface)
 }
 #endif
 
-// score 94 (was 175): the calls are the retail's, but the retail keeps the
-// direction and the character position in the slot the position copy and the
-// rotator used, and passes the rotator on in a register pair instead of
-// through its pointer.
-// Tried: a `const CCSGameCover &` plus a `const ECoverType` result variable
-// and the crouch case first reproduce retail's first 216 bytes exactly but
-// score 152, because the direction then takes a frame slot of its own
-// instead of the cover location's; a copy of the cover location, a
-// case-scope copy, an uninitialised direction, a function-scope rotator and an
-// inline rotator all scored 149 to 198, so this stays the lowest.
+// score 12 (was 94): the cover location is a Grip_Vector built straight from
+// the slot query's FVector result, the cover is held in a reference so the
+// slot query keeps the game cover's address, and the switch runs on a named
+// cover type so the dispatch maps the type to a case index; the retail's
+// frame is still 0x110 against our 0x140 and the direction, the rotator's
+// temporary and the second character take slots of their own. Tried this
+// session: an explicit FRotator temporary in front of the Grip_Rotation
+// copy (score 29) and about twenty other source shapes (const qualifiers,
+// references, declaration order, split or merged switch cases, named or
+// unnamed facing rotation), all of which stayed at 12; the retail's layout
+// wants the slot rotation's return buffer in the rotator's own slot at
+// 0x60 and no named facing rotation, which none of them reproduced.
 // @retail 0x833432A8
 bool CCSCSCoverUnreal::DoGetInCover()
 {
     OverrideFocus();
-    FVector Position = m_currentCover.m_gameCover.m_coverInfo.Link->GetSlotLocation(m_currentCover.m_gameCover.m_coverInfo.SlotIdx, 0);
-    switch (m_currentCover.GetType())
+    const CCSGameCover &Cover = m_currentCover.m_gameCover;
+    Grip_Vector CoverLoc = Cover.m_coverInfo.Link->GetSlotLocation(Cover.m_coverInfo.SlotIdx, 0);
+    const CCS::ECoverType Type = Cover.GetType();
+    switch (Type)
     {
     case CCS::CoverType_Stand:
     {
-        m_pMeatPuppet->GetCharacter().m_gameCharacter.m_pawn->SetDesiredRotation(
-            m_currentCover.m_gameCover.m_coverInfo.Link->GetSlotRotation(m_currentCover.m_gameCover.m_coverInfo.SlotIdx, 0), 1, 1, 0.1f, 0);
-        if (!m_pMeatPuppet->ReachedPoint(Position))
+        Grip_Rotation Rot = Cover.m_coverInfo.Link->GetSlotRotation(Cover.m_coverInfo.SlotIdx, 0);
+        m_pMeatPuppet->GetCharacter().m_gameCharacter.m_pawn->SetDesiredRotation(Rot, 1, 1, 0.1f, 0);
+        if (!m_pMeatPuppet->ReachedPoint(CoverLoc))
         {
-            auto TempPosition = Grip_Vector(Position);
-            Grip_Vector Direction = TempPosition - (m_pMeatPuppet->GetCharacter().GetPosition());
+            CCSCharacter MPCharacter = m_pMeatPuppet->GetCharacter();
+            Grip_Vector Direction = CoverLoc - MPCharacter.GetPosition();
             Direction.Z = 0.0f;
             Grip_Rotation Facing;
             Direction.Normalize();
@@ -56,6 +60,8 @@ bool CCSCSCoverUnreal::DoGetInCover()
     case CCS::CoverType_Crouch:
         GetCrouchCoverRot();
         m_pMeatPuppet->SetCrouched(true);
+        break;
+    default:
         break;
     }
     return true;
