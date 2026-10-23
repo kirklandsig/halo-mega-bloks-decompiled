@@ -8,7 +8,6 @@ address,name,status,score
 0x8332DAD0,CCSAFStrafeTarget::UpdateGoal,todo,273
 0x8332F4B0,CCSCSCover::GetCrouchCoverRot,near,19
 0x83330CE0,CCSRBTEncircleTarget::ExecuteInternal,near,8
-0x83337990,ACCSController::RemoveState,todo,24
 0x83339098,CCSRBTSearch::FindNavigationPoints,near,3
 0x8333B960,CCSBrain::SchedulerRegistration,near,1
 0x8333BA88,CCSBrain::SchedulerUnregistration,near,1
