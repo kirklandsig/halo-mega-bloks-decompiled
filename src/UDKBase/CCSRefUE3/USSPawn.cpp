@@ -219,6 +219,12 @@ void AUSSPawn::SetMovementSpeedDefault()
 // shape (plain, by reference, through a pointer), while retail keeps
 // DeltaRot in a stack slot at r1+0x50 (pitch, yaw, roll) and writes the
 // unwound pitch back into it.
+// Retried this round: unwinding the yaw first in the by-value helper is a
+// regression (60, reverted); the shared FRotator UnwindRot on the difference
+// gives retail's forward pitch/yaw/roll subtraction and the 0x50/0x54 stores
+// but drops the roll (65); separate AimRot/PawnRot locals give 59; forcing
+// UnwindRot(int) inline and unwinding the members in place still lets the
+// roll die (65); member-wise int differences give 109-148.
 // @retail 0x8336D540
 void AUSSPawn::TickSpecial(float DeltaTime)
 {
