@@ -316,31 +316,24 @@ void CCSPSTargetAwareness::UpdateCurrentTarget()
 // the operand order; the shared operator[] spellings that would change it
 // break the other functions (see below), so the two words stay.
 // @retail 0x8333D9D0
-#line 319
 int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
 {
-    CCSBlackboard * pBB = m_pBrain->GetBlackboard < CCSBlackboard >();
-    float CamoScale;
-    const CCSTarget * pCurrentTarget;
-    CamoScale = (float)(1.0f);
-    const ACCSController * pController;
-    int TotalThreat;
-    TotalThreat = 0;
-    pController = (ACCSController *)(static_cast < CCSMeatPuppet * >(m_pBrain->m_meatPuppet)->m_pCCSCtrl);
-    auto permTemp11 = pBB->GetCurrentTarget();
-    pCurrentTarget = permTemp11;
+    CCSBlackboard *pBB = m_pBrain->GetBlackboard<CCSBlackboard>();
+    int TotalThreat = 0;
+    float CamoScale = 1.0f;
+    ACCSController *pController = static_cast<CCSMeatPuppet *>(m_pBrain->m_meatPuppet)->m_pCCSCtrl;
+    CCSTarget *pCurrentTarget = pBB->GetCurrentTarget();
     if (Target.character == CCSCharacter::NONE)
     {
         return 0;
     }
-    auto permTemp14 = Target.character.GetActor();
-    AActor * const pActor = (AActor *) permTemp14;
-    if ((pActor == 0))
+    AActor *pActor = (AActor *)Target.character.GetActor();
+    if (pActor == 0)
     {
         return 0;
     }
-    const UUDKTargetableComponent * const pTargetable = (UUDKTargetableComponent *)(((Target.character.GetTargetableComponent())));
-    if ((bool)(Target.teamNum == - 1))
+    UUDKTargetableComponent *pTargetable = Target.character.GetTargetableComponent();
+    if (Target.teamNum == -1)
     {
         Target.teamNum = pActor->GetTeamNum();
     }
@@ -350,41 +343,35 @@ int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
     auto permTemp18 = (Target.CNTAge) + DeltaTime;
     Target.CNTAge = ((permTemp18));
     Target.UpdateDestinationReachable();
-    if ((pActor->IsValid()) && 0 != pTargetable && pController->Pawn != 0)
+    if (pActor->IsValid() && pTargetable != 0 && pController->Pawn != 0)
     {
-        int TargetTeamNum = Target.teamNum;
+        const int TargetTeamNum = Target.teamNum;
         if (TargetTeamNum != pController->Pawn->GetTeamNum())
         {
             const float OuterRadiusSq = pTargetable->OutterThreatRadius * pTargetable->OutterThreatRadius;
-            float InnerRadiusSq = pTargetable->InnerThreatRadius * pTargetable->InnerThreatRadius;
-            const Grip_Vector Delta = (Grip_Vector)(((((m_pBrain->m_meatPuppet->GetCharacter().GetPosition()) - Target.position))));
-            float DistanceSq;
-            DistanceSq = Delta.SizeSquared2D();
+            const float InnerRadiusSq = pTargetable->InnerThreatRadius * pTargetable->InnerThreatRadius;
+            Grip_Vector Delta = m_pBrain->m_meatPuppet->GetCharacter().GetPosition() - Target.position;
+            const float DistanceSq = Delta.SizeSquared2D();
             if (DistanceSq < OuterRadiusSq)
             {
-                float BaseThreat;
-                BaseThreat = (float) pTargetable->BaseThreatVal;
-                float ModifiableThreat = pTargetable->ModifiableThreatPct * BaseThreat;
-                float Threat;
-                auto permTemp17 = Delta.Z * Delta.Z;
-                const auto permTemp9 = (OuterRadiusSq - Abs(permTemp17)) / OuterRadiusSq;
-                float Camo;
-                Threat = (float)((Max(0.1f, permTemp9)) * (BaseThreat - ModifiableThreat + ((pTargetable->MaxAIHeat - pTargetable->CurAIHeat) / pTargetable->MaxAIHeat) * ModifiableThreat));
-                Camo = (float)((((Target.CurrentCamo()))));
-                if (pCurrentTarget != 0 && pCurrentTarget != & Target && Camo > 0.0f)
+                const float BaseThreat = (float)pTargetable->BaseThreatVal;
+                const float ModifiableThreat = pTargetable->ModifiableThreatPct * BaseThreat;
+                const float HeatScale = (pTargetable->MaxAIHeat - pTargetable->CurAIHeat) / pTargetable->MaxAIHeat;
+                const float HeightScale = Max(0.1f, (OuterRadiusSq - Abs(Delta.Z * Delta.Z)) / OuterRadiusSq);
+                const float Threat = (BaseThreat - ModifiableThreat + HeatScale * ModifiableThreat) * HeightScale;
+                const float Camo = Target.CurrentCamo();
+                if (pCurrentTarget != 0 && pCurrentTarget != &Target && Camo > 0.0f)
                 {
-                    auto permTemp16 = (((1.0f))) - (((Camo)));
-                    CamoScale = permTemp16;
+                    CamoScale = 1.0f - Camo;
                 }
-                float ScaledThreat = CamoScale * Threat;
-                if (((((((((((((DistanceSq < InnerRadiusSq)))))))))))))
+                const float ScaledThreat = Threat * CamoScale;
+                if (DistanceSq < InnerRadiusSq)
                 {
-                    TotalThreat = (((((((((((((int) ScaledThreat))))))))))));
+                    TotalThreat = (int)ScaledThreat;
                 }
                 else
                 {
-                    const auto permTemp12 = 1.0f - (DistanceSq - InnerRadiusSq) / ((OuterRadiusSq - InnerRadiusSq));
-                    TotalThreat = (((((((((((((int)(ScaledThreat * (permTemp12))))))))))))));
+                    TotalThreat = (int)((1.0f - (DistanceSq - InnerRadiusSq) / (OuterRadiusSq - InnerRadiusSq)) * ScaledThreat);
                 }
             }
             {
@@ -398,8 +385,8 @@ int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
                                         i = 0;
                                         while (i < pController->TotalEnemyThreat.Num())
                                         {
-                                            const AController * const pInstigator = (AController *)((pController->TotalEnemyThreat(i).DamageInstigator));
-                                            const AActor * pDamager = pController->TotalEnemyThreat(i).DamagingActor;
+                                            const AController *const pInstigator = (AController *)((pController->TotalEnemyThreat(i).DamageInstigator));
+                                            const AActor *pDamager = pController->TotalEnemyThreat(i).DamagingActor;
                                             if ((0 != pInstigator && pInstigator->Pawn == pActor) || (0 != pDamager && pDamager == pActor))
                                             {
                                                 TotalThreat = (((int)((pController->TotalEnemyThreat(i).TotalDamageAmount * CamoScale)))) + TotalThreat;
@@ -417,7 +404,6 @@ int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
     }
     return TotalThreat;
 }
-#line 388
 
 // @retail 0x83357230
 void CCSPSTargetAwareness::UpdateTargetList()
