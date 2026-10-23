@@ -257,7 +257,12 @@ bool CCSPSCover::PathCulling(CCSCover &Cover)
 // 0xf0); a named difference, the rotation named after the difference, the
 // first test in a block of its own and a reference to the temporary tried;
 // declaring the delta after the difference and putting the whole body in
-// one block both leave the difference in 0x70 instead of the retail's 0x60
+// one block both leave the difference in 0x70 instead of the retail's 0x60;
+// this session the permuter ran 600 s over 1484 spellings and found
+// nothing, and about thirty more shapes (flat, one block, nested, named
+// vector, named delta, reference forms, declaration orders) all score 22 or
+// more: our compiler keeps the difference vector in a temp slot and never
+// merges it into the delta's slot the way the retail's does
 // @retail 0x8333CA38
 bool CCSPSCover::HasValidDefensiveAngle(const float MinYaw, const float MaxYaw, const Grip_Vector Position, const Grip_Rotation &Orientation,
                                         const CCSTarget *pTarget)
@@ -305,7 +310,11 @@ bool CCSPSCover::HasValidDefensiveAngle(const float MinYaw, const float MaxYaw, 
 // ours takes a fresh slot per scope (0x60, 0x80, 0xa0, frame 0x120
 // against 0x100); the retail's first scope subtracts X, Y, Z where ours
 // does Z, Y, X; an if/else-if chain (frame 0x100), a named difference per
-// scope and one shared at function scope tried
+// scope and one shared at function scope tried; this session the permuter
+// ran 540 s and found nothing, and naming the cover position, a memberwise
+// difference and six declaration orders of position/difference/targetDirection
+// all score 61 or more (161 with the three scopes hoisted), so the retail's
+// reuse of four slots across the three scopes cannot be reproduced here
 // @retail 0x83344B48
 bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover &Cover, const Grip_Rotation &Orientation, const CCSTarget *pTarget)
 {
@@ -363,8 +372,13 @@ bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover
 // score 39 (was 39): the saved registers hold 0 and 1 the other way round
 // (the retail puts 0 in r22 and 1 in r21), and the zero vector's three
 // stores come after the cover position loads where the retail stores them
-// before; naming the zero vector and declaring the position in one
-// statement change nothing
+// before; the permuter's temporaries carry their own names now, the
+// orientation keeps its cast because without it the copy of the returned
+// rotation is elided, and the direction to the puppet stays in two
+// statements for the same reason; this session the permuter found nothing
+// and named, default-constructed and integer zero vectors, reordered
+// declarations and swapped conditions all score 39 or more, so what is
+// left is the saved-register order and the store scheduling
 // @retail 0x83344EB8
 bool CCSPSCover::HighCostPerception(int &Budget)
 {
@@ -385,13 +399,11 @@ bool CCSPSCover::HighCostPerception(int &Budget)
             {
                 bSpent = true;
                 const Grip_Rotation Orientation = (Grip_Rotation)(Cover.GetOrientation());
-                Grip_Vector Position;
-                Position = (Cover.GetPosition());
+                Grip_Vector Position = Cover.GetPosition();
                 Grip_RotationTranslationMatrix Matrix(Orientation, Grip_Vector(0.0f, 0.0f, 0.0f));
-                auto permTemp1 = Grip_Vector(128.0f, 0.0f, 0.0f);
-                const Grip_Vector ShootPosition = (Matrix.TransformNormal(permTemp1)) + Position;
-                auto permTemp3 = Cover.m_gameCover.GetShootConfig();
-                CCS::ECoverShootConfig Config = (CCS::ECoverShootConfig)(permTemp3);
+                const Grip_Vector ShootOffset(128.0f, 0.0f, 0.0f);
+                const Grip_Vector ShootPosition = (Matrix.TransformNormal(ShootOffset)) + Position;
+                const CCS::ECoverShootConfig Config = Cover.m_gameCover.GetShootConfig();
                 float MinYaw = -16384.0f;
                 float MaxYaw = 16384.0f;
                 if (Config == CCS::CoverShootConfig_Left)
