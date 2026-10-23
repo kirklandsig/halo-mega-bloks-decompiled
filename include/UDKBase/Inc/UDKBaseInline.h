@@ -493,6 +493,36 @@ inline int appStricmp(const wchar_t *String1, const wchar_t *String2) { return _
 inline const wchar_t *FString::operator*() const { return Num() ? GetTypedData() : L""; }
 inline unsigned int FString::operator==(const FString &Other) const { return appStricmp(**this, *Other) == 0; }
 
+// The narrow constructor. The retail build has it in unstring.h, so the
+// compiler sees the body and knows the string's address does not escape the
+// constructor; that is what lets it drop the dead stores of a temporary.
+#ifndef HAGGAR_HOST
+inline FString::FString(const char *InSrc)
+{
+    int Len = 0;
+    if (InSrc != 0)
+    {
+        while (InSrc[Len] != 0)
+        {
+            Len++;
+        }
+    }
+    ArrayNum = Len;
+    ArrayMax = Len;
+    AllocatorInstance.Data = 0;
+    if (Len > 0)
+    {
+        AllocatorInstance.Data = (FScriptContainerElement *)appRealloc(0, (Len + 1) * sizeof(wchar_t), DEFAULT_ALIGNMENT);
+        wchar_t *Chars = (wchar_t *)AllocatorInstance.Data;
+        for (int i = 0; i < Len; i++)
+        {
+            Chars[i] = (wchar_t)(unsigned char)InSrc[i];
+        }
+        Chars[Len] = 0;
+    }
+}
+#endif
+
 // gripsf_string.h: a string's data is reference counted, the count after
 // its size; the low bits of the pointer name the heap
 #ifndef HAGGAR_HOST

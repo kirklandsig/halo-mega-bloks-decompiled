@@ -18,13 +18,6 @@ static inline Grip::String MakeStateString(const wchar_t *Text)
     return Grip::String(Text);
 }
 
-// The empty state: returning it by value makes the compiler keep it in the
-// frame instead of taking the constructor's returned pointer.
-static inline FString MakeEmptyStateString()
-{
-    return FString("");
-}
-
 // The retail inlines FVector::Normalize; the header only marks it inline, so
 // the compiler is free to leave it out of line. Force it in.
 static __forceinline void NormalizeVector(FVector &V)
@@ -38,19 +31,22 @@ void ACCSController::SetState(const FString &State)
     Brain->GetBlackboard<CCSBlackboard>()->AddState(MakeStateString(*State));
 }
 
-// Todo (248 bytes vs 236): retail reads the temporary FString back from the
-// frame and frees only its data (UE3's FString), ours inlines
-// ~TArray/~ForAnyElementType, which also zeroes the fields, and takes the
-// constructor's result from r3 instead of the frame.
-// Tried: the empty state as a named local in a scope (score 24, frame
-// addressed like retail), as FString("") (25), as a temporary in the
-// condition (25); retail's build drops the three dead stores of the
-// temporary, which it can only do when it sees the constructor's body, so
-// the FString temporary cannot be built here.
+// score 0 (was 24): the empty state is a scoped local, compared with the
+// state and freed before the branch, like retail. Its constructor is inline
+// (see UDKBaseInline.h): with the body visible the compiler knows the
+// string's address does not escape and drops the dead stores of the
+// destructor. Tried: the inline constructor with the state as a temporary
+// (25, the address escapes and the stores stay) and as a named local
+// (248 bytes, the free lands at the end of the function).
 // @retail 0x83337990
 void ACCSController::RemoveState(const FString &State)
 {
-    if (State == MakeEmptyStateString())
+    unsigned int bEmptyState;
+    {
+        const FString Empty("");
+        bEmptyState = (State == Empty);
+    }
+    if (bEmptyState)
     {
         Brain->GetBlackboard<CCSBlackboard>()->ClearAllState();
         return;
