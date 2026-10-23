@@ -21,16 +21,26 @@ bool CCSRBTMoveToTarget::TestPreCondition(IGripBTInterface *pInterface)
     return true;
 }
 
-// score 31 (was 36): the objective still gets a slot of its own at 0x80 (the
-// frame is 0xf0 instead of 0xd0), the constant 0 is rematerialised instead of
-// living in a callee-saved register, the target's two stores are merged into
-// one (4 bytes short of retail) and alwaysFire is stored as a byte instead of
-// a word
+// score 12 (was 31): only the stack layout is left - retail keeps the
+// objective in the slot the GetCharacter() return buffer used (0x60) so the
+// frame is 0xd0, while the objective gets a slot of its own at 0x80 here and
+// the frame grows to 0xf0. Every instruction, its size and its order match;
+// the twelve differences are all the slot immediates.
 // tried: member assignments in the retail's store order (52), the same with an
 // explicit NULL check (49), an explicit character == NONE test (75), a
 // one-element aggregate so the tail is zeroed (38), the position assigned
-// after the aggregate (36), a named CCSCharacter local (33) and the permuter
-// (no improvement)
+// after the aggregate (36), a named CCSCharacter local (33), the natural
+// character.GetActor() in the aggregate (36), the objective declared before
+// the position test (37), the position copied through a named local (36) and
+// the permuter (no improvement)
+// tried for the layout: the objective declared first (37), declared before the
+// position test with member assignments (37) or with the position member
+// written field by field (103), its address taken early (37), the position
+// read through a named CCSCharacter (14) or a named Grip_Vector (12), the
+// objective built by a helper that returns it by value (55), a named
+// character local outside the test (29) - the objective keeps the slot at
+// 0x80 and the frame at 0xf0 in every one of them, so MSVC does not share
+// the return buffer's slot with the objective here
 // @retail 0x8333F270
 GripRBTNode::EBTExecutionResult CCSRBTMoveToTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool bFirstTime)
 {
@@ -48,7 +58,8 @@ GripRBTNode::EBTExecutionResult CCSRBTMoveToTarget::ExecutePreInternal(IGripBTIn
     {
         pointOfOrigin = pBrain->m_meatPuppet->GetCharacter().GetPosition();
     }
-    CCSAOMoveToActor moveToObjective = {pBB->GetCurrentTarget()->character.GetActor(), m_movementType, m_alertness, pointOfOrigin, false};
+    CCSTarget *pTarget = pBB->GetCurrentTarget();
+    CCSAOMoveToActor moveToObjective = {(pTarget->character != CCSCharacter::NONE) ? pTarget->character.m_gameCharacter.GetActor() : 0, m_movementType, m_alertness, pointOfOrigin};
     m_actionHandle = pFactory->CreateActionInternal<CCSAOMoveToActor, CCSAFMoveToActor>(moveToObjective);
     pScheduler->Execute(m_actionHandle);
     return ER_INPROGRESS;
