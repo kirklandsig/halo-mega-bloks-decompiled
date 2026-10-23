@@ -46,6 +46,18 @@ bool CCSRBTStrafeTarget::TestPreCondition(IGripBTInterface *pInterface)
 // directly (todo 89), and const locals (12, no change) - none reproduced
 // retail's schedule; the permuter (600 s, 4 jobs) found no better rewrite
 // ("base score 12, best score 12, helped: none")
+// tried again: the declaration and the check on one source line (12, no
+// change), a fresh local for the reloaded target (69), an explicit reload
+// into pTarget before the objective (208), the check reading the early
+// pTarget local (121), the condition's operands swapped (104), the condition
+// in a bool local (239), the objective's construction folded into the
+// condition with a comma (162) and the failure return through a static
+// helper (12, no change) - the load stays after the six stores in all of
+// them; retail's own line table puts the objective's zeroing, the 0x108
+// reload and the compare on one source line (line 63) and gives the
+// ER_FAILURE block a line of its own (90), so its check and its zeroing
+// are probably one statement and its failure return a separate inlined
+// helper
 // @retail 0x83340438
 GripRBTNode::EBTExecutionResult CCSRBTStrafeTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool)
 {
