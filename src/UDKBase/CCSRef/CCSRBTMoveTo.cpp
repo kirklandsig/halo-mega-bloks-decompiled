@@ -53,6 +53,13 @@ GripRBTNode::EBTExecutionResult CCSRBTMoveTo::ExecutePreInternal(IGripBTInterfac
 // interface local, nested and short-circuit roll forms, a named roll local,
 // swapped comparison and product operands, the case order, the breaks and a
 // named constant were tried, and the permuter found nothing)
+// tried this session: retail's line table puts the rand() call on a line of
+// its own, so a `const int Roll = rand();` in a braced case (49, identical
+// code), the same as a named float roll (49) and a file-scope named scale
+// (49, folded back to the literal); swapping the comparison's operands to
+// `weight * chance > rand() * scale` (75: MSVC then compares the other way
+// round and evaluates the threshold first); a 540 s permuter run with 4
+// jobs (base 49, best 49, helped: none)
 // @retail 0x8333E5E8
 GripRBTNode::EBTExecutionResult CCSRBTMoveTo::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *, bool)
 {
