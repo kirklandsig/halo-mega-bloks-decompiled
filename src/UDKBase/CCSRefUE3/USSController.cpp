@@ -10,14 +10,21 @@ template CCSMeatPuppetQuery *IGripBTInterface::GetMeatPuppetQuery<CCSMeatPuppetQ
 
 // Steps the pawn aside when its move would run into another pawn that is in
 // cover: it aims for a point beside the other pawn, away from the cover.
-// score 146 (was 153): the rotation is now a local assigned in place, so the
-// stack slots match retail (rotation 0x60, scaled extent 0x70, destination
-// 0x80, start 0x90, cover direction 0xa0, line check 0xb0, cover 0xc0).
-// Still differing: retail zeroes the whole line check result where ours
-// zeroes the rotation, retail copies the other pawn's location into a stack
-// slot (a 12 byte copy) where ours keeps it in registers, retail keeps the
-// negated direction in registers (a phi) where ours stores it back, and
-// retail's `this` is in r29, ours in r30.
+// score 9 (was 11): the direction test is written as (Away | CoverFacing) <
+// 0.0f and the target test as (Target | Pawn->Location) > 0.0f, which puts
+// the dot products' operands the way round retail has them.
+// Still differing: retail's destination and extent sret temporaries are at
+// 0x60 and 0x50 where ours are at 0x70 and 0x60 (retail lets the extent
+// buffer share the direction's slot), retail recomputes the cover and
+// rotation addresses where ours forwards the callee's returned pointer, the
+// global the line check is called through sits at another offset in the
+// constant pool, and the first multiply of the direction test has its
+// operands the other way round.
+// Tried this session: spelling the extent scaling as "*=" instead of
+// "x = x *" left the score at 9 (slot layout unchanged); binding the cover
+// and rotation to named locals gives the retail "addi r4, r1, ..." form but
+// grows the frame to 0x140 and scores worse; a permuter run over this body
+// (3101 iterations, 8 rewrite kinds) found nothing better than 9.
 // @retail 0x8336E868
 void AUSSController::PostPollMove()
 {
@@ -25,7 +32,6 @@ void AUSSController::PostPollMove()
     {
         return;
     }
-    Grip_Rotation Rotation;
     GripLineCheckResult Result;
     const Grip_Vector Destination = GetDestinationPosition();
     const Grip_Vector Start = Pawn->Location;
@@ -53,20 +59,21 @@ void AUSSController::PostPollMove()
     {
         return;
     }
-    Grip_Vector OtherLocation = pOther->Location;
+    FVector OtherLocation = pOther->Location;
     Grip_Vector Away = OtherLocation - Pawn->Location;
     Away.Z = 0.0f;
     Away.Normalize();
     Away = Grip_Vector(Away.Y, -Away.X, 0.0f);
-    Rotation = pQuery->GetCurrentCover().GetOrientation();
-    Grip_Vector CoverFacing = Rotation.Vector2D();
+    Grip_Vector CoverFacing = pQuery->GetCurrentCover().GetOrientation().Vector2D();
     CoverFacing.Z = 0.0f;
-    if (0.0f > (Away | CoverFacing))
+    if ((Away | CoverFacing) < 0.0f)
     {
-        Away = static_cast<const Grip_Vector &>(Away) * -1.0f;
+        Away.X = Away.X * -1.0f;
+        Away.Y = Away.Y * -1.0f;
+        Away.Z = Away.Z * -1.0f;
     }
     const Grip_Vector Target = OtherLocation - static_cast<const Grip_Vector &>(Away) * 50.0f;
-    if ((Pawn->Location | Target) > 0.0f)
+    if ((Target | Pawn->Location) > 0.0f)
     {
         SetAdjustLocation(Target, 1, 0);
     }
