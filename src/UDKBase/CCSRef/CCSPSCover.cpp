@@ -251,11 +251,13 @@ bool CCSPSCover::PathCulling(CCSCover &Cover)
     return true;
 }
 
-// near: the code matches byte for byte, only the stack slots differ: the
-// retail reuses the first vector difference's slot for the rotation
-// difference (four slots, frame 0xe0), ours takes five (frame 0xf0); a
-// named difference, the rotation named after the difference, the first
-// test in a block of its own and a reference to the temporary tried
+// score 18 (was 18): the code matches byte for byte, only the stack slots
+// differ: the retail reuses the first vector difference's slot for the
+// rotation difference (four slots, frame 0xe0), ours takes five (frame
+// 0xf0); a named difference, the rotation named after the difference, the
+// first test in a block of its own and a reference to the temporary tried;
+// declaring the delta after the difference and putting the whole body in
+// one block both leave the difference in 0x70 instead of the retail's 0x60
 // @retail 0x8333CA38
 bool CCSPSCover::HasValidDefensiveAngle(const float MinYaw, const float MaxYaw, const Grip_Vector Position, const Grip_Rotation &Orientation,
                                         const CCSTarget *pTarget)
@@ -298,10 +300,12 @@ bool CCSPSCover::HasValidDefensiveAngle(const float MinYaw, const float MaxYaw, 
     return Rotation.Yaw < MaxYaw && Rotation.Yaw > MinYaw;
 }
 
-// near: the retail keeps the cover position in the last stack slot and
-// reads it through the pointer GetPosition returns, ours copies it into
-// the first slot (frame 0x120 against 0x100); a copied position, the
-// position fetched three times and the delta declared first tried
+// score 39 (was 39): the retail reuses one stack slot for the three vector
+// differences (0x60, 0x60, 0x70) and keeps the cover position in 0x80,
+// ours takes a fresh slot per scope (0x60, 0x80, 0xa0, frame 0x120
+// against 0x100); the retail's first scope subtracts X, Y, Z where ours
+// does Z, Y, X; an if/else-if chain (frame 0x100), a named difference per
+// scope and one shared at function scope tried
 // @retail 0x83344B48
 bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover &Cover, const Grip_Rotation &Orientation, const CCSTarget *pTarget)
 {
@@ -318,60 +322,49 @@ bool CCSPSCover::HasValidAttackAngle(ICCSMeatPuppet *pMeatPuppet, const CCSCover
     const CCS::ECoverShootConfig Config = Cover.m_gameCover.GetShootConfig();
     if (Config == CCS::CoverShootConfig_All)
     {
-        Grip_Vector Eyes = pTarget->character.GetEyesPosition();
-        Grip_Vector Delta = Eyes - Cover.GetPosition();
-        Grip_Rotation R = Delta.Rotation();
-        Grip_Rotation Rotation;
-        Rotation.Pitch = R.Pitch - Orientation.Pitch;
-        int RollDelta = R.Roll - Orientation.Roll;
-        Rotation.Yaw = R.Yaw - Orientation.Yaw;
-        Rotation.Roll = RollDelta;
-        Rotation.Normalize();
-        int AbsYaw = Abs(Rotation.Yaw);
+        Grip_Vector targetPosition = pTarget->character.GetEyesPosition();
+        Grip_Rotation targetDirection = (targetPosition - Cover.GetPosition()).Rotation();
+        Grip_Rotation delta;
+        delta.Pitch = targetDirection.Pitch - Orientation.Pitch;
+        delta.Yaw = targetDirection.Yaw - Orientation.Yaw;
+        delta.Roll = targetDirection.Roll - Orientation.Roll;
+        delta.Normalize();
+        int AbsYaw = Abs(delta.Yaw);
         bValid = AbsYaw < 0x4000;
-        bValid = (0x2000 > Rotation.Pitch) & bValid;
+        bValid = (0x2000 > delta.Pitch) & bValid;
     }
     const CCSCharacter Self = pMeatPuppet->GetCharacter();
     if (Config == CCS::CoverShootConfig_Left || Config == CCS::CoverShootConfig_LeftOrRight)
     {
         float Size = Self.GetSize();
-        const Grip_Vector &Pos = Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Left, Size);
-        Grip_Vector Delta;
-        Delta.X = pTarget->position.X - Pos.X;
-        Delta.Y = pTarget->position.Y - Pos.Y;
-        Delta.Z = pTarget->position.Z - Pos.Z;
-        Grip_Rotation R = Delta.Rotation();
-        Grip_Rotation Rotation;
-        Rotation.Pitch = R.Pitch - Orientation.Pitch;
-        int RollDelta = R.Roll - Orientation.Roll;
-        int YawDelta = R.Yaw - Orientation.Yaw;
-        Rotation.Yaw = YawDelta;
-        Rotation.Roll = RollDelta;
-        Rotation.Normalize();
-        bValid = 0 > Rotation.Yaw && Rotation.Yaw > -0x2000;
+        Grip_Vector position = Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Left, Size);
+        Grip_Rotation targetDirection = (pTarget->position - position).Rotation();
+        Grip_Rotation delta;
+        delta.Pitch = targetDirection.Pitch - Orientation.Pitch;
+        delta.Yaw = targetDirection.Yaw - Orientation.Yaw;
+        delta.Roll = targetDirection.Roll - Orientation.Roll;
+        delta.Normalize();
+        bValid = 0 > delta.Yaw && delta.Yaw > -0x2000;
     }
     if (Config == CCS::CoverShootConfig_Right || (Config == CCS::CoverShootConfig_LeftOrRight && !bValid))
     {
-        const Grip_Vector &Pos = Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Right, Self.GetSize());
-        Grip_Vector Delta;
-        Delta.X = pTarget->position.X - Pos.X;
-        Delta.Y = pTarget->position.Y - Pos.Y;
-        Delta.Z = pTarget->position.Z - Pos.Z;
-        const Grip_Rotation R = Delta.Rotation();
-        Grip_Rotation Rotation;
-        int PitchDelta = R.Pitch - Orientation.Pitch;
-        Rotation.Pitch = PitchDelta;
-        Rotation.Yaw = R.Yaw - Orientation.Yaw;
-        Rotation.Roll = R.Roll - Orientation.Roll;
-        Rotation.Normalize();
-        bValid = Rotation.Yaw > 0 && Rotation.Yaw < 0x2000;
+        Grip_Vector position = Cover.m_gameCover.GetShootPosition(CCS::CoverShootConfig_Right, Self.GetSize());
+        Grip_Rotation targetDirection = (pTarget->position - position).Rotation();
+        Grip_Rotation delta;
+        delta.Pitch = targetDirection.Pitch - Orientation.Pitch;
+        delta.Yaw = targetDirection.Yaw - Orientation.Yaw;
+        delta.Roll = targetDirection.Roll - Orientation.Roll;
+        delta.Normalize();
+        bValid = delta.Yaw > 0 && delta.Yaw < 0x2000;
     }
     return bValid;
 }
 
-// near: saved registers hold 0 and 1 the other way round (r22/r21), the
-// zero vector is stored before the slot's location is loaded, and the cone
-// test squares the two vectors in the other order (operand orders tried)
+// score 39 (was 39): the saved registers hold 0 and 1 the other way round
+// (the retail puts 0 in r22 and 1 in r21), and the zero vector's three
+// stores come after the cover position loads where the retail stores them
+// before; naming the zero vector and declaring the position in one
+// statement change nothing
 // @retail 0x83344EB8
 bool CCSPSCover::HighCostPerception(int &Budget)
 {
