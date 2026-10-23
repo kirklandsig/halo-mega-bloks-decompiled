@@ -163,6 +163,21 @@ void CCSCSCover::Tick(float)
 // Grip_Vector::operator* (0x8331B338): one vector's three components load as
 // a group, the other's interleave with the arithmetic, so the vendor's
 // operator- probably copies *this and subtracts into the copy.
+// This session: the group is not the operator-'s doing. A scratch file built
+// with the XDK's cl shows MSVC interleaving the two operands' loads for every
+// spelling of the difference (A-B, the components one by one, the
+// three-argument constructor, UE3's FVector operator-, the same source), while
+// a copy-then-subtract does a bitwise struct copy into the result slot: the
+// grouped loads of the first operand are not reachable from operator- at all.
+// Tried here: a copy-then-subtract helper (79), the same helper with a
+// memberwise copy (19), a named delta subtracted by components (79), a named
+// delta (19), the three-argument constructor (19), float locals (19),
+// memberwise into a local (19), the character position inlined in the
+// expression (22), both positions inlined (38), the operands swapped (19) and
+// the shared operator- rewritten as copy-then-subtract (19): 19 or worse.
+// The two differences left are the frame slots: retail reuses the difference
+// vector's slot for the cover orientation and the rotation's slot for the
+// second cover orientation, ours reuses the character copy's slot for both.
 // @retail 0x8332F4B0
 Grip_Rotation CCSCSCover::GetCrouchCoverRot()
 {
