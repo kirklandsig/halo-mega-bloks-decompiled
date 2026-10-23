@@ -125,6 +125,11 @@ void EmitTargetMembers(void *pMem, const CCSTarget &Target, CCSTarget *pTarget)
 // (29 to 45), the copies assigned instead of initialised, the shared FVector
 // constructor and Grip_Vector conversion reshaped, a helper building the
 // FVector, the arguments swapped (15), and the permuter (600s).
+// This session: a by-value UnrealToGwNavVector parameter in the shared header
+// (Grip_Vector 43, FVector 40 - MSVC drops the copies or doubles them), a
+// struct-copy FVector (24 - word copies, not retail's float copies) and a
+// rewritten Grip_Vector::operator FVector() (12, no change): all worse or
+// equal, so the implicit conversion stays.
 // @retail 0x8334D020
 void CCSTarget::FindDestinationReachable(Grip_Vector Destination)
 {
