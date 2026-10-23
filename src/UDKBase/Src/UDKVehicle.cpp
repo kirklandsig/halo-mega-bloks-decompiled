@@ -174,37 +174,49 @@ void AUDKVehicle::moveTowardGwNavLookSteer(const FVector &Direction)
     }
 }
 
-// score 42 (was 51): two differences are left. First, the float register the
-// two constants get: retail keeps 0.0f in f8 and SMALL_NUMBER in f7, ours
-// keeps them the other way round, and that swap cascades into the fmr copies
-// (f4 before f5 against f5 before f4), the fcmpu operands, the register the
-// sqrt and the division use, the register the Forward scale lands in (f4
-// against f5), the operand order of the multiplies (fmuls f0, f0, f6 against
-// fmuls f0, f6, f0), the register the Right/Forward Z times scale product
-// lands in and the three stores of 0.0f - 18 of the 30 differing lines.
-// Second, the order of the three terms in the two dot products: retail groups
-// the steering sum as (Right.X * Dir.X + Right.Z * Dir.Z) - Right.Y * Dir.Y,
-// the negated term being Y, and the forward dot as (Forward.X * Dir.X +
-// Forward.Y * Dir.Y) + Forward.Z * Dir.Z; ours groups them the other way
-// round, the steering as (X + Y) - Z and the forward dot as (X + Z) + Y.
-// The normalize of Dir sums X, Z, Y (UnMath.h), which is what
-// moveTowardGwNavLSEncircle needs. The steering sum is written as
-// -(Right | Dir) on purpose: MSVC reassociates a three term float sum and
-// negates the last term of the canonical order, and only a named temporary
-// for the inner sum reproduces retail's (X + Z) - Y grouping - that costs
-// four lines elsewhere (the normalize of Right then squares X first instead
-// of Y, and its scaling multiplies swap their operands), so it scores 46.
+// score 37 (was 42): both dot products now compile to retail's shape, and
+// only the register allocation is left. The steering sum is written out as
+// -(Dir.Y * Right.Y + (Right.X * Dir.X + Right.Z * Dir.Z)): MSVC
+// reassociates a three term float sum, and only this term order gives
+// retail's tree - the negated Y term outside, the X and Z terms inside -
+// together with retail's operand order in the two multiply-adds. The forward
+// dot is written out in the X, Y, Z order, which is the order that fuses
+// Forward.X * Dir.X into the sum and keeps Forward.Y * Dir.Y as the addend,
+// as retail does; the pipe form (Forward | Dir) gives the same tree but
+// scores worse. Dir is normalized with FVector::Normalize from UnMath.h
+// instead of a hand written block: the inline squares X, Z, Y and scales
+// the three components the way retail does.
+// What is left is the register the two constants get: retail keeps 0.0f in
+// f8 and SMALL_NUMBER in f7, ours keeps them the other way round, and that
+// swap cascades into the fmr copies (f4 before f5 against f5 before f4),
+// the three fcmpu operands, the register the sqrt and the division use, the
+// register the Forward scale lands in (f4 against f5), the register the
+// Right/Forward Z times scale product lands in and the three stores of 0.0f
+// - 18 of the 27 differing lines. The other five are the operand order of
+// the scaling multiplies: retail multiplies the value by the scale
+// (fmuls f0, f0, f6), ours multiplies the scale by the value
+// (fmuls f0, f6, f0) in the Dir and the Right normalization, while the
+// Forward normalization matches.
 // Tried and rejected: the permuter (base 42, best 42), the steering sum
-// written out in six term orders with and without parentheses, the forward
-// dot in five term orders and with a named temporary, swapping the order of
-// the two dot statements, of the two Normalize calls and of the two Z
-// assignments, moving the Dir normalization block in front of the Z
-// assignments (161) or using Dir.Normalize(SMALL_NUMBER) from UnMath.h
-// (61), hand-written Right/Forward normalizations with four square sum
-// orders (48), the scaling written as *=, x = x * s and s = x, the zeroing
-// written as 0.0f, 0, 0.0, as a chained assignment and as -0.0f, the
-// SMALL_NUMBER comparison hoisted into a bool in front of the zeroing (68),
-// and the body wrapped in if (bCanStrafe) instead of the early return (466).
+// written out in nine term and operand orders, the forward dot in five term
+// orders and as (Forward | Dir) and (Dir | Forward), the pipe and the
+// written out form of each dot in all combinations, the Dir normalization as
+// a hand written block in four spellings (42, 58, 42, 103) and as
+// FVector::Normalize with the old dots (61), the two Normalize calls in the
+// other order (86), the Z zeroing before and after the Dir normalization
+// (79, 83), the zeroing written as 0.0f, 0, 0.0, as a chained assignment
+// and as -0.0f, the SMALL_NUMBER comparison hoisted into a bool in front of
+// the zeroing (68), and the body wrapped in if (bCanStrafe) instead of the
+// early return (466). Still to no effect: the zeroing and the vector
+// declarations in every interleaving (72, 87), the zero literal as 0, 0.0,
+// -0.0f and as a local (37 each), the hand written Dir normalization with all
+// eight operand orders of the three scaling multiplies and three square sum
+// spellings (43 at best), every order of the zeroing and the three Normalize
+// calls (37 at best, the order above), Dir.Normalize before the zeroing or
+// after the other two (169, 189, 209), the two dots swapped (49), the
+// steering and the forward dot in 48 term and operand orders (37 at best),
+// the shared Normalize inline with the components scaled in other orders (51,
+// 71, and Encircle down to 15), and the permuter on this base (best 37).
 // @retail 0x83386E18
 void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
 {
@@ -218,20 +230,11 @@ void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
     FVector Forward = Rotation.Vector();
     Right.Z = 0.0f;
     Forward.Z = 0.0f;
-    {
-        const float SquareSum = (Dir.X * Dir.X + Dir.Z * Dir.Z) + Dir.Y * Dir.Y;
-        if (SquareSum > SMALL_NUMBER)
-        {
-            const float Scale = appInvSqrt(SquareSum);
-            Dir.X *= Scale;
-            Dir.Y *= Scale;
-            Dir.Z *= Scale;
-        }
-    }
+    Dir.Normalize(SMALL_NUMBER);
     Right.Normalize(SMALL_NUMBER);
     Forward.Normalize(SMALL_NUMBER);
-    Steering = -(Right | Dir);
-    const float ForwardDot = (Forward.X * Dir.X + Forward.Z * Dir.Z) + Forward.Y * Dir.Y;
+    Steering = -(Dir.Y * Right.Y + (Right.X * Dir.X + Right.Z * Dir.Z));
+    const float ForwardDot = Forward.X * Dir.X + Forward.Y * Dir.Y + Forward.Z * Dir.Z;
     if (Steering > 0.1)
     {
         Steering = 1.0f;
