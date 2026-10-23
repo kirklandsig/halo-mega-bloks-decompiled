@@ -48,21 +48,28 @@ CCSGlobalDataScheduler::CCSGlobalDataScheduler() : m_pGlobalBB(0)
 // word off: retail's stwx has the index in rA, ours the base.
 #pragma inline_depth(8)
 // @retail 0x8335F260
+#line 51
 void CCSGlobalDataScheduler::Initialize(CCSGlobalBlackboard *pGlobalBB)
 {
     m_pGlobalBB = pGlobalBB;
+    const int iDead = 0;
     m_tickGroups.Reserve(CCSGlobalDataSystem::GST_NUM_OF);
     CCSGDS_SafeAddGroup(m_tickGroups, new GripSystemTickGroup, 0, CCS_STAT_Cover);
     m_tickGroupInfos.Reserve(CCSGlobalDataSystem::GST_NUM_OF);
-    m_tickGroupInfos.AddItemInlined(TickGroupInfo());
-    int iDead = 0;
-    for (int i = iDead; i < iDead; i++)
+    const auto permTemp0 = TickGroupInfo();
+    m_tickGroupInfos.AddItemInlined(permTemp0);
     {
+        int i;
+        i = iDead;
+        for (; iDead > i; i++)
+        {
+        }
     }
-    CCSGlobalDataSystem *pGDS = new CCSGSCover(pGlobalBB);
+    CCSGlobalDataSystem *const pGDS = (new CCSGSCover(pGlobalBB));
     m_tickGroupInfos[CCSGlobalDataSystem::GST_COVER].pGDS = pGDS;
     Register(m_tickGroupInfos[CCSGlobalDataSystem::GST_COVER].pGDS);
 }
+#line 65
 
 // @retail 0x833300A8
 void CCSGlobalDataScheduler::Finalize()
