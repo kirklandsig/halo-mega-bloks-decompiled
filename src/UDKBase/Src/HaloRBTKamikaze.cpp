@@ -75,20 +75,20 @@ bool HaloRBTKamikaze::TestPreCondition(IGripBTInterface *pInterface)
     return false;
 }
 
-// score 23 (was 59): the retail zeroes the origin before the test on the
+// score 14 (was 23): the retail zeroes the origin before the test on the
 // brain and lets CCSGameCharacter::GetPosition write straight into it (the
-// origin is at 0x60), while ours calls GetPosition into a second slot
-// (0x70) and reads the components from there; the frame is 0x10 bigger
-// because of that slot and the objective sits 0x10 higher. The origin gets
-// two homes in ours (the zeroed one and the one the assignment lands in),
-// the retail has one. Still tried: the origin zeroed at the declaration and
-// assigned under the test, an explicit else that assigns a zero vector (the
-// zeroing then moves into the else branch, score 48), the test written the
-// other way round (38), the position in a local, the origin through a
-// reference or through a pointer to it, the position wrapped in a vector,
-// the character in a reference, the constructor with a conditional and the
-// conditional expression itself (both 59, three slots). The compiler never
-// elides the copy of the returned vector into the variable's slot.
+// origin is at 0x60), so both arms of the test read the same three words
+// and the frame holds one vector. Ours still calls GetPosition into a
+// second slot and keeps a separate else arm, so the frame is 0x10 bigger
+// and the objective sits 0x10 higher. Still tried this session: the
+// character bound to a reference (14, kept), the character taken by value
+// (25), the chained GetCharacter().GetPosition() (23 - that one does give
+// retail's `mr r4, r3`, the temporary's address reused through the
+// returned pointer, but the call still writes into its own slot), the
+// character declared before the origin (78) and the origin after the test
+// (92). A scratch build shows the same call writing straight into the
+// origin slot when the whole pattern sits in one small function, so
+// something in this function's shape stops the copy from being elided.
 // @retail 0x83340B78
 GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {
@@ -118,7 +118,8 @@ GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecuteInternal(IGripBTInterfac
             Grip_Vector Origin;
             if (pBrain != 0)
             {
-                Origin = pBrain->m_meatPuppet->GetCharacter().GetPosition();
+                const CCSCharacter &Character = pBrain->m_meatPuppet->GetCharacter();
+                Origin = Character.GetPosition();
             }
             CCSAOMoveToActor Objective = {kamikazeTarget->character.GetActor(), CCS::MovementType_Run, CCS::AlertnessState_Alert, Origin};
             m_actionHandle = pFactory->CreateActionInternal<CCSAOMoveToActor, CCSAFMoveToActor>(Objective);
