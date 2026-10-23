@@ -79,8 +79,12 @@ UUDKTargetableComponent *CCSGameCharacter::GetTargetableComponent()
     return m_targetableComponent;
 }
 
-// score 45 (was 159): the register allocation and the order of the word
-// stores still differ from retail
+// score 1 (was 45): only the operand order of the float add differs - retail
+// has fadds f11, f13, f0 (Z + height) and ours fadds f11, f0, f13. MSVC keeps
+// the source order when the location is read directly (m_actor->Location.Z)
+// but then reorders the loads, and it commutes the add when the location is
+// read through a reference, which keeps retail's load order. The permuter
+// found no better form.
 // @retail 0x83321100
 Grip_Vector CCSGameCharacter::GetEyesPosition() const
 {
@@ -94,11 +98,8 @@ Grip_Vector CCSGameCharacter::GetEyesPosition() const
     {
         if (m_targetableComponent != 0)
         {
-            FVector Loc;
-            Loc.X = m_actor->Location.X;
-            Loc.Y = m_actor->Location.Y;
-            Loc.Z = m_actor->Location.Z + m_targetableComponent->fAITargetHeight;
-            Position = Loc;
+            const FVector &Loc = m_actor->Location;
+            Position = FVector(Loc.X, Loc.Y, Loc.Z + m_targetableComponent->fAITargetHeight);
         }
         else
         {
