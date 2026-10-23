@@ -130,6 +130,16 @@ void EmitTargetMembers(void *pMem, const CCSTarget &Target, CCSTarget *pTarget)
 // struct-copy FVector (24 - word copies, not retail's float copies) and a
 // rewritten Grip_Vector::operator FVector() (12, no change): all worse or
 // equal, so the implicit conversion stays.
+// Lane A, round 6: the same interleaving (position X, position Y, destination
+// X, position Z, destination Y, destination Z) comes out of every source
+// shape, so it is the scheduler merging two adjacent 12-byte float
+// temporaries, not the statement: named FVector locals built by the 3-float
+// constructor (45, and the same interleaved stores when the copies stay
+// unnamed), Grip_Vector and FVector locals (12, 29, 40), a Kaim::Vec3f local
+// per argument (53, 49), the arguments swapped (15), the two conversions
+// written out by hand (12, 29, 45), a const FVector reference (29, 40) and
+// Grip_Vector::operator FVector() reshaped in the shared header (12, 12, 48):
+// all worse or equal, so the one-statement form stays.
 // @retail 0x8334D020
 void CCSTarget::FindDestinationReachable(Grip_Vector Destination)
 {
