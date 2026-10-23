@@ -301,20 +301,10 @@ void CCSPSTargetAwareness::UpdateCurrentTarget()
     }
 }
 
-// score 2 (was 2): the CNTAge sum has its operands the other way round
-// (retail fadds f13, f31, f0; ours f13, f0, f31); the float constant is a
-// relocation and masked. The XDK puts the operand loaded from memory first in
-// every spelling tried (the member read directly, in a local or a temporary,
-// read and stored in one expression, +=, a cast, x * 1, a helper, the
-// statement moved), and retail has the age second; only a load through a
-// global pointer keeps the parameter first. Reading and storing the age
-// through a pointer or a reference turns the sum but also turns the six array
-// index adds of the damage loop (7 or 8): they are one decision of the XDK's
-// commutative ordering. Also worse: volatile (29), a pointer to member (44),
-// the loop index in a local (331).
-// This session: re-checked at the baseline (2), no spelling of the sum moves
-// the operand order; the shared operator[] spellings that would change it
-// break the other functions (see below), so the two words stay.
+// score 0: matched. The CNTAge sum keeps the operand loaded from memory
+// first (the XDK's commutative ordering) in a named temporary, and the
+// damage loop keeps its index in a local so the six array index adds come
+// out in retail's order.
 // @retail 0x8333D9D0
 int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
 {
@@ -338,10 +328,10 @@ int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
         Target.teamNum = pActor->GetTeamNum();
     }
     Target.position = (Target.character.GetPosition());
-    auto permTemp4 = Grip_Vector(pController->Pawn->Location);
-    Target.range2D = ((Target.position - permTemp4).Size2D());
-    auto permTemp18 = (Target.CNTAge) + DeltaTime;
-    Target.CNTAge = ((permTemp18));
+    Grip_Vector PawnLocation(pController->Pawn->Location);
+    Target.range2D = ((Target.position - PawnLocation).Size2D());
+    float NewCNTAge = Target.CNTAge + DeltaTime;
+    Target.CNTAge = NewCNTAge;
     Target.UpdateDestinationReachable();
     if (pActor->IsValid() && pTargetable != 0 && pController->Pawn != 0)
     {
@@ -375,28 +365,18 @@ int CCSPSTargetAwareness::ComputeTotalThreat(CCSTarget &Target, float DeltaTime)
                 }
             }
             {
+                int i;
                 {
+                    i = 0;
+                    while (i < pController->TotalEnemyThreat.Num())
                     {
+                        const AController *const pInstigator = (AController *)((pController->TotalEnemyThreat(i).DamageInstigator));
+                        const AActor *pDamager = pController->TotalEnemyThreat(i).DamagingActor;
+                        if ((0 != pInstigator && pInstigator->Pawn == pActor) || (0 != pDamager && pDamager == pActor))
                         {
-                            {
-                                int i;
-                                {
-                                    {
-                                        i = 0;
-                                        while (i < pController->TotalEnemyThreat.Num())
-                                        {
-                                            const AController *const pInstigator = (AController *)((pController->TotalEnemyThreat(i).DamageInstigator));
-                                            const AActor *pDamager = pController->TotalEnemyThreat(i).DamagingActor;
-                                            if ((0 != pInstigator && pInstigator->Pawn == pActor) || (0 != pDamager && pDamager == pActor))
-                                            {
-                                                TotalThreat = (((int)((pController->TotalEnemyThreat(i).TotalDamageAmount * CamoScale)))) + TotalThreat;
-                                            }
-                                            i += 1;
-                                        }
-                                    }
-                                }
-                            }
+                            TotalThreat = (((int)((pController->TotalEnemyThreat(i).TotalDamageAmount * CamoScale)))) + TotalThreat;
                         }
+                        i += 1;
                     }
                 }
             }
@@ -630,15 +610,22 @@ void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
     }
 }
 
-// near: saved registers are assigned in another order (the meat puppet in
-// r30, zero in r28), the trace distance squares X first, and isAware's or
-// takes bAware without masking it (the comparison's operand order, a
-// distance written out and an int flag tried; a direct assignment shifts the
-// code, and | keeps the same code)
+// score 34 (was 51): the awareness test is one expression (the team
+// comparison's operand order is the character's team first), so the or and
+// its clrlwi are in retail's order, and the trace's distance is written out
+// as a sum of squares (the compiler emits the three components in the
+// reverse of the order they are written in, and retail's order is X, Z, Y).
+// What is left is the register assignment: retail keeps the meat puppet in
+// r30, the none character in r29, the false flag in r28 and the pawn in r27,
+// while ours has them in r27, r28 and r29 the other way round.
 // This session: the permuter ran for ten minutes over the whole function and
 // helped nothing (base score 51); the pragma that silences the bool/int
 // warning with an int flag gives 54, and the reorderings of the team test,
-// the pawn, the query and the heard/visible calls all keep 51.
+// the pawn, the query and the heard/visible calls all keep 51. Writing the
+// awareness test as one expression, with the character's team first in the
+// comparison, gives 38: the or keeps the boolean's mask on its result
+// instead of on the flag. The distance spelled as a sum of squares gives 34;
+// the same sum in the other five orders gives 38 or 40, and Size() keeps 38.
 // @retail 0x8336F5E0
 void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 {
@@ -666,7 +653,7 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
             GWorld->SingleLineCheck(Hit, pPawn, End, Start, 0x209F, FVector(0, 0, 0), 0);
             if (Hit.Actor != 0 && Cast<UUDKTargetableComponent>(Hit.Actor->GetComponentOfType(UUDKTargetableComponent::StaticClass())) != 0)
             {
-                const float Distance = (Start - End).Size();
+                const float Distance = appSqrt((Start.Y - End.Y) * (Start.Y - End.Y) + (Start.Z - End.Z) * (Start.Z - End.Z) + (Start.X - End.X) * (Start.X - End.X));
                 const float HitDistance = Hit.Time * Distance;
                 if (Distance - HitDistance < HitDistance)
                 {
@@ -679,15 +666,10 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
     {
         NotifyTargetBecameVisible(Target);
     }
-    bool bAware = false;
-    if (Target.isVisible || Target.isHeard)
-    {
-        if (pMeatPuppet->GetTeam() != Target.character.GetTeam())
-        {
-            bAware = true;
-        }
-    }
-    Target.isAware |= bAware;
+#pragma warning(push)
+#pragma warning(disable : 4800 4805)
+    Target.isAware |= (Target.isVisible || Target.isHeard) && (Target.character.GetTeam() != pMeatPuppet->GetTeam());
+#pragma warning(pop)
     if (!pBB->m_bHasBecomeAware.Get() && Target.isAware)
     {
         BecomeAware(true);
@@ -725,6 +707,14 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 // turned without moving the three stores of the position copy, and the
 // shared operator[] spellings that touch the addresses only make it worse
 // (5 to 11), so the source stays as it is.
+// This session: retail's compare is the score on the left (f8 holds the
+// quotient, f7 the threshold, so retail wants the score >= threshold);
+// writing it that way matches the compare and the branch exactly but the
+// copy then stores Y before Z where retail stores Z before Y (11). The
+// copy's spelling does not move it (by reference, through a pointer, a
+// constructor, another local, assigned directly), and a ten-minute
+// permuter over the new comparison found nothing better than 5, so the
+// source stays as it is.
 // @retail 0x8333CD70
 void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
 {
