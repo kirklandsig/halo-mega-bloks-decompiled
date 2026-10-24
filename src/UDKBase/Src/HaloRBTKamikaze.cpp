@@ -100,6 +100,15 @@ bool HaloRBTKamikaze::TestPreCondition(IGripBTInterface *pInterface)
 // GetCharacter().GetPosition() (23, kept earlier but it gives the
 // GetPosition result a slot of its own at 0x70 instead of the origin's
 // 0x60), so the reference to the character (14) stays the best.
+// This session: the chained GetCharacter().GetPosition() again (23: it
+// does give retail's `mr r4, r3`, but the GetPosition result lands in a
+// slot of its own and the origin keeps the zeros), and scratch builds
+// that show MSVC's copy elision: an initialization (`Grip_Vector v =
+// f();`) writes the call's result straight into v's slot, while an
+// assignment (`v = f();`) always goes through a result slot of its own,
+// so retail's 0x60 destination for GetPosition wants an initialization
+// of pointOfOrigin that no source shape here produces (the origin is
+// zeroed before the test, so it cannot be initialized by the call).
 // @retail 0x83340B78
 GripRBTNode::EBTExecutionResult HaloRBTKamikaze::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {
