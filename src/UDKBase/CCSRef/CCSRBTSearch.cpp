@@ -129,6 +129,14 @@ void CCSRBTSearch::MoveToRandomLocation(IGripBTInterface *pInterface)
 // reference (60), a while loop, the condition folded, the actor in a local or
 // a reference, the checks moved out of operator* or into a helper, and a
 // ten-minute permuter run.
+// This session: the two pGlobalHeap loads carry REFLO relocations in our
+// object, so the comparison masks them and only the stwx stands between us
+// and a match; the store's operand order is the last difference. Spelling the
+// store as `m_ContainerContent[i] = Item` (direct assignment) or through the
+// member operator[] instead of `&m_ContainerContent[i]` leaves it stwx r28,
+// r10, r9 (still score 3). The matched twin CCSBrain::CreateDebugRenderingProxies
+// gets retail's order from the same AddItem, and differs only in the array
+// being a reference parameter with the resize left out of line.
 // @retail 0x83339098
 void CCSRBTSearch::FindNavigationPoints()
 {
