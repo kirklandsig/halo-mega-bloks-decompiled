@@ -21,7 +21,7 @@ address,name,status,score
 0x83340438,CCSRBTStrafeTarget::ExecutePreInternal,near,12
 0x83340B78,HaloRBTKamikaze::ExecuteInternal,todo,14
 0x833432A8,CCSCSCoverUnreal::DoGetInCover,near,12
-0x833434D0,CCSCSMovementUnreal::GetNextMoveLocation,near,9
+0x833434D0,CCSCSMovementUnreal::GetNextMoveLocation,near,5
 0x83344B48,CCSPSCover::HasValidAttackAngle,near,39
 0x83344EB8,CCSPSCover::HighCostPerception,near,39
 0x8334B5B8,CCSCSMovementGwNav::FindNavMeshPath,near,8
