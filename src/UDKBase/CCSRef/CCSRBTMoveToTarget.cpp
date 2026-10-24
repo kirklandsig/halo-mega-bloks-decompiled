@@ -41,6 +41,19 @@ bool CCSRBTMoveToTarget::TestPreCondition(IGripBTInterface *pInterface)
 // character local outside the test (29) - the objective keeps the slot at
 // 0x80 and the frame at 0xf0 in every one of them, so MSVC does not share
 // the return buffer's slot with the objective here
+// tried again: an explicit fifth aggregate element (alwaysFire = false, 21 -
+// the tail zero then becomes a plain store and the function loses four
+// bytes), the same with the target fetched inline in the aggregate (81, and
+// 67 without the fifth element - the two GetCurrentTarget() calls change
+// the register allocation), the position read through a named Grip_Vector or
+// a named CCSCharacter with the fifth element (21, 23) and pointOfOrigin
+// declared after the brain block (21) - the objective still lands at 0x80
+// and the frame at 0xf0
+// note: retail's line table puts the GetCurrentTarget() fetch and the whole
+// aggregate initializer on one source line (line 68) and the sunk stores on
+// the next (line 69), so the original had them together; the permuter run
+// was made against a modified copy of this file, so it never covered this
+// version of the source
 // @retail 0x8333F270
 GripRBTNode::EBTExecutionResult CCSRBTMoveToTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool bFirstTime)
 {
