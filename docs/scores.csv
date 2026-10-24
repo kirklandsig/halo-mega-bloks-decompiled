@@ -1,9 +1,9 @@
 address,name,status,score
 0x83321100,CCSGameCharacter::GetEyesPosition,near,1
-0x83325328,CCSTargetRenderingProxy::Render,todo,58
+0x83325328,CCSTargetRenderingProxy::Render,near,53
 0x8332ABA8,CCSCSMovementGwNav::OrientationReached,near,11
 0x8332AFE8,CCSCSMovementUnreal::OrientationReached,near,11
-0x8332BE08,CCSAFEncircleTarget::UpdateGoal,todo,34
+0x8332BE08,CCSAFEncircleTarget::UpdateGoal,todo,30
 0x8332C770,CCSAFFlee::UpdateMoveTarget,todo,130
 0x8332DAD0,CCSAFStrafeTarget::UpdateGoal,todo,251
 0x8332F4B0,CCSCSCover::GetCrouchCoverRot,near,19

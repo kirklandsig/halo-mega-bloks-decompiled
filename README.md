@@ -77,7 +77,7 @@ The results are in `docs/specs/phase2-baseline.md`,
 | | |
 | --- | --- |
 | Inventory | 237,168 functions (215,944 from the PDB's procedures, 21,224 library functions with only a public symbol), 2,295 objects |
-| n-Space's C++ | 2,061 functions (248,492 bytes) in scope: **2,024 matched** (223,464 bytes, 90%), 31 near, 6 todo |
+| n-Space's C++ | 2,061 functions (248,492 bytes) in scope: **2,024 matched** (223,464 bytes, 90%), 32 near, 5 todo |
 | Native port | Windows: boots to the first level, playable with the build's own known issues. Linux: builds, and starts UE3 on a software Vulkan device |
 | Recompilation | 237,162 functions, 345 jump tables, no unimplemented instruction; 506 files compile in about 6 minutes |
 | UnrealScript | 2,597 classes export; the 758 that are n-Space's own or modified from UDK are committed, with every decompiler error fixed, and UDK's compiler checks them as far as stock UDK allows |
