@@ -39,11 +39,20 @@ void CCSAFEncircleTarget::OnActivate()
 
 // Todo: as CCSAFStrafeTarget::UpdateGoal (retail has 0x20 more bytes of
 // frame and reads the rotated direction from a fixed slot).
-// score 34 (was 115): copying the rotation result into dirToTest component
-// by component makes MSVC promote it into f27-f29 like retail (a plain
-// assignment copies through memory, a loop-local declaration spills it to
-// volatile registers), but the copy leaves three fmr's and flips two fmuls
-// operands; retail loads the result straight into those registers.
+// score 30 (was 115): copying the rotation result through a temporary
+// FVector makes MSVC pick retail's fmuls operand order in the radius
+// subtraction; what is left is three fmr's (the result is loaded into
+// volatile f0/f13/f12 and copied into f29/f28/f27, retail loads it
+// straight into those) and the register order of the objective copy at
+// the end.  The permuter (1241 rewrites) and the loop-local/assignment
+// forms of the rotation all score worse: they lose the frame layout.
+// Also tried this round: the rotation result declared in the loop as
+// dirToTest (143, the hidden return slot moves to 0x98 and the frame
+// shrinks to 0x2b0), assigned to the function-scope dirToTest (92, the
+// call needs a separate temp plus a memory copy) and feeding the post
+// call radius multiply from the rotation result instead of the copy
+// (143) - retail loads 0xf8 straight into f29/f28/f27, so the value must
+// stay one node across the call, which none of these forms gives us.
 // @retail 0x8332BE08
 void CCSAFEncircleTarget::UpdateGoal()
 {
@@ -65,9 +74,7 @@ void CCSAFEncircleTarget::UpdateGoal()
             continue;
         }
         FVector rotTemp = dirToPivot.RotateAngleAxis((int)(Angle * 182.0444f), FVector(0, 0, 1));
-        dirToTest.X = rotTemp.X;
-        dirToTest.Y = rotTemp.Y;
-        dirToTest.Z = rotTemp.Z;
+        dirToTest = FVector(rotTemp.X, rotTemp.Y, rotTemp.Z);
 
         FVector strafeTestEnd = pPawn->GetPawnViewLocation() + dirToTest * 2000.0f;
         FCheckResult traceResult;
