@@ -77,6 +77,16 @@ bool CCSBBTargetVisualization::GetIsVisible()
 // but still computes the address at the top, from r3 before the first call.
 // The register follows the place the address is born, and the source cannot
 // have both.
+// This session: the same two groups again, one score apart from each other.
+// A reference bound at the top (the version kept) puts the address in r27,
+// like retail, but materialises it at the top of the function; a reference or
+// a pointer bound just before the first AddItem, and m_members used directly
+// for all four AddItems, all materialise the address where retail does (just
+// before the first AddItem) but number it r29 and the "YES"/"NO" strings
+// r28/r27 instead of retail's r27/r29/r28 (score 14). A const reference at
+// the top does not compile (AddItem is not const). The gap is therefore one
+// placement and one register allocation, and they move together: MSVC's
+// allocator gives the members address r27 only when it is born at the top.
 // @retail 0x8334BDA8
 void CCSBBTargetVisualization::Refresh()
 {
