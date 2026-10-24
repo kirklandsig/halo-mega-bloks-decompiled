@@ -85,6 +85,14 @@ UUDKTargetableComponent *CCSGameCharacter::GetTargetableComponent()
 // but then reorders the loads, and it commutes the add when the location is
 // read through a reference, which keeps retail's load order. The permuter
 // found no better form.
+// This session: the swap is MSVC's canonicalization - the operand whose base
+// comes from `this` (the height) goes first, so only a direct read of the
+// location (m_actor->Location.Z) gives retail's order, but that shape
+// reorders the whole branch (score 45). Tried and rejected: local copy of
+// the actor pointer, pointer to the FVector, reference to the actor, named
+// Z/Height locals, the reversed source order, a helper taking the operands
+// as parameters, and the Grip_Vector constructor - all score 1 with the
+// same swapped add, or 45/56/96 with a different schedule.
 // @retail 0x83321100
 Grip_Vector CCSGameCharacter::GetEyesPosition() const
 {
