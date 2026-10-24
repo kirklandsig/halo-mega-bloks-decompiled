@@ -32,6 +32,16 @@ CCSCSCoverUnreal::CCSCSCoverUnreal(CCSCSInterface *pInterface)
 // unnamed facing rotation), all of which stayed at 12; the retail's layout
 // wants the slot rotation's return buffer in the rotator's own slot at
 // 0x60 and no named facing rotation, which none of them reproduced.
+// Tried this session: every difference left is a stack offset (the frame is
+// 0x140 against the retail's 0x110) and the retail coalesces three slots we
+// keep apart - the slot rotation's return buffer with the rotator's own
+// 0x60, the direction with the cover location's 0x50 and the facing
+// rotation's buffer with the rotator's; an FRotator rotator (152) or a
+// separate rotator assignment (149) drop the conversion copy the retail
+// keeps, a switch on the GetType() call (28), a const-ref character (21), a
+// copy-then-subtract direction (94) and a case- or function-scope direction
+// (82) lose bytes, and dropping the named facing rotation or spelling the
+// rotator in any other way stays at 12.
 // @retail 0x833432A8
 bool CCSCSCoverUnreal::DoGetInCover()
 {
