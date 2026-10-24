@@ -186,17 +186,29 @@ void AUDKVehicle::moveTowardGwNavLookSteer(const FVector &Direction)
 // scores worse. Dir is normalized with FVector::Normalize from UnMath.h
 // instead of a hand written block: the inline squares X, Z, Y and scales
 // the three components the way retail does.
-// What is left is the register the two constants get: retail keeps 0.0f in
-// f8 and SMALL_NUMBER in f7, ours keeps them the other way round, and that
-// swap cascades into the fmr copies (f4 before f5 against f5 before f4),
-// the three fcmpu operands, the register the sqrt and the division use, the
-// register the Forward scale lands in (f4 against f5), the register the
-// Right/Forward Z times scale product lands in and the three stores of 0.0f
-// - 18 of the 27 differing lines. The other five are the operand order of
-// the scaling multiplies: retail multiplies the value by the scale
+// What is left is 27 differing lines out of 138 instructions, and the 37
+// points split into 17 register-only differences (one point each) and 10
+// operand-order differences (two points each). Eighteen of the lines come
+// from one swap: retail keeps 0.0f in f8 and SMALL_NUMBER in f7, ours keeps
+// them the other way round, and that cascades into the two fmr copies (f4
+// before f5 against f5 before f4), the three fcmpu operands, the register
+// the sqrt and the division use, the register the Forward scale lands in
+// (f4 against f5), the register the Right/Forward Z times scale product
+// lands in and the three stores of 0.0f. The other ten are the operand
+// order of the scaling multiplies: retail multiplies the value by the scale
 // (fmuls f0, f0, f6), ours multiplies the scale by the value
-// (fmuls f0, f6, f0) in the Dir and the Right normalization, while the
-// Forward normalization matches.
+// (fmuls f0, f6, f0).
+// Neither is reachable from the source. The build compiles with /fp:fast,
+// and MSVC canonicalizes the operands of a commutative float multiply: with
+// the shared inline changed to X = Scale * X the object file keeps the same
+// fmuls f0, f6, f0, so retail's (value, scale) order cannot be asked for.
+// The inline's shape is no lever either - an inverted if, a dropped return
+// value and a non-const scale all give 37 with the sibling
+// moveTowardGwNavLSEncircle still matching. That sibling compiles byte for
+// byte with the same inline, so the inline and its inlining are right and
+// only the register allocation in this context differs. (The zero in the
+// FRotationMatrix constructor call is a relocation to FVector::ZeroVector,
+// not a null pointer, so it needs no fixing.)
 // Tried and rejected: the permuter (base 42, best 42), the steering sum
 // written out in nine term and operand orders, the forward dot in five term
 // orders and as (Forward | Dir) and (Dir | Forward), the pipe and the
@@ -216,7 +228,11 @@ void AUDKVehicle::moveTowardGwNavLookSteer(const FVector &Direction)
 // after the other two (169, 189, 209), the two dots swapped (49), the
 // steering and the forward dot in 48 term and operand orders (37 at best),
 // the shared Normalize inline with the components scaled in other orders (51,
-// 71, and Encircle down to 15), and the permuter on this base (best 37).
+// 71, and Encircle down to 15), the permuter on this base (best 37), the
+// zeroing after the three Normalize calls (110) and between the two vector
+// declarations (72), the tolerance hoisted into a local (37), and the inline
+// with its multiply operands swapped (37) or its components scaled in four
+// other orders (37, 71, 65, with Encircle down to 15).
 // @retail 0x83386E18
 void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
 {
