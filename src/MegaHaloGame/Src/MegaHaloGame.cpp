@@ -62,24 +62,12 @@ FSystemSettings &GetSystemSettings()
 // @retail 0x842C65C8
 // `GetSystemSettings'::`2'::`dynamic atexit destructor for 'SystemSettingsSingleton''
 
-// BasicSerializeObject and BasicDeserializeObject are near: the same
-// instructions as retail, only the last two registers differ. Serialize score
-// 4 (was 12): retail materializes the TArray's zero constant before the
-// FArchive vtable's lis, ours hoists the whole vtable constant ahead of the
-// zero; retail stores the archive's Offset before the constant 1, ours the
-// other way round. Both fixed by giving FArchive::Reset() its body in
-// MegaHaloGameInline.h: with only the declaration the call is opaque and the
-// compiler schedules the archive's fields differently. Deserialize score 4
-// (was 8): the same cause. What is left in both: retail keeps the proxy
-// archive's vtable in r11 and the object's vtable in r5, ours the other way
-// round. Tried: the order of the archive flags (worse), an initializer list,
-// a temporary proxy, the writer through an FArchive reference, a scope
-// block, the copy constructor of the array, a serialize call in place of the
-// operator, an initialized version variable, the comparison the other way
-// round, an explicit temporary for the array, the TArray's constructor as an
-// assignment, the retail's line spacing (from the PDB's line table), casts
-// and named locals around the serialize call, true instead of 1, and the
-// permuter (once per function): none of them move the score.
+// BasicSerializeObject and BasicDeserializeObject match retail. What made
+// them match: FArchiveProxy's constructor needs its body in
+// MegaHaloGameInline.h, as FArchive::Reset()'s already did. With only the
+// declaration the call is opaque and the compiler allocates the proxy
+// archive's vtable constant and the object's vtable the other way round
+// (score 4 in both, the instructions otherwise the same).
 // @retail 0x833C9E98
 TArray<unsigned char, FDefaultAllocator> UHaloSaveGame::BasicSerializeObject(UObject *Obj, int Version)
 {

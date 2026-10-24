@@ -72,6 +72,48 @@ inline FMemoryReader::FMemoryReader(TArray<unsigned char, FDefaultAllocator> &In
     ArIsPersistent = bIsPersistent;
 }
 
+// FArchiveProxy's constructor copies the inner archive's flags. Its body has
+// to be visible here for the same reason as FArchive::Reset()'s: with only
+// the declaration the call is opaque and the caller schedules its own fields
+// differently from retail. Written from the retail copy at 0x824B1458: the
+// base constructor (FArchive::Reset) fills the flags, the proxy then copies
+// the inner archive's, except ArIsTransacting and ArIsFilterEditorOnly, which
+// it zeroes, and ArContainsCookedData, which it leaves alone.
+inline FArchiveProxy::FArchiveProxy(FArchive &InInnerArchive) : InnerArchive(InInnerArchive)
+{
+    ArVer = InInnerArchive.ArVer;
+    ArNetVer = InInnerArchive.ArNetVer & ~1;
+    ArLicenseeVer = InInnerArchive.ArLicenseeVer;
+    ArIsLoading = InInnerArchive.ArIsLoading;
+    ArIsSaving = InInnerArchive.ArIsSaving;
+    ArIsTransacting = 0;
+    ArWantBinaryPropertySerialization = InInnerArchive.ArWantBinaryPropertySerialization;
+    ArForceUnicode = InInnerArchive.ArForceUnicode;
+    ArIsPersistent = InInnerArchive.ArIsPersistent;
+    ArForEdit = InInnerArchive.ArForEdit;
+    ArForClient = InInnerArchive.ArForClient;
+    ArForServer = InInnerArchive.ArForServer;
+    ArIsError = InInnerArchive.ArIsError;
+    ArIsCriticalError = InInnerArchive.ArIsCriticalError;
+    ArContainsCode = InInnerArchive.ArContainsCode;
+    ArContainsMap = InInnerArchive.ArContainsMap;
+    ArForceByteSwapping = InInnerArchive.ArForceByteSwapping;
+    ArSerializingDefaults = InInnerArchive.ArSerializingDefaults != 0;
+    ArIgnoreArchetypeRef = InInnerArchive.ArIgnoreArchetypeRef;
+    ArIgnoreOuterRef = InInnerArchive.ArIgnoreOuterRef;
+    ArIgnoreClassRef = InInnerArchive.ArIgnoreClassRef;
+    ArAllowEliminatingReferences = InInnerArchive.ArAllowEliminatingReferences != 0;
+    ArAllowLazyLoading = InInnerArchive.ArAllowLazyLoading;
+    ArIsObjectReferenceCollector = InInnerArchive.ArIsObjectReferenceCollector;
+    ArIsCountingMemory = InInnerArchive.ArIsCountingMemory;
+    ArPortFlags = InInnerArchive.ArPortFlags;
+    ArShouldSkipBulkData = InInnerArchive.ArShouldSkipBulkData;
+    ArIsSaveGame = InInnerArchive.ArIsSaveGame;
+    ArIsFinalPackageSave = InInnerArchive.ArIsFinalPackageSave;
+    ArMaxSerializeSize = InInnerArchive.ArMaxSerializeSize;
+    ArIsFilterEditorOnly = 0;
+}
+
 inline FNameAsStringProxyArchive::FNameAsStringProxyArchive(FArchive &InInnerArchive) : FArchiveProxy(InInnerArchive) {}
 inline FObjectAndNameAsStringProxyArchive::FObjectAndNameAsStringProxyArchive(FArchive &InInnerArchive)
     : FNameAsStringProxyArchive(InInnerArchive)
