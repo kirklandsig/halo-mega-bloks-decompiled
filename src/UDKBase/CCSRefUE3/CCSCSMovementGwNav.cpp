@@ -132,6 +132,17 @@ void CCSCSMovementGwNav::DoStop()
 // but it copies the FVector twice and moves every slot with it (score 82);
 // taking the position by value, or binding the destination to a named
 // reference, only swaps the two copies' order (score 12 and 17).
+// Both copies are now known: the destination's FVector is copied into 0x50,
+// the conversion is called with that copy and writes 0x70, and the bot
+// position is copied into 0x60, so only the order of the six memory
+// operations is open. A matrix of 36 shapes (the position taken by value, by
+// reference or through a named copy, the destination taken by value, by
+// reference or in place, and the two copies in one statement or in two)
+// shows that the scheduler keeps the copies apart whenever they are in
+// separate statements, and hoists all six loads instead of interleaving them
+// when they share one statement; the shapes that do interleave a float store
+// with a word load copy the FVector twice and move every slot with them
+// (72 and 82).
 // @retail 0x8334B5B8
 bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 {
@@ -159,6 +170,9 @@ bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 // position loads as FindNavMeshPath, and the same attempts (a named FVector
 // interleaves the copies but wrecks the slots, score 82; a by-value position
 // swaps the copies' order, score 12).
+// The matrix of 36 shapes from FindNavMeshPath leaves the order alone here
+// too: the copies stay apart in separate statements and all six loads are
+// hoisted when they share one.
 // @retail 0x8334B6B8
 bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Distance, float) const
 {
@@ -196,6 +210,12 @@ bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Dis
 // four-statement forms, the sibling file's shape, the character used through a
 // named local) all land at 11 or worse, and a 540 s permuter run found
 // nothing below 11: the slot pairing is not reachable from the source.
+// Also tried here: a named Grip_Rotation for the orientation, the same with a
+// named character, the position bound to a const reference, a named delta and
+// a named tolerance: all 11. What is left is that retail puts the second
+// character's twenty bytes on the position's twelve byte slot at 0x50 while
+// ours allocates the rotator there first and gives the second character a
+// fresh slot at 0x90.
 // @retail 0x8332ABA8
 bool CCSCSMovementGwNav::OrientationReached() const
 {
