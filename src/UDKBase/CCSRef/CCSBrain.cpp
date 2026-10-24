@@ -274,6 +274,19 @@ CCSBrain::~CCSBrain()
 // moves the order of the two registers; the same source shape compiles
 // to one order in the perception loop and the other in the control loop,
 // so it is the compiler's choice, not the spelling.
+// This session: the element read through a file-local helper that returns
+// the element or the content pointer, by value and by reference, with the
+// offset written before the base and the other way round; the content
+// pointer read through a reference to the array (the trick that matched
+// UCCSBlackboard::GetCovers); the array's own members spelled out
+// (m_ContainerContent[i], m_ContainingNum); the container and the brain
+// read through references; the scheduler as a reference; the element bound
+// to a local in three positions; a distinct index name in the second
+// loop; the guard and the m_used test in their other spellings; and the
+// permuter again (4.8k rewrites, no improvement). None of them moves the
+// order: only the loop's shape does (a named element, an outer i or a
+// pointer to the data change the code), and retail's own two loops here
+// differ although the source of the two is symmetric.
 void CCSBrain::SchedulerRegistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();
@@ -336,6 +349,19 @@ void CCSBrain::SchedulerRegistration()
 // the code. Retail's own two loops here differ in the order although the
 // source of the two is symmetric, so the choice is the compiler's and
 // the spelling of the loop cannot reach it.
+// This session: the element read through a file-local helper that returns
+// the element or the content pointer, by value and by reference, with the
+// offset written before the base and the other way round; the content
+// pointer read through a reference to the array (the trick that matched
+// UCCSBlackboard::GetCovers); the array's own members spelled out
+// (m_ContainerContent[i], m_ContainingNum); the container and the brain
+// read through references; the scheduler as a reference; the element bound
+// to a local; a distinct index name in the first loop; the index written
+// as a post-increment; and the permuter again (4.8k rewrites, no
+// improvement). None of them moves the order; only the loop's shape does
+// (a named element, an outer i or a pointer to the data change the
+// code), and retail's own two loops here differ although the source of
+// the two is symmetric.
 void CCSBrain::SchedulerUnregistration()
 {
     GripAIManager *pAIManager = GripEngineServices::GetAIManager();
