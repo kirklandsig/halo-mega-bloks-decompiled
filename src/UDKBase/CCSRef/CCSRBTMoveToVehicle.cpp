@@ -23,6 +23,16 @@ extern FFeedbackContext *GWarn;
 // (near 8); only a variant that lets the outer else fall into the final
 // failure moves the in-progress block, and it changes the return value of
 // the no-target path, so it is not kept.
+// Lane B: reworked the tail the way retail's line order reads it (the log
+// falls into the failure return, the in-progress returns are explicit
+// branch returns) - still near 8, the compiler merges the three in-progress
+// exits into one block and keeps it before the shared epilogue. Guard-clause
+// forms give 9 (the failure falls into the epilogue, but the in-progress
+// block lands early), an inverted vehicle test 31, a result variable 37. A
+// lab with the same shape shows MSVC only pushes a block past the epilogue
+// when it is a cold block with one predecessor (the ternary arm of the
+// matched UUSSATBlendByPosture::TickAnim); no shape of this function puts
+// the merged in-progress block there.
 // @retail 0x8333F9D0
 GripRBTNode::EBTExecutionResult CCSRBTMoveToVehicle::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *pStack, bool bInterrupt)
 {
