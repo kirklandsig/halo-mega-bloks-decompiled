@@ -186,6 +186,18 @@ bool CCSCSMovementUnreal::DoMove()
 // Also tried here: both characters named (27), the character named and the
 // second one unnamed with the rotation after it (15) and the permuter over
 // the whole body (11, it found nothing).
+// The slot pairs are what differ, and only they: retail pairs the position
+// with the second character (0x50), the difference with the character's own
+// rotator (0x68) and keeps the rotation (0x78) and the first character
+// (0x90) to themselves, while ours pairs the position with the rotator
+// (0x50), the rotation with the first character (0x70) and gives the
+// second character a slot of its own (0x90). Tried again for the pairs: the
+// whole body, the yaw part and the whole function in nested blocks (11, the
+// slots do not move at all), a named difference (11), a reference to the
+// position (11) and a reference to the rotation (11). The sibling file's
+// CCSCSMovementGwNav::OrientationReached has the retail layout and ours
+// has the same wrong one, so the pairing follows the code shape and not the
+// source: the code is fixed, so the layout is fixed too.
 // @retail 0x8332AFE8
 bool CCSCSMovementUnreal::OrientationReached() const
 {
@@ -199,24 +211,25 @@ bool CCSCSMovementUnreal::OrientationReached() const
 // The log the retail writes when the path search fails.
 extern FOutputDeviceRedirectorBase *GLog;
 
-// score 9 (was 43): the code and its order match the retail; what is left is
-// the stack slots and two register choices. The retail keeps the navigation
-// handle in a local, so it is loaded once and stays in r30 across the calls;
-// it reuses the slot of the log string (0x60) for the character, so its
-// frame is 0xa0 bytes while ours is 0xb0 with the character at 0x70; and it
-// reads the character through the address the call returns in r3 while ours
-// reads it through the frame, and it reads the location's Y and Z through
-// r29 while ours reads them through r3. The shape that matches the code is
-// the navigation handle in a local, declared before the character.
-// Still tried: a reference for the character (9, no change), the character
-// read directly (11, the address of a temporary cannot be taken), the
-// character before the navigation handle (25), a reference for the next
-// move location (24: the location and the handle swap r29 and r30), the
-// next move location and the navigation handle together (24).
+// score 5 (was 43): the code, its order and the frame match the retail; what
+// is left is two register choices and the anchor of the GLog load. The tail
+// of the function (the character, the radius and the move) is in a block of
+// its own: that block is a sibling of the block that logs the failed path,
+// so the character shares the log string's stack slot (0x60) and the frame
+// is 0xa0 bytes, as in the retail. The retail keeps the navigation handle in
+// a local, so it is loaded once and stays in r30 across the calls. Left:
+// the retail reads the location's Y and Z through r29 (the address of the
+// location) while ours reads them through r3, the retail reads the character
+// through the address the call returns in r3 while ours reads it through the
+// frame, and the retail loads GLog from an anchor 0x4524 below it while ours
+// loads it from its own address.
+// Still tried: a reference for the character (5, no change), a reference for
+// the game character (5), a non const character (5), the character before
+// the navigation handle (21), a reference for the next move location (30),
+// the two radius tests swapped (12).
 // Also tried here: the handle declared first and the location referenced
 // (24 again), the reference without a named handle (50) and the handle
-// unnamed on its own (43), so the register the location and the handle get
-// is the compiler's and the source cannot reach it from here.
+// unnamed on its own (43).
 // @retail 0x833434D0
 bool CCSCSMovementUnreal::GetNextMoveLocation()
 {
@@ -237,25 +250,27 @@ bool CCSCSMovementUnreal::GetNextMoveLocation()
             return true;
         }
     }
-    UNavigationHandle *pNavigationHandle = m_pCCSCtrl->NavigationHandle;
-    const CCSCharacter Character = m_pMeatPuppet->GetCharacter();
-    float Radius = 0.0f;
-    if (Character.m_gameCharacter.m_pawn != 0)
     {
-        Radius = Character.m_gameCharacter.m_pawn->CylinderComponent->CollisionRadius;
-    }
-    if (Character.m_gameCharacter.m_actor != 0)
-    {
-        Radius = 1.0f;
-    }
-    if (pNavigationHandle->GetNextMoveLocation(m_nextMoveLocation, Radius) != 0)
-    {
+        UNavigationHandle *pNavigationHandle = m_pCCSCtrl->NavigationHandle;
+        const CCSCharacter Character = m_pMeatPuppet->GetCharacter();
+        float Radius = 0.0f;
+        if (Character.m_gameCharacter.m_pawn != 0)
+        {
+            Radius = Character.m_gameCharacter.m_pawn->CylinderComponent->CollisionRadius;
+        }
+        if (Character.m_gameCharacter.m_actor != 0)
+        {
+            Radius = 1.0f;
+        }
+        if (pNavigationHandle->GetNextMoveLocation(m_nextMoveLocation, Radius) != 0)
+        {
+            return true;
+        }
+        GLog->Logf__VA(L"Controller: Unable to follow Path");
+        pNavigationHandle->SetFinalDestination(m_validFinalDestination);
+        m_nextMoveLocation = m_validFinalDestination;
         return true;
     }
-    GLog->Logf__VA(L"Controller: Unable to follow Path");
-    pNavigationHandle->SetFinalDestination(m_validFinalDestination);
-    m_nextMoveLocation = m_validFinalDestination;
-    return true;
 }
 
 // score 10 (was 67): the code, its order and the block layout now match the
@@ -277,6 +292,17 @@ bool CCSCSMovementUnreal::GetNextMoveLocation()
 // and the reference declared in every order (10), the flag left out of its
 // initializer (does not compile: C4701) and no reference at all (12); the
 // permuter over the whole body found nothing (10).
+// Only the r28/r29 swap stands between this and a match: the 0.0f constant's
+// displacement is a relocated field, so it is masked in the comparison and
+// costs a point in the score only. The two candidates are the flag and the
+// address of the invalid location; both live across the calls, so both need
+// a non-volatile register, and the retail gives r28 to the flag while ours
+// gives it to the address. Tried again for the swap: a pointer for the
+// location (10), a non const reference (10), a const pointer (10), the flag
+// as a char (17), as an unsigned char (10) and compared with != 0 (10),
+// the invalid location through a helper function (10), the assignment, the
+// else branch and the move in nested blocks (10) and a second permuter run
+// over the whole body (10, 2972 rewrites, nothing).
 // @retail 0x8334B7C8
 void CCSCSMovementUnreal::MoveToDestination()
 {
