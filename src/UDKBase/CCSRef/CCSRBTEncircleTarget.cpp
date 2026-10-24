@@ -50,7 +50,16 @@ bool CCSRBTEncircleTarget::TestPreCondition(IGripBTInterface *pInterface)
 // in retail's order and the circle-left load before the circle distance);
 // the objective declared after the condition (37 - the load lands first but
 // the stores sink past the branch); two separate ifs instead of the || (46);
-// a 600 s permuter run (base 29, best 29).
+// a 600 s permuter run (base 29, best 29). Tried again: the early target
+// local ahead of the objective (720 bytes - its construction is dead on the
+// failure path, so the six float stores sink past the branch, and the
+// condition loses one of retail's three character==NONE chains); the actor
+// statement before the flags (36) or after the vehicle block (47); the
+// failure return moved to the end of the function (no change - the code is
+// the same, only the line numbers move); the two || operands swapped (112);
+// the flag assignments swapped (no change). The objective's field offsets
+// are right: retail's canTest[1] (the 90 degree strafe) is the objective's
+// byte 5 and canTest[3] its byte 4, so byte 5 is the right flag.
 // @retail 0x8333E1F8
 GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool)
 {
@@ -99,7 +108,13 @@ GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecutePreInternal(IGripBT
 // way, and the same two locals take r27/r26 in ExecutePreInternal), so it is
 // the allocator's own preference, not the source order. Tried since: the
 // switch rewritten as if/else if (73), a pointer compare instead of the
-// integer one (10) and a 600 s permuter run (base 8, best 8).
+// integer one (10) and a 600 s permuter run (base 8, best 8). Tried again:
+// renaming the two locals, declaring the puppet, actor and controller
+// locals at the top of the function and dropping the pPuppet local again
+// (43, 736 bytes - the puppet's load is no longer the same value) - the
+// allocation is unchanged. The two accessor calls and their two results are
+// the same instructions as retail's, so the swap is the allocator's own
+// preference between r26 and r27.
 // @retail 0x83330CE0
 GripRBTNode::EBTExecutionResult CCSRBTEncircleTarget::ExecuteInternal(IGripBTInterface *pInterface, GripBTStack *, bool bInterrupt)
 {
