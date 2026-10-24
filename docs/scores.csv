@@ -5,7 +5,7 @@ address,name,status,score
 0x8332AFE8,CCSCSMovementUnreal::OrientationReached,near,11
 0x8332BE08,CCSAFEncircleTarget::UpdateGoal,todo,34
 0x8332C770,CCSAFFlee::UpdateMoveTarget,todo,130
-0x8332DAD0,CCSAFStrafeTarget::UpdateGoal,todo,273
+0x8332DAD0,CCSAFStrafeTarget::UpdateGoal,todo,251
 0x8332F4B0,CCSCSCover::GetCrouchCoverRot,near,19
 0x83330CE0,CCSRBTEncircleTarget::ExecuteInternal,near,8
 0x83339098,CCSRBTSearch::FindNavigationPoints,near,3
