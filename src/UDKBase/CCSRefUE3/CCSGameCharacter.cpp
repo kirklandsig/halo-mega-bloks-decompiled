@@ -93,6 +93,14 @@ UUDKTargetableComponent *CCSGameCharacter::GetTargetableComponent()
 // Z/Height locals, the reversed source order, a helper taking the operands
 // as parameters, and the Grip_Vector constructor - all score 1 with the
 // same swapped add, or 45/56/96 with a different schedule.
+// This session: the add's operand order follows how Z is spelled - read through
+// a reference or pointer (Loc.Z, pLoc->Z) MSVC emits (height, Z) but keeps
+// retail's load/store schedule (1), while a direct member chain
+// (m_actor->Location.Z, Actor.Location.Z, or an explicit FVector/Grip_Vector
+// local built from it) gives retail's (Z, height) but MSVC's struct-copy
+// transform then drops the X (and Y) copy into Position (45/56/82). Changing
+// the FVector and Grip_Vector constructor forms in UnMath.h/UDKBaseInline.h
+// changed nothing (1), and the permuter again found no better form.
 // @retail 0x83321100
 Grip_Vector CCSGameCharacter::GetEyesPosition() const
 {
