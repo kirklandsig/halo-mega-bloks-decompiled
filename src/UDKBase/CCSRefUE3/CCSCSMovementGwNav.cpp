@@ -143,6 +143,18 @@ void CCSCSMovementGwNav::DoStop()
 // when they share one statement; the shapes that do interleave a float store
 // with a word load copy the FVector twice and move every slot with them
 // (72 and 82).
+// This session: retail's three temporaries are now known - the destination's
+// FVector is built by the implicit Grip_Vector::operator FVector() into 0x50,
+// the bot position's word copy into 0x60 and the converted destination into
+// 0x70, which the PDB names botPos and targetPosition - so only the order of
+// the six memory operations is open. Building that FVector by hand (three
+// member assignments), building it with the three-float constructor, copying
+// the position straight into the start instead of through a reference,
+// dropping the reference to the FVector and passing the destination to the
+// conversion directly all leave the two copies grouped: the three stores of
+// one and the three loads of the other are never interleaved, in either
+// order (12, 17 and 33). A 600 s permuter run on the restored source found
+// nothing below 8.
 // @retail 0x8334B5B8
 bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 {
@@ -173,6 +185,11 @@ bool CCSCSMovementGwNav::FindNavMeshPath(Grip_Vector Destination) const
 // The matrix of 36 shapes from FindNavMeshPath leaves the order alone here
 // too: the copies stay apart in separate statements and all six loads are
 // hoisted when they share one.
+// This session: the same shapes as FindNavMeshPath (the destination's FVector
+// built by hand or with the constructor, the position copied straight into
+// the start, the conversion taking the destination directly, both copies in
+// one declaration) leave the copies grouped here as well. A permuter run
+// found nothing below 8.
 // @retail 0x8334B6B8
 bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Distance, float) const
 {
@@ -216,6 +233,17 @@ bool CCSCSMovementGwNav::FindNavMeshDistance(Grip_Vector Destination, float &Dis
 // character's twenty bytes on the position's twelve byte slot at 0x50 while
 // ours allocates the rotator there first and gives the second character a
 // fresh slot at 0x90.
+// This session: the copy at 0x94 is the inlined CCSGameCharacter::GetOrientation()
+// - it takes the pawn's or the actor's rotation (the yaw at +0x74) and keeps
+// the yaw in a register - and the PDB lists no stack local but `this`, so
+// retail's position, delta and rotation are compiler temporaries and its
+// named locals (the yaw and the difference) live in registers. Merging the
+// position into the rotation and the yaw and the difference into one
+// statement (13 and 13), naming the difference and inlining everything else
+// (55: the rotation call moves before the second character) and taking the
+// orientation through CCSCharacter::GetOrientation() instead of
+// m_gameCharacter.GetOrientation() (11) all fail to reach retail's layout.
+// Including CCSCharacter.cpp in this file changes nothing.
 // @retail 0x8332ABA8
 bool CCSCSMovementGwNav::OrientationReached() const
 {
