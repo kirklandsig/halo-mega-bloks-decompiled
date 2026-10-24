@@ -34,5 +34,5 @@ address,name,status,score
 0x8336E868,AUSSController::PostPollMove,near,9
 0x8336F5E0,CCSPSTargetAwareness::ComputeHighCostAwareness,near,34
 0x83386E18,AUDKVehicle::moveTowardGwNavLSStrafe,near,37
-0x833C9E98,UHaloSaveGame::BasicSerializeObject,near,12
-0x833C9F50,UHaloSaveGame::BasicDeserializeObject,near,8
+0x833C9E98,UHaloSaveGame::BasicSerializeObject,near,4
+0x833C9F50,UHaloSaveGame::BasicDeserializeObject,near,4
