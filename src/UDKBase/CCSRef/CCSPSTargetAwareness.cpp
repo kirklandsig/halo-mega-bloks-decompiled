@@ -715,6 +715,10 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 // constructor, another local, assigned directly), and a ten-minute
 // permuter over the new comparison found nothing better than 5, so the
 // source stays as it is.
+// This session: the friendly loop's body restructured into a nested if
+// (the continue turned into the branch) moves the copy the same way (11),
+// so the baseline's spelling is the only one that keeps the stores in
+// retail's order; the score stays at 5.
 // @retail 0x8333CD70
 void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
 {
