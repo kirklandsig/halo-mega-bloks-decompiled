@@ -36,17 +36,21 @@ void CCSAFStrafeTarget::OnActivate()
     m_pMovementCS->Activate();
 }
 
-// score 273 (was 274): retail's PDB names the locals dirToPivot, canTest,
+// score 251 (was 273): retail's PDB names the locals dirToPivot, canTest,
 // bestStrafeLocation, potentialStrafeLocations, dirToTest, strafeTestEnd and
-// traceResult, so the source uses those names; a sweep of the pre-loop
-// statement order found that declaring canTest before the direction is
-// normalised (and the best time after bestStrafeLocation) matches retail's
-// preamble, which loads the canTest flags and initialises the best time
-// around the Normalize call (274 -> 273). Still 0x20 bytes of frame short:
-// retail keeps the rotated direction in f28/f29/f30 across the trace call
-// while we spill it, and the direction to pivot and the rotated direction sit
-// in different slots than retail's (dirToPivot 0x88, dirToTest 0xf8). The
-// permuter found no further rewrite (2658 iterations, no improvement).
+// traceResult, so the source uses those names; declaring the canTest flags
+// inside the loop lets the compiler hoist their initialisation into the loop
+// preheader, after the Normalize call, where retail has them (273 -> 251).
+// Still 0x20 bytes of frame short: retail's slot order is canTest, best
+// strafe location, strafe test end, direction to pivot, ... direction to
+// test, while ours puts the direction to test first (the hidden return slot
+// of RotateAngleAxis) and the direction to pivot after it. The permuter
+// found no further rewrite (2658 iterations, no improvement).
+// Tried this round: canTest at function scope in every position (277, all
+// orders), canTest split into four assignments (251), a named axis local
+// (251), function-scope dirToTest (307), component-wise copy of the rotation
+// result (322/326). Retail initialises canTest in the loop preheader, ours
+// keeps it in the loop body, which is what the score is mostly made of.
 // @retail 0x8332DAD0
 bool CCSAFStrafeTarget::UpdateGoal()
 {
@@ -57,13 +61,13 @@ bool CCSAFStrafeTarget::UpdateGoal()
     }
     FVector dirToPivot = GripEngineServices::GetActorPosition(m_objective.pTarget) - pPawn->Location;
     dirToPivot.Z = 0.0f;
-    bool canTest[4] = {m_objective.moveForward, m_objective.moveRight, m_objective.moveBack, m_objective.moveLeft};
     dirToPivot.Normalize(SMALL_NUMBER);
     FVector bestStrafeLocation = pPawn->Location;
     float BestTime = 0.0f;
     FVector potentialStrafeLocations[4];
     for (int i = 0, Angle = 0; Angle < 360; Angle += 90, i++)
     {
+        bool canTest[4] = {m_objective.moveForward, m_objective.moveRight, m_objective.moveBack, m_objective.moveLeft};
         potentialStrafeLocations[i] = FVector(3.402823466e+38F, 3.402823466e+38F, 3.402823466e+38F);
         if (!canTest[i])
         {
