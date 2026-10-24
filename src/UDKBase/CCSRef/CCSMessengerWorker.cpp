@@ -133,6 +133,14 @@ void CCSMessengerWorker::SetDebugOptions(const Grip::String &Options)
 // assigned in both arms of the clamp, &pName[Offset] and Offset + pName
 // spellings, a non-const pointer, and a 10 minute permuter run (4147
 // rewrites, no improvement).
+// This session: every clamp spelling (if, ternary, inline ternary in the
+// pointer, int/unsigned/size_t temporaries, Dot+1 written out) reproduces
+// retail's cmplw/bge/mr but scores 33 - the compiler rematerialises the
+// pointer add into the strncmp argument, so the add lands after the "yes"
+// literal setup and every register shifts (pName in r30, literals in r10 and
+// r9). Without the clamp the score is 7, so the two-arm ternary stays; what
+// is still missing is retail's single add of the clamped offset at the join
+// (base+index order, before the literal setup).
 // @retail 0x8333C538
 void CCSMessengerWorker::SetDebugOption(const Grip::String &Option)
 {
