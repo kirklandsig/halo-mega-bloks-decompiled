@@ -25,6 +25,17 @@ template CCSMeatPuppetQuery *IGripBTInterface::GetMeatPuppetQuery<CCSMeatPuppetQ
 // and rotation to named locals gives the retail "addi r4, r1, ..." form but
 // grows the frame to 0x140 and scores worse; a permuter run over this body
 // (3101 iterations, 8 rewrite kinds) found nothing better than 9.
+// Tried again: naming only the rotation gives retail's "addi r4, r1, ..."
+// for Vector2D but the frame grows to 0x140 and the score worsens to 91;
+// naming only the cover does the same for GetOrientation (frame 0x150,
+// score 61); writing the direction test out as "Away.X * CoverFacing.X +
+// Away.Y * CoverFacing.Y + Away.Z * CoverFacing.Z" turns the first multiply
+// the way round retail has it but leaves the score at 9.
+// Retail's PDB names its locals direction/rotation/coverLocation/
+// coverDirection/lineCheck/cover at 0x50/0x60/0x70/0xa0/0xb0/0xc0, so its
+// extent and destination sret buffers are plain temporaries that share the
+// direction's and rotation's slots; ours are named variables that take
+// slots of their own, which is what moves them to 0x60 and 0x70.
 // @retail 0x8336E868
 void AUSSController::PostPollMove()
 {
