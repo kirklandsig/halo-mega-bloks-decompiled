@@ -420,6 +420,7 @@ void CCSCSMovementUnreal::MoveToDestination()
     {
         RestoreMovementType();
     }
+
 }
 
 // The debug proxy: where the controller is heading, the final destination,
