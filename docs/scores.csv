@@ -25,7 +25,7 @@ address,name,status,score
 0x83344EB8,CCSPSCover::HighCostPerception,near,39
 0x8334B5B8,CCSCSMovementGwNav::FindNavMeshPath,near,8
 0x8334B6B8,CCSCSMovementGwNav::FindNavMeshDistance,near,8
-0x8334B7C8,CCSCSMovementUnreal::MoveToDestination,near,10
+0x8334B7C8,CCSCSMovementUnreal::MoveToDestination,near,5
 0x8334BDA8,CCSBBTargetVisualization::Refresh,near,7
 0x8334D020,CCSTarget::FindDestinationReachable,near,12
 0x833579B8,CCSPSTargetAwareness::RemoveThreatTarget,near,1
