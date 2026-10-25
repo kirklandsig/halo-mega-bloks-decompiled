@@ -29,6 +29,19 @@ CCSTargetRenderingProxy::CCSTargetRenderingProxy() : m_targetHeight(0.0f), m_tar
 // canonicalises them all to byte-identical code (53, or 168 when an extra
 // local moves the frame); the permuter over this spelling found nothing
 // below 53.
+// Still 53 after: splitting tipZ into two statements, separate baseZ and
+// bodyZ locals, sharing one base height between the two vectors (168),
+// raising the tip in place with the bases reading the member back (168),
+// constructor-built bases, and all 96 permutations of the tipZ, base and
+// body expressions, the member order and the write-back position - MSVC
+// compiles every one of them to the same code. Retail's line table puts
+// the whole body in one block (AddCone at L+22, AddCylinder at L+28, so
+// its source ran about 19 lines of setup) and names the same four locals
+// we have, so the shape is right and only MSVC's float allocation differs:
+// retail keeps tipZ in f12 with 8.0 in f11 and 10.0 in f10, reloads the
+// tip's X right after its word copy and stores the base vectors as X, Y,
+// Z, while ours keeps tipZ in f10, reuses f0 for 8.0, reloads X late and
+// stores them Y, Z, X.
 // @retail 0x83325328
 void CCSTargetRenderingProxy::Render(IGripSceneRenderer *pRenderer)
 {
