@@ -219,6 +219,10 @@ bool CCSCSMovementUnreal::DoMove()
 // as an FVector (28), the difference in the FVector domain (58), the
 // rotation as a Grip_Rotation (36) and the position inline (31). All
 // eleven points are the frame offsets; the constants are masked.
+// This session (lane A): the character copy that the previous session left
+// in the tree was reverted (23, the character is then read back from the
+// stack) and nothing else was found: the source decides which locals share
+// a slot, and the slot order itself is the compiler's (11).
 // @retail 0x8332AFE8
 bool CCSCSMovementUnreal::OrientationReached() const
 {
@@ -344,6 +348,17 @@ bool CCSCSMovementUnreal::GetNextMoveLocation()
 // but the copy then stores the three floats instead of the three words
 // (13). The one point left is the displacement of the second 0.0f, which
 // the constant pool of the whole game puts out of reach of the mask.
+// This session (lane A, again): the flag is now set to true after the call
+// has been checked instead of holding the result of the call. That gives the
+// retail's register allocation (r28 for the flag, r29 for the address of the
+// invalid location) and drops the score from 10 to 5. What is left is the
+// store of the call's result: the retail keeps it in the flag with "mr r28,
+// r3" before the test, ours sets the flag with "li r28, 1" after the branch
+// that skips the return. Writing the comparison against a literal 0.0f
+// instead of the constant (51, the literal spills into f31 and the frame
+// grows), the flag as a char (17), the flag holding the result again (10),
+// the flag tested as "== false" (10) and an extra read of the flag (10)
+// all keep the old allocation.
 // @retail 0x8334B7C8
 void CCSCSMovementUnreal::MoveToDestination()
 {
@@ -353,22 +368,22 @@ void CCSCSMovementUnreal::MoveToDestination()
         NextMoveLocation.Y == INVALID_LOCATION.Y &&
         NextMoveLocation.Z == INVALID_LOCATION.Z)
     {
-        bMoving = GetNextMoveLocation();
-        if (!bMoving)
+        if (!GetNextMoveLocation())
         {
             return;
         }
+        bMoving = true;
     }
     else
     {
         const Grip_Vector Position = m_pMeatPuppet->GetCharacter().m_gameCharacter.GetPosition();
         if (m_pBasePawn->ReachedDestination(Position, m_nextMoveLocation, 0, 1) != 0)
         {
-            bMoving = GetNextMoveLocation();
-            if (!bMoving)
+            if (!GetNextMoveLocation())
             {
                 return;
             }
+            bMoving = true;
         }
     }
     if (bMoving)
