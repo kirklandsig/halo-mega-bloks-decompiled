@@ -12,18 +12,22 @@ CCSTargetRenderingProxy::CCSTargetRenderingProxy() : m_targetHeight(0.0f), m_tar
 #endif
 
 // score 53 (was 58): raising the tip in a separate float (tipZ) and writing
-// it back at the end reproduces retail's copy schedule - retail copies the
-// position as Y, Z, X and reloads every member right after its word copy,
-// which only happens when the Z member is not modified in place. Still
-// differs: retail reloads X early and stores the two base vectors as
-// X, Y, Z, ours reloads X late and stores them as Y, Z, X. Tried this
-// session: raising the tip in place with the bases built from float members
-// or from constructors (168), building the body base from the tip base (53),
-// declaring the body base first with its Z as tip.Z + 18 (48, but MSVC folds
-// 8 + 10 into 18 so the body Z is no longer the (tipZ + 8) + 10 of retail -
-// not kept), reading the height from m_targetPos, locals for the tip X and
-// Y, and every statement and member order permutation (all 53 or worse:
-// MSVC canonicalises them). The permuter over this spelling found nothing
+// it back at the end reproduces retail's copy schedule - the position is
+// copied as Y, Z, X and every member is reloaded right after its word copy,
+// which only happens when the Z member is not modified in place. What is
+// left is scheduling alone: retail keeps tipZ in f12 with 8.0 in f11 and
+// 10.0 in f10, stores arrowTip.Z before the tip's X copy, reloads X right
+// after it and stores the two base vectors as X, Y, Z; ours keeps tipZ in
+// f10, reuses f0 for 20.0 and 8.0, reloads X late and stores the bases as
+// Y, Z, X. Tried: raising the tip in place (168), building the body base
+// from the tip base, declaring the body base first with its Z as tip.Z + 18
+// (48, but MSVC folds 8 + 10 into 18, so the body Z is no longer retail's
+// (tipZ + 8) + 10 - not kept), constructors instead of member assignments,
+// storing arrowTip.Z right after tipZ, hoisting the tip's X and Y into float
+// locals, stepwise arithmetic with float temps, reading the height from
+// m_targetPos, and every statement, member and declaration order - MSVC
+// canonicalises them all to byte-identical code (53, or 168 when an extra
+// local moves the frame); the permuter over this spelling found nothing
 // below 53.
 // @retail 0x83325328
 void CCSTargetRenderingProxy::Render(IGripSceneRenderer *pRenderer)
