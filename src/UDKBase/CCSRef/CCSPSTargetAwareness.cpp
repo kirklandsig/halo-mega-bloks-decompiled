@@ -517,6 +517,12 @@ void CCSPSTargetAwareness::AddThreatTarget(AActor *pActor)
 // as pointer arithmetic (both const and non-const) leaves this at 1 but
 // breaks ComputeTotalThreat (2 to 8), UpdateTargetList (matched to 3) and
 // ComputeLowCostAwareness (5 to 11), so the header stays as it is.
+// This session: eleven more spellings of the removal loop (the index and the
+// count in temporaries, the removal before the flag, a while loop, a cast on
+// the index, a pointer loop, an else-if chain, the targets loop first) all
+// leave the add's operand order alone, three of them make the score worse
+// (index in a temporary 6, the removal first 69, the pointer loop 52), and a
+// ten-minute permuter run finds nothing better than 1.
 // @retail 0x833579B8
 void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
 {
@@ -626,6 +632,13 @@ void CCSPSTargetAwareness::RemoveThreatTarget(AActor *pActor)
 // comparison, gives 38: the or keeps the boolean's mask on its result
 // instead of on the flag. The distance spelled as a sum of squares gives 34;
 // the same sum in the other five orders gives 38 or 40, and Size() keeps 38.
+// This session: the rotation of the none character, the false flag and the
+// pawn between r27, r28 and r29 is not reachable from this file's source:
+// the team comparison in the other order matches retail's compare and the
+// bool's mask but rotates the three the other way (35), and no spelling of
+// the awareness test, the pawn, the query or the heard and visible calls
+// moves them; the permuter over the whole function found nothing better
+// than the baseline's 34.
 // @retail 0x8336F5E0
 void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 {
@@ -719,6 +732,15 @@ void CCSPSTargetAwareness::ComputeHighCostAwareness(float, CCSTarget &Target)
 // (the continue turned into the branch) moves the copy the same way (11),
 // so the baseline's spelling is the only one that keeps the stores in
 // retail's order; the score stays at 5.
+// This session: of the five points, two are the friendly test's compare
+// (retail fcmpu f8, f7 with bge, ours fcmpu f7, f8 with ble) and three are
+// the vehicle class pointer's address split (retail lis r26, -0x7bba with
+// lwz -0x1b64(r26), ours a relocatable lis r26 with lwz 0(r26), which the
+// linker fills the same way); only the compare is a source spelling's work,
+// and every spelling that fixes it this session makes the position copy's
+// stores worse (the score first with >=, 11; the score and the threshold in
+// named temporaries, 14; only the threshold, 15; only the score, 15; the dot
+// test last, 122), so the baseline stays at 5.
 // @retail 0x8333CD70
 void CCSPSTargetAwareness::ComputeLowCostAwareness(float DeltaTime)
 {
