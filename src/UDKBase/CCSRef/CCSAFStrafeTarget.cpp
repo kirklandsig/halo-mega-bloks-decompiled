@@ -36,21 +36,25 @@ void CCSAFStrafeTarget::OnActivate()
     m_pMovementCS->Activate();
 }
 
-// score 251 (was 273): retail's PDB names the locals dirToPivot, canTest,
-// bestStrafeLocation, potentialStrafeLocations, dirToTest, strafeTestEnd and
-// traceResult, so the source uses those names; declaring the canTest flags
-// inside the loop lets the compiler hoist their initialisation into the loop
-// preheader, after the Normalize call, where retail has them (273 -> 251).
-// Still 0x20 bytes of frame short: retail's slot order is canTest, best
-// strafe location, strafe test end, direction to pivot, ... direction to
-// test, while ours puts the direction to test first (the hidden return slot
-// of RotateAngleAxis) and the direction to pivot after it. The permuter
-// found no further rewrite (2658 iterations, no improvement).
-// Tried this round: canTest at function scope in every position (277, all
-// orders), canTest split into four assignments (251), a named axis local
-// (251), function-scope dirToTest (307), component-wise copy of the rotation
-// result (322/326). Retail initialises canTest in the loop preheader, ours
-// keeps it in the loop body, which is what the score is mostly made of.
+// score 251 (was 251): retail's PDB gives the frame offsets of the named
+// locals - canTest 0x50, bestStrafeLocation 0x58, strafeTestEnd 0x78,
+// dirToPivot 0x88, dirToTest 0xf8, traceResult 0x110, potentialStrafeLocations
+// 0x190 - and every one of them but the direction to test sits where retail
+// puts it. Ours allocates the direction to test at 0x88 and the direction to
+// pivot at 0x98, one 12 byte slot too early, so every slot after them sits
+// 0x10 higher than retail's and the frame is 0x20 smaller. The rest of the
+// difference is the order the compiler issues the four canTest byte stores
+// and the constant loads in; ours keeps them together, retail interleaves
+// them with the address computations.
+// The back-off constant is now retail's: 0.0789438 (the float at 0x82235cb4),
+// not 100. That is the only change to the source this round, the score is
+// unchanged because the constant is masked.
+// Tried this round: all sixteen scope combinations of the four loop locals
+// (best 291, none reproduces retail's slot order), the direction to test
+// declared apart from its assignment (307), const-qualified locals (251),
+// a named axis vector (251/260), the loop body declarations in every order
+// (251, the layout does not move), the loop body in an extra block (251),
+// canTest at function scope (277). The permuter found no rewrite (251).
 // @retail 0x8332DAD0
 bool CCSAFStrafeTarget::UpdateGoal()
 {
@@ -84,7 +88,7 @@ bool CCSAFStrafeTarget::UpdateGoal()
         {
             potentialStrafeLocations[i] = traceResult.Location;
         }
-        potentialStrafeLocations[i] = potentialStrafeLocations[i] - dirToTest * 100.0f;
+        potentialStrafeLocations[i] = potentialStrafeLocations[i] - dirToTest * 0.0789438f;
         if (BestTime < traceResult.Time || (BestTime <= traceResult.Time && rand() % 2 == 0))
         {
             bestStrafeLocation = potentialStrafeLocations[i];
