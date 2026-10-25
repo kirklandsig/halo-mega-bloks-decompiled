@@ -1,6 +1,6 @@
 # Progress
 
-Updated 2026-10-24 (n-Space's C++: 2,025 of 2,061 functions matched). Matching progress is
+Updated 2026-10-24 (n-Space's C++: 2,027 of 2,061 functions matched). Matching progress is
 charted on [ByteMatch](https://bytematch.dev/kirklandsig/halo-mega-bloks-decompiled).
 
 ## Scope and roadmap
@@ -32,8 +32,8 @@ Phase 5 (UDK rebuild, later).
 
 2,061 functions (248,492 bytes) are in scope: the `nspace` rows of
 `config/functions/game.csv`. `config/status.csv` records every function that
-isn't `todo`. **2,025 are matched (223,980 bytes, 90%), 31 are near
-(19,696 bytes) and 5 are todo (4,816 bytes)**; 2,038 functions match in
+isn't `todo`. **2,027 are matched (224,436 bytes, 90%), 29 are near
+(19,240 bytes) and 5 are todo (4,816 bytes)**; 2,040 functions match in
 all, counting the Grip and Epic helpers that the same objects keep out of
 line. The scope has grown twice: n-Space's 159 additions to Epic's classes
 (156 match), and the CCS layer's other 644 functions (99,024 bytes; 618 of
@@ -44,7 +44,7 @@ them match).
 | `Unity_HaloRBTKamikazeEtAl.cpp.obj` | 1,603 | 207,200 | 1,570 | 28 | 5 |
 | `Unity_UDKWeaponEtAl.cpp.obj` | 354 | 31,352 | 353 | 1 | 0 |
 | `Unity_UDKCoverEtAl.cpp.obj` | 45 | 5,912 | 45 | 0 | 0 |
-| `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 32 | 2 | 0 |
+| `Unity_NullSurveysEtAl.cpp.obj` (MegaHaloGame) | 34 | 2,664 | 34 | 0 | 0 |
 | `Unity_CCSMainEtAl.cpp.obj` (Cognition) | 25 | 1,364 | 25 | 0 | 0 |
 
 Four of the CCS files (`ccsbrain.cpp`, `ccscsmovementunreal.cpp`,
@@ -53,7 +53,7 @@ separate lane, written by the MiniMax-M3.1-Flash model; at its merge 46 of
 them matched (4,844 bytes), 6 were near (1,236 bytes) and 8 todo. Two
 more MiniMax-M3.1-Flash lanes then worked on the leftovers, merged in five
 rounds, then through a queue that gives each session one file and takes its
-work only after re-checking every source (40 functions matched, 2 more by
+work only after re-checking every source (42 functions matched, 2 more by
 the permuter from their near results, and most of the rest brought closer).
 
 `docs/scores.csv` lists every near and todo function with its score (how
