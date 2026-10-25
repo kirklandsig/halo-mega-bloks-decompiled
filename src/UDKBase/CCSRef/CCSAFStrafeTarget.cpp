@@ -46,15 +46,29 @@ void CCSAFStrafeTarget::OnActivate()
 // difference is the order the compiler issues the four canTest byte stores
 // and the constant loads in; ours keeps them together, retail interleaves
 // them with the address computations.
-// The back-off constant is now retail's: 0.0789438 (the float at 0x82235cb4),
-// not 100. That is the only change to the source this round, the score is
-// unchanged because the constant is masked.
-// Tried this round: all sixteen scope combinations of the four loop locals
-// (best 291, none reproduces retail's slot order), the direction to test
-// declared apart from its assignment (307), const-qualified locals (251),
-// a named axis vector (251/260), the loop body declarations in every order
-// (251, the layout does not move), the loop body in an extra block (251),
-// canTest at function scope (277). The permuter found no rewrite (251).
+// The back-off constant is retail's: 0.0789438 (the float at 0x82235cb4),
+// not 100. The score is unchanged because the constant is masked.
+// Tried: all sixteen scope combinations of the four loop locals (best 291,
+// none reproduces retail's slot order), the direction to test declared apart
+// from its assignment (307), const-qualified locals (251), a named axis
+// vector (251/260), the loop body declarations in every order (251, the
+// layout does not move), the loop body in an extra block (251), canTest at
+// function scope (277), the canTest initialisation as four separate
+// statements (277), the FLT_MAX fill after the canTest test (470) or written
+// per component (316), and the strafe test end with the operands swapped
+// (251), with a copy of the pawn location (300) or component by component
+// (336). The permuter found no rewrite (251).
+// What still blocks it: retail holds the canTest initialisation in the loop
+// pre-header - its body starts at the canTest[i] load with lbzx, ours
+// reloads the four flags on every iteration - and it keeps the direction to
+// test in callee-saved f28-f30 across the SingleLineCheck call while ours
+// reloads it from the stack. Moving the canTest declaration out of the loop
+// scores 277 in five placements, because the scheduler then permutes the
+// stores to 0x52/0x53/0x51/0x50 instead of retail's 0x50/0x51/0x52/0x53.
+// Declaring the direction to test at function scope scores 307 but does land
+// the direction to pivot on retail's 0x88; moving the strafe test end (310),
+// the trace result (337) or all four loop locals out of the loop (355) is
+// worse.
 // @retail 0x8332DAD0
 bool CCSAFStrafeTarget::UpdateGoal()
 {
