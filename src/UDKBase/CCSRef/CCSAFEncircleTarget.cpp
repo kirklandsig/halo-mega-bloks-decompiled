@@ -77,6 +77,24 @@ void CCSAFEncircleTarget::OnActivate()
 // 9 for the float and integer constants whose .rdata displacement sits
 // more than 8 instructions away from its lis (no source change moves
 // those).
+// Third round: the copy into the function scope dirToTest is what gives
+// MSVC two nodes, and it is also what fills the slot at 0x98 that retail
+// leaves unused - drop the copy and the rotation result moves to 0x98,
+// the axis takes 0xf8 and the frame shrinks by 0x20, so the two
+// requirements fight each other.  Tried and rejected this round: the
+// loop scope dirToTest on its own (143), the same with the function
+// scope dirToTest declared but never used (143, MSVC drops the slot
+// altogether), the rotation result dead stored into the function scope
+// dirToTest so the copy disappears (143, the slot goes with it), the
+// 2000 multiply fed from the rotation result and the radius multiply
+// from the copy (34) and the other way round (143) - both leave the
+// three fmr's in place, because MSVC forwards the copy into the
+// multiply and keeps the copy for the use after the call; the copy
+// written component by component (34, the radius multiply operand order
+// flips); a named axis vector next to the rotation (143, no effect on
+// the layout); the objective copy through an explicit Grip_Vector
+// conversion (30, no change) and through a local (90).  The permuter
+// (base 30) finds nothing better.
 // @retail 0x8332BE08
 void CCSAFEncircleTarget::UpdateGoal()
 {
