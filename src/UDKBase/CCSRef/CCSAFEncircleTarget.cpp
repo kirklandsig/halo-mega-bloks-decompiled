@@ -53,6 +53,30 @@ void CCSAFEncircleTarget::OnActivate()
 // call radius multiply from the rotation result instead of the copy
 // (143) - retail loads 0xf8 straight into f29/f28/f27, so the value must
 // stay one node across the call, which none of these forms gives us.
+// Second round: the frame layout is now ours byte for byte (every slot
+// is read and written the same number of times as retail), so all that
+// is left is that retail keeps ONE node for the rotated direction - it
+// loads 0xf8/0xfc/0x100 into f29/f28/f27 once and uses those for the
+// 2000 multiply and for the radius multiply after the call.  Every
+// source form that keeps the layout hands MSVC two nodes (the call
+// result, returned through the hidden pointer at 0xf8 and so live in
+// scratch registers, and the copy in memory), and MSVC then splits the
+// live range at the GetPawnViewLocation call - those three fmr's are
+// that split.  Tried and rejected this round: the rotation written
+// into the function scope dirToTest (92) or the loop scope one (143),
+// both lose the layout; the copy written as a whole struct assignment
+// (325) materialises it in memory; the copy written component by
+// component (34) and the 2000 multiply written out (30, identical
+// code); the multiply taken from the rotation result instead of the
+// copy (34) or the other way round (143); the view location and the
+// scaled direction each in their own variable (135, 30); the rotation
+// result scaled before the copy (31); the orientation target copied
+// through a local (90).  The permuter (1241 rewrites) finds nothing
+// better than 30 either.  What is left is 15 points for the three
+// fmr's, 6 for the register order of the objective copy at the end and
+// 9 for the float and integer constants whose .rdata displacement sits
+// more than 8 instructions away from its lis (no source change moves
+// those).
 // @retail 0x8332BE08
 void CCSAFEncircleTarget::UpdateGoal()
 {
