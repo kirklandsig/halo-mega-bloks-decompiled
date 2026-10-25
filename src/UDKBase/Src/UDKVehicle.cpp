@@ -233,6 +233,21 @@ void AUDKVehicle::moveTowardGwNavLookSteer(const FVector &Direction)
 // declarations (72), the tolerance hoisted into a local (37), and the inline
 // with its multiply operands swapped (37) or its components scaled in four
 // other orders (37, 71, 65, with Encircle down to 15).
+// Tried again since: a cross product of 144 variants over the order of the
+// declarations, the spelling of the zeroing, the order of the three Normalize
+// calls and the shape of the steering sum and the forward dot - only the shape
+// above reaches 37, every other combination is worse (50 to 192). The tolerance
+// named as a const in front of the zeroing (37), the 0.0f written as 0, 0.0,
+// -0.0f or as a duplicated zeroing statement (37 each, the object file is byte
+// identical), the declarations spelled with parentheses instead of = (37 each)
+// and a file local normalization helper that takes the vector by reference
+// (37, byte identical). The residue is the allocator's tie break between the
+// two free constant registers: MSVC creates the 0.0f constant at the
+// Forward.Z = 0.0f statement and the SMALL_NUMBER constant at the first
+// Normalize in both builds, and only the order in which the two constants are
+// handed f8 and f7 differs. Zeroing the Z after the Dir normalization does
+// create SMALL_NUMBER first, but it also moves the Forward.Z store out of the
+// Dir.Normalize region and costs 170.
 // @retail 0x83386E18
 void AUDKVehicle::moveTowardGwNavLSStrafe(const FVector &Direction)
 {
