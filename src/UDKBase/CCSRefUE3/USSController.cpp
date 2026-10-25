@@ -36,6 +36,16 @@ template CCSMeatPuppetQuery *IGripBTInterface::GetMeatPuppetQuery<CCSMeatPuppetQ
 // extent and destination sret buffers are plain temporaries that share the
 // direction's and rotation's slots; ours are named variables that take
 // slots of their own, which is what moves them to 0x60 and 0x70.
+// Tried this session: swapping the direction test to "(CoverFacing | Away)"
+// leaves the score at 9 (the multiply that differs stays the other way
+// round); spelling the test out term by term matches the first multiply but
+// makes MSVC put the direction component first in the second one as well, so
+// the fmadds flips instead (score 9), and reordering the two terms of that
+// sum gives 12; splitting the cover chain into named locals ("CCSCover
+// Cover", "Grip_Rotation Rotation") does give retail's "addi r4, r1, ..."
+// argument form, but MSVC materialises the returned cover in a separate
+// temporary instead of copying it into the named local, so every slot moves
+// up by 0x10 and the score worsens to 91.
 // @retail 0x8336E868
 void AUSSController::PostPollMove()
 {
