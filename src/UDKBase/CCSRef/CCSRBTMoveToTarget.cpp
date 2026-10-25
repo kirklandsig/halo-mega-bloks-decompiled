@@ -54,6 +54,15 @@ bool CCSRBTMoveToTarget::TestPreCondition(IGripBTInterface *pInterface)
 // the next (line 69), so the original had them together; the permuter run
 // was made against a modified copy of this file, so it never covered this
 // version of the source
+// tried this session: the matched twin CCSRBTSearch::MoveToRandomLocation
+// has the same shape (position at 0x50, character temporary at 0x60, the
+// objective reusing 0x60), so the difference is in this function's extra
+// code, not the shape: a named CCSCharacter local for the position (14, the
+// objective keeps 0x80), dropping the early target check (21, the objective
+// keeps 0x80), and fetching the target inline in the aggregate (the two
+// GetCurrentTarget() loads change the register allocation) - in every case
+// MSVC gives the objective its own slot at 0x80 and the frame 0xf0, so the
+// reuse of the character temporary's slot is what is missing here
 // @retail 0x8333F270
 GripRBTNode::EBTExecutionResult CCSRBTMoveToTarget::ExecutePreInternal(IGripBTInterface *pInterface, bool bFirstTime)
 {
