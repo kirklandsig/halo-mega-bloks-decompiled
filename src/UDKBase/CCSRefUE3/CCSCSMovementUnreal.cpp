@@ -206,6 +206,19 @@ bool CCSCSMovementUnreal::DoMove()
 // both characters named (27). The retail keeps the first character's slot to
 // itself, so that character is still alive when the rotation is made, but no
 // spelling of the source keeps it alive without changing the code.
+// This session (lane A): the frame was compared slot by slot. The retail
+// holds the position at 0x50, the difference at 0x68, the rotation at 0x78
+// and the first character at 0x90, with the second character taking over
+// the position's slot at 0x50 and the orientation copy taking over the
+// difference's slot at 0x68; ours holds the difference at 0x60 and the
+// rotation at 0x70, with the orientation copy taking over the position's
+// slot at 0x50 and the second character at 0x90. The variants that keep
+// the code the same do not move a single slot: the orientation in a named
+// Grip_Rotation or FRotator, the difference named, an extra named vector
+// (all 11). The ones that do move the slots change the code: the position
+// as an FVector (28), the difference in the FVector domain (58), the
+// rotation as a Grip_Rotation (36) and the position inline (31). All
+// eleven points are the frame offsets; the constants are masked.
 // @retail 0x8332AFE8
 bool CCSCSMovementUnreal::OrientationReached() const
 {
@@ -317,6 +330,20 @@ bool CCSCSMovementUnreal::GetNextMoveLocation()
 // register), the flag as an unsigned char (10), the comparisons negated (10),
 // the flag declared before the reference (10) and the permuter over the
 // whole body again (10, 600s, nothing).
+// This session (lane A): the swap was hunted with the instruction level
+// diff, so a variant that only moves the allocation shows up even when the
+// score does not. A named reference and a named pointer to the invalid
+// location keep the code and the allocation (10), the flag as an int or an
+// unsigned int (27, 25), the flag tested against true (12), the flag
+// assigned from a conditional expression (17), the comparisons duplicated
+// or taken through a reference (10, the duplicate is folded away), the
+// copy through a temporary (10), the position inline in the call (38) and
+// the position as a reference (10) all keep the address of the constant
+// in the same register. Only the copy written field by field moves it:
+// that puts the address in r29 and the flag in r28, as the retail has it,
+// but the copy then stores the three floats instead of the three words
+// (13). The one point left is the displacement of the second 0.0f, which
+// the constant pool of the whole game puts out of reach of the mask.
 // @retail 0x8334B7C8
 void CCSCSMovementUnreal::MoveToDestination()
 {
