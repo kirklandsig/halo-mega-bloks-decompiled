@@ -42,6 +42,16 @@ CCSCSCoverUnreal::CCSCSCoverUnreal(CCSCSInterface *pInterface)
 // copy-then-subtract direction (94) and a case- or function-scope direction
 // (82) lose bytes, and dropping the named facing rotation or spelling the
 // rotator in any other way stays at 12.
+// Tried this session: MSVC's own frame layout (cl /Fa) shows that retail
+// keeps one slot for the whole rotation chain (the slot rotation's return
+// buffer, the rotator and the facing rotation) and one for the cover
+// location and the direction, where ours gives each of them a slot of its
+// own; calling the cover's GetOrientation() instead of the slot query does
+// collapse the rotation chain into a single slot, but it lifts every slot
+// by 0x10 (score 33), a direction declared in an outer scope adds the
+// default constructor's zero stores (score 99 in the function scope, 85 in
+// the case scope) and reusing the cover location's variable for the
+// direction changes the code (score 85).
 // @retail 0x833432A8
 bool CCSCSCoverUnreal::DoGetInCover()
 {
