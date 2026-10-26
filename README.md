@@ -10,6 +10,11 @@ can run natively on PC and, eventually, on an Anbernic handheld. It is an
 independent, non-commercial preservation project, not affiliated with or
 endorsed by Microsoft, 343 Industries, n-Space, Mega Brands or Epic Games.
 
+> **On hold (October 2026):** work here is paused while we focus on our
+> [Halo 2 decompilation](https://github.com/kirklandsig/halo2-decompiled).
+> We'll be back. What works today and what doesn't yet:
+> [#2](https://github.com/kirklandsig/halo-mega-bloks-decompiled/issues/2).
+
 ## Goal
 
 A proper decomp of the game's own code and scripts, as the foundation for
@@ -44,7 +49,7 @@ is Autodesk Gameware's middleware and stays out; the 159 functions n-Space
 added to Epic's classes (the CCS pawn interface on UDKPawn and its kin) are in,
 and so is the whole CCS layer (644 more functions, 99,024 bytes).
 
-Now: the leftover near and todo functions. Then Phase 4 (the handheld) and Phase 5 (the UDK rebuild).
+On hold since October 2026 (see above). When work resumes: the modding workflow (swapping decompiled functions into the port), Phase 4 (the handheld) and Phase 5 (the UDK rebuild). The 34 unmatched functions stay open to anyone.
 
 ## What this is
 
